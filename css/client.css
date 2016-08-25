@@ -1,0 +1,447 @@
+body {
+    color: #555555;
+	font-family: "Roboto Condensed",sans-serif;
+}
+
+* {
+  margin: 0;
+}
+html, body {
+  height: 100%;
+}
+
+/**********************************************************************/
+/************************** COMMON ELEMENTS **************************/
+/********************************************************************/
+.clear{clear:both;}
+h1, h2, h3, h4, h5, h6 {
+    color: #333333;
+    font-family: 'Roboto Condensed',sans-serif;
+}
+p {
+    line-height: 1.6;
+    font-size: 16px;
+}
+a:focus {
+    outline: none;
+}
+.btn:focus, .btn:active:focus, .btn.active:focus {
+    outline: none;
+}
+/** Custom styles **/
+.vis-hidden {
+    visibility: hidden !important;
+}
+a {
+    -webkit-transition: 0.25s;
+    -moz-transition: 0.25s;
+    -o-transition: 0.25s;
+    transition: 0.25s;
+	color: #a30942;
+}
+
+a:hover, a:focus {
+	color: #610024;
+}
+h2.sectionTitle {
+    color: #428BCA;
+    font-size: 50px;
+    margin-top: 0;
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 50px;
+}
+h3.sectionTitle {
+    text-align: center;
+    margin-bottom: 50px;
+    margin-top: -20px;
+}
+.altWrap {
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    background-color: #f7f7f7;
+}
+
+/**********************************************************************/
+/***************************** NAVBAR ********************************/
+/********************************************************************/
+.navbar-brand img {max-height:100%; float:left;}
+.navbar-brand h3{ line-height: 20px;}
+.navbar {
+    margin-bottom: 0;
+}
+
+.navbar-inverse {
+    /**
+    background: url(../assets/img/80.png);
+    **/
+    background: #fff;
+    border: 0 none;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
+}
+.navbar-brand {
+    line-height: 1;
+    height: 40px;
+    margin-top: 14px;
+    margin-bottom: 26px;
+    padding: 0;
+    width: 100%;
+    font-size: 40px;
+    letter-spacing: -2px;
+    font-weight: 700;
+}
+.navbar-inverse .navbar-brand {
+    color: #428BCA;
+}
+.navbar-inverse .navbar-brand .fa-stack {
+    font-size: 28px;
+}
+.navbar-inverse .navbar-brand .title {
+    color: #888;
+    font-size:32px;
+}
+.navbar-inverse .navbar-brand:hover,
+.navbar-inverse .navbar-brand:focus {
+    background: none;
+    color: #428BCA;
+}
+.navbar > .container .navbar-brand,
+.navbar > .container-fluid .navbar-brand {
+    margin-left: 0;
+}
+.navbar-nav {
+    float: right;
+}
+.navbar-inverse .navbar-nav > li > a {
+    font-family: 'Roboto Condensed',sans-serif;
+    color: #333333;
+    display: block;
+    font-size: 20px;
+    font-weight: 400;
+    padding: 30px 15px;
+    text-shadow: none;
+}
+.navbar .nav > li > a:hover,
+.navbar .nav > li > a:focus {
+    color: #A30942;
+}
+.navbar-inverse .navbar-toggle {
+    background: #FFFFFF;
+    border: 0 none;
+    margin: 19px 15px 19px 0;
+}
+.navbar-inverse .navbar-toggle:hover,
+.navbar-inverse .navbar-toggle:focus {
+    background-color: #eee;
+}
+.navbar-inverse .navbar-toggle .icon-bar {
+    background: #333;
+}
+
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus, .dropdown-submenu:hover > a, .dropdown-submenu:focus > a,.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+	 background-image: linear-gradient(to bottom , #850031, #A30942);
+	 background-color: #A30942;}
+/**********************************************************************/
+/************************* FOOTER ************************************/
+/********************************************************************/
+footer {
+    background: #444;
+    padding: 40px 0;
+}
+footer p {
+    color: #ddd;
+    font-weight: 300;
+    margin: 0 0 20px 0;
+    font-size: 16px;
+}
+footer .social {
+    margin: 0;
+}
+footer .social a {
+    color: #DDDDDD;
+    text-decoration: none;
+}
+footer .social a:hover {
+    color: #fff;
+}
+footer .social a .fa-inverse {
+    color: #444;
+}
+                                                                                                                                                                                                                                                              113,1         10%
+
+/**********************************************************************/
+/****************** MEDIA QUERIES ************************************/
+/********************************************************************/
+@media(max-width:1200px){
+    .jumbotron .mobile {
+        margin-left: -164px;
+    }
+}
+@media(max-width:979px){
+    .navbar-collapse {
+        float: right;
+    }
+    .navbar-inverse .navbar-nav > li > a {
+        font-size: 16px;
+        padding: 25px 12px;
+    }
+    .navbar > .container .navbar-brand,
+    .navbar > .container-fluid .navbar-brand {
+        font-size: 28px;
+        float: left;
+        margin: 15px 0;
+        width: auto;
+    }
+    .navbar-inverse .navbar-brand .fa-stack {
+        font-size: 22px;
+    }
+    .navbar-nav {
+        float: left;
+    }
+    .jumbotron {
+        padding-top: 100px;
+    }
+    .jumbotron .jumboText {
+        text-align: center;
+    }
+    .jumbotron h1 {
+        font-size: 64px;
+    }
+    .jumbotron .actionBtn {
+        margin-bottom: 50px;
+    }
+    .jumbotron .mobile {
+        margin-left: -48px;
+    }
+    #productWrap .imgWrap img {
+        margin: 0 auto 60px;
+    }
+    #contactWrap .blurb {
+        font-size: 20px;
+    }
+
+}
+@media (max-width: 767px) {
+    .navbar-collapse {
+        float: none;
+    }
+    .navbar > .container .navbar-brand, .navbar > .container-fluid .navbar-brand {
+        float: left;
+        margin: 15px 0 15px 15px;
+    }
+    .navbar-inverse .navbar-nav > li > a {
+        font-size: 14px;
+        padding: 12px 15px;
+    }
+    .jumbotron {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .jumbotron h1 {
+        font-size: 48px;
+    }
+    .jumbotron h2 {
+        font-size: 22px;
+    }
+
+    #featureWrap .feature {
+        margin-bottom: 40px;
+    }
+    #productWrap .productFeatures .icon {
+        font-size: 14px;
+    }
+    #pricingWrap .priceTable {
+        margin-bottom: 60px;
+    }
+}
+
+
+
+/* Customized styles */
+
+* {
+  margin: 0;
+}
+html, body {
+  height: 100%;
+}
+
+.cpntainer{
+  min-height: 60%;
+  height: auto !important; /*min-height hack*/
+  height: 100%;            /*min-height hack*/
+}
+#footer, .puush {
+  height: 4em;
+}
+/*Table style*/
+
+
+	/*
+	Max width before this PARTICULAR table gets nasty
+	This query will take effect for any screen smaller than 760px
+	and also iPads specifically.
+		*/
+		table { 
+		width: 100%; 
+		border-collapse: collapse; 
+	}
+	/* Zebra striping */
+	tr:nth-of-type(odd) { 
+		background: #eee; 
+	}
+	th { 
+		background: #333; 
+		color: white; 
+		font-weight: bold; 
+	}
+	td, th { 
+		padding: 6px; 
+		border: 1px solid #ccc; 
+		text-align: left; 
+	}
+	@media
+	only screen and (max-width: 760px),
+	(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+		/* Force table to not be like tables anymore */
+		table, thead, tbody, th, td, tr {
+			display: block;
+		}
+
+		/* Hide table headers (but not display: none;, for accessibility) */
+		thead tr {
+			position: absolute;
+			top: -9999px;
+			left: -9999px;
+		}
+
+		tr { border: 1px solid #ccc; }
+
+		td {
+			/* Behave  like a "row" */
+			border: none;
+			border-bottom: 1px solid #eee;
+			position: relative;
+			padding-left: 50%;
+		}
+
+		td:before {
+			/* Now like a table header */
+			position: absolute;
+			/* Top/left values mimic padding */
+			top: 6px;
+			left: 6px;
+			width: 45%;
+			padding-right: 10px;
+			white-space: nowrap;
+		}
+
+		/*
+		Label the data
+		*/
+		table#vpn td:nth-of-type(1):before { content: "No."; }
+		table#vpn td:nth-of-type(2):before { content: "Usuario"; }
+		table#vpn td:nth-of-type(3):before { content: "Contraseña"; }
+		table#vpn td:nth-of-type(4):before { content: "Eliminar"; }
+	}
+
+	/* Smartphones (portrait and landscape) ----------- */
+	@media only screen
+	and (min-device-width : 320px)
+	and (max-device-width : 480px) {
+		body {
+			padding: 0;
+			margin: 0;
+			width: 320px; }
+		}
+
+	/* iPads (portrait and landscape) ----------- */
+	@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+		body {
+			width: 495px;
+		}
+	}
+#change {
+	        display: none;
+			    }
+
+.inner {padding:1em;}
+/* Colums styyles */
+
+.col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {float:left;}
+.col-sm-2 {width: 20%;}
+.col-sm-3 {width: 25%;}
+.col-sm-4 {width: 33.3333%;}
+.col-sm-8 {width: 66.6667%;}
+.col-sm-10 {width: 80%;}
+.col-sm-9 {width: 75%;}
+.col-sm-12 {width: 100%;}
+
+#sidebarleft {border-right: 1px solid #ddd;}
+p.little {font-size:10px;}
+.menu li i {
+  display: inline-block;
+  cursor: pointer;
+}
+.menu li.active i {
+  display: none;
+}
+ul#menu-main-menu-m{margin:0;}
+.menu li i + i {
+  display: none;
+}
+.menu li.active i + i {
+  display: inline-block;
+}
+#menu-main-menu-m li {list-style: outside none none;}
+
+.sub-menu { display: none; }
+
+.arrowleft {
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid #000;
+    border-top: 10px solid transparent;
+    content: "";
+    display: inline-block;
+    height: 0;
+    vertical-align: middle;
+    width:0;
+}
+.arrowdown{
+    border-right: 10px solid transparent;
+    border-left: 10px solid transparent;
+    border-top: 10px solid #a30942;
+    content: "";
+    display: inline-block;
+    height: 0;
+    vertical-align: middle;
+    width:0;
+}
+span.counter {
+    background: none repeat scroll 0 0 #bbb;
+    border-radius: 8px;
+    color: white;
+    font-size: 9px;
+    padding: 2px 6px;
+}
+h4.tone  {    color: #a30942;
+	    font-family: "Roboto Condensed",sans-serif;}
+#maincol h4.tone {float:right;}
+h4 a.biglist{color:#333333;}
+h4 a.active{text-decoration: underline;}
+/*buttons*/
+.btn-primary {
+    background-color: #02535e;
+	background-image: linear-gradient(to bottom, #02535e, #086673);
+}
+
+.btn-primary:focus, .btn-primary:active, .btn-primary:hover, .btn-primary.active {
+	    background-color: #02535e;
+		    background-image: linear-gradient(to bottom, #02535e, #086673);
+		}
+/*FORMS*/
+form.form-table {margin:0;width:50%;}
+form.form-table input[type="password"] {margin:0; width: 60%;}
+form.sub-form{display:none;}
+a.showform {cursor:pointer;}
