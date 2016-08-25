@@ -95,12 +95,6 @@ if(isset($_POST['adddomain'])){
 		<strong>Dominio " . $domain_new ." añadido correctamente</strong> 
 		</div>
         ";
-	   //add the domain in adddomain.txt file to let the cron/vhosts.sh script
-	   //crete the apache  virtualhost and the domain folder for website
-	   $fp = fopen("cron/adddomain.txt", "a") or exit("Unable to open file!");
-	   $writestring =$domain_new. "\n"; 
-	   fwrite($fp, $writestring);
-	   fclose($fp);
 	} else {
 		$errorttpe 	= (ldap_errno($ldapconn)==68)?"El dominio " . $domain_new . " ya existe": $errorttpe;
 	   	$message=  "
@@ -124,12 +118,6 @@ if(isset($_POST['deldomain'])){
         <strong>Dominio " . $domain_new ." eliminado</strong> 
         </div>
         ";
-       //add the domain in adddomain.txt file to let the cron/vhosts.sh script
-       //crete the apache  virtualhost and the domain folder for website
-       $fp = fopen("cron/deldomain.txt", "a") or exit("Unable to open file!");
-	   $writestring = $_POST['domainid']. "\n";
-       fwrite($fp, $writestring);
-       fclose($fp);
     } else {
         $message=  "
         <div class='alert alert-error'>
