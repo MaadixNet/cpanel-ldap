@@ -28,7 +28,7 @@ $(document).ready(function() {
             else {
                 if (target.length) {
                     $('html,body').animate({
-                        scrollTop: target.offset().top - $('.navbar').outerHeight(true) + 1
+                        scrollTop: target.offset().top - $('.nav').outerHeight(true) + 1
                     }, 1000);
                     return false;
                 }

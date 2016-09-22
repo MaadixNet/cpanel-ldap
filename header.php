@@ -5,7 +5,7 @@
     <head>
     		<meta charset="utf-8">
 			<meta http-equiv="X-UA-Compatible" content="IE=edge">
-			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+			<meta name="viewport" content="width=device-width">
 			<meta name="description" content="A Bootstrap based app landing page template">
 			<meta name="author" content="">
 			<meta name="robots" content="noindex">
@@ -15,7 +15,7 @@
         <!-- Bootstrap -->
         <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
 		<!--<link href="bootstrap/css/bootstrap.css" rel="stylesheet" media="screen">-->
-        <link href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+        <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet" media="screen">
         <link href="assets/styles.css" rel="stylesheet" media="screen">
         <!--<link href="css/custom.css" rel="stylesheet">-->
 		<link href="css/client.css" rel="stylesheet">
@@ -28,17 +28,19 @@
     </head>
     
     <body>
-        <div class="navbar navbar-fixed-top">
+        <div class="navbar">
             <div class="navbar-inner">
                 <div class="container-fluid">
+				<div class="navbar-header">
                     <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> <span class="icon-bar"></span>
                      <span class="icon-bar"></span>
                      <span class="icon-bar"></span>
                     </a>
-  						<a class="navbar-brand brand" href="<?php echo BASE_URL;?>">
+  						<a class="navbar-brand brand" href="/capnel">
 
 						<img src="images/logo_maadix.png" tilte="Cpanel Home" alt="Cpanel" class"logo"/><h3>Cpanel</h3>
 						</a>
+				</div><!-- navbar-header-->
                     <div class="nav-collapse collapse">
                         <ul class="nav pull-right">
                             <li class="dropdown">
@@ -55,24 +57,23 @@
 						<?php $permissions= $_SESSION["login"]["level"];?>
                         <ul class="nav">
                             <li>
-                                <a href="<?php echo BASE_URL;?>">Detalles</a>
+                                <a href="/cpanel">Detalles</a>
                             </li>
-							<?php if (is_dir('var/www/html/ownclowd')){?>
+							<?php if (is_dir('/var/www/html/ownclowd')){?>
                             <li>
                                 <a href="https://<?php echo $_SERVER['HTTP_HOST'];?>/owncloud">Owncloud</a>
 							</li>
 							<?php }?>
-                            <li>
 							<?php if ($permissions == '10') {?>
-								<li><a href="<?php echo BASE_URL;?>edomains.php">Dominios </a></li>
-                            </li>
+								<li><a href="/cpanel/edomains.php">Dominios </a></li>
 							<?php } ?>
 
-                                    <li><a href="<?php echo BASE_URL;?>mails.php">Email</a></li>
-	
-							<li>
-                                <a href="<?php echo BASE_URL ;?>vpn.php">VPN</a>
-                            </li>
+                            <li><a href="/cpanel/mails.php">Email</a></li>
+                            <?php if ($permissions >= '4') {?>
+						    	<li><a href="/cpanel/notificaciones.php">Notificaciones</a></li>
+							<?php } ?>	
+							<li><a href="/cpanel/vpn.php">VPN</a></li>
+
                             <li class="dropdown">
                                 <a href="#" data-toggle="dropdown" class="dropdown-toggle">Tutoriales <b class="caret"></b>
                                 </a>
@@ -83,9 +84,10 @@
                                     <li><a href="#">Dominios</a></li>
                                 </ul>
                             </li>
+						</ul>
 			</div><!--nav-collapse-->
 		</div><!--container-fluid-->
 	</div><!--navbar inner-->
 </div><!--navbar fixed-->
-<div class="cpntainer">
+<div class="container-fluid">
 

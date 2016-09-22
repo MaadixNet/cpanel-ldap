@@ -52,9 +52,6 @@ Edit site-config.php filling with your data
 	//The VPN container
 	define ("LDAP_VPN","ou=vpn,dc=example,dc=tld");
 
-	//the cpanel URL installation. As we always will install Cpanel in a path under the default domain, we could avoid this, but
-	//for other users in cutsom installation could be useful
-	define("BASE_URL", "http://example.com/cpanel/");
 
 ```
 

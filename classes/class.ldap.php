@@ -38,6 +38,18 @@ class LDAP{
                 ldap_add($ldapconn, $adddn, $info);
 				}
 	}
+    //Add ou=senderemail firts time if not exixt . check it in notificaciones.php
+    function addSenderObject ($ldapconn){
+                //Only admin can add vpn accounts. Check level
+                if($_SESSION["login"]["level"] == '10'){
+                $ldapbind=$this->bind($ldapconn, BINDDN ,$_SESSION["login"]["password"]);
+                $adddn='ou=sendermail,' . SUFFIX;
+                $info['objectclass'][0]='organizationalUnit';
+                $info['objectclass'][1]='top';
+                $info['objectclass'][2]='metaInfo';
+                ldap_add($ldapconn, $adddn, $info);
+                }
+    }
 
  	function search($ldapconn,$searchdn, $filter){
  
@@ -46,18 +58,13 @@ class LDAP{
         if ($sr) {
  
  
-        $info = ldap_get_entries($ldapconn, $sr);
- 
-        return $info; 
+			$info = ldap_get_entries($ldapconn, $sr);
+	 
+			return $info; 
  
         } else {
-            echo"
-                <div class='alert alert-error'>
-                    <button class='close' data-dismiss='alert'>&times;</button>
-                        <strong>No hay resultados</strong> 
-                </div>
-                ";
- 
+
+			return false; 
         }
     }   
     function addRecord($connection, $adddn, $record){
@@ -248,12 +255,17 @@ class LDAP{
  
 }
 //END LDAP CLASS
+function ssha_hash_password($password) // SSHA with random 4-character salt
+	 {
+	  $salt = substr(str_shuffle(str_repeat('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',4)),0,4);
+	  return '{SSHA}' . base64_encode(sha1( $password.$salt, TRUE ). $salt);
+	   }
 
 
-
-function ldap_password_hash($password_clear)
+function ldap_password_hash($password_clear,$enc_type)
 {
-    $enc_type = strtolower(ENC_TYPE);
+	$salt = substr(str_shuffle(str_repeat('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',4)),0,4);
+    $enc_type = strtolower($enc_type);
 
     switch($enc_type)
     {
@@ -268,6 +280,27 @@ function ldap_password_hash($password_clear)
         $password_hash .= chr( hexdec( $md5_hash{ $i + 1 } ) + hexdec( $md5_hash{ $i } ) * 16 );
     $password_hash = '{MD5}'.base64_encode($password_hash);
         break;
+	case 'ssha':
+#	$password_hash =  '{SSHA}' . base64_encode(sha1( $password_clear.$salt, TRUE ). $salt);	
+    //$password_hash =  '{SSHA}' . base64_encode(sha1( $password_clear.$salt, TRUE ). $salt);   
+            if (function_exists('mhash') && function_exists('mhash_keygen_s2k')) {
+                mt_srand((double)microtime()*1000000);
+                $salt = mhash_keygen_s2k(MHASH_SHA1,$password_clear,substr(pack('h*',md5(mt_rand())),0,8),4);
+                $password_hash = sprintf('{SSHA}%s',base64_encode(mhash(MHASH_SHA1,$password_clear.$salt).$salt));
+
+            } else {
+                error(_('Your PHP install does not have the mhash() or mhash_keygen_s2k() function. Cannot do S2K hashes.'),'error','index.php');
+            }   
+
+            break;
+
+	case 'md5crypt':
+		if (! defined('CRYPT_MD5') || CRYPT_MD5 == 0)
+			error(_('Your system crypt library does not support md5crypt encryption.'),'error','index.php');
+
+		$password_hash = sprintf('{CRYPT}%s',crypt($password_clear,'$1$'.$salt));
+
+            break;
 
     case 'clear':
         $password_hash = $password_clear;

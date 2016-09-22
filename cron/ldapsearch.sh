@@ -13,15 +13,19 @@
 # based on this topic: http://stackoverflow.com/questions/14171340/dilemma-realtime-crate-virtual-hosts-or-with-a-crontab/38901618#38901618
 # TODO: add let's encrypt script to create certificates for the domain
 
-bindpass=$(awk -F\" '/READDNPSW/{print $(NF-1)}'  ../site-config.php)
+bindpass=$(awk -F\" '/RDNPSW/{print $(NF-1)}'  ../site-config.php)
 binddn=$(awk -F\" '/READDN/{print $(NF-1)}'  ../site-config.php)
 ldapbase=$(awk -F\" '/LDAP_BASE/{print $(NF-1)}'  ../site-config.php)
+echo $binddn;
+echo $ldapbase;
+#echo $bindpass;
 has_new_domains=false #No new domains by default = do not reload the apache config.
 vhroot='/etc/apache2/sites-available/'
 ldapresult=()
 #do not delete defaults virtualhost that are not in ldap
 defaultvhost='000-default.conf'
 defaultssl='default-ssl.conf'
+documenRoot='/var/www/html'
 
 while read domain 
 do
@@ -29,21 +33,19 @@ do
 	if [ -f $vhroot/"$domain".conf ];then
 		echo 'file existe'
 	else
-		if [ ! -d /var/www/html/websites/ ]; then
-			mkdir /var/www/html/websites/
-			chown -R root:www-data /var/www/html/websites
-			chmod -R 755 /var/www/html/websites
-		fi
 		#New domain. Let's create virtual host
      	has_new_domains=true #true = at least one new domain = reload apache config
       	echo "<VirtualHost *:80>
 		ServerName  "$domain"
 		ServerAlias www."$domain"
+		Alias /cpanel '"$documenRoot"/cpanel'
+		Alias /owncloud '"$documenRoot"/owncloud'
+		Alias /webmail '"$documenRoot"/webmail'
 		ServerAdmin postmaster@"$domain"
-		DocumentRoot /var/www/html/websites/"$domain"
+		DocumentRoot /var/www/html/"$domain"
 		</VirtualHost>" > $vhroot/"$domain".conf
 
-		mkdir /var/www/html/websites/$domain
+		mkdir $documenRoot/$domain
 
 		echo "<!DOCTYPE html>
 		<html>
@@ -65,7 +67,7 @@ do
         <p>
           Please start builing your website 
         </p>
-        </body> </html>">/var/www/html/websites/$domain/index.html
+        </body> </html>">$documenRoot/$domain/index.html
         a2ensite "$domain".conf
 		
 	fi	
@@ -91,10 +93,6 @@ do
 			a2dissite "$basevhost"
 			echo "dominio "$basevhost" eliminado"
 			rm $vhroot"$basevhost"
-		fi
-		if [ ! -z "$folderdomain" ]; then
-			#make sure we don't remove all the /website folder
-			rm -r /var/www/html/websites/$folderdomain
 		fi
 	fi
 	done

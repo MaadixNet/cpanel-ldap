@@ -63,7 +63,7 @@ if(isset($_POST['adddomain'])){
 	$entrypm["cn"] = "Postmaster";
 	$entrypm["sn"] = "Postmaster";
 	$entrypm["mail"] = "postmaster@".$domain_new;
-	$entrypm["userPassword"]  =ldap_password_hash($password);
+	$entrypm["userPassword"]  =ldap_password_hash($password,'md5crypt');
 	$entrypm["maildrop"] = "postmaster";
 	$entrypm["accountActive"]     = "TRUE";
 	$entrypm["creationDate"]      = date('Ymd');
@@ -135,8 +135,9 @@ if(isset($_POST['chpsw'])){
     //$modifydn='uid='. $_POST['userid']. ',' . $ldaptree;
 	$domain=$_POST['domainid'];
 	$modifydn='cn=postmaster,vd='.$domain.','.LDAP_BASE;
-    $info['userpassword'][0]="{MD5}".base64_encode(pack("H*",md5($_POST['changepsw'])));
-    if($permissions==10) {
+    #$info['userpassword'][0]="{MD5}".base64_encode(pack("H*",md5($_POST['changepsw'])));
+	$info['userpassword'][0] =ldap_password_hash($_POST['changepsw'],'md5crypt');
+    if($permissions==2) {
     $Ldap->modifyRecord($ldapconn, $modifydn, $info );
     } else {
         $modifs = [
@@ -195,6 +196,7 @@ if ($ldapbind) {
             <th>Dominio</th>
             <th>Contraseña para Administrador de dominio </th>
 			<th>Cuentas email </th>
+			<th>DNS</th>
              <?php if($_SESSION["login"]["level"] == '10') echo '<th>Borrar</th>';//Only admin can delete Domains  ?>
         </tr>
         </thead>
@@ -230,13 +232,15 @@ if ($ldapbind) {
 		$domainpass=$Ldap->search($ldapconn, 'vd='.$domain.','.LDAP_BASE, '(cn=postmaster)');
 		$oldpass =  $domainpass[0]['userpassword'][0];
 		echo "<a class='showform'>Cambiar Contaseña</a>";
-        echo "<form action='#' method='POST' class='form-table sub-form' autocomplete='off'><input id='chpass' type='password' name='changepsw' /><input type='hidden' name='domainid' value='" . $domain . "' /><input type='submit' name='chpsw' value='Cambiar' class='btn btn-small btn-primary' /></form>";
+        echo "<form action='#' method='POST' class='form-table sub-form' autocomplete='off'><input id='changepsw' type='password' name='changepsw' /><input type='hidden' name='domainid' value='" . $domain . "' /><input type='submit' name='chpsw' value='Cambiar' class='btn btn-small btn-primary' /></form>";
 		        echo "</td>";
 
         echo "</td>";
         echo "<td>";
-		echo "<a href='" . BASE_URL ."mails.php?domain=" . $domain ."'>Administrar cuentas de correo</a> ";
+		echo "<a href='/cpanel/mails.php?domain=" . $domain ."'>Administrar cuentas de correo</a> ";
         echo "</td>";
+		echo "<td>";
+		echo "<a href='editdns.php?domain=" . $domain ."'>Ver</a>";
         if($_SESSION["login"]["level"] == '10') {
             echo "<td>";
 	        echo "<form action='#' method='POST' class='form-table'><input type='hidden' name='domainid' value='". $domain."' /> <input type='submit' name='deldomain' value='Eliminar' class='btn btn-small btn-primary'  onclick=\"return confirm('Quieres borrar el dominio " . $domain ."? Si Aceptas borrarás todo el contenido relacionado con el mismo:  La carpeta /var/www/html/webistes/". $domain." y también todas las cuentas de correo electrónico creadas para este dominio así como su contenido (bandeja de euntrada,bandeja de salida, borradores, etc etc)');\" /></form>";

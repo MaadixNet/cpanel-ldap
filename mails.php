@@ -49,7 +49,8 @@ if ($ldapconn){
 		$domain=$_POST['domainid'];
 		$mailaccount = $_POST['mailaccount'];
 		$modifydn='mail=' . $mailaccount . ',vd='.$domain.','.LDAP_BASE;
-		$info['userpassword'][0]="{MD5}".base64_encode(pack("H*",md5($_POST['changepsw'])));
+		//$info['userpassword'][0]="{MD5}".base64_encode(pack("H*",md5($_POST['changepsw'])));
+		$info['userpassword'][0]=ldap_password_hash($_POST['changepsw'], 'md5crypt');
 		if($permissions==10) {
 		#TODO: Allow lower level users to change his own password
 		#User will need to be logged out in order to be able to bind again
@@ -110,7 +111,7 @@ if ($ldapconn){
 		$entry["vdhome"] = '/home/vmail/domains';
 		$entry["quota"] = '0';
 		$entry["mail"] = $mail_account;
-		$entry["userPassword"] = ldap_password_hash($password);
+		$entry["userPassword"] = ldap_password_hash($password, 'md5crypt');
 		$entry["sn"] = $_POST["surname"];
 		$entry["givenname"] = $_POST["givenname"];
 		$entry["cn"] = $_POST["givenname"] .' '. $_POST["surname"];
@@ -179,7 +180,7 @@ if ($ldapconn){
 						$mailcount = $resultmail["count"];
 						$haschildren = ($mailcount>0) ? '<i class=" arrow arrowleft"></i><i class="arrow arrowdown"></i>':'';
 						echo '<li class=' .  $active . '>';	
-						echo '<h4>' . $haschildren . ' <a class="biglist ' .  $active . '"   href="' . BASE_URL .'mails.php?domain=' . $domain . '">' . $domain .'</a> <span class="counter">' . $mailcount . '</span></h4>';
+						echo '<h4>' . $haschildren . ' <a class="biglist ' .  $active . '"   href="/cpanel/mails.php?domain=' . $domain . '">' . $domain .'</a> <span class="counter">' . $mailcount . '</span></h4>';
 						if($mailcount>0) {
 							echo '<ul class="sub-menu">';
 							for ($c=0; $c<$resultmail["count"]; $c++) {
@@ -213,7 +214,6 @@ if ($ldapconn){
 			} else { ?>
    	 			<form autocomplete="off" action="#" method="POST" class="form-signin">
 				<hr>
-				<input type="hidden" name="maildomain" value="<?php echo $queryvar;?>" />
 				<label for="username">Email de usuario: </label><input id="mailnew" type="text" name="mailnew" required />
 				<?php
 				if($result["count"] == 1){
@@ -254,7 +254,7 @@ if ($ldapconn){
 				$resultmail=$Ldap->search($ldapconn,$queryvar . LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
 			}
 			if($resultmail>0) { 
-				echo '<table>';
+				echo '<table id="email">';
 				echo '<thead>';
 				echo '<tr>';
 				echo '<th>Email</th>';
@@ -267,6 +267,8 @@ if ($ldapconn){
 
 	
             for ($c=0; $c<$resultmail["count"]; $c++) {
+				$queryvar=(explode("@",$resultmail[$c]["mail"][0]));
+				$domain=$queryvar[1];
 				echo "<tr>";
 				echo "<td>";
 				echo $resultmail[$c]["mail"][0];
@@ -277,11 +279,11 @@ if ($ldapconn){
                 echo "<td>";
 				$oldpass=$resultmail[$c]["userpassword"][0];
 				echo "<a class='showform'>Cambiar Contaseña</a>";
-		        echo "<form action='#' autocomplete='off' method='POST' class='form-table sub-form'><input id='chpass' type='password' name='changepsw' /><input type='hidden' name='domainid' value='" . $queryvar ."' /> <input type='hidden' name='mailaccount' value='" . $resultmail[$c]['mail'][0] . "' /><input type='submit' name='chpsw' value='Cambiar' class='btn btn-small btn-primary' /></form>";
+		        echo "<form action='#' autocomplete='off' method='POST' class='form-table sub-form'><input id='chpass' type='password' name='changepsw' /><input type='hidden' name='domainid' value='" . $domain ."' /> <input type='hidden' name='mailaccount' value='" . $resultmail[$c]['mail'][0] . "' /><input type='submit' name='chpsw' value='Cambiar' class='btn btn-small btn-primary' /></form>";
                 echo "</td>";
 				if($permissions > 2) { //a normal user cannot deñlete his own account
             	echo "<td>";
-            	echo "<form action='#' method='POST' class='form-table'><input type='hidden' name='userid' value='".  $resultmail[$c]['mail'][0]."' /><input type='hidden' name='domain' value='" . $queryvar ."' /> <input type='submit' name='deluser' value='Borrar' class='btn btn-small btn-primary' /></form>";
+            	echo "<form action='#' method='POST' class='form-table'><input type='hidden' name='userid' value='".  $resultmail[$c]['mail'][0]."' /><input type='hidden' name='domain' value='" . $domain ."' /> <input type='submit' name='deluser' value='Borrar' class='btn btn-small btn-primary' /></form>";
             	echo "</td>";
 				}//end permissions >2
 				echo '</tr>';

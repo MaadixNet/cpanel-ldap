@@ -17,7 +17,7 @@ try {
 
   $freeSpace = $diskStatus->freeSpace();
   $totalSpace = $diskStatus->totalSpace();
-  $barWidth = ($diskStatus->usedSpace()/100) * 400;
+  $barWidth = ($diskStatus->usedSpace()/100) * 300;//300 is the width of the bar in pxx
 
 } catch (Exception $e) {
   echo 'Error ('.$e->getMessage().')';
@@ -45,22 +45,4 @@ try {
 	?>
 <!--admin-content-->
 <?php require_once('footer.php');?>
-    <style>
-
-      .disk {
-		background-color: #167E8D;
-        border: 4px solid black;
-        width: 400px;
-        padding: 2px;
-		margin-bottom:5px;
-      }
-
-      .used {
-        display: block;
-		background: none repeat scroll 0 0 #c91c5c;
-		color: #fff;
-		padding: 0;
-		text-align: right;
-      }
-    </style>
 

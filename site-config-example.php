@@ -29,7 +29,4 @@ define ("READDN","cn=phamm,dc=example,dc=tld");
 
 ////read user password to allow ldapserch.sh to bind ldap
 define ("READDNPSW","rhx");
-//the cpanel URL installation. As we always will install Cpanel in a path, wu could avoid this, but
-//for other users in cutsom installation could be useful
-define("BASE_URL", "http://example.com/cpanel/");
 
