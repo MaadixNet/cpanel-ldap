@@ -1,0 +1,19 @@
+## Version 0.1.1 Alpha 2016-09-22
+## Changed
+
+- The new path for Vhost folder is /var/www/html
+
+### Removed
+- Removed delete vhost folder in /var/www/html/websites from cron/ldapsearch.sh. Users will delete their folders on their own. The new path for Vhost folder is /var/www/html
+
+### Added
+- Alias in Vhost creation from ldapsearch.sh for /ownclowd, /cpanel an /webmail
+
+- Check for DNS records for given domain, and instructions for a correct configuration
+
+
+## Version 0.1.0 Alpha 2016-08-21
+
+First commit
+
+
