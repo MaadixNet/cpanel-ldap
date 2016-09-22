@@ -2,7 +2,7 @@
 ## Changed
 
 - The new path for Vhost folder is /var/www/html
-
+- Changed variable BASE_URL with BASE_PATH to create internal links based on app name folder
 ### Removed
 - Removed delete vhost folder in /var/www/html/websites from cron/ldapsearch.sh. Users will delete their folders on their own. The new path for Vhost folder is /var/www/html
 

@@ -180,7 +180,7 @@ if ($ldapconn){
 						$mailcount = $resultmail["count"];
 						$haschildren = ($mailcount>0) ? '<i class=" arrow arrowleft"></i><i class="arrow arrowdown"></i>':'';
 						echo '<li class=' .  $active . '>';	
-						echo '<h4>' . $haschildren . ' <a class="biglist ' .  $active . '"   href="/cpanel/mails.php?domain=' . $domain . '">' . $domain .'</a> <span class="counter">' . $mailcount . '</span></h4>';
+						echo '<h4>' . $haschildren . ' <a class="biglist ' .  $active . '"   href="/' .  BASE_PATH . '/mails.php?domain=' . $domain . '">' . $domain .'</a> <span class="counter">' . $mailcount . '</span></h4>';
 						if($mailcount>0) {
 							echo '<ul class="sub-menu">';
 							for ($c=0; $c<$resultmail["count"]; $c++) {

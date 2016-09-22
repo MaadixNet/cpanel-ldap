@@ -237,7 +237,7 @@ if ($ldapbind) {
 
         echo "</td>";
         echo "<td>";
-		echo "<a href='/cpanel/mails.php?domain=" . $domain ."'>Administrar cuentas de correo</a> ";
+		echo "<a href='/". BASE_PATH ."/mails.php?domain=" . $domain ."'>Administrar cuentas de correo</a> ";
         echo "</td>";
 		echo "<td>";
 		echo "<a href='editdns.php?domain=" . $domain ."'>Ver</a>";

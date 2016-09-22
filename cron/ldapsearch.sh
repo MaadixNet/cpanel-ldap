@@ -29,36 +29,36 @@ documenRoot='/var/www/html'
 
 while read domain 
 do
-	ldapresult+=("$domain".conf)
-	if [ -f $vhroot/"$domain".conf ];then
-		echo 'file existe'
-	else
-		#New domain. Let's create virtual host
-     	has_new_domains=true #true = at least one new domain = reload apache config
-      	echo "<VirtualHost *:80>
-		ServerName  "$domain"
-		ServerAlias www."$domain"
-		Alias /cpanel '"$documenRoot"/cpanel'
-		Alias /owncloud '"$documenRoot"/owncloud'
-		Alias /webmail '"$documenRoot"/webmail'
-		ServerAdmin postmaster@"$domain"
-		DocumentRoot /var/www/html/"$domain"
-		</VirtualHost>" > $vhroot/"$domain".conf
+    ldapresult+=("$domain".conf)
+    if [ -f $vhroot/"$domain".conf ];then
+        echo 'file existe'
+    else
+        #New domain. Let's create virtual host
+        has_new_domains=true #true = at least one new domain = reload apache config
+        echo "<VirtualHost *:80>
+        ServerName  "$domain"
+        ServerAlias www."$domain"
+        Alias /cpanel '"$documenRoot"/cpanel'
+        Alias /owncloud '"$documenRoot"/owncloud'
+        Alias /webmail '"$documenRoot"/webmail'
+        ServerAdmin postmaster@"$domain"
+        DocumentRoot /var/www/html/"$domain"
+        </VirtualHost>" > $vhroot/"$domain".conf
 
-		mkdir $documenRoot/$domain
+        mkdir $documenRoot/$domain
 
-		echo "<!DOCTYPE html>
-		<html>
-		<head>
-		<title>Welcome to nginx on Debian!</title>
-		<style>
-		body {
-			width: 35em;
-			margin: 0 auto;
-			font-family: Tahoma, Verdana, Arial, sans-serif;
-			}
-		</style>
-		</head>
+        echo "<!DOCTYPE html>
+        <html>
+        <head>
+        <title>Welcome to nginx on Debian!</title>
+        <style>
+        body {
+            width: 35em;
+            margin: 0 auto;
+            font-family: Tahoma, Verdana, Arial, sans-serif;
+            }
+        </style>
+        </head>
         <body>
         <h1>Welcome to "$domain"</h1>
         <p>If you see this page, the Aoache web server is successfully installed and
@@ -69,34 +69,34 @@ do
         </p>
         </body> </html>">$documenRoot/$domain/index.html
         a2ensite "$domain".conf
-		
-	fi	
-done < <(ldapsearch -x -D "$binddn"  -p 389 -h ldap://localhost -b "$ldapbase" -s one "(objectclass=VirtualDomain)" -w $bindpass | grep -o -P '(?<=vd=).*(?=,o=hosting,dc=example)') 
+
+    fi
+done < <(ldapsearch -x -D "$binddn"  -p 389 -h ldap://localhost -b "$ldapbase" -s one "(objectclass=VirtualDomain)" -w $bindpass | grep -o -P '(?<=vd=).*(?=,o=hosting,dc=example)')
 #delete vhost that are not anymre in ldap tree but still in apache
 printf "%s\n" "${ldapresult[@]}"
 for vhost in "$vhroot"/*;
 do
-	basevhost=$(basename $vhost)
-	folderdomain=${basevhost:0:-5}
-	# Exclude default and default-ssl virtual 
-	[[ $basevhost =~ ^($defaultvhost|$defaultssl)$ ]] && continue
-	#echo $(basename $vhost)
-	
-	if [[ " ${ldapresult[@]} " =~ " $basevhost " ]]; then
-		#do nothing
-		echo $basevhost 'is present in ldap'
-		echo $folderdomain 'is present in system'
-	else
-		if [ ! -z "$basevhost" ]; then
-			#disable and delete apache virtualhost, and web files
-			echo $basevhost 'is NOT present in ldap and is not' $defaultvhost 'or' $defaultssl ' so we can delete it'
-			a2dissite "$basevhost"
-			echo "dominio "$basevhost" eliminado"
-			rm $vhroot"$basevhost"
-		fi
-	fi
-	done
-	#reload apache with new vhosts
-	if $has_new_domains ; then #only reload the apache config if there is at least one new domain
-	  /etc/init.d/apache2 reload
+    basevhost=$(basename $vhost)
+    folderdomain=${basevhost:0:-5}
+    # Exclude default and default-ssl virtual 
+    [[ $basevhost =~ ^($defaultvhost|$defaultssl)$ ]] && continue
+    #echo $(basename $vhost)
+
+    if [[ " ${ldapresult[@]} " =~ " $basevhost " ]]; then
+        #do nothing
+        echo $basevhost 'is present in ldap'
+        echo $folderdomain 'is present in system'
+    else
+        if [ ! -z "$basevhost" ]; then
+            #disable and delete apache virtualhost, and web files
+            echo $basevhost 'is NOT present in ldap and is not' $defaultvhost 'or' $defaultssl ' so we can delete it'
+            a2dissite "$basevhost"
+            echo "dominio "$basevhost" eliminado"
+            rm $vhroot"$basevhost"
+        fi
+    fi
+    done
+    #reload apache with new vhosts
+    if $has_new_domains ; then #only reload the apache config if there is at least one new domain
+      /etc/init.d/apache2 reload
 fi

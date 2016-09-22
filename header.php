@@ -57,7 +57,7 @@
 						<?php $permissions= $_SESSION["login"]["level"];?>
                         <ul class="nav">
                             <li>
-                                <a href="/cpanel">Detalles</a>
+							<a href="/<?php echo BASE_PATH;?>">Detalles</a>
                             </li>
 							<?php if (is_dir('/var/www/html/ownclowd')){?>
                             <li>
@@ -65,14 +65,14 @@
 							</li>
 							<?php }?>
 							<?php if ($permissions == '10') {?>
-								<li><a href="/cpanel/edomains.php">Dominios </a></li>
+							<li><a href="/<?php echo BASE_PATH;?>/edomains.php">Dominios </a></li>
 							<?php } ?>
 
-                            <li><a href="/cpanel/mails.php">Email</a></li>
+							<li><a href="/<?php echo BASE_PATH;?>/mails.php">Email</a></li>
                             <?php if ($permissions >= '4') {?>
-						    	<li><a href="/cpanel/notificaciones.php">Notificaciones</a></li>
+							<li><a href="/<?php echo BASE_PATH;?>/notificaciones.php">Notificaciones</a></li>
 							<?php } ?>	
-							<li><a href="/cpanel/vpn.php">VPN</a></li>
+							<li><a href="/<?php echo BASE_PATH;?>/vpn.php">VPN</a></li>
 
                             <li class="dropdown">
                                 <a href="#" data-toggle="dropdown" class="dropdown-toggle">Tutoriales <b class="caret"></b>

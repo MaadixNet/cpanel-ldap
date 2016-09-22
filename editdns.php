@@ -133,7 +133,7 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
 		Para que estos servicios funcionen correctamente y desde cualquier ubicación utilizando nombres en lugar que números,, hay 	que comunicar en cual máquina están alojados los sdrvicios. Esta comunicación se lleva a cabo configurando correctamente los registros DNS para un determinado dominio. </p>
 		<h4 id="ACorrect">Registro de tipo "A" para contenido web</h4>
 		<p>Para que puedas acceder a tus aplicaciones desde el navegador, usando tu propio dominio</br>
-			https://' . $domain . '/cpanel</br>
+			https://' . $domain . '/'. BASE_PATH . '</br>
 			tendrás que cambiar la configuración del mismo.</br>
 			
 			Para ello sigue los siguientes pasos:
