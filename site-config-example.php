@@ -28,5 +28,6 @@ define ("LDAP_VPN","ou=vpn,dc=example,dc=tld");
 define ("READDN","cn=phamm,dc=example,dc=tld");
 
 ////read user password to allow ldapserch.sh to bind ldap
-define ("READDNPSW","rhx");
-
+define ("RDNPSW","rhx");
+//To create internal links
+define ("BASE_PATH" , basename(__DIR__));  
