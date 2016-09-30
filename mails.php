@@ -123,7 +123,17 @@ if ($ldapconn){
 		<div class="alert alert-success">
 		<button class="close" data-dismiss="alert">×</button>
 		<strong>Usario añadido correctamente</strong>
-		</div>';
+                </div>';
+                $fqdn=shell_exec('hostname -f');
+                $body='Bienvenido a tu nuevo buzón.' . "\r\n";
+                $body .='Por favor, no contestes a este mensaje.';
+                $to=$mail_account;
+                $from='no-replay@' . $fqdn;
+                $subject='Bienvenido';
+                $cabeceras  = 'MIME-Version: 1.0' . "\r\n";
+                $cabeceras .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+                $cabeceras .= 'From: no-replay@' . $fqdn . "\r\n"; 
+                mail($to,$subject,$body,$cabeceras); 
 		} else {
 		$errorttpe  = (ldap_errno($ldapconn)==68)?"La cuenta " . $mail_account . " ya existe": $errorttpe;
 		$message = '
@@ -283,7 +293,7 @@ if ($ldapconn){
                 echo "</td>";
 				if($permissions > 2) { //a normal user cannot deñlete his own account
             	echo "<td>";
-            	echo "<form action='#' method='POST' class='form-table'><input type='hidden' name='userid' value='".  $resultmail[$c]['mail'][0]."' /><input type='hidden' name='domain' value='" . $domain ."' /> <input type='submit' name='deluser' value='Borrar' class='btn btn-small btn-primary' /></form>";
+            	echo "<form action='#' method='POST' class='form-table'><input type='hidden' name='userid' value='".  $resultmail[$c]['mail'][0]."' /><input type='hidden' name='domain' value='" . $domain ."' /> <input type='submit' onclick=\"return confirm('Quieres borrar la cuenta " . $resultmail[$c]["mail"][0] ." y  todos sus mensajes?');\" name='deluser' value='Borrar' class='btn btn-small btn-primary' /></form>";
             	echo "</td>";
 				}//end permissions >2
 				echo '</tr>';

@@ -243,7 +243,7 @@ if ($ldapbind) {
 		echo "<a href='editdns.php?domain=" . $domain ."'>Ver</a>";
         if($_SESSION["login"]["level"] == '10') {
             echo "<td>";
-	        echo "<form action='#' method='POST' class='form-table'><input type='hidden' name='domainid' value='". $domain."' /> <input type='submit' name='deldomain' value='Eliminar' class='btn btn-small btn-primary'  onclick=\"return confirm('Quieres borrar el dominio " . $domain ."? Si Aceptas borrarás todo el contenido relacionado con el mismo:  La carpeta /var/www/html/webistes/". $domain." y también todas las cuentas de correo electrónico creadas para este dominio así como su contenido (bandeja de euntrada,bandeja de salida, borradores, etc etc)');\" /></form>";
+	        echo "<form action='#' method='POST' class='form-table'><input type='hidden' name='domainid' value='". $domain."' /> <input type='submit' name='deldomain' value='Eliminar' class='btn btn-small btn-primary'  onclick=\"return confirm('Quieres borrar el dominio " . $domain ."? Si Aceptas borrarás todo el contenido relacionado con el mismo:  incluidas todas las cuentas de correo electrónico creadas para este dominio así como su contenido (bandeja de euntrada,bandeja de salida, borradores, etc etc)');\" /></form>";
 			/*echo "<form action='#' method='POST' class='form-table'><input type='hidden' name='domainid' value='". $domain."' /> <input type='submit' name='deldomain' value='Eliminar' class='btn btn-small btn-primary confirm' onclick=\"return alertify.confirm('Confirm Message', function(){ alertify.success('Ok') }, function(){ alertify.error('Cancel')})\"  /></form>";	*/
             echo "</td>";
         }

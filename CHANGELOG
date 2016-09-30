@@ -1,5 +1,19 @@
+## Version 0.1.2 Alpha 2016-09-22
+### Changed
+- use of preg_match instead of deprecated eregi in classes/class.ldap.php
+### Added
+Send first email from no-reply when email account is created, to create mailbox folder  
+Confirm on email deletion
+ldap-pam user manegment. has following requirements:
+** libnss-ldapd libpam-ldapd
+** add schema/uidNext.schema to ldap Directory
+** add uidNext.firstentry.ldif. It contains the next available uid for next inserted user. Simulates an autoIncrement function.  
+  In the default configuration we set this first numer to 10000, so users addes from the cpanle whill have uid >10000
+  but you can customize that setting the uidNumber to the value you need
+** Notfication customization page. Can set custom email to send notifications from (still in progress)
+
 ## Version 0.1.1 Alpha 2016-09-22
-## Changed
+### Changed
 
 - The new path for Vhost folder is /var/www/html
 - Changed variable BASE_URL with BASE_PATH to create internal links based on app name folder
