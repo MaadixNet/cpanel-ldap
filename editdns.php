@@ -61,17 +61,17 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
 	$resultMX=dns_get_record ( $domain,  DNS_MX );
 	$resultNS = dns_get_record($domain,  DNS_NS );
 	$domain_ip=$resultA[0]['ip'];
-	$statok='<span class="alert alert-success">OK</span>';
-	$staterr='<span class="alert alert-error">X</span>';
+        $statok='<i class="fa fa-check-circle-o icon checkok"></i>';
+	$staterr='<i class="fa fa-exclamation-triangle icon checkko"></i>';
 	$correct_mx= $domain;
-
-	function in_array_r($item , $array){
-		return preg_match('/"'.$item.'"/i' , json_encode($array));
-	}
-
+        $fqdn=trim(shell_exec('hostname -f'));
+        $allMX[]='';
+        foreach($resultMX as $value){
+          array_push($allMX,$value['target']);
+        }
 	if(!$resultA):
 		echo   '<div class="alert alert-error">Este dominio no existe </div>';
-	elseif ($server_ipaddr==$domain_ip && in_array_r($correct_mx , $resultMX)): 
+	elseif (($server_ipaddr==$domain_ip && in_array($correct_mx , $allMX)) || ($server_ipaddr==$domain_ip && in_array($fqdn, $allMX))): 
 		echo '<div class="alert alert-success">La configuración de tu dominio es correcta para que funcione en tu servidor</div>';
 	else:
 		echo '<div class="alert alert-error">El dominio '. $domain . ' está incluido correctamente en tu sistema. Sin embargo necesitas aplicar configuraciones para que funcione en tu servidor.</br>Sigue los pasos a continuación.</div>';
@@ -84,7 +84,7 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
 		<tr>
 			<th>Tipo Registro</th>
 			<th>Configuración Actual</th>
-			<th>Configuración correcta</th>
+			<th>Configuración Requerida</th>
 			<th>Estado</th>
 		</tr>
 		</thead>
@@ -94,7 +94,7 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
 				<td>' . $domain_ip . '</td>
 				<td>' . $server_ipaddr .'</td>';
 				$domain_stat=($domain_ip==$server_ipaddr)?$statok:$staterr . " <a href='#ACorrect'>Como Corregir? </a>";
-			echo '<td>' . $domain_stat . '</td>
+			echo '<td class="center">' . $domain_stat . '</td>
 			</tr>';
 			$i=1;
 			foreach($resultMX as $value){
@@ -104,11 +104,11 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
 				echo $value['target'];
 				echo "</td>";
 				echo "<td>";
-				echo $correct_mx;
+				echo $correct_mx .' o ' . $fqdn;
 				echo "</td>";
-				$mx_stat=($value['target']== $correct_mx)?$statok:$staterr . " <a href='#mxCorrect'>Cómo Corregir?</a>";
+				$mx_stat=(($value['target']== $correct_mx) || ($value['target']== $fqdn ))?$statok:$staterr . " <a href='#mxCorrect'>Cómo Corregir?</a>";
 				if ($i>1)$mx_stat='Eliminar. Un solo registro MX será necesario para una correcta configuración';
-				echo '<td>' . $mx_stat . '</td>';
+				echo '<td class="center">' . $mx_stat . '</td>';
 				$i++;
 				echo "</tr>";
 				}
@@ -148,7 +148,7 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
 		}
 		
 		echo '<h4 id="mxCorrect">Registros de tipo "MX" para correo electrónico</h4>';
-		if(in_array_r($correct_mx , $resultMX)){
+		if(in_array($correct_mx , $allMX)|| in_array($fqdn, $allMX)){
 			echo 'La configuración del registro MX es correcta para que puedas enviar y recibir correo electrónico para las cuentas email del dominio '. $domain .' a través de este servidor';
 		} else {
 		echo '

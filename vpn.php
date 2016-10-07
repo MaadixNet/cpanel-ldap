@@ -162,9 +162,6 @@ if(!$result){
 		<tbody>
 
 		<?php 
-                echo '<pre>';
-                print_r($result);
-                echo '</pre>';
                 for ($i=0; $i<$result["count"]; $i++) {
 		$oldpsw=$result[$i]['userpassword'][0];
 		$username = $result[$i]["uid"][0];

@@ -1,6 +1,6 @@
 	<div id="push"></div>
 	</div><!--div class container-opened in header.php-->
-
+        </div><!--wrap-->
 		<footer>
 		<div class="container">
 			<div class="row">

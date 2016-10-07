@@ -1,3 +1,38 @@
+## Version 0.1.2.1 Alpha 2016-10-09
+
+### Changed
+- Fixed bug in dnlookup for domains
+
+### Added
+- Users Created through the Cpanel will belong to  group sftpuser and will be chrooted in their home (/home/sftpusers/username)  
+For chroot to work edit /etc/ssh/sshd_config file   
+ Change line:  
+Subsystem sftp /usr/lib/openssh/sftp-server  
+ for:  
+Subsystem sftp internal-sftp  
+
+ Add folowing lines:  
+Match Group sftpusers  
+  # Force the connection to use SFTP and chroot to the required directory.  
+  ForceCommand internal-sftp  
+  ChrootDirectory /home/sftpusers  
+  # Disable tunneling, authentication agent, TCP and X11 forwarding.  
+  PermitTunnel no  
+  AllowAgentForwarding no  
+  AllowTcpForwarding no  
+  X11Forwarding no  
+  
+
+- When a new domain is created you can assign a webmaster to it,  
+meaning he will be able to edit file within the web folder, which will be --bind  mounted in his home.  
+If a domain is deleted an umou8nt action will take place  .
+All theses processes are handled by cron/ldaspearch.sh, so will take place only if the script is included
+in root crontab  
+
+
+
+
+
 ## Version 0.1.2 Alpha 2016-09-22
 ### Changed
 - use of preg_match instead of deprecated eregi in classes/class.ldap.php
@@ -8,7 +43,7 @@ ldap-pam user manegment. has following requirements:
 ** libnss-ldapd libpam-ldapd
 ** add schema/uidNext.schema to ldap Directory
 ** add uidNext.firstentry.ldif. It contains the next available uid for next inserted user. Simulates an autoIncrement function.  
-  In the default configuration we set this first numer to 10000, so users addes from the cpanle whill have uid >10000
+  In the default configuration we set this first numer to 10000, so users addeded from the cpanle whill have uid >10000
   but you can customize that setting the uidNumber to the value you need
 ** Notfication customization page. Can set custom email to send notifications from (still in progress)
 

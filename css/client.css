@@ -155,10 +155,18 @@ padding:0;}
 /**********************************************************************/
 /************************* FOOTER ************************************/
 /********************************************************************/
+#wrap {min-height: 100%;}
+
+#main {overflow:auto;
+    padding-bottom: 168px;}  /* must be same height as the footer */
 footer {
     background: #444;
     padding: 40px 0;
-}
+    width:100%;
+    position: relative;
+    margin-top: -168px; /* negative value of footer height */
+    /*height: 168px;*/
+    clear:both;} 
 footer p {
     color: #ddd;
     font-weight: 300;
@@ -204,6 +212,7 @@ html, body {
                 }
 
 .inner {padding:1em;}
+.loading{ background-image: url("../images/spinner.gif");padding: 0 7px;}
 /*Table style*/
 
 
@@ -235,9 +244,11 @@ html, body {
     padding: 2px 6px;
 	border-radius: 20px;
 	}
-
+td .alert {border-radius:12px; padding:3px;}
 /* Colums styyles */
-
+td.center{text-align:center;}
+i.checkok {color: #086673;background-color: #dff0d8;}
+i.checkko {color : #a30942;background-color: #f2dede;}
 .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {float:left;}
 .col-sm-2 {width: 20%;}
 .col-sm-3 {width: 25%;}

@@ -18,8 +18,9 @@
         <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet" media="screen">
         <link href="assets/styles.css" rel="stylesheet" media="screen">
         <!--<link href="css/custom.css" rel="stylesheet">-->
-		<link href="css/client.css" rel="stylesheet">
-		<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,300,700' rel='stylesheet' type='text/css'>
+	<link href="css/client.css" rel="stylesheet">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+	<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,300,700' rel='stylesheet' type='text/css'>
         <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
             <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -28,6 +29,7 @@
     </head>
     
     <body>
+    <div id="wrap">
         <div class="navbar">
             <div class="navbar-inner">
                 <div class="container-fluid">
@@ -69,6 +71,8 @@
 							<?php } ?>
 
 							<li><a href="/<?php echo BASE_PATH;?>/mails.php">Email</a></li>
+                                                        <li><a href="/<?php echo BASE_PATH;?>/usuarios.php">Usuarios</a></li>
+
                             <?php if ($permissions >= '4') {?>
 							<li><a href="/<?php echo BASE_PATH;?>/notificaciones.php">Notificaciones</a></li>
 							<?php } ?>	
@@ -89,5 +93,5 @@
 		</div><!--container-fluid-->
 	</div><!--navbar inner-->
 </div><!--navbar fixed-->
-<div class="container-fluid">
+<div id="main" class="container-fluid">
 

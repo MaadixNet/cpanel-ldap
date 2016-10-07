@@ -32,99 +32,9 @@ $filter="(&(objectClass=person)(uid=*))";
 //Add new User
 if(isset($_POST['adduser'])){
         $newuser=$_POST['username'];
-        
-        //First we check if username is available, including system users, outside ldap Directory using getent
-        $cmnd="getent passwd " .$newuser;
-        $userexist=exec($cmnd);
-        if($userexist) {
-           $message=  "
-        
-          <div class='alert alert-error'>
-          <button class='close' data-dismiss='alert'>&times;</button>
-          <strong> El usuario ". $newuser ." ya existe en el sistema. Por favor escoge otro nombre</strong> 
-          </div>
-          ";
-          //We check syntax for usename
-        } elseif(!check_syntax ('account',$newuser, $length="2")) {
-
-           $message=  "
-        
-          <div class='alert alert-error'>
-          <button class='close' data-dismiss='alert'>&times;</button>
-          <strong>'" . $newuser ."' no es un nombre de usuario válido. El nombre tiene que tener mínimo dos carácteres y solo puede contener cifras y/o números. Los carácteres especiales y los espacios no están admitidos</strong> 
-          </div>
-          ";
-
-        
-        } else {
-
-          $adddn='uid='. $newuser . ',' . $ldaptree;
-          $info=array();
-          $info['objectclass'][0]='person';
-          $info['objectclass'][1]='organizationalPerson';
-          $info['objectclass'][2]='inetOrgPerson';
-          $info['objectclass'][3]='posixAccount';
-          $info['objectclass'][4]='top';
-          $info['objectclass'][5]='shadowAccount';
-          $info['cn']=$_POST['username'];
-          $info['uid']=$_POST['username'];
-          $info['sn']=$_POST['username'];
-          $info['userpassword']=ldap_password_hash($_POST['password'],'md5crypt');
-          $info['shadowlastchange'] = floor(time()/86400); 
-          ## “shadowMax”: days after which password must be changed
-          ## For now we just set it as longer than a human life.
-          ## Then we will see if we want to include this function
-          $info['shadowmax']='99999';
-          ## “shadowWarning”: days before password is to expire that user is warned
-          $info['shadowwarning']='7';
-          $info['loginshell']='/bin/bash';
-
-          ## Check Netxuid number to sssign to new user
-          ## for that we use a fake autoincrement system:
-          ## cn=uidNext,dc=example,dc=tld May have attribute uidNumber or not
-          #  If attribute is present and has a value we assign it to a variable and delete it in order to avoid
-          # other process to use same value
-          # When we finish with new user creation we set back the uidNumber attribute to the stored value + 1 
-          $netxuid_number=$Ldap->search($ldapconn,'cn=uidNext,'. SUFFIX, '(&(objectClass=uidNext)(uidnumber=*))');
-          $uidNext=($netxuid_number)? $netxuid_number[0]['uidnumber'][0]:NULL;
-          if($uidNext){
-            //First delete uidNumber attribute from Directory
-            $entry['uidnumber']=array();
-            $success=ldap_mod_del($ldapconn,'cn=uidNext,'. SUFFIX,$entry);
-            if($success){
-              //Only if deletion was succesfully we go on. Otherwise somebody else coud use same uid
-              //We set next uidNumber to an incremente value by 1
-              $insertuid=$uidNext+1;
-              $entry['uidnumber']=(int)$insertuid;
-              $success=ldap_mod_add($ldapconn,'cn=uidNext,'. SUFFIX,$entry);
-              $info['uidnumber']=(int)$uidNext;
-              $info['gidnumber']=(int)$uidNext;
-              $info['homedirectory']='/home/' . $_POST['username'];
-              $info['gecos']=$_POST['username'].',,,';
-              $addUser=$Ldap->addRecord($ldapconn, $adddn, $info);
-            }
-
-          } else { //No uidNumber found. We cannot add user
-            $errorttpe = 'Probablemente alguien estaba añdadiendo un usuario en el mismo instante y se ha bloqueado tu acción para evitar conflictos en el sistema. Por favor vuelve a intentarlo';
-          }
-
-	if ($addUser){
-         $message = "
-          <div class='alert alert-success'>
-          <button class='close' data-dismiss='alert'>&times;</button>
-          <strong>Cuenta añadida con éxito para el usuario " . $_POST['username'] . "</strong> 
-                  </div>";
-	} else {
-		 $errorttpe  = (ldap_errno($ldapconn)==68)?"El usuario " . $_POST['username']. " ya existe": "";
-        $message=  "
-        <div class='alert alert-error'>
-        <button class='close' data-dismiss='alert'>&times;</button>
-        <strong>Ha habido un error. " . $errorttpe ." </strong> 
-        </div>
-        ";
-	}
-    } //End if user exist in getent passwd
-
+        $password=$_POST['password'];
+        $add_user=$Ldap->add_sftp_user($newuser,$password); 
+        $message=$add_user['message'];
 }
 
 //Modifiy Passord
@@ -156,7 +66,6 @@ if(isset($_POST['deluser'])){
 		<label for="username"><h4>Nombre de usuario:</h4> </label>
 		<input id="username" type="text" name="username" required />
 		<label for="password">Contraseña: </label><input id="password" type="password" name="password" required />        
-		<p class="little"> <input type="checkbox" name="sendinstruction" value="Yes" /> Enviar email con instrucciones al usuario</p>
 		<input type="submit" name="adduser" value="Guardar" class="btn btn-small btn-primary" />
 		</form>
 	</div><!--change-->

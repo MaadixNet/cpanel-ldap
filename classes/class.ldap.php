@@ -88,12 +88,12 @@ class LDAP{
 
             echo '<hr><br>';
         } else {
-			echo  "
-				<div class='alert alert-error'>
-					<button class='close' data-dismiss='alert'>&times;</button>
-						<strong>Lo sentimos!  ha habido un errorr. Los cambios no se han podido guardar</strong> 
-				</div>
-				"; 
+            echo  "
+            <div class='alert alert-error'>
+                <button class='close' data-dismiss='alert'>&times;</button>
+                <strong>Lo sentimos!  ha habido un errorr. Los cambios no se han podido guardar</strong> 
+              </div>
+              "; 
             echo '<hr><br>';
         }
     }
@@ -224,6 +224,112 @@ class LDAP{
 
 	}
 
+        function add_sftp_user($newuser,$password){
+        $ldaptree    = 'ou=People,' . SUFFIX;
+        $filter="(&(objectClass=person)(uid=*))";
+        //First we check if username is available, including system users, outside ldap Directory using getent
+        $cmnd="getent passwd " .$newuser;
+        $userexist=exec($cmnd);
+        if($userexist) {
+           $message=  "
+        
+          <div class='alert alert-error'>
+          <button class='close' data-dismiss='alert'>&times;</button>
+          <strong> El usuario ". $newuser ." ya existe en el sistema. Por favor escoge otro nombre</strong> 
+          </div>
+          ";
+          //We check syntax for usename
+        } elseif(!check_syntax ('account',$newuser, $length="2")) {
+
+           $message=  "
+        
+          <div class='alert alert-error'>
+          <button class='close' data-dismiss='alert'>&times;</button>
+          <strong>'" . $newuser ."' no es un nombre de usuario válido. El nombre tiene que tener mínimo dos carácteres y solo puede contener cifras y/o números. Los carácteres especiales y los espacios no están admitidos</strong> 
+          </div>
+          ";
+
+
+        } else {
+
+          $adddn='uid='. $newuser . ',' . $ldaptree;
+          $info=array();
+          $info['objectclass'][0]='person';
+          $info['objectclass'][1]='organizationalPerson';
+          $info['objectclass'][2]='inetOrgPerson';
+          $info['objectclass'][3]='posixAccount';
+          $info['objectclass'][4]='top';
+          $info['objectclass'][5]='shadowAccount';
+          $info['cn']=$newuser;
+          $info['uid']=$newuser;
+          $info['sn']=$newuser;
+          $info['userpassword']=ldap_password_hash($password,'md5crypt');
+          $info['shadowlastchange'] = floor(time()/86400);
+          ## “shadowMax”: days after which password must be changed
+          ## For now we just set it as longer than a human life.
+          ## Then we will see if we want to include this function
+          $info['shadowmax']='99999';
+          ## “shadowWarning”: days before password is to expire that user is warned
+          $info['shadowwarning']='7';
+          $info['loginshell']='/bin/bash';
+
+          ## Check Netxuid number to sssign to new user
+          ## for that we use a fake autoincrement system:
+          ## cn=uidNext,dc=example,dc=tld May have attribute uidNumber or not
+          #  If attribute is present and has a value we assign it to a variable and delete it in order to avoid
+          # other process to use same value
+          # When we finish with new user creation we set back the uidNumber attribute to the stored value + 1 
+          $netxuid_number=$this->search($this->connection,'cn=uidNext,'. SUFFIX, '(&(objectClass=uidNext)(uidnumber=*))');
+          $uidNext=($netxuid_number)? $netxuid_number[0]['uidnumber'][0]:NULL;
+          if($uidNext){
+            //First delete uidNumber attribute from Directory
+            $entry['uidnumber']=array();
+            $success=ldap_mod_del($this->connection,'cn=uidNext,'. SUFFIX,$entry);
+            if($success){
+              //Only if deletion was succesfully we go on. Otherwise somebody else coud use same uid
+              //We set next uidNumber to an incremente value by 1
+              $insertuid=$uidNext+1;
+              $entry['uidnumber']=(int)$insertuid;
+              $success=ldap_mod_add($this->connection,'cn=uidNext,'. SUFFIX,$entry);
+              //1003 is the sftpusers group which is chrooted in their home
+              $sftifroupid='1003';
+              //first we crate group
+              $info['uidnumber']=(int)$uidNext;
+              $info['gidnumber']=(int)$sftifroupid;
+              $info['homedirectory']='/home/sftpusers/' . $newuser;
+              $info['gecos']=$newuser . ',,,';
+              //$addgroup=$this->addRecord($this->connection,$adddngroup,$group);
+              $addUser=$this->addRecord($this->connection, $adddn, $info);
+            }
+
+          } else { //No uidNumber found. We cannot add user
+            $errorttpe = 'Probablemente alguien estaba añdadiendo un usuario en el mismo instante y se ha bloqueado tu acción para evitar conflictos en el sistema. Por favor vuelve a intentarlo';
+          }
+
+        if ($addUser){
+          return array('result' => true,
+         'message'=> "
+          <div class='alert alert-success'>
+          <button class='close' data-dismiss='alert'>&times;</button>
+          <strong>Cuenta añadida con éxito para el usuario " . $newuser . "</strong> 
+          </div>"
+          );
+        } else {
+                 $errorttpe  = (ldap_errno($this->connection)==68)?"El usuario " . $newuser . " ya existe": "";
+        $message=  "
+        <div class='alert alert-error'>
+        <button class='close' data-dismiss='alert'>&times;</button>
+        <strong>Ha habido un error. " . $errorttpe ." </strong> 
+        </div>
+        ";
+        return array('result' => false,
+          'message' => $message
+        );
+        }
+    } //End if user exist in getent passwd
+        //echo $message;
+        return $addUser;
+}
 
 
     function is_logged_in()

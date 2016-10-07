@@ -13,6 +13,9 @@ require_once('header.php');
 //connect and BInd
 $errorttpe="";
 $message="";
+$statok='<i class="fa fa-check-circle-o icon checkok"></i>';
+$loading='<span class="loading"></span>';
+
 $ldapconn=$Ldap->connect();
 if ($ldapconn){
 	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$_SESSION["login"]["password"]); 
@@ -42,16 +45,28 @@ if ($ldapconn){
 
 //Add new domain
 if(isset($_POST['adddomain'])){
-	$values = $_POST["values"];
+    $webmaster=$_POST['seluser'];
+    if($webmaster=='newuser'){
+      $webmaster=$_POST['new_username'];
+      $password = $_POST['webmaster_password'];
+      $add_user=$Ldap->add_sftp_user($webmaster,$password);
+      $message=$add_user['message'];
+
+    }
+
+
+    $values = $_POST["values"];
     $domain_new = $_POST["domain_new"];
-	$syntax= check_syntax ('domain',$domain_new);
+    $syntax= check_syntax ('domain',$domain_new);
     $password = $_POST["password"];
     $entry["objectclass"][0]    = "top";
     $entry["objectclass"][1]    = "VirtualDomain";
 
     $entry["vd"]                = $domain_new;
     $entry["lastChange"]        = time();
+    $entry["adminid"]           = $webmaster;
     // Merge static values with domain values
+
     $entry = array_merge($entry,$values["domain"]);
 
 	######Create cn=Postmaster ###########3
@@ -60,51 +75,51 @@ if(isset($_POST['adddomain'])){
     $entrypm = array();
     $entrypm["objectclass"][0]    = "top";
     $entrypm["objectclass"][1]    = "VirtualMailAlias";
-	$entrypm["cn"] = "Postmaster";
-	$entrypm["sn"] = "Postmaster";
-	$entrypm["mail"] = "postmaster@".$domain_new;
-	$entrypm["userPassword"]  =ldap_password_hash($password,'md5crypt');
-	$entrypm["maildrop"] = "postmaster";
-	$entrypm["accountActive"]     = "TRUE";
-	$entrypm["creationDate"]      = date('Ymd');
-	$entrypm["lastChange"]        = time();
+    $entrypm["cn"] = "Postmaster";
+    $entrypm["sn"] = "Postmaster";
+    $entrypm["mail"] = "postmaster@".$domain_new;
+    $entrypm["userPassword"]  =ldap_password_hash($password,'md5crypt');
+    $entrypm["maildrop"] = "postmaster";
+    $entrypm["accountActive"]     = "TRUE";
+    $entrypm["creationDate"]      = date('Ymd');
+    $entrypm["lastChange"]        = time();
     // Create abuse alias
-   	$entry_abuse["objectclass"][0]  = "top";
-	$entry_abuse["objectclass"][1]  = "VirtualMailAlias";
-	$entry_abuse["cn"] = "Abuse";
-	$entry_abuse["sn"] = "Abuse";
-	$entry_abuse["mail"] = "abuse@".$domain_new;
-	$entry_abuse["maildrop"] = "postmaster";
+    $entry_abuse["objectclass"][0]  = "top";
+    $entry_abuse["objectclass"][1]  = "VirtualMailAlias";
+    $entry_abuse["cn"] = "Abuse";
+    $entry_abuse["sn"] = "Abuse";
+    $entry_abuse["mail"] = "abuse@".$domain_new;
+    $entry_abuse["maildrop"] = "postmaster";
     $entry_abuse["accountActive"] = "TRUE";
-	$entry_abuse["creationDate"] = date('Ymd');
-	$entry_abuse["lastChange"] = time();
+    $entry_abuse["creationDate"] = date('Ymd');
+    $entry_abuse["lastChange"] = time();
 
     // iCheck Domain syntax
-	if (!$syntax){
-	$errorttpe="El dominio " . $domain_new . " no es válido";
-	} else {
-	//if syntax is ok add records	
-	$addDomain=$Ldap->addRecord($ldapconn, 'vd='.$domain_new.','.LDAP_BASE, $entry);
-    $addDomainpm=$Ldap->addRecord($ldapconn, 'cn=postmaster,vd='.$domain_new.','.LDAP_BASE, $entrypm);
-	$addAbuse=$Ldap->addRecord($ldapconn,'mail=abuse@'.$domain_new.',vd='.$domain_new.','.LDAP_BASE,$entry_abuse); 
-	}
-	if ($addDomain && $addAbuse && $addDomainpm) {
-	   $message = "
+    if (!$syntax){
+      $errorttpe="El dominio " . $domain_new . " no es válido";
+    } else {
+      //if syntax is ok add records	
+      $addDomain=$Ldap->addRecord($ldapconn, 'vd='.$domain_new.','.LDAP_BASE, $entry);
+      $addDomainpm=$Ldap->addRecord($ldapconn, 'cn=postmaster,vd='.$domain_new.','.LDAP_BASE, $entrypm);
+      $addAbuse=$Ldap->addRecord($ldapconn,'mail=abuse@'.$domain_new.',vd='.$domain_new.','.LDAP_BASE,$entry_abuse); 
+      }
+    if ($addDomain && $addAbuse && $addDomainpm) {
+       $message .= "
 		<div class='alert alert-success'>
 		<button class='close' data-dismiss='alert'>&times;</button>
 		<strong>Dominio " . $domain_new ." añadido correctamente</strong> 
 		</div>
         ";
-	} else {
-		$errorttpe 	= (ldap_errno($ldapconn)==68)?"El dominio " . $domain_new . " ya existe": $errorttpe;
-	   	$message=  "
+      } else {
+          $errorttpe 	= (ldap_errno($ldapconn)==68)?"El dominio " . $domain_new . " ya existe": $errorttpe;
+          $message .=  "
 		<div class='alert alert-error'>
 		<button class='close' data-dismiss='alert'>&times;</button>
 		<strong>Ha habido un error. " . $errorttpe ." </strong> 
 		</div>
 		";
-	}
-}
+      }
+  }
 }
 //delete domain 
 if(isset($_POST['deldomain'])){
@@ -161,7 +176,6 @@ if ($ldapbind) {
 	$result=$Ldap->search($ldapconn,$binddn, $filter);
 	}
 
-
 ?>
 <div id="admin-content" class="content">
 	<?php if($message) echo $message;?>
@@ -172,16 +186,35 @@ if ($ldapbind) {
     <div id="change">
     <form autocomplete="off" action="#" method="POST" class="form-signin">
         <hr>
-            <label for="domain">Nombre de Dominio </label><p class="little">(Activa un nuevo dominio para poder crear cuentas de correo)</p><input id="domain_new" type="text" name="domain_new" required />
-            <label for="password">Contraseña: </label><input id="password" type="password" name="password" required />
-			<input class="form-control" type="hidden" name="values[domain][maxmail]" value="100">
-			<input class="form-control" type="hidden" name="values[domain][maxalias]" value="100">
-			<input class="form-control" type="hidden" name="values[domain][maxquota]" value="100">
-			<input class="form-control" type="hidden" name="values[domain][accountactive]" value="TRUE">
-			<input class="form-control" type="hidden" name="values[domain][editav]" value="TRUE">
-			<input class="form-control" type="hidden" name="values[domain][delete]" value="FALSE">
-			<input class="form-control" type="hidden" name="values[mail][editaccounts]" value="TRUE">
-			<input class="form-control" type="hidden" name="values[domain][postfixtransport]" value="maildrop:">
+            <label for="domain">Nombre de Dominio </label><p class="little">(Inserta un nombre de dominio válido. Para los dominios activado en este panel podrás crear cuentas de correo electrónico o páginas web)</p><input id="domain_new" type="text" name="domain_new" required />
+            <label for="password">Contraseña: </label><p class="little">Esta contraseña se puede utilizar para acceder a este mismo panel de control como administrador del dominio identificándose con <b>User:</b> <em>Nombre Dominio</em> <b>Contraseña: </b><em>La que insertes en este campo</em>. El administrador de dominio tiene privilegios límitados y sólo podrá crear, editar y borrar las cuentas de cooreo electrónico asociadas a su dominio. No podrá en ningún caso acceder a ninguna otra función y no podrá eliminar el dominio</p><input id="password" type="password" name="password" required />
+            <label for="webmaster">Webmaster (Administrador sito web) </label><p class="little">Por cada dominio que actives en este panel se creará una carpeta en la que puedes subir tu aplicación web, accesible desde un navegador. Para ello es necesario que indiques cual usuario de tu sistema tiene acceso a cada web. Puedes elegir un usuario ya creado o crear uno nuevo. Si no asignas ningún usuario solo root podrá editar los archivos, desde la consola (terminal) por ssh</p>
+             <?php 
+            $ldaptree    = 'ou=People,' . SUFFIX;
+            $filter="(&(objectClass=person)(uid=*))";
+            $allusers=$Ldap->search($ldapconn,$ldaptree, $filter);
+
+            echo '<select id="seluser" name="seluser">';
+            echo '<option value="root">Seleccionar Administrador web</option>';
+            echo '<option value="newuser">Crear nuevo usuario</option>';
+            for ($c=0; $c<$allusers["count"]; $c++) {
+            $usernames = $allusers[$c]["uid"][0];
+            echo '<option value="' . $allusers[$c]["uid"][0] .'">' . $allusers[$c]["uid"][0] . '</option>';
+                  }
+            echo '</select>';
+            echo '<div class="newuser" id="new_user" style="display:none;">';
+            echo '<label for="new_username">Nombre de usuario</label>';
+            echo '<input id="new_username" type="text" name="new_username" />';
+            echo '<label for="webmaster_password">Contraseña: </label><input id="webmaster_password" type="password" name="webmaster_password" />';
+            echo '</div>';?>
+            <input class="form-control" type="hidden" name="values[domain][maxmail]" value="100">
+            <input class="form-control" type="hidden" name="values[domain][maxalias]" value="100">
+            <input class="form-control" type="hidden" name="values[domain][maxquota]" value="100">
+            <input class="form-control" type="hidden" name="values[domain][accountactive]" value="TRUE">
+            <input class="form-control" type="hidden" name="values[domain][editav]" value="TRUE">
+            <input class="form-control" type="hidden" name="values[domain][delete]" value="FALSE">
+            <input class="form-control" type="hidden" name="values[mail][editaccounts]" value="TRUE">
+            <input class="form-control" type="hidden" name="values[domain][postfixtransport]" value="maildrop:">
             <input type="submit" name="adddomain" value="Guardar" class="btn btn-small btn-primary" />
 
             </form>
@@ -194,9 +227,11 @@ if ($ldapbind) {
         <thead>
         <tr>
             <th>Dominio</th>
-            <th>Contraseña para Administrador de dominio </th>
-			<th>Cuentas email </th>
-			<th>DNS</th>
+            <th>Contraseña Cpanel</th>
+            <th>Cuentas email </th>
+            <th>Administrador web</th>
+            <th>DNS</th>
+            <th>Status</th>
              <?php if($_SESSION["login"]["level"] == '10') echo '<th>Borrar</th>';//Only admin can delete Domains  ?>
         </tr>
         </thead>
@@ -229,41 +264,53 @@ if ($ldapbind) {
         echo $domain;
         echo "</td>";
         echo "<td>";
-		$domainpass=$Ldap->search($ldapconn, 'vd='.$domain.','.LDAP_BASE, '(cn=postmaster)');
-		$oldpass =  $domainpass[0]['userpassword'][0];
-		echo "<a class='showform'>Cambiar Contaseña</a>";
+        $domainpass=$Ldap->search($ldapconn, 'vd='.$domain.','.LDAP_BASE, '(cn=postmaster)');
+        $oldpass =  $domainpass[0]['userpassword'][0];
+        echo "<a class='showform'>Cambiar Contaseña</a>";
         echo "<form action='#' method='POST' class='form-table sub-form' autocomplete='off'><input id='changepsw' type='password' name='changepsw' /><input type='hidden' name='domainid' value='" . $domain . "' /><input type='submit' name='chpsw' value='Cambiar' class='btn btn-small btn-primary' /></form>";
-		        echo "</td>";
-
         echo "</td>";
         echo "<td>";
-		echo "<a href='/". BASE_PATH ."/mails.php?domain=" . $domain ."'>Administrar cuentas de correo</a> ";
+        echo "<a href='/". BASE_PATH ."/mails.php?domain=" . $domain ."'>Administrar cuentas de correo</a> ";
         echo "</td>";
-		echo "<td>";
-		echo "<a href='editdns.php?domain=" . $domain ."'>Ver</a>";
+        echo "<td>";
+        echo $result[$i]["adminid"][0];
+        echo "</td>";
+        echo "<td class='center'>";
+        echo "<a href='editdns.php?domain=" . $domain ."'>Ver</a>";
+        echo "</td>";
+        echo "<td class='center'>";
+        $status=(file_exists('/etc/apache2/ldap-enabled/' . $domain .'.conf'))?$statok:$loading;
+        echo $status;
+        echo "</td>";
         if($_SESSION["login"]["level"] == '10') {
             echo "<td>";
-	        echo "<form action='#' method='POST' class='form-table'><input type='hidden' name='domainid' value='". $domain."' /> <input type='submit' name='deldomain' value='Eliminar' class='btn btn-small btn-primary'  onclick=\"return confirm('Quieres borrar el dominio " . $domain ."? Si Aceptas borrarás todo el contenido relacionado con el mismo:  incluidas todas las cuentas de correo electrónico creadas para este dominio así como su contenido (bandeja de euntrada,bandeja de salida, borradores, etc etc)');\" /></form>";
+            echo "<form action='#' method='POST' class='form-table'><input type='hidden' name='domainid' value='". $domain."' /> <input type='submit' name='deldomain' value='Eliminar' class='btn btn-small btn-primary'  onclick=\"return confirm('Quieres borrar el dominio " . $domain ."? Si Aceptas borrarás todo el contenido relacionado con el mismo:  incluidas todas las cuentas de correo electrónico creadas para este dominio así como su contenido (bandeja de euntrada,bandeja de salida, borradores, etc etc)');\" /></form>";
 			/*echo "<form action='#' method='POST' class='form-table'><input type='hidden' name='domainid' value='". $domain."' /> <input type='submit' name='deldomain' value='Eliminar' class='btn btn-small btn-primary confirm' onclick=\"return alertify.confirm('Confirm Message', function(){ alertify.success('Ok') }, function(){ alertify.error('Cancel')})\"  /></form>";	*/
-            echo "</td>";
+          echo "</td>";
         }
 
         echo "</tr>";
 
     }
-	}
+  }
 ?>
         </tbody>
     </table>
+  </div><!--ineer-->
 
-
-
-            </div><!--ineer-->
-
-	</div><!--row-->
+</div><!--row-->
 <?php
 ?>
 </div><!--admin-content-->
 <?php 
-	ldap_close($ldapconn);
-	require_once('footer.php');?>
+  ldap_close($ldapconn);
+  require_once('footer.php');?>
+<script type="text/javascript">
+    $(function() {
+        $('#seluser').change(function(){
+            $('#new_user').hide();
+            $('.' + $(this).val()).show();
+        });
+    });
+</script>
+
