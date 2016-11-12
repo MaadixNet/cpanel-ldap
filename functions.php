@@ -29,6 +29,6 @@ function send_mail($from,$to,$message,$subject,$attachments='')
     } 
     else 
     {
-      echo "Instricciones enviadas con éxito";
+  //    echo "Instrucciones enviadas con éxito";
     }
   }     

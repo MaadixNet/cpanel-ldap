@@ -64,7 +64,6 @@ if(isset($_POST['adduser'])){
             $folderpath=__DIR__.'/files/'.$foldername;
             if (file_exists($folderpath.'zip')) {
               $attachments=$folderpath.'.zip';
-              echo 'file exist';
             }
             else 
             {
@@ -73,12 +72,10 @@ if(isset($_POST['adduser'])){
       
             $filesdir=__DIR__.'/files';
             $src=$filesdir.'/vpn_config/*';
-            echo $src.'<br>';
             //create directory and copy generic config files
             //If files already exists is ok to overwrite them
             //slasinh comand calls it without alias which may habe -i
             shell_exec("mkdir $folderpath; \cp -r -f $src $folderpath");
-            echo 'carpeta creata '. $folderpath;
             $addip_text='remote ' . $_SERVER['SERVER_ADDR'];
             shell_exec("echo '\n<ca>'> $filesdir/cert.ip.txt; cat /etc/openvpn/ca.crt >> $filesdir/cert.ip.txt; echo '</ca>' >> $filesdir/cert.ip.txt"); 
             $filesnames=array($folderpath.'/linux/vpn.conf',$folderpath.'/windows/vpn.ovpn', $folderpath.'/android/android-client.ovpn');
