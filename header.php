@@ -38,7 +38,7 @@
                      <span class="icon-bar"></span>
                      <span class="icon-bar"></span>
                     </a>
-  						<a class="navbar-brand brand" href="/capnel">
+  						<a class="navbar-brand brand" href="/cpanel">
 
 						<img src="images/logo_maadix.png" tilte="Cpanel Home" alt="Cpanel" class"logo"/><h3>Cpanel</h3>
 						</a>
