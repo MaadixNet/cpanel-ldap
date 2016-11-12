@@ -26,7 +26,10 @@
 # GNU General Public License v3
 # based on this topic: http://stackoverflow.com/questions/14171340/dilemma-realtime-crate-virtual-hosts-or-with-a-crontab/38901618#38901618
 # TODO: add let's encrypt script to create certificates for the domain
-
+PATH=/sbin:/bin:/usr/bin
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+echo "directory is " $dir;
+cd $dir
 bindpass=$(awk -F\" '/RDNPSW/{print $(NF-1)}'  ../site-config.php)
 binddn=$(awk -F\" '/READDN/{print $(NF-1)}'  ../site-config.php)
 ldapbase=$(awk -F\" '/LDAP_BASE/{print $(NF-1)}'  ../site-config.php)
@@ -198,3 +201,4 @@ do
     if $has_new_domains ; then #only reload the apache config if there is at least one new domain
       /etc/init.d/apache2 reload
 fi
+cd

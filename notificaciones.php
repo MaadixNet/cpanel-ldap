@@ -57,11 +57,6 @@ if(!$mailsenderou){
     }
 }
 
-  /*echo '<pre>';
-  print_r($mailsenderou);
-  echo '</pre>';
-   */
-  //Debería ser así pero en esta máquina parece que es al revés....hostname con hostname -f
   $fqdn=trim(shell_exec('hostname -f'));
   $sender_email = ($mailsenderou[0]["cn"][0])?$mailsenderou[0]["cn"][0]: 'www-data@'.$fqdn;
 

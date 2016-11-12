@@ -1,5 +1,5 @@
 <?php
-require_once 'site-config.php';
+require_once __DIR__.('/../site-config.php');
 class LDAP{
  
     private $server = "ldap://" . LDAP_HOST_NAME ;

@@ -48,13 +48,81 @@ if(isset($_POST['adduser'])){
         ";
 	}
 
-
-
-	####@TODO  send email not working
 	if((isset($_POST['sendinstruction']) &&  $_POST['sendinstruction'] == 'Yes') && ($addUser))
 	{
-		mail($_POST['username'],'Vpn user addeed', 'hecho');
+          //Get email sender option for notifications
+
+         if ($ldapbind) {
+              $mailsenderou= $Ldap->search($ldapconn,'ou=sendermail,dc=example,dc=tld','(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
+          }
+            $fqdn=trim(shell_exec('hostname -f'));
+            $from = ($mailsenderou[0]["cn"][0])?$mailsenderou[0]["cn"][0]: 'www-data@'.$fqdn;
+            $subject='Cuenta VPN activada';
+            $to=$_POST['username'];
+            $ipaddr=$_SERVER['SERVER_ADDR'];
+            $foldername='VPN-'.$_SERVER['SERVER_ADDR'];
+            $folderpath=__DIR__.'/files/'.$foldername;
+            if (file_exists($folderpath.'zip')) {
+              $attachments=$folderpath.'.zip';
+              echo 'file exist';
+            }
+            else 
+            {
+            # For linux,...
+            #TODO for windows and mac. If it's the same so a foreach
+      
+            $filesdir=__DIR__.'/files';
+            $src=$filesdir.'/vpn_config/*';
+            echo $src.'<br>';
+            //create directory and copy generic config files
+            //If files already exists is ok to overwrite them
+            //slasinh comand calls it without alias which may habe -i
+            shell_exec("mkdir $folderpath; \cp -r -f $src $folderpath");
+            echo 'carpeta creata '. $folderpath;
+            $addip_text='remote ' . $_SERVER['SERVER_ADDR'];
+            shell_exec("echo '\n<ca>'> $filesdir/cert.ip.txt; cat /etc/openvpn/ca.crt >> $filesdir/cert.ip.txt; echo '</ca>' >> $filesdir/cert.ip.txt"); 
+            $filesnames=array($folderpath.'/linux/vpn.conf',$folderpath.'/windows/vpn.ovpn', $folderpath.'/android/android-client.ovpn');
+            $fca=(fopen($filesdir.'/cert.ip.txt','r'));
+            foreach ($filesnames as $configfile){
+              
+              if (is_writable($configfile)) {
+                if (!$handle = fopen($configfile, 'a')) {
+                  echo "Cannot open file ($configfile)";
+                  exit;
+                }
+
+                if (fwrite($handle, $addip_text) === FALSE && fwrite($handle, $fca) === FALSE) {
+                    echo "Cannot write to file ($configfile)";
+                    exit;
+                }
+                fclose($handle);
+                } else {
+                    echo "The file $configfile not writable";
+                }
+                shell_exec("cat $filesdir/cert.ip.txt >> $configfile");
+
+            }
+                shell_exec("cd $filesdir && zip -r $foldername.zip $foldername");
+                $attachments=$filesdir.'/'.$foldername .'.zip';
+          }
+                 
+          $body="
+          Buenos días,<br><br>
+          El administrador de " . $_SERVER['SERVER_NAME'] . " ha activado una cuenta VPN para ti<br>
+          <b>Usuario: </b> " . $to ."<br>
+          <b>Contraseña: <b>" . $_POST['password'] ."
+          <br>
+          <br>
+          Por favor, desacrga el archivo adjunto y sigue las instrucciones para tu sistema operativo que encontrarás 
+          <br>
+          <br><br>
+          Puedes encontrar más información sobre VPN aquí:<br>
+          <a href='http://docs.maadix.net/vpn'>http://docs.maadix.net/vpn/</a>";
+                     
+        require_once __DIR__.('/functions.php');
+        send_mail($from,$to,$body,$subject,$attachments);
 	}
+
 }
 
 //Modifiy Passord
@@ -120,6 +188,8 @@ if(!$result){
 }
 
 ?>
+
+
 <div id="admin-content" class="content">
 	<?php echo $message;?>
 	<h1 class="navbar-nav"> Usuarios VPN activos</h1>

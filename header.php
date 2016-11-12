@@ -43,6 +43,8 @@
 						<img src="images/logo_maadix.png" tilte="Cpanel Home" alt="Cpanel" class"logo"/><h3>Cpanel</h3>
 						</a>
 				</div><!-- navbar-header-->
+                   <?php $permissions= $_SESSION["login"]["level"];
+                   if (isset($permissions)){ ?>
                     <div class="nav-collapse collapse">
                         <ul class="nav pull-right">
                             <li class="dropdown">
@@ -56,7 +58,6 @@
                                 </ul>
                             </li>
                         </ul>
-						<?php $permissions= $_SESSION["login"]["level"];?>
                         <ul class="nav">
                             <li>
 							<a href="/<?php echo BASE_PATH;?>">Detalles</a>
@@ -87,9 +88,10 @@
                                     <li><a href="#">Vpn</a></li>
                                     <li><a href="#">Dominios</a></li>
                                 </ul>
-                            </li>
-						</ul>
+                           </li>
+			</ul>
 			</div><!--nav-collapse-->
+                    <?php } ?>
 		</div><!--container-fluid-->
 	</div><!--navbar inner-->
 </div><!--navbar fixed-->
