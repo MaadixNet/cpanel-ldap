@@ -223,8 +223,14 @@ class LDAP{
         return false;
 
 	}
+        # Add users to ldap . They won't be in sudoers
+        # and will be in a sftpusers group, jailed in
+        # chroot own home directory
+        # @param $newuser - The username
+        # @param $password - The user password 
+        # @param $grid - The group id (will be sftpusers
 
-        function add_sftp_user($newuser,$password){
+        function add_sftp_user($newuser,$password,$grid){
         $ldaptree    = 'ou=People,' . SUFFIX;
         $filter="(&(objectClass=person)(uid=*))";
         //First we check if username is available, including system users, outside ldap Directory using getent
@@ -292,7 +298,7 @@ class LDAP{
               $entry['uidnumber']=(int)$insertuid;
               $success=ldap_mod_add($this->connection,'cn=uidNext,'. SUFFIX,$entry);
               //1003 is the sftpusers group which is chrooted in their home
-              $sftifroupid='1003';
+              $sftifroupid=$grid;
               //first we crate group
               $info['uidnumber']=(int)$uidNext;
               $info['gidnumber']=(int)$sftifroupid;

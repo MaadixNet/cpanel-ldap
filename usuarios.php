@@ -27,13 +27,15 @@ if ($ldapconn){
 }
 $message='';
 $ldaptree    = 'ou=People,' . SUFFIX;
-$filter="(&(objectClass=person)(uid=*))";
-
+$groupinfo = posix_getgrnam("sftpusers");
+$grid=$groupinfo["gid"];
+//Only show sftpusers
+$filter="(&(objectClass=person)(uid=*)(gidnumber=$grid))";
 //Add new User
 if(isset($_POST['adduser'])){
         $newuser=$_POST['username'];
         $password=$_POST['password'];
-        $add_user=$Ldap->add_sftp_user($newuser,$password); 
+        $add_user=$Ldap->add_sftp_user($newuser,$password,$grid); 
         $message=$add_user['message'];
 }
 

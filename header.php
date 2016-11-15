@@ -55,6 +55,9 @@
                                     <li>
                                         <a tabindex="-1" href="logout.php">Logout</a>
                                     </li>
+                                    <li>
+                                        <a tabindex="-1" href="profile.php">Perfil</a>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>
