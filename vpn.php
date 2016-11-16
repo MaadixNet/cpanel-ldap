@@ -71,32 +71,31 @@ if(isset($_POST['adduser'])){
             #TODO for windows and mac. If it's the same so a foreach
       
             $filesdir=__DIR__.'/files';
-            $src=$filesdir.'/vpn_config/*';
+            $src=$filesdir.'/vpn_config';
             //create directory and copy generic config files
             //If files already exists is ok to overwrite them
-            //slasinh comand calls it without alias which may habe -i
-            shell_exec("mkdir $folderpath; \cp -r -f $src $folderpath");
+            //slash before command calls it without alias which may habe -i
+            $ca=shell_exec("cat /etc/openvpn/ca.crt > $filesdir/ca.crt");
+            shell_exec("find $src/ -type d -exec cp $ca {} \;");
+            shell_exec("mkdir $folderpath; \cp -r -f $src/* $folderpath");
             $addip_text='remote ' . $_SERVER['SERVER_ADDR'];
-            shell_exec("echo '\n<ca>'> $filesdir/cert.ip.txt; cat /etc/openvpn/ca.crt >> $filesdir/cert.ip.txt; echo '</ca>' >> $filesdir/cert.ip.txt"); 
             $filesnames=array($folderpath.'/linux/vpn.conf',$folderpath.'/windows/vpn.ovpn', $folderpath.'/android/android-client.ovpn');
-            $fca=(fopen($filesdir.'/cert.ip.txt','r'));
             foreach ($filesnames as $configfile){
               
               if (is_writable($configfile)) {
                 if (!$handle = fopen($configfile, 'a')) {
-                  echo "Cannot open file ($configfile)";
+                 // echo "Cannot open file ($configfile)";
                   exit;
                 }
 
-                if (fwrite($handle, $addip_text) === FALSE && fwrite($handle, $fca) === FALSE) {
-                    echo "Cannot write to file ($configfile)";
+                if (fwrite($handle, $addip_text) === FALSE ) {
+                 //   echo "Cannot write to file ($configfile)";
                     exit;
                 }
                 fclose($handle);
                 } else {
-                    echo "The file $configfile not writable";
+                 //   echo "The file $configfile not writable";
                 }
-                shell_exec("cat $filesdir/cert.ip.txt >> $configfile");
 
             }
                 shell_exec("cd $filesdir && zip -r $foldername.zip $foldername");
