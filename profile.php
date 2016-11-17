@@ -35,8 +35,16 @@ contraseña actual no coincide con que has insertado</span>";
     $msg3="
   <span class='error'><i class='fa fa-exclamation-triangle icon checkko alert-danger'></i>Contraseña incorrecta</span>";
     break;
+  case "4":
+    $msg4="
+    <div class='alert alert-error'>
+    <button class='close' data-dismiss='alert'>×</button>
+    Ha habido un error. No se ha podido cambiar la contraseña
+    </div>";
+    break;
+
   default:
-    $msg1=$msg2=$msg3="";
+    $msg1=$msg2=$msg3=$msg4="";
 }
 
 
@@ -44,6 +52,7 @@ require_once('header.php');?>
 <div id="admin-content" class="content">
   <h2>Editar perfil</h2>
     <h4>Cambiar contraseña del Cpanel</h4>
+    <?php echo $msg4;?>
     <p>Para poder cambiar esta contraseña necesitas conocer la contraseña del usuario de sistema, <?php echo $rootusername;?> 
     <form action='proc/form-functions.php' autocomplete='off' method='POST' class='form' id="changepassword">
     
