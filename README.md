@@ -23,7 +23,7 @@ A simplified cpanel to manage LDAP server. It's based on Phamm schema and adds a
  -  In /etc/apache/apache2.conf add  
 
 ```
-  IncludeOptional ldap-enabled/*.conf
+IncludeOptional ldap-enabled/*.conf
 ```
 
 * Configure nslcd.conf according to your system. An example:
@@ -50,10 +50,9 @@ filter shadow (&(objectClass=person)(loginShell=/bin/bash)(!(uid=root)))
 * If you have custom olcAcces rules maybe you need to add the following  at the beginning of your config file (something like olcDatabase\=\{1\}mdb.ldif:
 
 ```
-olcAccess: {0}to attrs=userPassword,shadowLastChange by self write by anonym
- ous auth by * none
- olcAccess: {1}to dn.base="" by * read
- olcAccess: {2}to * by * read
+olcAccess: {0}to attrs=userPassword,shadowLastChange by self write by anonymous auth by * none
+olcAccess: {1}to dn.base="" by * read
+olcAccess: {2}to * by * read
 ```
 
 * Make sure you hace ldap enabled in nsswitch and pam
@@ -85,22 +84,27 @@ session [success=ok default=ignore] pam_ldap.so minimum_uid=1000
 
 - In /etc/pam.d/common-session
 
-    session [success=ok default=ignore] pam_ldap.so minimum_uid=1000
-    # To automatically create home on first user login
-    session required   pam_mkhomedir.so skel=/etc/skel/ umask=0077
-
+```
+session [success=ok default=ignore] pam_ldap.so minimum_uid=1000
+# To automatically create home on first user login
+session required   pam_mkhomedir.so skel=/etc/skel/ umask=0077
+```
 - In /etc/pam.d/common-auth
 
+```
     auth    [success=1 default=ignore]      pam_ldap.so minimum_uid=1000 use_first_pass
+```
 
 - In /etc/pam.d/common-password
 
-    password        [success=1 default=ignore]      pam_ldap.so minimum_uid=1000 try_first_pass
+```
+password        [success=1 default=ignore]      pam_ldap.so minimum_uid=1000 try_first_pass
+```
+- In /etc/pam.d/common-account
 
- - In /etc/pam.d/common-account
-
-    account [success=ok new_authtok_reqd=done ignore=ignore user_unknown=ignore authinfo_unavail=ignore default=bad]            pam_ldap.so minimum_uid=1000
-
+```
+account [success=ok new_authtok_reqd=done ignore=ignore user_unknown=ignore authinfo_unavail=ignore default=bad]            pam_ldap.so minimum_uid=1000
+```
 
 * /etc/ssh/sshd_cnfig Confoguration to jail users in their home 
 
