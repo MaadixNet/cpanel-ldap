@@ -61,8 +61,7 @@ if($pass1==$pass2 && $currentpsw==$_POST["oldpsw"] && $error!="3"){
     # 2 - if everything was ok, go on and change password in config DIT
     # 3 - @TODO: If this operation is succesfully, we have finished. If not we must go back to previous pswd in normal DIT
     # $command="export HISTIGNORE='*echo*'; echo '$rootpswinput' |sudo -S ldapsearch -H ldapi:// -LLL -Q -Y EXTERNAL -b 'cn=config' '(olcRootDN=$readdn)' dn olcRootDN olcRootPW | tee /tmp/dnconfig.txt && awk '/^dn\: olcDatabase/' /tmp/dnconfig.txt > /tmp/dnconfig.ldif && echo 'changetype: modify\nreplace: olcRootPW\nolcRootPW: $hashedpsw' >> /tmp/dnconfig.ldif && sudo -S ldapmodify -H ldapi:// -Y EXTERNAL -f /tmp/dnconfig.ldif 2> /tmp/dnconfig.error";
-    #$command="sudo ldapsearch -H ldapi:// -LLL -Q -Y EXTERNAL -b 'cn=config' '(olcRootDN=$readdn)' dn olcRootDN olcRootPW > /tmp/dnconfig.txt && awk '/^dn\: olcDatabase/' /tmp/dnconfig.txt > /tmp/dnconfig.ldif && echo 'changetype: modify\nreplace: olcRootPW\nolcRootPW: $hashedpsw' >> /tmp/dnconfig.ldif && sudo ldapmodify -H ldapi:// -Y EXTERNAL -f /tmp/dnconfig.ldif 2> /tmp/dnconfig.error";
-    $command="mammamia";
+    $command="sudo ldapsearch -H ldapi:// -LLL -Q -Y EXTERNAL -b 'cn=config' '(olcRootDN=$readdn)' dn olcRootDN olcRootPW > /tmp/dnconfig.txt && awk '/^dn\: olcDatabase/' /tmp/dnconfig.txt > /tmp/dnconfig.ldif && echo 'changetype: modify\nreplace: olcRootPW\nolcRootPW: $hashedpsw' >> /tmp/dnconfig.ldif && sudo ldapmodify -H ldapi:// -Y EXTERNAL -f /tmp/dnconfig.ldif 2> /tmp/dnconfig.error";
     // execute  command
     if (!($stream = ssh2_exec($con, $command ))) {
       $error="4";

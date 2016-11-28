@@ -43,8 +43,8 @@
 						<img src="images/logo_maadix.png" tilte="Cpanel Home" alt="Cpanel" class"logo"/><h3>Cpanel</h3>
 						</a>
 				</div><!-- navbar-header-->
-                   <?php $permissions= $_SESSION["login"]["level"];
-                   if (isset($permissions)){ ?>
+                   <?php $permissions= isset($_SESSION["login"]["level"])?$_SESSION["login"]["level"]:"";
+                   if (!empty($permissions)){ ?>
                     <div class="nav-collapse collapse">
                         <ul class="nav pull-right">
                             <li class="dropdown">
@@ -86,10 +86,11 @@
                                 <a href="#" data-toggle="dropdown" class="dropdown-toggle">Tutoriales <b class="caret"></b>
                                 </a>
                                 <ul class="dropdown-menu" id="menu1">
-                                    <li><a href="#">Owncloud</a></li>
-                                     <li><a href="#">Emails</a></li>
-                                    <li><a href="#">Vpn</a></li>
-                                    <li><a href="#">Dominios</a></li>
+                                    <li><a href="#" target="_blank">Owncloud</a></li>
+                                    <li><a href="http://docs.maadix.net/dominios/" target="_blank">Dominios</a></li>
+                                    <li><a href="http://docs.maadix.net/email" target="_blank">Emails</a></li>
+                                    <li><a href="http://docs.maadix.net/vpn/" target="_blank">VPN</a></li>
+                                    <li><a href="http://docs.maadix.net/dominios/" target="_blank">Dominios</a></li>
                                 </ul>
                            </li>
 			</ul>

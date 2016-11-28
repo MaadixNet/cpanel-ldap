@@ -5,86 +5,79 @@ class LDAP{
     private $server = "ldap://" . LDAP_HOST_NAME ;
     private $port = "389";
     private $basedn = BINDDN ;
-	private $lddn=SUFFIX;
-	public $connection;
-	public $bind;
+    private $lddn=SUFFIX;
+    public $connection;
+    public $bind;
 
     public function connect(){
-		$this->connection=null; 
-		$this->connection = ldap_connect($this->server,$this->port);  // must be a valid LDAP server!
-		ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, 3);
- 		ldap_set_option( $this->connection, LDAP_OPT_REFERRALS, 0); 
+        $this->connection=null; 
+        $this->connection = ldap_connect($this->server,$this->port);  // must be a valid LDAP server!
+        ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, 3);
+        ldap_set_option( $this->connection, LDAP_OPT_REFERRALS, 0); 
         // PHP Reference says there is no control of connection status in OpenLDAP 2.x.x
         // So we'll use binding function to check connection status.
 	 	return $this->connection;
 	 
     }
  
-	function bind($connection,$dn, $psw){
-		//$bind = ldap_bind($connection, BINDDN ,$_SESSION["userSessionpsw"]);
-		$bind = ldap_bind($connection,$dn, $psw);
-		return $bind;
+    function bind($connection,$dn, $psw){
+        //$bind = ldap_bind($connection, BINDDN ,$_SESSION["userSessionpsw"]);
+        $bind = ldap_bind($connection,$dn, $psw);
+        return $bind;
 
  
     } 
-	//Add ou=vnp firts time if not exixt . check it in vpn.php
-	function addVpnObject ($ldapconn){
-				//Only admin can add vpn accounts. Check level
-				if($_SESSION["login"]["level"] == '10'){				
-                $ldapbind=$this->bind($ldapconn, BINDDN ,$_SESSION["login"]["password"]);
-                $adddn='ou=vpn,' . SUFFIX;
-                $info['objectclass'][0]='organizationalUnit';
-                $info['objectclass'][1]='top';
-                ldap_add($ldapconn, $adddn, $info);
-				}
-	}
+    //Add ou=vnp firts time if not exixt . check it in vpn.php
+    function addVpnObject ($ldapconn){
+        //Only admin can add vpn accounts. Check level
+        if($_SESSION["login"]["level"] == '10'){				
+            $ldapbind=$this->bind($ldapconn, BINDDN ,$_SESSION["login"]["password"]);
+            $adddn='ou=vpn,' . SUFFIX;
+            $info['objectclass'][0]='organizationalUnit';
+            $info['objectclass'][1]='top';
+            ldap_add($ldapconn, $adddn, $info);
+        }
+      }
     //Add ou=senderemail firts time if not exixt . check it in notificaciones.php
     function addSenderObject ($ldapconn){
-                //Only admin can add vpn accounts. Check level
-                if($_SESSION["login"]["level"] == '10'){
-                $ldapbind=$this->bind($ldapconn, BINDDN ,$_SESSION["login"]["password"]);
-                $adddn='ou=sendermail,' . SUFFIX;
-                $info['objectclass'][0]='organizationalUnit';
-                $info['objectclass'][1]='top';
-                $info['objectclass'][2]='metaInfo';
-                ldap_add($ldapconn, $adddn, $info);
-                }
+        //Only admin can add vpn accounts. Check level
+        if($_SESSION["login"]["level"] == '10'){
+          $ldapbind=$this->bind($ldapconn, BINDDN ,$_SESSION["login"]["password"]);
+          $adddn='ou=sendermail,' . SUFFIX;
+          $info['objectclass'][0]='organizationalUnit';
+          $info['objectclass'][1]='top';
+          $info['objectclass'][2]='metaInfo';
+          ldap_add($ldapconn, $adddn, $info);
+        }
     }
 
- 	function search($ldapconn,$searchdn, $filter){
+      function search($ldapconn,$searchdn, $filter){
+          $sr = ldap_search($ldapconn, $searchdn, $filter );
  
-        $sr = ldap_search($ldapconn, $searchdn, $filter );
- 
-        if ($sr) {
- 
- 
-			$info = ldap_get_entries($ldapconn, $sr);
-	 
-			return $info; 
- 
+          if ($sr) {
+              $info = ldap_get_entries($ldapconn, $sr);
+              return $info; 
         } else {
-
-			return false; 
+              return false; 
         }
     }   
     function addRecord($connection, $adddn, $record){
- 
-		$addProcess = ldap_add(
-			$connection, 
-			$adddn, 
-			$record);
-		return $addProcess; 
+        $addProcess = ldap_add(
+        $connection, 
+        $adddn, 
+        $record);
+        return $addProcess; 
     }
  
     function modifyRecord($connection, $modifydn, $record){
         $modifyProcess = ldap_modify($connection, $modifydn, $record);
         if($modifyProcess){
-			echo "
-                <div class='alert alert-success'>
-                    <button class='close' data-dismiss='alert'>&times;</button>
-                        <strong>cambio registrado correctamente</strong> 
-                </div>
-                ";
+            echo "
+            <div class='alert alert-success'>
+            <button class='close' data-dismiss='alert'>&times;</button>
+            <strong>cambio registrado correctamente</strong> 
+            </div>
+            ";
 
             echo '<hr><br>';
         } else {
@@ -101,8 +94,7 @@ class LDAP{
    function deleteRecord($connection, $dn, $recursive = false){
  
         if($recursive == false){
-
-            return(ldap_delete($connection, $dn));
+          return(ldap_delete($connection, $dn));
         } else {
  
             // Search for child entries        
@@ -196,16 +188,6 @@ class LDAP{
             $proposed["login_username"] = 'postmaster@'.$login_username;
         }
 
-			/*$ldaprdn=$this->lddn;
-			$bind = @ldap_bind($this->connection, 'cn='. $username. ',' . $ldaprdn, $login_password);
-
-			if ($bind) {
-					$_SESSION['userSession'] = $login_username;
-					$_SESSION['userSessionpsw'] = $login_password;
-					return true;
-			ldap_close($this->connection);
-			}
-			*/
         $r = ldap_bind($this->connection, $proposed["dn"], $login_password);
 
         if ($r)
