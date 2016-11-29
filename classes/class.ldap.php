@@ -213,30 +213,32 @@ class LDAP{
         # @param $grid - The group id (will be sftpusers
 
         function add_sftp_user($newuser,$password,$grid){
-        $ldaptree    = 'ou=People,' . SUFFIX;
+        $ldaptree    = 'ou=sshd,ou=People,' . SUFFIX;
         $filter="(&(objectClass=person)(uid=*))";
         //First we check if username is available, including system users, outside ldap Directory using getent
         $cmnd="getent passwd " .$newuser;
         $userexist=exec($cmnd);
         if($userexist) {
-           $message=  "
-        
-          <div class='alert alert-error'>
-          <button class='close' data-dismiss='alert'>&times;</button>
-          <strong> El usuario ". $newuser ." ya existe en el sistema. Por favor escoge otro nombre</strong> 
-          </div>
-          ";
+            $result=false;
+            $message=  "
+          
+            <div class='alert alert-error'>
+            <button class='close' data-dismiss='alert'>&times;</button>
+            <strong> El usuario ". $newuser ." ya existe en el sistema. Por favor escoge otro nombre</strong> 
+            </div>
+            ";
+
           //We check syntax for usename
         } elseif(!check_syntax ('account',$newuser, $length="2")) {
 
-           $message=  "
-        
-          <div class='alert alert-error'>
-          <button class='close' data-dismiss='alert'>&times;</button>
-          <strong>'" . $newuser ."' no es un nombre de usuario válido. El nombre tiene que tener mínimo dos carácteres y solo puede contener cifras y/o números. Los carácteres especiales y los espacios no están admitidos</strong> 
-          </div>
+            $result=false;
+            $message=  "
+          
+            <div class='alert alert-error'>
+            <button class='close' data-dismiss='alert'>&times;</button>
+            <strong>'" . $newuser ."' no es un nombre de usuario válido. El nombre tiene que tener mínimo dos carácteres y solo puede contener cifras y/o números. Los carácteres especiales y los espacios no están admitidos</strong> 
+            </div>
           ";
-
 
         } else {
 
@@ -248,10 +250,12 @@ class LDAP{
           $info['objectclass'][3]='posixAccount';
           $info['objectclass'][4]='top';
           $info['objectclass'][5]='shadowAccount';
+          $info['objectclass'][6]='authorizedServiceObject';
+          $info['authorizedservice']='sshd';
           $info['cn']=$newuser;
           $info['uid']=$newuser;
           $info['sn']=$newuser;
-          $info['userpassword']=ldap_password_hash($password,'md5crypt');
+          $info['userpassword']=ldap_password_hash($password,'ssha');
           $info['shadowlastchange'] = floor(time()/86400);
           ## “shadowMax”: days after which password must be changed
           ## For now we just set it as longer than a human life.
@@ -267,18 +271,18 @@ class LDAP{
           #  If attribute is present and has a value we assign it to a variable and delete it in order to avoid
           # other process to use same value
           # When we finish with new user creation we set back the uidNumber attribute to the stored value + 1 
-          $netxuid_number=$this->search($this->connection,'cn=uidNext,'. SUFFIX, '(&(objectClass=uidNext)(uidnumber=*))');
+          $netxuid_number=$this->search($this->connection,$ldaptree, '(&(objectClass=uidNext)(uidnumber=*))');
           $uidNext=($netxuid_number)? $netxuid_number[0]['uidnumber'][0]:NULL;
           if($uidNext){
             //First delete uidNumber attribute from Directory
             $entry['uidnumber']=array();
-            $success=ldap_mod_del($this->connection,'cn=uidNext,'. SUFFIX,$entry);
+            $success=ldap_mod_del($this->connection,'cn=uidNext,'.$ldaptree,$entry);
             if($success){
               //Only if deletion was succesfully we go on. Otherwise somebody else coud use same uid
               //We set next uidNumber to an incremente value by 1
               $insertuid=$uidNext+1;
               $entry['uidnumber']=(int)$insertuid;
-              $success=ldap_mod_add($this->connection,'cn=uidNext,'. SUFFIX,$entry);
+              $success=ldap_mod_add($this->connection,'cn=uidNext,'.$ldaptree,$entry);
               //1003 is the sftpusers group which is chrooted in their home
               $sftifroupid=$grid;
               //first we crate group
@@ -291,32 +295,36 @@ class LDAP{
             }
 
           } else { //No uidNumber found. We cannot add user
+            $result=false;
             $errorttpe = 'Probablemente alguien estaba añdadiendo un usuario en el mismo instante y se ha bloqueado tu acción para evitar conflictos en el sistema. Por favor vuelve a intentarlo';
           }
 
         if ($addUser){
-          return array('result' => true,
-         'message'=> "
+
+          $result=true;
+          $message="
           <div class='alert alert-success'>
           <button class='close' data-dismiss='alert'>&times;</button>
           <strong>Cuenta añadida con éxito para el usuario " . $newuser . "</strong> 
-          </div>"
-          );
+          </div>";
+
         } else {
-                 $errorttpe  = (ldap_errno($this->connection)==68)?"El usuario " . $newuser . " ya existe": "";
-        $message=  "
-        <div class='alert alert-error'>
-        <button class='close' data-dismiss='alert'>&times;</button>
-        <strong>Ha habido un error. " . $errorttpe ." </strong> 
-        </div>
-        ";
-        return array('result' => false,
-          'message' => $message
-        );
+
+          $errorttpe  = (ldap_errno($this->connection)==68)?"El usuario " . $newuser . " ya existe": "";
+          $result=false;
+          $message=  "
+          <div class='alert alert-error'>
+          <button class='close' data-dismiss='alert'>&times;</button>
+          <strong>Ha habido un error. " . $errorttpe ." </strong> 
+          </div>
+          ";
+
         }
     } //End if user exist in getent passwd
         //echo $message;
-        return $addUser;
+        return array('result' => $result,
+                    'message' => $message
+                            );
 }
 
 

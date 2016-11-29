@@ -1,7 +1,7 @@
 <?php 
-/*error_reporting(-1);
+error_reporting(-1);
 ini_set('display_errors', 'On');
-*/
+
 session_start();
 require_once 'classes/class.ldap.php';
 $Ldap = new LDAP();
@@ -26,11 +26,12 @@ if ($ldapconn){
     $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$_SESSION["login"]["password"]);
 }
 $message='';
-$ldaptree    = 'ou=People,' . SUFFIX;
+$ldaptree    = 'ou=sshd,ou=People,' . SUFFIX;
 $groupinfo = posix_getgrnam("sftpusers");
 $grid=$groupinfo["gid"];
 //Only show sftpusers
-$filter="(&(objectClass=person)(uid=*)(gidnumber=$grid))";
+$filtersftp="(&(objectClass=person)(uid=*)(gidnumber=$grid))";
+$filtersudo="(&(objectClass=person)(uid=*)(gidnumber=27))";
 //Add new User
 if(isset($_POST['adduser'])){
         $newuser=$_POST['username'];
@@ -54,11 +55,15 @@ if(isset($_POST['deluser'])){
 }
 
     if ($ldapbind) {
-         $result=$Ldap->search($ldapconn,$ldaptree, $filter);
+          //Get all sftpusers
+         $result=$Ldap->search($ldapconn,$ldaptree, $filtersftp);
+        $resultsudo=$Ldap->search($ldapconn,$ldaptree, $filtersudo);
     }
 ?>
 <div id="admin-content" class="content">
 	<?php echo $message;?>
+          <?php $commuid="getent passwd | awk -F: '{uid[$3]=1}END{for(x=10000; x<=40000; x++) {if(uid[x] != \"\"){}else{print x; exit;}}}'";
+        $firstuid_availabe=system($commuid);?>
 	<h1 class="navbar-nav"> Usuarios de sistema activados </h1>
 	<span><button class="togglevisibility btn btn-small btn-secondary">Añadir usuario</button>	</span>
 	<div class="clear"></div>
@@ -83,6 +88,27 @@ if(isset($_POST['deluser'])){
 		<tbody>
 
 		<?php 
+                #list sudo user without pssword change option
+                for ($i=0; $i<$resultsudo["count"]; $i++) {
+                $username = $resultsudo[$i]["uid"][0];
+                echo "<tr>";
+                echo "<td>";
+                echo $username;
+                echo "</td>";
+                echo "<td>";
+                echo $resultsudo[$i]["homedirectory"][0];
+                echo "</td>";
+                echo "<td>";
+                echo "Opción no disponible para este usuario";
+                echo "</td>";
+                echo "<td>";
+                echo "No disponible";
+                echo "</td>";
+
+                echo "</tr>";
+
+            }
+                #List sftpusers with edit options
                 for ($i=0; $i<$result["count"]; $i++) {
 		$oldpsw=$result[$i]['userpassword'][0];
 		$username = $result[$i]["uid"][0];
