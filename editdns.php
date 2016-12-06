@@ -10,45 +10,12 @@ if(!$Ldap->is_logged_in())
 }
 
 require_once('header.php');
-//connect and BInd
 $errorttpe="";
+
 $message="";
 
-#@TODO
-#Try to use SESSION variable or hidden field onstead of url
-#
-
-$domain=$_GET["domain"];
-$ldapconn=$Ldap->connect();
-if ($ldapconn){
-	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$_SESSION["login"]["password"]); 
-	$permissions= $_SESSION["login"]["level"];
-	switch ($permissions) :
-	case "10" :
-		$binddn=LDAP_BASE;
-		$filter="(vd=" . $domain.")";
-	break;
-	//Postmaster can only access DNS info for his own domain
-    case "4" :
-        $binddn=LDAP_BASE;
-		$who=$_SESSION["phamm"]["domain"];
-		$filter="(vd=" . $who .")";
-		
-	break;
-	//Simple user cannot acces this information
-	case "2":
-	break;
-
-	default:
-	break;
-	endswitch;
-
-}
-
-//Query domains in database
-if ($ldapbind) {
-	$result=$Ldap->search($ldapconn,$binddn, $filter);
-	}
+$psw=$Ldap->decrypt_psw();
+$domain=(isset($_GET["domain"]))?$_GET["domain"]:'';
 $server_ipaddr=$_SERVER["SERVER_ADDR"];
 ?>
 <div id="admin-content" class="content">
@@ -60,22 +27,25 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
 	$resultA=dns_get_record ( $domain,  DNS_A );
 	$resultMX=dns_get_record ( $domain,  DNS_MX );
 	$resultNS = dns_get_record($domain,  DNS_NS );
-	$domain_ip=$resultA[0]['ip'];
+	$domain_ip=($resultA[0]['ip'])?($resultA[0]['ip']):'No hay registro';
         $statok='<i class="fa fa-check-circle-o icon checkok"></i>';
 	$staterr='<i class="fa fa-exclamation-triangle icon checkko"></i>';
-	$correct_mx= $domain;
+	//$correct_mx= $domain;
+
         $fqdn=trim(shell_exec('hostname -f'));
+        $correct_mx=$fqdn;
         $allMX[]='';
         foreach($resultMX as $value){
           array_push($allMX,$value['target']);
         }
 	if(!$resultA):
-		echo   '<div class="alert alert-error">Este dominio no existe </div>';
+		echo   '<div class="alert alert-error">Este dominio no existe. Tienes que registrarlo antes de poder utilizarlo. </div>';
 	elseif (($server_ipaddr==$domain_ip && in_array($correct_mx , $allMX)) || ($server_ipaddr==$domain_ip && in_array($fqdn, $allMX))): 
 		echo '<div class="alert alert-success">La configuración de tu dominio es correcta para que funcione en tu servidor</div>';
 	else:
 		echo '<div class="alert alert-error">El dominio '. $domain . ' está incluido correctamente en tu sistema. Sin embargo necesitas aplicar configuraciones para que funcione en tu servidor.</br>Sigue los pasos a continuación.</div>';
 	endif;
+        if ($resultA){
 	echo '
 	<h3>Configuración de DNS activa para el dominio ' . $domain . '</h3>
 	</br>
@@ -104,7 +74,7 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
 				echo $value['target'];
 				echo "</td>";
 				echo "<td>";
-				echo $correct_mx .' o ' . $fqdn;
+				echo $correct_mx;
 				echo "</td>";
 				$mx_stat=(($value['target']== $correct_mx) || ($value['target']== $fqdn ))?$statok:$staterr . " <a href='#mxCorrect'>Cómo Corregir?</a>";
 				if ($i>1)$mx_stat='Eliminar. Un solo registro MX será necesario para una correcta configuración';
@@ -118,8 +88,12 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
 				</br>';
 
 		echo '<h4>Dirección IP</h4>';
-		echo '<h5>ESta es la IP actualmente configurada para el dominio ' . $domain . '</h5>';
-		echo '<pre>' . $resultA[0]['ip'] . '</pre>';
+                if ($resultA){
+                  echo '<h5>Esta es la IP actualmente configurada para el dominio ' . $domain . '</h5>';
+                  echo '<pre>' . $resultA[0]['ip'] . '</pre>';
+                } else {
+                  echo '<h5>El dominio ' . $domain . ' no está registrado o no está creado. </h5>';
+                }
 		if ($server_ipaddr==$domain_ip){
 		echo 'La configuración es correcta para que puedas acceder a tus aplicaciones desde el navegador, usando tu propio dominio</br>';}
 		else {
@@ -204,7 +178,7 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
 					echo $value['target'] . '</br>';
 				}
 			}
-
+                }//End if($resultA)
 		
 		?>
 	<div class="result"></div>

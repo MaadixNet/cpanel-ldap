@@ -32,3 +32,353 @@ function send_mail($from,$to,$message,$subject,$attachments='')
   //    echo "Instrucciones enviadas con éxito";
     }
   }     
+function ssha_hash_password($password) // SSHA with random 4-character salt
+{
+
+  $salt = substr(str_shuffle(str_repeat('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',4)),0,4);
+  return '{SSHA}' . base64_encode(sha1( $password.$salt, TRUE ). $salt);
+
+}
+
+function ldap_password_hash($password_clear,$enc_type)
+{
+    $salt = substr(str_shuffle(str_repeat('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',4)),0,4);
+    $enc_type = strtolower($enc_type);
+
+    switch($enc_type)
+    {
+
+    case 'crypt':
+
+        $password_hash = '{CRYPT}'.crypt($password_clear);
+        break;
+
+    case 'md5':
+
+    $password_hash = '';
+    $md5_hash = md5($password_clear);
+
+    for ( $i = 0; $i < 32; $i += 2 )
+      $password_hash .= chr( hexdec( $md5_hash{ $i + 1 } ) + hexdec( $md5_hash{ $i } ) * 16 );
+      $password_hash = '{MD5}'.base64_encode($password_hash);
+      break;
+    case 'ssha':
+
+    if (function_exists('mhash') && function_exists('mhash_keygen_s2k')) {
+      mt_srand((double)microtime()*1000000);
+      $salt = mhash_keygen_s2k(MHASH_SHA1,$password_clear,substr(pack('h*',md5(mt_rand())),0,8),4);
+      $password_hash = sprintf('{SSHA}%s',base64_encode(mhash(MHASH_SHA1,$password_clear.$salt).$salt));
+
+    } else {
+        error(_('Your PHP install does not have the mhash() or mhash_keygen_s2k() function. Cannot do S2K hashes.'),'error','index.php');
+    }
+
+      break;
+
+    case 'md5crypt':
+
+      if (! defined('CRYPT_MD5') || CRYPT_MD5 == 0)
+
+        error(_('Your system crypt library does not support md5crypt encryption.'),'error','index.php');
+
+        $password_hash = sprintf('{CRYPT}%s',crypt($password_clear,'$1$'.$salt));
+
+      break;
+
+    case 'clear':
+        $password_hash = $password_clear;
+        break;
+
+    default:
+        $password_hash = '{CRYPT}'.crypt($password_clear);
+        break;
+    }
+
+    return $password_hash;
+}
+
+/**
+ * FROM phpldapadmin code
+ * Used to generate a random salt for crypt-style passwords. Salt strings are used
+ * to make pre-built hash cracking dictionaries difficult to use as the hash algorithm uses
+ * not only the user's password but also a randomly generated string. The string is
+ * stored as the first N characters of the hash for reference of hashing algorithms later.
+ *
+ * @param int The length of the salt string to generate.
+ * @return string The generated salt string.
+ */
+function random_salt($length) {
+
+    $possible = '0123456789'.
+        'abcdefghijklmnopqrstuvwxyz'.
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.
+        './';
+    $str = '';
+    mt_srand((double)microtime() * 1000000);
+
+    while (strlen($str) < $length)
+
+        $str .= substr($possible,(rand()%strlen($possible)),1);
+
+    return $str;
+}
+
+/**
+* Various syntax check (IP address, domain, email address...)
+*
+* @author Alessandro De Zorzi <adezorzi@rhx.it>
+* @todo Check if IP 0 < number <255
+*
+* @param string $type The kind of data
+* @param string $arg The value
+* @param int $length The min length of string
+* @todo name
+* @return bool
+**/
+
+function check_syntax ($type,$arg,$length="0")
+{
+    if (strlen($arg) < $length)
+    {
+        return false;
+    }
+
+    // IP Address
+    if ($type == 'ip')
+    {
+        if (!preg_match ("^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$", $arg))
+        {
+            return FALSE;
+        }
+
+        /*$numbers = explode('.',$arg);
+
+        foreach ($numbers as $number)
+        {
+            if ($number > 255)
+            return FALSE;
+        } */
+
+        else
+        {
+            return TRUE;
+        }
+    }
+   // DOMAIN
+    elseif ($type == 'domain')
+    {
+        if (!preg_match("/^([0-9a-z][0-9a-z-]+\.)+[a-z]{2,7}$/i", $arg))
+        {
+            return FALSE;
+        }
+
+        else
+        {
+            return TRUE;
+        }
+    }
+
+ // ALIAS and ACCOUNT
+    elseif ($type == 'account')
+    {
+        if (!preg_match("/^[\._a-z0-9-]+$/i", $arg))
+        {
+            return FALSE;
+        }
+
+        else
+        {
+            return TRUE;
+        }
+    }
+
+    // Password
+    elseif ($type == 'password')
+    {
+        if (!preg_match("/^[\._a-z0-9-]+$/i", $arg))
+        {
+            return false;
+        }
+        else
+        {
+          return true;
+        }
+    }
+
+    // Email
+    elseif ($type == 'email')
+    {
+        if (!preg_match("/^[_\.0-9a-z-]+@([0-9a-z][0-9a-z-]+\.)+[a-z]{2,4}$/i", $arg))
+        {
+            return FALSE;
+        }
+
+        else
+        {
+            return TRUE;
+        }  
+    }
+
+    // Name
+    elseif ($type == 'name')
+    {
+        return true;
+    }
+}
+/* from Squirrelmail code
+ * http://squirrelmail.org/docs/devel-code/__filesource/fsource_squirrelmail__functionsstrings.php.html#a585
+ */
+
+ /** Encrypts password
+ *
+ * These functions are used to encrypt the password before it is
+ * stored in a cookie. The encryption key is generated by
+ * OneTimePadCreate();
+ *
+ * @param string $string the (password)string to encrypt
+ * @param string $epad the encryption key
+ * @return string the base64-encoded encrypted password
+ * @since 1.0
+ */
+function OneTimePadEncrypt ($string, $epad) {
+    $pad = base64_decode($epad);
+ 
+    if (strlen($pad)>0) {
+        // make sure that pad is longer than string
+        while (strlen($string)>strlen($pad)) {
+            $pad.=$pad;
+        }
+    } else {
+        // FIXME: what should we do when $epad is not base64 encoded or empty.
+    }
+ 
+    $encrypted = '';
+    for ($i = 0; $i < strlen ($string); $i++) {
+        $encrypted .= chr (ord($string[$i]) ^ ord($pad[$i]));
+    }
+ 
+    return base64_encode($encrypted);
+}
+ 
+/**
+ * Decrypts a password from the cookie
+ *
+ * Decrypts a password from the cookie, encrypted by OneTimePadEncrypt.
+ * This uses the encryption key that is stored in the session.
+ *
+ * @param string $string the string to decrypt
+ * @param string $epad the encryption key from the session
+ * @return string the decrypted password
+ * @since 1.0
+ */
+function OneTimePadDecrypt ($string, $epad) {
+    $pad = base64_decode($epad);
+ 
+    if (strlen($pad)>0) {
+        // make sure that pad is longer than string
+        while (strlen($string)>strlen($pad)) {
+            $pad.=$pad;
+        }
+    } else {
+        // FIXME: what should we do when $epad is not base64 encoded or empty.
+    }
+ 
+    $encrypted = base64_decode ($string);
+    $decrypted = '';
+    for ($i = 0; $i < strlen ($encrypted); $i++) {
+        $decrypted .= chr (ord($encrypted[$i]) ^ ord($pad[$i]));
+    }
+ 
+    return $decrypted;
+}
+ 
+/**
+ * Creates encryption key
+ *
+ * Creates an encryption key for encrypting the password stored in the cookie.
+ * The encryption key itself is stored in the session.
+ *
+ * Pad must be longer or equal to encoded string length in 1.4.4/1.5.0 and older.
+ * @param int $length optional, length of the string to generate
+ * @return string the encryption key
+ * @since 1.0
+ */
+function OneTimePadCreate ($length=100) {
+    $pad = '';
+    for ($i = 0; $i < $length; $i++) {
+        $pad .= chr(mt_rand(0,255));
+    }
+ 
+    return base64_encode($pad);
+}
+
+ 
+/**
+ * Set a cookie
+ *
+ * @param string  $sName     The name of the cookie.
+ * @param string  $sValue    The value of the cookie.
+ * @param int     $iExpire   The time the cookie expires. This is a Unix
+ *                            timestamp so is in number of seconds since
+ *                            the epoch.
+ * @param string  $sPath     The path on the server in which the cookie
+ *                            will be available on.
+ * @param string  $sDomain   The domain that the cookie is available.
+ * @param boolean $bSecure   Indicates that the cookie should only be
+ *                            transmitted over a secure HTTPS connection.
+ * @param boolean $bHttpOnly Disallow JS to access the cookie (IE6 only)
+ * @param boolean $bReplace  Replace previous cookies with same name?
+ *
+ * @return void 
+ *
+ * @since 1.4.16 and 1.5.1
+ *
+ */
+
+function sqsetcookie($sName, $sValue='deleted', $iExpire=0, $sPath="", $sDomain="",
+                     $bSecure=false, $bHttpOnly=true, $bReplace=false) {
+ 
+    // some environments can get overwhelmed by an excessive
+    // setting of the same cookie over and over (e.g., many
+    // calls to this function via sqsession_is_active() result
+    // in repeated setting of the session cookie when $bReplace
+    // is FALSE, but something odd happens (during login only)
+    // if we change that to default TRUE) ... so we keep our own
+    // naive per-request name/value cache and only set the cookie
+    // if its value is changing (or never seen before)
+    static $cookies = array();
+    if (isset($cookies[$sName]) && $cookies[$sName] === $sValue)
+        return;
+    else
+        $cookies[$sName] = $sValue;
+ 
+/*TODO check https 
+    // if we have a secure connection then limit the cookies to https only.
+    global $is_secure_connection;
+    if ($sName && $is_secure_connection)
+        $bSecure = true;
+ */
+ 
+    if (false && check_php_version(5,2)) {
+       // php 5 supports the httponly attribute in setcookie, but because setcookie seems a bit
+       // broken we use the header function for php 5.2 as well. We might change that later.
+       //setcookie($sName,$sValue,(int) $iExpire,$sPath,$sDomain,$bSecure,$bHttpOnly);
+    } else {
+        if (!empty($sDomain)) {
+            // Fix the domain to accept domains with and without 'www.'.
+            if (strtolower(substr($sDomain, 0, 4)) == 'www.')  $sDomain = substr($sDomain, 4);
+            $sDomain = '.' . $sDomain;
+ 
+            // Remove port information.
+            $Port = strpos($sDomain, ':');
+            if ($Port !== false)  $sDomain = substr($sDomain, 0, $Port);
+        }
+        if (!$sValue) $sValue = 'deleted';
+        header('Set-Cookie: ' . rawurlencode($sName) . '=' . rawurlencode($sValue)
+                            . (empty($iExpire) ? '' : '; expires=' . gmdate('D, d-M-Y H:i:s', $iExpire) . ' GMT')
+                            . (empty($sPath) ? '' : '; path=' . $sPath)
+                            . (empty($sDomain) ? '' : '; domain=' . $sDomain)
+                            . (!$bSecure ? '' : '; secure')
+                            . (!$bHttpOnly ? '' : '; HttpOnly'), $bReplace);
+    }
+}

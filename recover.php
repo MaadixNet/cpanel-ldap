@@ -22,26 +22,55 @@ $code=md5(uniqid(rand(), true));
 $token=getToken($length=32);
 
 
-if(isset($_POST['username']) && isset($_POST['mail'])){
-    $username = $_POST['username'];
-    $to = $_POST['mail'];
+//Special connection Only read mode to rertieve cn and mail
+$host = "ldapi:///";
+$base = SUFFIX;
+
+$ds = ldap_connect($host);
+
+//buscamos cualquier entrada
+$filter="(&(objectclass=extensibleObject)(!(cn=uidNext)))";
+//de las entradas solo queremos cn y mail
+$justthese = array("email", "cn");
+
+//como usuario anonimo solo tenemos acceso al primer nivel de la base de
+//datos, asi que solo tenemos acceso al dn de admin. y solo tenemos acceso
+//a su atributo cn e email.
+
+$sr=ldap_search($ds, $base, $filter, $justthese);
+$info = ldap_get_entries($ds, $sr);
+/*echo $info["count"]." entradas devueltas\n";
+echo "<pre>";
+print_r ($info);
+echo "</pre>";
+*/
+$adminname = $info[0]["cn"][0];
+$adminmail = $info[0]["email"][0];
+
+
+if(isset($_POST['user']) && isset($_POST['usermail'])){
+    $username = (trim($_POST['user']));
+    $to = $_POST['usermail'];
     //Provisional : we stores admin username and email in site-config.php
     //Then we will probably create a mysql database	
-    if ($username !=ADMIN || $to!=ADMINEMAIL){
+    if ($username != $adminname || $to != $adminmail){
         $error=
         "<div class='alert alert-error'>
-        <button class='close' data-dismiss='alert'>×</button>
-        Credenciales de administrador inválidas 
-        </div>";
+        <button class='close' data-dismiss='alert'>×</button><h4>" .
+        sprintf(_("Credenciales de administrador inválidas")) .  
+        "</h4></div>";
 
-    } elseif ( $username==ADMIN && $to==ADMINEMAIL){
+    } elseif ( $username == $adminname && $to == $adminmail){
       
         //Generate 1 token for reset pswd url and one code to copy and paste as code
+
         $code=md5(uniqid(rand(), true));
         $token=getToken($length=32);
         $when=date("Y-m-d H:i:s"); 
+
         //For now we just use a file to save data. Maybe a mysql database is better
         // So we could also set a random name for this file ??
+
         $checkfile = fopen("/tmp/checkfile.txt", "w") or die("Unable to open file!");
         $txt=array('code' => $code, 'token' => $token, 'when' => $when, 'username' => $username);
         fwrite($checkfile, json_encode($txt));
@@ -50,6 +79,7 @@ if(isset($_POST['username']) && isset($_POST['mail'])){
         $subject="Recuperar Contraseña";
         $headers  = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
+        $headers .= 'From: no-reply' . "\r\n";
         $message = "
         <html>
         <head>
@@ -73,28 +103,33 @@ if(isset($_POST['username']) && isset($_POST['mail'])){
         else
         
         {
-          echo "<div class='alert alert-success'><h4>Se ha enviado un correo electrónico a la cuenta de correo que has especificado. Por favor, revisa tu bandeja ded entrada y sigue las instruccones que encontrarás en el mensaje</div>";
+          echo "<div class='alert alert-success'><h4>" . sprintf (_("Se ha enviado un email a la cuenta de correo %s . Por favor, revisa tu bandeja ded entrada y sigue las instruccones que encontrarás en el mensaje"), $to)." </div>";
         } 
+    } else {
+      
+      $error=
+       "<div class='alert alert-error'>
+        <button class='close' data-dismiss='alert'>×</button>" .
+        sprintf(_("Error")) .   
+        "</div>";
     }
-
 }	
   print_rec_form($error);
 
 
-echo ADMIN;
 function print_rec_form($error){
                 if (isset($error)) echo $error;
-    		echo '<form action="#" method="POST" class="form-signin">
+    		echo '<form action="" method="POST" class="form-signin">
 		<h2 class="form-signin-heading">Recuperar contraseña</h2>
                 <h5>Para recuperar la contraseña de acceso al Cpanel necesitas conocer el nombre de usuario y el correo electrónico asociado al mismo. Si has olvidado estos datos, y no los has cambiado, los encontrarás en tu <a href="https://maadix.net/client-area/" target="_blank">Área Cliente</a></h5>
 		<hr>
 
-                <label for="username">Usuario: </label>
+                <label for="user">Usuario: </label>
                 <p class="little">Inserta el nombre de usuario del administrador del Cpanel</p>
-                <input id="username" type="text" name="username" />
-                <label for="mail">Email: </label>
+                <input id="user" type="text" name="user" required />
+                <label for="usermail">Email: </label>
                 <p class="little">Inserta la cuenta de correo electrónico asociada al usuario administrador</p>
-                <input id="mail" type="mail" name="mail" />
+                <input id="usermail" type="mail" name="usermail" required />
                 <input type="submit" name="submit" value="Submit" class="btn btn-large btn-primary" />
     		</form>';
 }
@@ -125,5 +160,5 @@ function getToken($length=32){
 ?>
 	</div><!--container-->
 	<?php include 'footer.php';?>
-	</body>
+  </body>
 </html>

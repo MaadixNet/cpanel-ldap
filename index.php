@@ -20,19 +20,19 @@ try {
 ?>
 <div id="admin-content" class="content">
 <?php
-echo '<h3>Datos del servidor</h3>';
+echo '<h3>'. sprintf(_("Datos del servidor")). '</h3>';
 echo '<p><b>IP:</b> ' . $_SERVER['SERVER_ADDR'] . '</p>';
-echo '<p><b>Sistema Operativo:</b> ' . php_uname() . ' ' . PHP_OS . '</p>';;
+echo '<p><b>'. sprintf(_("Sistema Operativo")). ':</b> ' . php_uname() . ' ' . PHP_OS . '</p>';;
 $data = shell_exec('uptime');
 $uptime = explode(' up ', $data);
 $uptime = explode(',', $uptime[1]);
 $uptime = $uptime[0].', '.$uptime[1];
-echo '<p><b>Tiempo de actividad del servidor:</b> '.$uptime .'</p>';
-echo '<p><b>Espacio en disco:</b></p>';
+echo '<p><b>'. sprintf(_("Tiempo de actividad del servidor")). ':</b> '.$uptime .'</p>';
+echo '<p><b>'. sprintf(_("Espacio en disco")). ':</b></p>';
 echo '<div class="disk">';
-echo ' <div class="used" style="width: ' . $barWidth .'px">'. $diskStatus->usedSpace() . '%&nbsp;</div>';
+echo '<div class="used" style="width: ' . round($barWidth) .'px">'. $diskStatus->usedSpace() . '%&nbsp;</div>';
 echo '</div>';
-echo 'Libres: ' .$freeSpace . ' (de ' . $totalSpace . ' )</div>';
+echo sprintf(_("Libres")).': ' .$freeSpace .' ('.sprintf(_("de")). $totalSpace . ' )</div>';
 ?>
 <!--admin-content-->
 <?php require_once('footer.php');?>

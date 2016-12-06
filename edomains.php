@@ -17,15 +17,16 @@ $statok='<i class="fa fa-check-circle-o icon checkok"></i>';
 $loading='<span class="loading"></span>';
 
 $ldapconn=$Ldap->connect();
+$psw=$Ldap->decrypt_psw();
 if ($ldapconn){
-	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$_SESSION["login"]["password"]); 
+	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$psw); 
 	$permissions= $_SESSION["login"]["level"];
 	switch ($permissions) :
 	case "10" :
 		$binddn=LDAP_BASE;
 		$filter="(vd=*)";
 	break;
-    case "4" :
+        case "4" :
         $binddn=LDAP_BASE;
 		$who=$_SESSION["phamm"]["domain"];
 		$filter="(vd=" . $who .")";
@@ -130,14 +131,14 @@ if(isset($_POST['deldomain'])){
        $message = "
         <div class='alert alert-success'>
         <button class='close' data-dismiss='alert'>&times;</button>
-        <strong>Dominio " . $domain_new ." eliminado</strong> 
+        <strong>" . sprintf(_("Dominio %s eliminado"), $domain_new ) . "</strong>
         </div>
         ";
     } else {
         $message=  "
         <div class='alert alert-error'>
         <button class='close' data-dismiss='alert'>&times;</button>
-        <strong>Ha habido un error.</strong> 
+        <strong>" . sprintf(_("Error")) . "</strong> 
         </div>
         ";
     }
@@ -173,12 +174,12 @@ if(isset($_POST['chpsw'])){
 
 //Query domains in database
 if ($ldapbind) {
-	$result=$Ldap->search($ldapconn,$binddn, $filter);
-	}
+    $result=$Ldap->search($ldapconn,$binddn, $filter);
+}
 
 ?>
 <div id="admin-content" class="content">
-	<?php if($message) echo $message;?>
+    <?php if($message) echo $message;?>
     <?php if($_SESSION["login"]["level"] == '10'){//Only admin can add Domains 
     ?>
     <span><button class="togglevisibility btn btn-small btn-secondary">Añadir dominio</button>  </span>
@@ -188,14 +189,22 @@ if ($ldapbind) {
         <hr>
             <label for="domain">Nombre de Dominio </label><p class="little">(Inserta un nombre de dominio válido. Para los dominios activado en este panel podrás crear cuentas de correo electrónico o páginas web)</p><input id="domain_new" type="text" name="domain_new" required />
             <label for="password">Contraseña: </label><p class="little">Esta contraseña se puede utilizar para acceder a este mismo panel de control como administrador del dominio identificándose con <b>User:</b> <em>Nombre Dominio</em> <b>Contraseña: </b><em>La que insertes en este campo</em>. El administrador de dominio tiene privilegios límitados y sólo podrá crear, editar y borrar las cuentas de cooreo electrónico asociadas a su dominio. No podrá en ningún caso acceder a ninguna otra función y no podrá eliminar el dominio</p><input id="password" type="password" name="password" required />
-            <label for="webmaster">Webmaster (Administrador sito web) </label><p class="little">Por cada dominio que actives en este panel se creará una carpeta en la que puedes subir tu aplicación web, accesible desde un navegador. Para ello es necesario que indiques cual usuario de tu sistema tiene acceso a cada web. Puedes elegir un usuario ya creado o crear uno nuevo. Si no asignas ningún usuario solo root podrá editar los archivos, desde la consola (terminal) por ssh</p>
+            <label for="webmaster">Webmaster (Administrador sito web) </label><p class="little">Por cada dominio que actives en este panel se creará una carpeta en la que puedes subir tu aplicación web, accesible desde un navegador. Pudedes permitir que un usuario concreto tenga acceso a la carpeta para que pueda editar sus archivos. Puedes elegir un usuario ya creado o crear uno nuevo. Si no asignas ningún usuario solo podrá editar los archivos el usuario por defecto del sistema, tanto por ssh como por sftp</p>
              <?php 
-            $ldaptree    = 'ou=People,' . SUFFIX;
-            $filter="(&(objectClass=person)(uid=*))";
+            $ldaptree    = LDAP_PEOPLE;
+            $filter="(&(objectClass=person)(uid=*)(authorizedService=sshd))";
+            $filtersudo="(&(objectClass=person)(uid=*)(gidnumber=27))";
             $allusers=$Ldap->search($ldapconn,$ldaptree, $filter);
+            $sudouser=$Ldap->search($ldapconn,$ldaptree, $filtersudo);
 
+            // This is the default user which has sudo and will be the default owner
+            // in case no webmaster is selected or created
+            $sudo_username=$sudouser[0]["uid"][0];
+
+            //default webmaster will be user with sudo (uid 10000);
             echo '<select id="seluser" name="seluser">';
-            echo '<option value="root">Seleccionar Administrador web</option>';
+            echo '<option value="' . $sudo_username .'">Seleccionar Administrador web</option>';
+            echo '<option value="' . $sudo_username .'">' . $sudo_username .' - Usuario por defecto</option>';
             echo '<option value="newuser">Crear nuevo usuario</option>';
             for ($c=0; $c<$allusers["count"]; $c++) {
             $usernames = $allusers[$c]["uid"][0];
@@ -284,7 +293,7 @@ if ($ldapbind) {
         echo "</td>";
         if($_SESSION["login"]["level"] == '10') {
             echo "<td>";
-            echo "<form action='#' method='POST' class='form-table'><input type='hidden' name='domainid' value='". $domain."' /> <input type='submit' name='deldomain' value='Eliminar' class='btn btn-small btn-primary'  onclick=\"return confirm('Quieres borrar el dominio " . $domain ."? Si Aceptas borrarás todo el contenido relacionado con el mismo:  incluidas todas las cuentas de correo electrónico creadas para este dominio así como su contenido (bandeja de euntrada,bandeja de salida, borradores, etc etc)');\" /></form>";
+            echo "<form action='' method='POST' class='form-table'><input type='hidden' name='domainid' value='". $domain."' /> <input type='submit' name='deldomain' value='Eliminar' class='btn btn-small btn-primary'  onclick=\"return confirm('Quieres borrar el dominio " . $domain ."? Si Aceptas borrarás todo el contenido relacionado con el mismo:  incluidas todas las cuentas de correo electrónico creadas para este dominio así como su contenido (bandeja de euntrada,bandeja de salida, borradores, etc etc)');\" /></form>";
 			/*echo "<form action='#' method='POST' class='form-table'><input type='hidden' name='domainid' value='". $domain."' /> <input type='submit' name='deldomain' value='Eliminar' class='btn btn-small btn-primary confirm' onclick=\"return alertify.confirm('Confirm Message', function(){ alertify.success('Ok') }, function(){ alertify.error('Cancel')})\"  /></form>";	*/
           echo "</td>";
         }

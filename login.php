@@ -6,41 +6,67 @@
 session_start();
 require_once 'classes/class.ldap.php';
 $user_home = new LDAP();
-
+$message="";
 if($user_home->is_logged_in())
 {
         $user_home->redirect('index.php');
 }
+
+$result=(isset($_GET["chpsw"]))?$_GET["chpsw"]:'';
+if ($result=='ok'){
+      $message="
+    <div class='alert alert-success'>
+    <button class='close' data-dismiss='alert'>×</button><h4>"
+    .sprintf(_("Cambio registrado con éxito")) . "<br>" . 
+    sprintf(_("Utiliza la nueva contraseña para entrar"))." 
+     </h4></div>";
+}
+
 require_once('header.php');
 ?>
-	<div class="cpntainer container" id="login">
+<div class="cpntainer container" id="login">
 
 <?php 
-if(isset($_POST['username']) && isset($_POST['password'])){
-	$user_home->connect();
-    $username = $_POST['username'];
+
+echo $message;
+
+if(isset($_POST['user']) && isset($_POST['password'])){
+    $ldapconn=$user_home->connect();
+    $username = trim($_POST['user']);
     $password = $_POST['password'];
 
 	
-	if($user_home->login($username,$password))
-	{
-		$user_home->redirect('index.php');
-	} else {
-	echo "<div class='alert alert-error'>
-		<button class='close' data-dismiss='alert'>&times;</button>
-		Error de autentificación'
-		</div>";
-	print_form();
-	}
+    if($user_home->login($username,$password))
+    {  
+     # Check for first login
+     # if so force user to edit his profile: set email account and change password
+      #
+       if ($_SESSION["login"]["level"]==10 && $_SESSION["login"]["status"] != "active") {
+
+            $user_home->redirect('activate.php');
+
+        } else {
+
+            $user_home->redirect('index.php');
+
+        }
+
+          
+    } else {
+    echo "<div class='alert alert-error'>
+            <button class='close' data-dismiss='alert'>&times;</button>".
+            sprintf (_("Usuario o Contraseña no válido.")).
+            "</div>";
+    print_form();
+    }
 } else {	
  	print_form();
 }
-
 function print_form(){
-    		echo '<form action="#" method="POST" class="form-signin">
+    		echo '<form action="" method="POST" class="form-signin">
 		<h2 class="form-signin-heading">Entrar</h2>
 		<hr>
-        	<label for="username">Username: </label><input id="username" type="text" name="username" />
+        	<label for="user">Username: </label><input id="user" type="text" name="user" />
         	<label for="password">Password: </label><input id="password" type="password" name="password" />        <input type="submit" name="submit" value="Submit" class="btn btn-large btn-primary" />
     		</form>';
 }

@@ -1,3 +1,14 @@
+## Version 0.1.2.2 Alpha 2016-12-06
+
+### Added
+- Encryption for user password session
+- Localization (English and Spanish)
+- Anonymous bind for apache for first level
+
+### Changed
+- Ldap tree changed. All users are in ou=People
+and may have assigned different services (sshd and/or vpn)
+
 ## Version 0.1.2.1 Alpha 2016-10-09
 
 ### Changed

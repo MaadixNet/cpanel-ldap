@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__.('/../site-config.php');
+require_once __DIR__.('/../functions.php');
 class LDAP{
  
     private $server = "ldap://" . LDAP_HOST_NAME ;
@@ -32,7 +33,7 @@ class LDAP{
         //Only admin can add vpn accounts. Check level
         if($_SESSION["login"]["level"] == '10'){				
             $ldapbind=$this->bind($ldapconn, BINDDN ,$_SESSION["login"]["password"]);
-            $adddn='ou=vpn,' . SUFFIX;
+            $adddn=LDAP_VPN;
             $info['objectclass'][0]='organizationalUnit';
             $info['objectclass'][1]='top';
             ldap_add($ldapconn, $adddn, $info);
@@ -70,32 +71,34 @@ class LDAP{
     }
  
     function modifyRecord($connection, $modifydn, $record){
-        $modifyProcess = ldap_modify($connection, $modifydn, $record);
+        $modifyProcess = ldap_modify(
+        $connection,
+        $modifydn,
+        $record);
         if($modifyProcess){
-            echo "
+            $message= "
             <div class='alert alert-success'>
             <button class='close' data-dismiss='alert'>&times;</button>
-            <strong>cambio registrado correctamente</strong> 
+            <strong>" . sprintf(_('Cambio registrado con éxito')) ."<strong> 
             </div>
-            ";
-
-            echo '<hr><br>';
+            <hr><br>";
         } else {
-            echo  "
+            $message= "
             <div class='alert alert-error'>
                 <button class='close' data-dismiss='alert'>&times;</button>
-                <strong>Lo sentimos!  ha habido un errorr. Los cambios no se han podido guardar</strong> 
+                <strong>" . sprintf(_('Cambio registrado con éxito')) ."</strong> 
               </div>
-              "; 
-            echo '<hr><br>';
+            <hr><br>";
         }
+        //return  $message;
+        return array('message' => $message);
+
     }
  
    function deleteRecord($connection, $dn, $recursive = false){
  
-        if($recursive == false){
-          return(ldap_delete($connection, $dn));
-        } else {
+        if($recursive != false){
+        
  
             // Search for child entries        
             $sr = ldap_list($connection, $dn, "ObjectClass=*", array(""));
@@ -109,10 +112,36 @@ class LDAP{
                     return($result);
                 }
             }
+        }
             // Delete top dn
 
-            return(ldap_delete($connection, $dn));
+        $delUser=ldap_delete($connection, $dn);
+
+        if ($delUser){
+
+          $result=true;
+          $message="
+          <div class='alert alert-success'>
+          <button class='close' data-dismiss='alert'>&times;</button>
+          <strong>". sprintf (_('Cuenta eliminada con éxito')) . "</strong> 
+          </div>";
+
+        } else {
+
+          $result=false;
+          $message=  "
+          <div class='alert alert-error'>
+          <button class='close' data-dismiss='alert'>&times;</button>
+          <strong>". sprintf (_('Error')) . "</strong> 
+          </div>
+          ";
+
         }
+        //echo $message;
+        return array('result' => $result,
+                    'message' => $message
+                            );
+
     }
  
     function close($connection){
@@ -124,12 +153,7 @@ class LDAP{
 	##User Session functions######
 	#############################
 	
-	function login($login_username,$login_upassword){
-
-			$login_username = $_POST['username'];
-			$login_password = $_POST['password'];
-
-
+	function login($login_username,$login_password){
 
         // @todo $proposed will be real DN and level
         if (strpos($login_username, '=') && strpos($login_username, ','))
@@ -199,6 +223,26 @@ class LDAP{
             $_SESSION["login"]["level"] = $proposed["level"];
             $_SESSION["login"]["password"] = $login_password; // @todo crypt it
 
+            # Create Key for encrypt password
+            $key = OneTimePadCreate ($length=100);
+
+            # Encrypt password and store in browser as cookie
+            $enc_pass=OneTimePadEncrypt ($login_password, $key);
+  
+            # Save cookie with encrypted passord and key in session
+            sqsetcookie('usec', $enc_pass);
+            $_SESSION["login"]["key"] = $key;
+ 
+            # Check if is first login
+            if ($_SESSION["login"]["level"]==10){
+
+              $filter="(&(objectClass=extensibleObject)(cn=$login_username))";
+
+              $admin_data=$this->search($this->connection,SUFFIX,$filter);
+              $status=$admin_data[0]["status"][0];
+              $_SESSION["login"]["status"] = $status;
+            }
+
             return true;
         }
 
@@ -212,12 +256,15 @@ class LDAP{
         # @param $password - The user password 
         # @param $grid - The group id (will be sftpusers
 
-        function add_sftp_user($newuser,$password,$grid){
+        function add_sftp_user($newuser,$password,$user_email){
+        $groupinfo = posix_getgrnam("sftpusers");
+        $grid=$groupinfo["gid"];
         $ldaptree    = 'ou=sshd,ou=People,' . SUFFIX;
         $filter="(&(objectClass=person)(uid=*))";
         //First we check if username is available, including system users, outside ldap Directory using getent
         $cmnd="getent passwd " .$newuser;
         $userexist=exec($cmnd);
+
         if($userexist) {
             $result=false;
             $message=  "
@@ -239,7 +286,16 @@ class LDAP{
             <strong>'" . $newuser ."' no es un nombre de usuario válido. El nombre tiene que tener mínimo dos carácteres y solo puede contener cifras y/o números. Los carácteres especiales y los espacios no están admitidos</strong> 
             </div>
           ";
-
+        } elseif (!check_syntax ('email', $user_email)) {
+                      $result=false;
+                                 $message=  "
+          
+            <div class='alert alert-error'>
+            <button class='close' data-dismiss='alert'>&times;</button>
+            <strong>'" . $user_email ."' no es un email válido.</strong>
+            </div>
+          ";
+         
         } else {
 
           $adddn='uid='. $newuser . ',' . $ldaptree;
@@ -253,6 +309,7 @@ class LDAP{
           $info['objectclass'][6]='authorizedServiceObject';
           $info['authorizedservice']='sshd';
           $info['cn']=$newuser;
+          $info['mail']=$user_email;
           $info['uid']=$newuser;
           $info['sn']=$newuser;
           $info['userpassword']=ldap_password_hash($password,'ssha');
@@ -283,15 +340,13 @@ class LDAP{
               $insertuid=$uidNext+1;
               $entry['uidnumber']=(int)$insertuid;
               $success=ldap_mod_add($this->connection,'cn=uidNext,'.$ldaptree,$entry);
-              //1003 is the sftpusers group which is chrooted in their home
-              $sftifroupid=$grid;
-              //first we crate group
               $info['uidnumber']=(int)$uidNext;
-              $info['gidnumber']=(int)$sftifroupid;
+              $info['gidnumber']=(int)$grid;
               $info['homedirectory']='/home/sftpusers/' . $newuser;
               $info['gecos']=$newuser . ',,,';
               //$addgroup=$this->addRecord($this->connection,$adddngroup,$group);
               $addUser=$this->addRecord($this->connection, $adddn, $info);
+              var_dump ($info);
             }
 
           } else { //No uidNumber found. We cannot add user
@@ -305,7 +360,7 @@ class LDAP{
           $message="
           <div class='alert alert-success'>
           <button class='close' data-dismiss='alert'>&times;</button>
-          <strong>Cuenta añadida con éxito para el usuario " . $newuser . "</strong> 
+          <strong>". sprintf ('Account %s successfully added', $newuser) . "</strong> 
           </div>";
 
         } else {
@@ -327,21 +382,251 @@ class LDAP{
                             );
 }
 
+        function add_user($newuser,$entry){
+        $ldaptree    = LDAP_PEOPLE;
+        $filter="(&(objectClass=person)(uid=*))";
+          $adddn='uid='. $newuser . ',' . $ldaptree;
+          $info=array();
+          $info['objectclass'][0]='person';
+          $info['objectclass'][1]='organizationalPerson';
+          $info['objectclass'][2]='inetOrgPerson';
+          $info['objectclass'][3]='posixAccount';
+          $info['objectclass'][4]='top';
+          $info['objectclass'][5]='shadowAccount';
+          $info['objectclass'][6]='authorizedServiceObject';
+          /*$info['authorizedservice']='sshd';
+          $info['cn']=$newuser;
+          $info['mail']=$user_email;
+          $info['uid']=$newuser;
+          $info['sn']=$newuser;
+          $info['userpassword']=ldap_password_hash($password,'ssha');
+          */
+          $info['shadowlastchange'] = floor(time()/86400);
+          ## “shadowMax”: days after which password must be changed
+          ## For now we just set it as longer than a human life.
+          ## Then we will see if we want to include this function
+          $info['shadowmax']='99999';
+          ## “shadowWarning”: days before password is to expire that user is warned
+          $info['shadowwarning']='7';
+          //$info['loginshell']='/bin/bash';
+
+          ## Check Netxuid number to sssign to new user
+          ## for that we use a fake autoincrement system:
+          ## cn=uidNext,dc=example,dc=tld May have attribute uidNumber or not
+          #  If attribute is present and has a value we assign it to a variable and delete it in order to avoid
+          # other process to use same value
+          # When we finish with new user creation we set back the uidNumber attribute to the stored value + 1 
+          $netxuid_number=$this->search($this->connection,$ldaptree, '(&(objectClass=uidNext)(uidnumber=*))');
+          $uidNext=($netxuid_number)? $netxuid_number[0]['uidnumber'][0]:NULL;
+          if($uidNext){
+            //First delete uidNumber attribute from Directory
+            $index['uidnumber']=array();
+            $success=ldap_mod_del($this->connection,'cn=uidNext,'.$ldaptree,$index);
+
+            if($success){
+              //Only if deletion was succesfully we go on. Otherwise somebody else coud use same uid
+              //We set next uidNumber to an incremente value by 1
+              $insertuid=$uidNext+1;
+              $index['uidnumber']=(int)$insertuid;
+              $success=ldap_mod_add($this->connection,'cn=uidNext,'.$ldaptree,$index);
+
+              # If is sshd user assign sfptusers' group
+              if (in_array('sshd',$info)){
+              $info['gidnumber']=(int)$grid;
+              # Esle assign uidnumber as group
+              } else  {
+              $info['gidnumber']=(int)$insertuid;
+              }
+              $info['uidnumber']=(int)$insertuid;
+              //$info['homedirectory']='/home/sftpusers/' . $newuser;
+              $info['gecos']=$newuser . ',,,';
+              //Merge values into array
+              $entry2 = array_merge($info,$entry);
+              
+              //$addgroup=$this->addRecord($this->connection,$adddngroup,$group);
+              $addUser=$this->addRecord($this->connection, $adddn, $entry2);
+            }
+
+          } else { //No uidNumber found. We cannot add user
+            $result=false;
+            $errorttpe = 'Probablemente alguien estaba añdadiendo un usuario en el mismo instante y se ha bloqueado tu acción para evitar conflictos en el sistema. Por favor vuelve a intentarlo';
+          }
+
+        if ($addUser){
+
+          $result=true;
+          $message="
+          <div class='alert alert-success'>
+          <button class='close' data-dismiss='alert'>&times;</button>
+          <strong>". sprintf ('Account %s successfully added', $newuser) . "</strong> 
+          </div>";
+
+        } else {
+
+          $errorttpe  = (ldap_errno($this->connection)==68)?"El usuario " . $newuser . " ya existe": "";
+          $result=false;
+          $message=  "
+          <div class='alert alert-error'>
+          <button class='close' data-dismiss='alert'>&times;</button>
+          <strong>Ha habido un error. " . $errorttpe ." </strong> 
+          </div>
+          ";
+
+        }
+        //echo $message;
+        return array('result' => $result,
+                    'message' => $message
+       );
+}
+  function show_path(){
+          echo $foldername='VPN-'.$_SERVER['SERVER_ADDR'];
+          echo  $filesdir=dirname(__DIR__).'/files';
+          echo  $folderpath=$filesdir.'/'.$foldername;
+}
+
+  function send_vpn_instructions($to,$username) {
+        {
+          //Get email sender option for notifications
+
+            $mailsenderou= $this->search($this->connection,'ou=sendermail,' . SUFFIX,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
+            $fqdn=trim(shell_exec('hostname -f'));
+            $from = ($mailsenderou[0]["cn"][0])?$mailsenderou[0]["cn"][0]: 'www-data@'.$fqdn;
+            $subject='Cuenta VPN activada';
+            $ipaddr=$_SERVER['SERVER_ADDR'];
+            $foldername='VPN-'.$_SERVER['SERVER_ADDR'];
+            $filesdir=dirname(__DIR__).'/files';
+            $folderpath=$filesdir.'/'.$foldername;
+
+            //Check if a ca.crt is available
+            if (file_exists("/etc/openvpn/ca.crt")){
+
+              $ca=shell_exec("cat /etc/openvpn/ca.crt > $filesdir/ca.crt");
+            } elseif (file_exists($filesdir.'/ca.crt')){
+
+              $ca=$filesdir. '/ca.crt';
+
+            } else {
+
+              $error=1;
+              $message="no hay ca.crt";
+
+            }
+
+            if (file_exists($folderpath.'zip')) {
+              $attachments=$folderpath.'.zip';
+            }
+            else
+            {
+            #TODO for  mac. If it's the same so a foreach
+            $src=$filesdir.'/vpn_config';
+
+            //create directory and copy generic config files
+            //If files already exists is ok to overwrite them
+            //slash before command calls it without alias which may be -i
+            if (file_exists("/etc/openvpn/ca.crt")){
+              
+              $ca=shell_exec("cat /etc/openvpn/ca.crt > $filesdir/ca.crt");
+            } elseif (file_exists($filesdir.'/ca.crt')){
+        
+              $ca=$filesdir. '/ca.crt';
+
+            } else {
+
+              $error=1;
+              $message="no hay ca.crt";
+
+            }
+
+            shell_exec("find $src/ -type d -exec cp $ca {} \;");
+            shell_exec("mkdir $folderpath; \cp -r -f $src/* $folderpath");
+            $addip_text='remote ' . $_SERVER['SERVER_ADDR'];
+            $filesnames=array($folderpath.'/linux/vpn.conf',$folderpath.'/windows/vpn.ovpn', $folderpath.'/android/android-client.ovpn');
+            foreach ($filesnames as $configfile){
+
+              if (is_writable($configfile)) {
+                if (!$handle = fopen($configfile, 'a')) {
+                 // echo "Cannot open file ($configfile)";
+                  exit;
+                }
+
+                if (fwrite($handle, $addip_text) === FALSE ) {
+                 //   echo "Cannot write to file ($configfile)";
+                    exit;
+                }
+                fclose($handle);
+                } else {
+                 //   echo "The file $configfile not writable";
+                }
+
+            }
+                shell_exec("cd $filesdir && zip -r $foldername.zip $foldername");
+                $attachments=$filesdir.'/'.$foldername .'.zip';
+          }
+
+          $body="
+          Buenos días,<br><br>
+          El administrador de " . $_SERVER['SERVER_NAME'] . " ha activado una cuenta VPN para ti<br>
+          <b>Usuario: </b> " . $username ."<br>
+          <b>Contraseña: <em>Solicitala al administrador</em>
+          <br>
+          <br>
+          Por favor, desacrga el archivo adjunto y sigue las instrucciones para tu sistema operativo que encontrarás 
+          <br>
+          <br><br>
+          Puedes encontrar más información sobre VPN aquí:<br>
+          <a href='http://docs.maadix.net/vpn'>http://docs.maadix.net/vpn/</a>";
+
+        $action=send_mail($from,$to,$body,$subject,$attachments);
+        }
+}
+
+
+
+
+
+
+
+
+
+  function decrypt_psw () {
+
+      $key=$_SESSION["login"]["key"];
+      $encpsw=$_COOKIE['usec'];
+      $psw=OneTimePadDecrypt ($encpsw, $key);
+      return $psw;
+
+  } 
+
+
+
+
+
 
     function is_logged_in()
 	{
-		/*	if(isset($_SESSION['userSession']))
-			{
-					return true;
-			}
-		*/
 
-        if (isset($_SESSION["login"]["dn"]))
-            return true;
-        else
-            return false;
+          if (isset($_SESSION["login"]["dn"]) &&  $_SESSION["login"]["status"] == "active")
+          {
 
-	}
+              return true;
+          
+          }
+          
+           elseif (isset($_SESSION["login"]["dn"]) &&  $_SESSION["login"]["status"] != "active")
+
+          {
+          
+          $this->redirect('activate.php');
+
+          }
+
+          else
+
+          { 
+              return false;
+
+          }
+        }
 
 	function redirect($url)
 	{
@@ -349,190 +634,18 @@ class LDAP{
 	}
 	function logout()
 	{
-			session_destroy();
-			//$_SESSION['userSession'] = false;
-		 	//$_SESSION['userSessionpsw'] = false;
+            session_destroy();
+            //$_SESSION['userSession'] = false;
+            //$_SESSION['userSessionpsw'] = false;
+            
+            # Remove usec cookie
+            setcookie('usec', '', time()-3600);
+
+
 	}
 
  
 }
 //END LDAP CLASS
-function ssha_hash_password($password) // SSHA with random 4-character salt
-	 {
-	  $salt = substr(str_shuffle(str_repeat('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',4)),0,4);
-	  return '{SSHA}' . base64_encode(sha1( $password.$salt, TRUE ). $salt);
-	   }
-
-
-function ldap_password_hash($password_clear,$enc_type)
-{
-	$salt = substr(str_shuffle(str_repeat('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',4)),0,4);
-    $enc_type = strtolower($enc_type);
-
-    switch($enc_type)
-    {
-    case 'crypt':
-        $password_hash = '{CRYPT}'.crypt($password_clear);
-        break;
-
-    case 'md5':
-    $password_hash = '';
-        $md5_hash = md5($password_clear);
-    for ( $i = 0; $i < 32; $i += 2 )
-        $password_hash .= chr( hexdec( $md5_hash{ $i + 1 } ) + hexdec( $md5_hash{ $i } ) * 16 );
-    $password_hash = '{MD5}'.base64_encode($password_hash);
-        break;
-	case 'ssha':
-#	$password_hash =  '{SSHA}' . base64_encode(sha1( $password_clear.$salt, TRUE ). $salt);	
-    //$password_hash =  '{SSHA}' . base64_encode(sha1( $password_clear.$salt, TRUE ). $salt);   
-            if (function_exists('mhash') && function_exists('mhash_keygen_s2k')) {
-                mt_srand((double)microtime()*1000000);
-                $salt = mhash_keygen_s2k(MHASH_SHA1,$password_clear,substr(pack('h*',md5(mt_rand())),0,8),4);
-                $password_hash = sprintf('{SSHA}%s',base64_encode(mhash(MHASH_SHA1,$password_clear.$salt).$salt));
-
-            } else {
-                error(_('Your PHP install does not have the mhash() or mhash_keygen_s2k() function. Cannot do S2K hashes.'),'error','index.php');
-            }   
-
-            break;
-
-	case 'md5crypt':
-		if (! defined('CRYPT_MD5') || CRYPT_MD5 == 0)
-			error(_('Your system crypt library does not support md5crypt encryption.'),'error','index.php');
-
-		$password_hash = sprintf('{CRYPT}%s',crypt($password_clear,'$1$'.$salt));
-
-            break;
-
-    case 'clear':
-        $password_hash = $password_clear;
-        break;
-
-    default:
-        $password_hash = '{CRYPT}'.crypt($password_clear);
-        break;
-    }
-
-    return $password_hash;
-}
-/**
- * FROM phpldapadmin code
- * Used to generate a random salt for crypt-style passwords. Salt strings are used
- * to make pre-built hash cracking dictionaries difficult to use as the hash algorithm uses
- * not only the user's password but also a randomly generated string. The string is
- * stored as the first N characters of the hash for reference of hashing algorithms later.
- *
- * @param int The length of the salt string to generate.
- * @return string The generated salt string.
- */
-function random_salt($length) {
-
-    $possible = '0123456789'.
-        'abcdefghijklmnopqrstuvwxyz'.
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.
-        './';
-    $str = '';
-    mt_srand((double)microtime() * 1000000);
-
-    while (strlen($str) < $length)
-        $str .= substr($possible,(rand()%strlen($possible)),1);
-
-    return $str;
-}
-
-/**
-* Various syntax check (IP address, domain, email address...)
-*
-* @author Alessandro De Zorzi <adezorzi@rhx.it>
-* @todo Check if IP 0 < number <255
-*
-* @param string $type The kind of data
-* @param string $arg The value
-* @param int $length The min length of string
-* @todo name
-* @return bool
-**/
-
-function check_syntax ($type,$arg,$length="0")
-{
-    if (strlen($arg) < $length)
-    {
-        return false;
-    }
-
-    // IP Address
-    if ($type == 'ip')
-    {
-        if (!preg_match ("^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$", $arg))
-        {   
-            return FALSE;
-        }
-
-        /*$numbers = explode('.',$arg);
-
-        foreach ($numbers as $number)
-        {
-            if ($number > 255)
-            return FALSE;
-        } */
-
-        else
-        {   
-            return TRUE;
-        }
-    }
-   // DOMAIN
-    elseif ($type == 'domain')
-    {
-        if (!preg_match("/^([0-9a-z][0-9a-z-]+\.)+[a-z]{2,7}$/i", $arg))
-        {   
-            return FALSE;
-        }
-
-        else
-        {
-            return TRUE;
-        }
-    }
-
- // ALIAS and ACCOUNT
-    elseif ($type == 'account')
-    {
-        if (!preg_match("/^[\._a-z0-9-]+$/i", $arg))
-        {
-            return FALSE;
-        }
-
-        else
-        {
-            return TRUE;
-        }
-    }
-
-    // Password
-    elseif ($type == 'password')
-    {
-        if (!preg_match("/^[\._a-z0-9-]+$/i", $arg))
-            return false;
-
-        return true;
-    }
-
-    // Email
-    elseif ($type == 'email')
-    {
-        if (!preg_match("^[_\.0-9a-z-]+@([0-9a-z][0-9a-z-]+\.)+[a-z]{2,4}$", $arg))
-            return false;
-
-        return true;
-
-    }
-
-    // Name
-    elseif ($type == 'name')
-    {
-        return true;
-    }
-}
 
 ?>

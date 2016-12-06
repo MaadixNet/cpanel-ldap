@@ -12,13 +12,17 @@ $message='';
 require_once('header.php');
 //connect and BInd
 $ldapconn=$Ldap->connect();
+$psw=$Ldap->decrypt_psw();
 if ($ldapconn){
-  $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$_SESSION["login"]["password"]); 
+  $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
+
   #TODO: Check user level to show and allow differents permissions
   #Level 10= admin : can read and manage all accounts
   #Level 4 postmaster (domain administrator) can read and edit all accounts related to his domain excluded VPN
   #level 2 : simple user. Can read and edit only his own data (basically email related)
   #need LDAP ACL to be set
+  #
+
   $permissions= $_SESSION["login"]["level"];
   $binddn=LDAP_BASE;
   $filter="(vd=*)";

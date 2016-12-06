@@ -1,4 +1,38 @@
 #!/bin/bash -x
+# Check if some user asked for a reset password
+# if /tmp/checkfile.txt && /tmp/update-"$token".ldif
+# exists it means that somebody is willing to recover password
+#
+PATH=/sbin:/bin:/usr/bin
+
+# Set ldap variables
+
+ldapbase=$(awk -F\" '/LDAP_BASE/{print $(NF-1)}'  ../site-config.php)
+suffix=$(awk -F\" '/SUFFIX/{print $(NF-1)}'  ../site-config.php)
+
+delete="0"
+checkfile="/tmp/checkfile.txt"
+
+if [ -f "$checkfile" ];then
+  token=$(cat /tmp/checkfile.txt |  python -c "import sys, json; print json.load(sys.stdin)['token']")
+  username=$(cat /tmp/checkfile.txt |  python -c "import sys, json; print json.load(sys.stdin)['username']")
+  ldiffile="/tmp/update-"$token".ldif"
+fi
+
+if [ -f "$checkfile" ] && [ -f "$ldiffile" ];then
+  ldapmodify -H ldapi:// -Y EXTERNAL -f "$ldiffile" && delete="1" 2> /tmp/dnconfig.error
+fi
+
+# If all process was successfully send confirmaion mail to user and delete files
+if [ "$delete" == "1" ];then
+  mail=$(ldapsearch -H ldapi:// -Y EXTERNAL -b "$suffix" "(&(objectClass=extensibleObject)(cn=admincp))" email | grep -o -P "(?<=email: ).*")
+
+  mail -s "Contraseña cambiada" "$mail" <<< "El proceso de recuperación de contraseña ha terminado. Ahora puedes acceder al Cpanel con tu nueva contraseña"
+
+  rm "$ldiffile"
+  rm "$checkfile"
+fi
+
 # Script to create Apache virtual hos when a new record is detected
 # in ldap.
 # The vhosts are create in custom location in order to no mix with 
@@ -30,13 +64,6 @@ PATH=/sbin:/bin:/usr/bin
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo "directory is " $dir;
 cd $dir
-bindpass=$(awk -F\" '/RDNPSW/{print $(NF-1)}'  ../site-config.php)
-binddn=$(awk -F\" '/READDN/{print $(NF-1)}'  ../site-config.php)
-ldapbase=$(awk -F\" '/LDAP_BASE/{print $(NF-1)}'  ../site-config.php)
-echo $binddn;
-echo $ldapbase;
-echo $bindpass;
-#echo $bindpass;
 has_new_domains=false #No new domains by default = do not reload the apache config.
 vhroot='/etc/apache2/ldap-enabled'
 sftpusershome="/home/sftpusers"
@@ -49,6 +76,8 @@ documenRoot='/var/www/html'
 appsWebRoot='/usr/share'
 #chek all monted point
 mountresult=()
+#The default user which is sudo (in our configurations is usually user 10000
+defaultsudouser=$(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "$suffix" "gidNumber=27" | grep -o -P "(?<=uid: ).*")
 
 while read domain 
 do
@@ -59,7 +88,10 @@ do
     #Check is there is a webmaster for current domain. We are using adminID
     # attribute, which i not a required attribute. so is better to check if
     # this value is empty or not
-    webmaster=$(ldapsearch -x -D "cn=admin,dc=example,dc=tld" -p 389 -h ldap://localhost -b "vd=$domain,o=hosting,dc=example,dc=tld" "adminID=*" -w $bindpass | grep -o -P "(?<=adminID: ).*")
+    webmaster=$(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "vd=$domain,$ldapbase" "adminID=*" | grep -o -P "(?<=adminID: ).*")
+    #issudouser=$(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "uid="$webmaster",ou=sshd,ou=People,dc=example,dc=tld" "gidNumber=*" | grep -o -P "(?<=gidNumber: ).*")
+    #webmaster=$(ldapsearch -x -D "cn=admin,dc=example,dc=tld" -p 389 -h ldap://localhost -b "vd=$domain,o=hosting,dc=example,dc=tld" "adminID=*" -w $bindpass | grep -o -P "(?<=adminID: ).*")
+
     # If virtualhost does not exists Let's create it
     if [[ ! -f $vhroot/"$domain".conf ]];
     then
@@ -76,7 +108,7 @@ do
         </VirtualHost>" > $vhroot/"$domain".conf
 
         mkdir $documenRoot/$domain
-        chown -R root:www-data $documenRoot/$domain
+        chown -R $webmaster:www-data $documenRoot/$domain
         chmod 755 $documenRoot/$domain
         #chmod g+s $documenRoot/$domain
         echo 'Folder created'
@@ -106,11 +138,9 @@ do
     # Check ownership and mountpoints for all domains in ldap
     # as administrator should change this ownership in any time
     # 
-    # @TODO: We just created new vhosts and folder with root as owner
-    #   We could create the new folder with thw corresponding owner (webmaster)
-    #   but as the administrator should change this ownership at any time
-    #   let's do it this way for now.
+    # @TODO: We have  just created new vhosts and folder with $webmaster as owner
     # web folder in /var/www/html
+
     if [[ ! -z $webmaster ]];
     then
 
@@ -123,10 +153,13 @@ do
           chown -R $webmaster:www-data $documenRoot/$domain
         fi
         # Crete the Mounting point for the website into sftpuser's home 
+        # if webmaster is the default user don't mount . Default user
+        #is not jailed and will acces websites folder directlyfrom /var/www/
         # NOTE: sftp users home is created the first time they login
         # If it's a new created user this home does not exixst, so we 
         # create before mounting
-        if [[ ! -d $sftpusershome/$webmaster ]];
+
+        if [[ ! -d $sftpusershome/$webmaster && $defaultsudouser != $webmaster ]];
         then
           mkdir $sftpusershome/$webmaster && chmod 700 $sftpusershome/$webmaster && chown $webmaster:sftpusers $sftpusershome/$webmaster
         fi
@@ -139,7 +172,7 @@ do
           # for the website are indifferent to us 
           activemount=$(echo "$line" | awk -v FS="(\/sftpusers\/|\/$domain)" '{print $2}')
 
-          # store all users  space separeted ("$var") inwhose home a  website is mounted
+          # store all users  space separeted ("$var") in whose home a  website is mounted
           mountresult+=("$activemount")
           # If there is a mounting point in a user home, and this user is not the website owner
           # umont it.It probably means ownership changed
@@ -149,14 +182,14 @@ do
           # If $owner is not listed between the active mounting points we have collected 
           # by username in $mountresult() it means that we have to mount the web folder on his home 
           # We check exact match (between spaces) in order to avoid parcial matches (mari is not maria)
-          if [[ ! ${mountresult[@]} =~ $(echo '\<'$webmaster'\>') ]];then
+          if [[ ! ${mountresult[@]} =~ $(echo '\<'$webmaster'\>') && $defaultsudouser != $webmaster ]];then
             mkdir -p $sftpusershome/$webmaster/$domain
             chown $webmaster:www-data $sftpusershome/$webmaster/$domain
             mount --bind  $documenRoot/$domain $sftpusershome/$webmaster/$domain
           fi
       done
     fi     
-  done < <(ldapsearch -x -D "$binddn"  -p 389 -h ldap://localhost -b "$ldapbase" "(objectclass=VirtualDomain)" -w $bindpass | grep -o -P '(?<=vd=).*(?=,o=hosting,dc=example)') 
+  done < <(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "$ldapbase" "(objectclass=VirtualDomain)" | grep -o -P '(?<=vd=).*(?=,o=hosting,dc=example)') 
 #delete vhost that are not anymre in ldap tree but still in apache
 printf "%s\n" "${ldapresult[@]}"
 for vhost in "$vhroot"/*;
@@ -173,14 +206,18 @@ do
     else
         if [ ! -z "$basevhost" ]; then
             folderdomain=${basevhost:0:-5}
+
             #disable and delete apache virtualhost, and web files
             echo $basevhost 'is NOT present in ldap so we can delete it'
             echo "dominio "$basevhost" eliminado"
             rm $vhroot/"$basevhost" && has_new_domains=true
-            # We won't delete the web folder in /var/www/htnl, so we set the ownwe as root again
-            chown -R root:www-data $documenRoot/$folderdomain
-            #Check if there was a mounted pojnt for the deleted domain. if so umount is
+
+            # We won't delete the web folder in /var/www/htnl, so we set the ownwer as the default sudo user again
+            chown -R $defaultsudouser:www-data $documenRoot/$folderdomain
+
+            #Check if there was a mounted pojnt for the deleted domain. if so umount it
             mounteddomains=$(findmnt | grep "\[$documenRoot/$folderdomain\]")
+
             # Check all mounted points that a website may have greping with current domain 
             printf '%s\n' "$mounteddomains" | while IFS= read -r line
             do

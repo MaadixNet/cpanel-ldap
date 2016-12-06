@@ -1,6 +1,15 @@
 <?php
 /**
+ * reset.php
  * Created by Maddish
+ *
+ * Show the form to collect new password
+ * call proc/reset-ps.php
+ * that performs data validation:
+ * checks username, email, token and code
+ *
+ * Returns error if there are some
+ *
  */
 // Start PHP session
 session_start();
@@ -57,10 +66,10 @@ require_once('header.php');
     		echo '<form action="proc/reset-ps.php" method="POST" class="form-signin">
 		<h2 class="form-signin-heading">Introduce los datos</h2>
 		<hr>
-              <label for="username">Nombre de usuario: </label><input id="username" type="text" name="username" required/><p> ' . $msg2 .'</p>
+              <label for="user">Nombre de usuario: </label><input id="user" type="text" name="user" required/><p> ' . $msg2 .'</p>
                 <label for="usercode">Código de verificación: </label><input id="usercode" type="text" name="usercode" required/><p> ' . $msg3 .'</p>
-                <label for="password1">Nueva contraseña: </label><input id="password1" type="password" name="password1" required/>
-                <label for="password2">Repetir contraseña: </label><input id="password2" type="password" name="password2" required/><p> ' . $msg1 .'</p>
+                <label for="pswd1">Nueva contraseña: </label><input id="pswd1" type="password" name="pswd1" required/>
+                <label for="pswd2">Repetir contraseña: </label><input id="pswd2" type="password" name="pswd2" required/><p> ' . $msg1 .'</p>
                 <input type="hidden" name="token" value="'.$urltoken.'" />
                 <input type="submit" name="submit" value="Submit" class="btn btn-large btn-primary" />
 

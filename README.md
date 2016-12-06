@@ -12,7 +12,6 @@ A simplified cpanel to manage LDAP server. It's based on Phamm schema and adds a
 * OpenVPN server installed and running whit authentication against ldap
 * PHP
 * Apache
-* libssh2-1-dev libssh2-php  
 * libnss-ldapd libpam-ldapd
 
 ## System settings
@@ -24,12 +23,12 @@ A simplified cpanel to manage LDAP server. It's based on Phamm schema and adds a
 
 ```
 IncludeOptional ldap-enabled/*.conf
-```
 
+```
 * Configure nslcd.conf according to your system. An example:
 
 ```
-#earch scope.
+#search scope.
 scope sub 
 #Change it
 base passwd ou=People,dc=example,dc=tld
@@ -75,6 +74,7 @@ ethers:         db files
 rpc:            db files
 
 netgroup:       nis
+
 ```
 - in /etc/pam.d/common-session
 
@@ -99,11 +99,13 @@ session required   pam_mkhomedir.so skel=/etc/skel/ umask=0077
 
 ```
 password        [success=1 default=ignore]      pam_ldap.so minimum_uid=1000 try_first_pass
+
 ```
 - In /etc/pam.d/common-account
 
 ```
 account [success=ok new_authtok_reqd=done ignore=ignore user_unknown=ignore authinfo_unavail=ignore default=bad]            pam_ldap.so minimum_uid=1000
+
 ```
 
 * /etc/ssh/sshd_cnfig Confoguration to jail users in their home 
@@ -126,6 +128,7 @@ PermitTunnel no
 AllowAgentForwarding no
 AllowTcpForwarding no
 X11Forwarding no
+
 ```
 * Add UidNext Objectclass to ldap. This is used to simulate autoincrement
  
@@ -165,44 +168,104 @@ uidNumber: 10001
 ## Installation  
 
 Download or clone files  
-Copy site-config-example.php to site-config.php  
 Edit site-config.php filling with your data  
 
 
 ```php
 <?php
-	define ("LDAP_HOST_NAME","localhost");
+define ("LDAP_HOST_NAME","localhost");
 
-	// The protocol version [2,3]
-	define ("LDAP_PROTOCOL_VERSION","3");
+// The protocol version [2,3]
+define ("LDAP_PROTOCOL_VERSION","3");
 
-	// The server port (To use ldapssl change to 636)
-	define ("LDAP_PORT",'389');
+// The server port (To use ldapssl change to 636)
+define ("LDAP_PORT","389");
 
-	// Set LDAP_TLS to 1 if you want to use TLS
-	define ("LDAP_TLS",0);
+// Set LDAP_TLS to 1 if you want to use TLS
+define ("LDAP_TLS",0);
 
-	// The container
-	define ("SUFFIX","dc=example,dc=tld");
+// The container
+define ("SUFFIX","dc=example,dc=tld");
 
-	// The admin bind dn (could be rootdn)
-	define ("BINDDN","cn=admin,dc=example,dc=tld");
+// The admin bind dn 
+# Get value from function. if it doesn't work set it manually
+$binddn =  get_bind_dn();
+define ("BINDDN",$binddn);
 
-	//reader user for ldapserch.sh script. If you don't have any 'only read' user you can use admin,
-	//but for security it would be better to have a lower privilege user with no write permissions
-	//we can use the default phamm user
-	define ("READDN","cn=phamm,dc=example,dc=tld");
+// The Phamm container - change it if your installation has different structure
+define ("LDAP_BASE","o=hosting," . SUFFIX);
 
-	//read user password to allow ldapserch.sh to bind ldap
-	define ("READDNPSW","rhx");
+//The People container for sftp users and vpn users
+define ("LDAP_PEOPLE","ou=sshd,ou=People," .  SUFFIX);
 
-	// The base container - change it if your installation has different structure
-	define ("LDAP_BASE","o=hosting,dc=example,dc=tld");
+//To create internal links
+define ("BASE_PATH" , basename(__DIR__));
 
-	//The VPN container
-	define ("LDAP_VPN","ou=vpn,dc=example,dc=tld");
+// The languages available
+ $supported_languages = array();
+// $supported_languages["de_DE"] = "Deutsch";
+ $supported_languages["en_GB"] = "English";
+ $supported_languages["es_ES"] = "Español";
+// $supported_languages["fr_FR"] = "French";
+// $supported_languages["hu_HU"] = "Hungarian";
+// $supported_languages["it_IT"] = "Italiano";
+// $supported_languages["pl_PL"] = "Polish";
+// $supported_languages["ru_RU"] = "Russian";
+// $supported_languages["vi_VN"] = "Tiếng Việt"; // Vietnamese
+// $supported_languages["da_DK"] = "Dansk"; // Danish
+// $supported_languages["pt_BR"] = "Portuguese";
 
 
+ # Get admin name dinamically throug a ESXTERNAL bind connection
+ # Ldap need to be configured in oreder to allow 
+ # anonymous bind connection for apache
+
+## Get the admin bame
+    function get_bind_dn () {
+      //Special connection Only read mode to rertieve cn and mail
+      $host = "ldapi:///";
+      $base = SUFFIX;
+
+      $ds = ldap_connect($host);
+
+      //buscamos cualquier entrada
+      $filter="(&(objectclass=extensibleObject)(!(cn=uidNext)))";
+      //de las entradas solo queremos cn y mail
+      $justthese = array("cn");
+
+      //como usuario anonimo solo tenemos acceso al primer nivel de la base de
+      //datos, asi que solo tenemos acceso al dn de admin. y solo tenemos acceso
+      //a su atributo cn e email.
+
+      $sr=ldap_search($ds, $base, $filter, $justthese);
+      $info = ldap_get_entries($ds, $sr);
+      /*echo $info["count"]." entradas devueltas\n";
+      echo "<pre>";
+      print_r ($info);
+      echo "</pre>";
+      */
+      $adminname = $info[0]["dn"];
+      return $adminname;
+      }
+
+
+
+
+
+```
+
+* change owner to  /files folder.  Set ownership to apache. eg: 
+
+```
+cd 'YOUR INSTALATION FOLDER(cpanel-ldap)'
+chown -R  www-data files
+
+```
+* Place a copy of the ca.crt file for openvpn server (normally in /etc/openvpn/ca.crt) into the files directory
+This is needed in order to be able to send instruccions to vpn users from the cpanel
+
+```
+cp /etc/openvpn/ca.crt YOUR-INSTALLATION-DIR/files/
 ```
 
 if you want to automatically create apache vhosts and Document Root folder when a new domain is addedd, you need to
@@ -211,7 +274,7 @@ In this example the script will run each 5 minutes.
 As root run crontab -e and add this line  
 
 
-    */5 * * * * /var/www/html/cpanel/cron/ldapsearch.sh
+    */5 * * * * /var/www/html/YOUR INSTALATION FOLDER/cron/ldapsearch.sh
 
 ## Usage
 

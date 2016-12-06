@@ -1,3 +1,6 @@
+<?php require_once 'classes/class.locale.php';
+$locale = new CpanelLocale();?>
+
 	<div id="push"></div>
 	</div><!--div class container-opened in header.php-->
         </div><!--wrap-->
@@ -15,6 +18,10 @@
 						</a>
 					</p>
 				</div>
+                                 <div class="col-sm-2">
+                                  <?php echo $locale->locale_select();?>
+                                </div>
+
 			</div>
 		</div>
 	</footer>
@@ -25,11 +32,9 @@
     <!-- Placed at the end of the document so the pages load faster -->
    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>-->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script> <!-- load jquery via CDN -->
-	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+	<script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <script src="js/bootstrap.min.js"></script>
 	<script src="js/flexslider.js"></script>
-<script src="js/alertify.min.js"></script>
 	<script src="js/customscript.js"></script>
-	
   </body>
 </html>

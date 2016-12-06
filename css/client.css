@@ -207,9 +207,9 @@ html, body {
   height: 4em;
 }
 
-#change {
-            display: none;
-                }
+#change, #hidden {
+    display: none;
+}
 
 .inner {padding:1em;}
 .loading{ background-image: url("../images/spinner.gif");padding: 0 7px;}
@@ -326,7 +326,39 @@ form.form-table input[type="password"] {margin:0; width: 60%;}
 form.sub-form{display:none;}
 a.showform {cursor:pointer;}
 
+input[type=checkbox] {
+    display:none;
+  }
+input[type=checkbox] + label
+ {   
+       width: 23px;
+       height: 21px;
+      background: transparent url(../images/checkbox.png ) no-repeat 0 50%;
+ }   
+  
+input[type=checkbox] + label.small
+ {   
+    background-size: 35px auto;
+    background-repeat: no-repeat;
+    width: 12px;
+ }   
 
+ input[type=checkbox]:checked + label
+  {   
+ background: transparent url(../images/checkbox.png ) no-repeat 80% 50%;
+  }   
+
+ input[type=checkbox]:checked + label.small
+  {
+  background: transparent url(../images/checkbox.png ) no-repeat 80% 50%;
+background-size: 35px auto;
+  }
+
+input[type=checkbox] + label.left
+ {
+  float: left;
+  margin-right: 7px;
+ }  
 /* disk usage bar */
 
 .disk {
@@ -373,6 +405,7 @@ a.showform {cursor:pointer;}
     .navbar > .container .navbar-brand,
     .navbar > .container-fluid .navbar-brand {
         font-size: 28px;
+background-size: 35px auto;
         float: left;
         margin: 15px 0;
         width: auto;

@@ -1,0 +1,249 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: phamm 0.5.13\n"
+"POT-Creation-Date: 2016-11-16 11:46+0200\n"
+"PO-Revision-Date: 2016-12-03 12:05+0100\n"
+"Last-Translator: maddish <maddish@xnet-x.net>\n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.10\n"
+"Language-Team: \n"
+
+msgid "%s no añadido!"
+msgstr "¡%s not added!"
+
+msgid "Activo"
+msgstr "Active"
+
+msgid "Añadir nueva cuenta"
+msgstr "Add new account"
+
+msgid "Añadir nuevo dominio"
+msgstr "Add new domain"
+
+msgid "Borrar"
+msgstr "Delete"
+
+msgid "Buzón"
+msgstr "Mailbox"
+
+msgid "Confirma contraseña"
+msgstr "Confirm password"
+
+msgid "Nueva Contraseña"
+msgstr "New Password"
+
+msgid "Código "
+msgstr "Code "
+
+msgid "Cuenta"
+msgstr "Account"
+
+msgid "Cuenta %s añadida con éxito"
+msgstr "Account %s successfully added"
+
+msgid "Cuenta ya existente"
+msgstr "Account or Alias already exists"
+
+msgid "Cuota"
+msgstr "Quota"
+
+msgid "Directorio Personal"
+msgstr "Home Directory"
+
+msgid "Destino"
+msgstr "Destination"
+
+msgid "Dominio %s añadido con éxito"
+msgstr "Domain %s successfully added"
+
+msgid "Error"
+msgstr "Error"
+
+msgid "Error LDAP: "
+msgstr "LDAP Error: "
+
+msgid "Establecer"
+msgstr "Set"
+
+msgid "Fecha de Creación"
+msgstr "Creation Date"
+
+msgid "¡Ha Fallado la Conexión al Servidor LDAP!"
+msgstr "Connection to LDAP Server Failed"
+
+msgid "Los cambios no se han efectuado"
+msgstr "Changes have not performed"
+
+msgid "Nombre Común"
+msgstr "Common Name"
+
+msgid "Propiedades del dominio"
+msgstr "Domain property"
+
+msgid "Puede editar Cuentas"
+msgstr "Can edit Accounts"
+
+msgid "Reenvío Activo"
+msgstr "Forward Active"
+
+msgid "Teléfono de Casa"
+msgstr "Home Phone"
+
+msgid "Todo"
+msgstr "All"
+
+msgid "Todos los dominios"
+msgstr "All domains"
+
+msgid "Usuario o Contraseña no válido."
+msgstr "Login Username or Password not valid."
+
+msgid "Max Cuota"
+msgstr "Max Quota"
+
+msgid "Móvil"
+msgstr "Mobile"
+
+msgid "Modificar cuenta"
+msgstr "Modify account"
+
+msgid "Modificar dominio"
+msgstr "Modify domain"
+
+msgid "Nombre"
+msgstr "Name"
+
+msgid "Nombre no válido"
+msgstr "Name is not valid"
+
+msgid "Pager"
+msgstr "Paginador"
+
+msgid "Contraseña"
+msgstr "Password"
+
+msgid "¡Contraseña demasiado corta!"
+msgstr "Password too short!"
+
+msgid "¡Las contraseñas no coinciden!"
+msgstr "Passwords don't match!"
+
+msgid "No se permiten caracteres especiales en la dirección de correo"
+msgstr "Special Characters not Allowed in E-mail address"
+
+msgid "Apellidos"
+msgstr "Surname"
+
+msgid "Apellidos no válidos"
+msgstr "Surname is not valid"
+
+msgid ""
+"La sintaxis no es válida, o se han encontrado caracteres especiales en el "
+"nombre del dominio"
+msgstr "Syntax not valid or special chars found in domain name"
+
+msgid "Teléfono"
+msgstr "Telephone"
+
+msgid "Vacaciones"
+msgstr "Vacation"
+
+msgid "Fin de Vacaciones"
+msgstr "Vacation End"
+
+msgid "Reenvío de Vacaciones"
+msgstr "Vacation Forward"
+
+msgid "Alerta: "
+msgstr "Warning: "
+
+msgid "Acceso Web"
+msgstr "Web Access"
+
+msgid "SI"
+msgstr "YES"
+
+msgid ""
+"Serás redirigido a una nueva página en los próximos segundos.<br/> Si esto "
+"no ocurre por favor sigue el enlace:"
+msgstr ""
+"You will be automatically redirected to a new page within a few seconds.<br/"
+"> If this does not happen, please follow the link:"
+
+msgid "¡cuenta %s no actualizada!"
+msgstr "account %s not updated!"
+
+msgid "haz click aquíc"
+msgstr "lick here"
+
+msgid "¡dominio %s no añadido!"
+msgstr "domain %s not added!"
+
+msgid "¡por favor, inserta un destino para el reenvío o desactiva el Reenvío!"
+msgstr "please, insert a forward destination or disable Forward!"
+
+msgid "Nombre de usuario"
+msgstr "Username"
+
+msgid "Usuario"
+msgstr "User"
+
+msgid "Usuarios"
+msgstr "Users"
+
+msgid "Notificaciones"
+msgstr "Notifications"
+
+msgid "VPN"
+msgstr "VPN"
+
+msgid "Libre"
+msgstr "Free"
+
+msgid "Libres"
+msgstr "Free"
+
+msgid "de"
+msgstr "of"
+
+msgid "Sistema Operativo"
+msgstr "Operating System"
+
+msgid "Espacio en disco"
+msgstr "Space in disk"
+
+msgid "Tiempo de actividad del servidor"
+msgstr "Server UpTime"
+
+msgid "Datos del servidor"
+msgstr "Server details"
+
+msgid "Dominio %s eliminado"
+msgstr "Domain %s removed"
+
+msgid "Dominios"
+msgstr "Domains"
+
+msgid "Detalles"
+msgstr "Details"
+
+msgid "Editar usuario"
+msgstr "Edit User"
+
+msgid "Editar usuario %s"
+msgstr "Edit User %S"
+
+msgid "Correo electrónico"
+msgstr "Email"
+
+msgid "Cuenta VPN"
+msgstr "VPN Account"
+
+msgid "Guardar"
+msgstr "Save"
+
+msgid "Cuenta eliminada con éxito"
+msgstr "Account successfully removed"

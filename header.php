@@ -1,4 +1,19 @@
-<?php require_once 'site-config.php';?>
+<?php require_once 'site-config.php';
+require_once 'classes/class.locale.php';
+
+/////////////////////////////////////////////////////////////////
+//// Set language and locale
+$locale = new CpanelLocale();
+
+if (isset($_POST["language"]))
+    $locale->change_language($_POST["language"]);
+    setlocale(LC_ALL, $locale->get_language());
+    bindtextdomain("messages", "locales");
+    textdomain("messages");
+    bind_textdomain_codeset("messages","UTF-8");
+
+/////////////////////////////////////////////////////////////////
+?>
 <!DOCTYPE html>
 <html class="no-js">
     
@@ -20,7 +35,7 @@
         <!--<link href="css/custom.css" rel="stylesheet">-->
 	<link href="css/client.css" rel="stylesheet">
         <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-	<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,300,700' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Roboto+Condensed:400,300,700' rel='stylesheet' type='text/css'>
         <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
             <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -33,23 +48,24 @@
         <div class="navbar">
             <div class="navbar-inner">
                 <div class="container-fluid">
-				<div class="navbar-header">
-                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> <span class="icon-bar"></span>
-                     <span class="icon-bar"></span>
-                     <span class="icon-bar"></span>
-                    </a>
-  						<a class="navbar-brand brand" href="/cpanel">
+                    <div class="navbar-header">
+                          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> <span class="icon-bar"></span>
+                           <span class="icon-bar"></span>
+                           <span class="icon-bar"></span>
+                          </a>
+                          <a class="navbar-brand brand" href="/cpanel">
 
-						<img src="images/logo_maadix.png" tilte="Cpanel Home" alt="Cpanel" class"logo"/><h3>Cpanel</h3>
-						</a>
-				</div><!-- navbar-header-->
+                            <img src="images/logo_maadix.png" tilte="Cpanel Home" alt="Cpanel" class"logo"/><h3>Cpanel</h3>
+                          </a>
+
+                    </div><!-- navbar-header-->
                    <?php $permissions= isset($_SESSION["login"]["level"])?$_SESSION["login"]["level"]:"";
                    if (!empty($permissions)){ ?>
                     <div class="nav-collapse collapse">
                         <ul class="nav pull-right">
                             <li class="dropdown">
                                 <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-user"></i> 
-								<?php echo $_SESSION["login"]["username"] ?> <i class="caret"></i>
+                                    <?php echo $_SESSION["login"]["username"] ?> <i class="caret"></i>
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li>
@@ -61,43 +77,45 @@
                                 </ul>
                             </li>
                         </ul>
+                        <?php if(isset($_SESSION["login"]["status"]) && $_SESSION["login"]["status"] == "active"){ ?>
                         <ul class="nav">
                             <li>
-							<a href="/<?php echo BASE_PATH;?>">Detalles</a>
+                              <a href="/<?php echo BASE_PATH;?>"><?php printf(_("Detalles"));?></a>
                             </li>
-							<?php if (is_dir('/var/www/html/ownclowd')){?>
-                            <li>
-                                <a href="https://<?php echo $_SERVER['HTTP_HOST'];?>/owncloud">Owncloud</a>
-							</li>
-							<?php }?>
-							<?php if ($permissions == '10') {?>
-							<li><a href="/<?php echo BASE_PATH;?>/edomains.php">Dominios </a></li>
-							<?php } ?>
 
-							<li><a href="/<?php echo BASE_PATH;?>/mails.php">Email</a></li>
-                                                        <li><a href="/<?php echo BASE_PATH;?>/usuarios.php">Usuarios</a></li>
+                            <?php if (is_dir('/var/www/html/ownclowd')){?>
+                              <li>
+                                <a href="https://<?php echo $_SERVER['HTTP_HOST'];?>/owncloud"><?php printf(_("Owncloud"));?></a>
+                              </li>
+                            <?php }?>
+
+                            <?php if ($permissions == '10') {?>
+                              <li><a href="/<?php echo BASE_PATH;?>/edomains.php"><?php printf(_("Dominios"));?></a></li>
+                            <?php } ?>
+
+                            <li><a href="/<?php echo BASE_PATH;?>/mails.php"><?php printf(_("Email"));?></a></li>
+                            <li><a href="/<?php echo BASE_PATH;?>/usuarios.php"><?php printf(_("Usuarios"));?></a></li>
 
                             <?php if ($permissions >= '4') {?>
-							<li><a href="/<?php echo BASE_PATH;?>/notificaciones.php">Notificaciones</a></li>
-							<?php } ?>	
-							<li><a href="/<?php echo BASE_PATH;?>/vpn.php">VPN</a></li>
+                            <li><a href="/<?php echo BASE_PATH;?>/notificaciones.php"><?php printf(_("Notificaciones"));?></a></li>
+                            <?php } ?>	
+                            <li><a href="/<?php echo BASE_PATH;?>/vpn.php"><?php printf(_("VPN"));?></a></li>
 
                             <li class="dropdown">
                                 <a href="#" data-toggle="dropdown" class="dropdown-toggle">Tutoriales <b class="caret"></b>
                                 </a>
                                 <ul class="dropdown-menu" id="menu1">
-                                    <li><a href="#" target="_blank">Owncloud</a></li>
-                                    <li><a href="http://docs.maadix.net/dominios/" target="_blank">Dominios</a></li>
-                                    <li><a href="http://docs.maadix.net/email" target="_blank">Emails</a></li>
-                                    <li><a href="http://docs.maadix.net/vpn/" target="_blank">VPN</a></li>
-                                    <li><a href="http://docs.maadix.net/dominios/" target="_blank">Dominios</a></li>
+                                <li><a href="#" target="_blank"><?php printf(_("Owncloud"));?></a></li>
+                                <li><a href="http://docs.maadix.net/dominios/" target="_blank"><?php printf(_("Dominios"));?></a></li>
+                                <li><a href="http://docs.maadix.net/email" target="_blank"><?php printf(_("Email"));?></a></li>
+                                <li><a href="http://docs.maadix.net/vpn/" target="_blank"><?php printf(_("VPN"));?></a></li>
                                 </ul>
                            </li>
-			</ul>
+                        </ul>
+                      <?php } ?>
 			</div><!--nav-collapse-->
                     <?php } ?>
 		</div><!--container-fluid-->
 	</div><!--navbar inner-->
 </div><!--navbar fixed-->
 <div id="main" class="container-fluid">
-
