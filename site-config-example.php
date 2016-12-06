@@ -45,7 +45,7 @@ define ("BASE_PATH" , basename(__DIR__));
  # Get admin name dinamically throug a ESXTERNAL bind connection
  # Ldap need to be configured in oreder to allow 
  # anonymous bind connection for apache
- # If you don't want this kind od configuratios for your ldaps
+ # If you don't want this kind od configuratiosn for your ldap
  # server define BINDDN manually...as eg: cn=admin,dc=example,dc=tld 
 
 ## Get the admin bame
@@ -58,20 +58,11 @@ define ("BASE_PATH" , basename(__DIR__));
 
       //buscamos cualquier entrada
       $filter="(&(objectclass=extensibleObject)(!(cn=uidNext)))";
-      //de las entradas solo queremos cn y mail
+      //de las entradas solo queremos cn 
       $justthese = array("cn");
-
-      //como usuario anonimo solo tenemos acceso al primer nivel de la base de
-      //datos, asi que solo tenemos acceso al dn de admin. y solo tenemos acceso
-      //a su atributo cn e email.
 
       $sr=ldap_search($ds, $base, $filter, $justthese);
       $info = ldap_get_entries($ds, $sr);
-      /*echo $info["count"]." entradas devueltas\n";
-      echo "<pre>";
-      print_r ($info);
-      echo "</pre>";
-      */
       $adminname = $info[0]["dn"];
       return $adminname;
       }  
