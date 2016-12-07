@@ -67,7 +67,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
       $info['homedirectory']='none';
   }
   if (isset($_POST['vpn'])){
-      $info['authorizedservice'][$c]='vpn';
+      $info['authorizedservice'][$c]='openvpn';
       $c++;
 
   }

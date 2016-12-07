@@ -55,7 +55,7 @@ if(isset($_POST['adduser'])){
           $c++;
         }
         if (isset($_POST['vpn'])){
-          $entry['authorizedservice'][$c]='vpn';
+          $entry['authorizedservice'][$c]='openvpn';
           //$entry['homedirectory']='none';
           $c++;
         }

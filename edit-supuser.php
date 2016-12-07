@@ -56,7 +56,7 @@ if (isset($_POST['updateuser'])){
 
   if (isset($_POST['vpn'])){
       $info['authorizedservice'][0]='sshd';
-      $info['authorizedservice'][1]='vpn';
+      $info['authorizedservice'][1]='openvpn';
   }else {
     $info['authorizedservice']='sshd';
   }
