@@ -74,7 +74,8 @@ if(isset($_POST['chpsw'])){
    	$modifydn='uid='. $_POST['userid']. ',' . $ldaptree;
  	$info['userpassword'][0]=ldap_password_hash($_POST['changepsw'],'md5crypt');
         $info['shadowlastchange'][0] = floor(time()/86400);
-	$Ldap->modifyRecord($ldapconn, $modifydn, $info );
+	$chpass=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
+        $message=$chpass['message'];
 }
 
 //delete user
