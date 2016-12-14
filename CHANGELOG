@@ -4,6 +4,7 @@
 - Encryption for user password session
 - Localization (English and Spanish)
 - Anonymous bind for apache for first level
+- Bootstrao modal for confirmation on delete items
 
 ### Changed
 - Ldap tree changed. All users are in ou=People

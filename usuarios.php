@@ -83,6 +83,8 @@ if(isset($_POST['deluser'])){
     $deletedn='uid='. $_POST['userid']. ',' . $ldaptree;
     $del_user=$Ldap->deleteRecord($ldapconn, $deletedn, $recursive = false);
     $message=$del_user['message'];
+### @TODO: if deleted user is webadmin for some domain, we need to update
+    # the adminID for this domain and set to default user
 }
 
 if ($ldapbind) {
@@ -111,7 +113,7 @@ $firstuid_availabe=system($commuid);*/?>
                 <input id="surname" type="text" name="surname" />
 
                 <label for="usermail"><?php printf(_("Correo electrónico"));?> *</label>
-                <p class="little">Puedes insertar un correo electrónico externo o elegir una entre las cuentas creadas en el servidor</p>
+                <p class="little"><?php printf(_("Puedes insertar un correo electrónico externo o elegir una entre las cuentas creadas en el servidor"));?></p>
                 <input id="usermail" type="mail" name="usermail" required />  
                 <?php $resultmail = $Ldap->search($ldapconn,LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
                 $mailcount = $resultmail["count"];
@@ -172,7 +174,7 @@ $firstuid_availabe=system($commuid);*/?>
                 $username = $resultsudo[$i]["uid"][0];
                 $services=$resultsudo[$i]["authorizedservice"];
                 $issftp=(in_array('sshd',$services)&& (!empty ($services)))?'<i class="fa fa-check-circle-o icon checkok"></i>':'<i class="fa fa-exclamation-triangle icon checkko"></i>';
-                $isvpn=(in_array('vpn',$services)&& (!empty ($services)))?'<i class="fa fa-check-circle-o icon checkok"></i>':'<i class="fa fa-exclamation-triangle icon checkko"></i>';
+                $isvpn=(in_array('openvpn',$services)&& (!empty ($services)))?'<i class="fa fa-check-circle-o icon checkok"></i>':'<i class="fa fa-exclamation-triangle icon checkko"></i>';
                 echo "<tr>";
                 echo "<td>";
                 echo $username;
@@ -203,7 +205,7 @@ $firstuid_availabe=system($commuid);*/?>
 		$username = $result[$i]["uid"][0];
                 $services=(isset($result[$i]["authorizedservice"]))?$result[$i]["authorizedservice"]:array();
                 $issftp=(in_array('sshd',$services) && (is_array($services)))?'<i class="fa fa-check-circle-o icon checkok"></i>':'<i class="fa fa-exclamation-triangle icon checkko"></i>';
-                $isvpn=(in_array('vpn',$services)&& (is_array($services)))?'<i class="fa fa-check-circle-o icon checkok"></i>':'<i class="fa fa-exclamation-triangle icon checkko"></i>';
+                $isvpn=(in_array('openvpn',$services)&& (is_array($services)))?'<i class="fa fa-check-circle-o icon checkok"></i>':'<i class="fa fa-exclamation-triangle icon checkko"></i>';
 		echo "<tr>";
 		echo "<td>";
 		echo $username;
@@ -224,7 +226,8 @@ $firstuid_availabe=system($commuid);*/?>
                 echo "</td>";
                 echo "<td>";
                 $deletestring=sprintf(_('¿Quieres borrar la cuenta para el usuario %s? Esto eliminará su acceso al servidor'),$username);
-                echo "<form action='' method='POST' class='form-table'><input type='hidden' name='userid' value='". $username ."' /> <input type='submit' name='deluser' value='". sprintf(_('Borrar')) ."' class='btn btn-small btn-primary' onclick=\"return confirm('" . $deletestring ."');\" /></form>";
+//                echo "<form action='' method='POST' class='form-table'><input type='hidden' name='userid' value='". $username ."' /> <input type='submit' name='deluser' value='". sprintf(_('Borrar')) ."' class='btn btn-small btn-primary' onclick=\"return confirm('" . $deletestring ."');\" /></form>";
+                echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#userModal" data-user="' . $username .  '">' . sprintf (_('Eliminar')) . '</button>';
                 echo "</td>";
 
 		echo "</tr>";
@@ -233,6 +236,24 @@ $firstuid_availabe=system($commuid);*/?>
             ?>
 		</tbody>
 	</table>
+
+<div class="bd-example">
+  <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+           <h4 class="modal-title" id="userModalLabel"></h4>
+        </div>
+        <div class="modal-body" id="modal-body">
+        </div>
+      </div><!--modal-content-->
+    </div><!--modal-dialog-->
+  </div><!--exampleModal-->
+</div><!--bd-example-->
+
 </div><!--admin-content-->
 <?php ldap_close($ldapconn);
 require_once('footer.php');?>

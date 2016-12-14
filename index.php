@@ -30,7 +30,7 @@ $uptime = $uptime[0].', '.$uptime[1];
 echo '<p><b>'. sprintf(_("Tiempo de actividad del servidor")). ':</b> '.$uptime .'</p>';
 echo '<p><b>'. sprintf(_("Espacio en disco")). ':</b></p>';
 echo '<div class="disk">';
-echo '<div class="used" style="width: ' . round($barWidth) .'px">'. $diskStatus->usedSpace() . '%&nbsp;</div>';
+echo '<div id="disk-used" class="used" data-width="' . round($barWidth) .'px">'. $diskStatus->usedSpace() . '%&nbsp;</div>';
 echo '</div>';
 echo sprintf(_("Libres")).': ' .$freeSpace .' ('.sprintf(_("de")). $totalSpace . ' )</div>';
 ?>

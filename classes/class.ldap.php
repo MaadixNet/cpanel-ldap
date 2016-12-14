@@ -29,7 +29,7 @@ class LDAP{
  
     } 
     //Add ou=vnp firts time if not exixt . check it in vpn.php
-    function addVpnObject ($ldapconn){
+    /*function addVpnObject ($ldapconn){
         //Only admin can add vpn accounts. Check level
         if($_SESSION["login"]["level"] == '10'){				
             $ldapbind=$this->bind($ldapconn, BINDDN ,$_SESSION["login"]["password"]);
@@ -39,11 +39,13 @@ class LDAP{
             ldap_add($ldapconn, $adddn, $info);
         }
       }
+     */
     //Add ou=senderemail firts time if not exixt . check it in notificaciones.php
     function addSenderObject ($ldapconn){
         //Only admin can add vpn accounts. Check level
         if($_SESSION["login"]["level"] == '10'){
-          $ldapbind=$this->bind($ldapconn, BINDDN ,$_SESSION["login"]["password"]);
+          $password=$this->decrypt_psw();
+          $ldapbind=$this->bind($ldapconn, BINDDN ,$password);
           $adddn='ou=sendermail,' . SUFFIX;
           $info['objectclass'][0]='organizationalUnit';
           $info['objectclass'][1]='top';
@@ -52,7 +54,7 @@ class LDAP{
         }
     }
 
-      function search($ldapconn,$searchdn, $filter){
+    function search($ldapconn,$searchdn, $filter){
           $sr = ldap_search($ldapconn, $searchdn, $filter );
  
           if ($sr) {
@@ -151,6 +153,8 @@ class LDAP{
     }
 
 	##User Session functions######
+        # Get fro Phamm code
+        # With encryption for pasword addeed#
 	#############################
 	
 	function login($login_username,$login_password){
@@ -221,7 +225,7 @@ class LDAP{
             $_SESSION["login"]["username"] = strtolower($proposed["login_username"]);
 
             $_SESSION["login"]["level"] = $proposed["level"];
-            $_SESSION["login"]["password"] = $login_password; // @todo crypt it
+            //$_SESSION["login"]["password"] = $login_password; // @todo crypt it
 
             # Create Key for encrypt password
             $key = OneTimePadCreate ($length=100);
@@ -581,8 +585,11 @@ class LDAP{
 }
 
 
-
-
+  function get_sudo_user(){
+    $filter="(&(objectClass=person)(uid=*)(gidnumber=27))";
+    $sudouser=$this->search($this->connection,LDAP_PEOPLE, $filter);
+    return $sudouser[0]['uid'][0];
+   } 
 
 
 
@@ -596,7 +603,6 @@ class LDAP{
       return $psw;
 
   } 
-
 
 
 

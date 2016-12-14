@@ -207,7 +207,7 @@ html, body {
   height: 4em;
 }
 
-#change, #hidden {
+#change, #hidden ,#new_user{
     display: none;
 }
 

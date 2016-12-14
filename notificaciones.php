@@ -34,15 +34,6 @@ if ($ldapconn){
     #$modifydn='mail=' . $mailaccount . ',vd='.$domain.','.LDAP_BASE;
     $entry["cn"] =$modifydn; 
     ldap_mod_replace($ldapconn,'ou=sendermail,' . SUFFIX, $entry);
-/*$to = "sergio@wwb.cc";
-$subject = "Test mail";
-$message = "Haciendo prueba, porque en realidad no me funciona...lo que te dije que se envió al gmail no era verdad. era esto to=<nobody@agent.wwb.cc>, orig_to=<root@agent.wwb.cc>, Así que pruebo con tu mail";
-
-$headers = "From: " .  $modifydn;
-$headers .= "\r\nX-Mailer: PHP/".phpversion();
-
-mail($to,$subject,$message,$headers);
- */
       }
   
 
@@ -50,7 +41,7 @@ mail($to,$subject,$message,$headers);
   
 //Check if a custom mail has been set
 if ($ldapbind) {
-  $mailsenderou= $Ldap->search($ldapconn,'ou=sendermail,dc=example,dc=tld','(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
+  $mailsenderou= $Ldap->search($ldapconn,'ou=sendermail,' . SUFFIX ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
 }
 //Check if object senderemail existe. if not create it
 if(!$mailsenderou){

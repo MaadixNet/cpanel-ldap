@@ -215,12 +215,12 @@ if ($ldapconn){
 			$queryvar=$_GET['domain']?$_GET['domain'] :'';
 			$querymess=($queryvar)?'para el dominio ' . $queryvar:'';
 			echo '<h4 class="tone">Cuentas de correo activadas' . $querymess. '</h4>';?>
-    		<span><button class="togglevisibility btn btn-small btn-secondary">Añadir cuenta</button>  </span>
+                        <span><button class="togglevisibility btn btn-small btn-secondary"><?php printf(_("Añadir cuenta"));?></button>  </span>
     		<div class="clear"></div>
     		<div id="change">
 
 			<?php if($result["count"] == 0){
-				echo '<h2>Para poder crear cuentas de correos tienes que activar antes el dominio correspondiente en la <a href="edomains.php">página de administración de dominios</h2>';
+				echo '<h2>Para poder crear cuentas de correos tienes que activar antes el dominio correspondiente en la <a href="view-domains.php">página de administración de dominios</h2>';
 			} else { ?>
    	 			<form autocomplete="off" action="#" method="POST" class="form-signin">
 				<hr>
@@ -239,9 +239,9 @@ if ($ldapconn){
              		echo '</select></span>';
             	};?>
 
-				<label for="password">Contraseña: </label><input id="password" type="password" name="password" required />
-				<label for="givenname">Nombre: </label><input id="givenname" type="text" name="givenname" required />
-				<label for="surname">Apellido</label><input id="surname" type="text" name="surname" required />
+                        <label for="password"><?php printf(_("Contraseña"));?> </label><input id="password" type="password" name="password" required />
+                          <label for="givenname"><?php printf(_("Nombre"));?> </label><input id="givenname" type="text" name="givenname" required />
+                          <label for="surname"><?php printf(_("Apellidos"));?></label><input id="surname" type="text" name="surname" required />
 				<br>
             	<input type="submit" name="adduser" value="Guardar" class="btn btn-small btn-primary" />
             </form>
@@ -293,7 +293,8 @@ if ($ldapconn){
                 echo "</td>";
 				if($permissions > 2) { //a normal user cannot deñlete his own account
             	echo "<td>";
-            	echo "<form action='#' method='POST' class='form-table'><input type='hidden' name='userid' value='".  $resultmail[$c]['mail'][0]."' /><input type='hidden' name='domain' value='" . $domain ."' /> <input type='submit' onclick=\"return confirm('Quieres borrar la cuenta " . $resultmail[$c]["mail"][0] ." y  todos sus mensajes?');\" name='deluser' value='Borrar' class='btn btn-small btn-primary' /></form>";
+            //	echo "<form action='#' method='POST' class='form-table'><input type='hidden' name='userid' value='".  $resultmail[$c]['mail'][0]."' /><input type='hidden' name='domain' value='" . $domain ."' /> <input type='submit' onclick=\"return confirm('Quieres borrar la cuenta " . $resultmail[$c]["mail"][0] ." y  todos sus mensajes?');\" name='deluser' value='Borrar' class='btn btn-small btn-primary' /></form>";
+                echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-domain="' . $domain .'" data-language="' . $_SESSION["language"] .'" data-target="#mailModal" data-email="' . $resultmail[$c]["mail"][0] .  '">' . sprintf (_('Eliminar')) . '</button>';
             	echo "</td>";
 				}//end permissions >2
 				echo '</tr>';
@@ -308,6 +309,23 @@ if ($ldapconn){
 
             </div><!--ineer-->
         </div><!--col-sm-8-->
+<!-- Modal -->
+<div class="bd-example">
+  <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+           <h4 class="modal-title" id="mailModalLabel"></h4>
+        </div>
+        <div class="modal-body" id="modal-body">
+        </div>
+      </div><!--modal-content-->
+    </div><!--modal-dialog-->
+  </div><!--exampleModal-->
+</div><!--bd-example-->
 
 	</div><!--row-->
 <?php

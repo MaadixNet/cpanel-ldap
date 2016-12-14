@@ -192,7 +192,7 @@ if ($ldapbind) {
             <label for="webmaster">Webmaster (Administrador sito web) </label><p class="little">Por cada dominio que actives en este panel se creará una carpeta en la que puedes subir tu aplicación web, accesible desde un navegador. Pudedes permitir que un usuario concreto tenga acceso a la carpeta para que pueda editar sus archivos. Puedes elegir un usuario ya creado o crear uno nuevo. Si no asignas ningún usuario solo podrá editar los archivos el usuario por defecto del sistema, tanto por ssh como por sftp</p>
              <?php 
             $ldaptree    = LDAP_PEOPLE;
-            $filter="(&(objectClass=person)(uid=*)(authorizedService=sshd))";
+            $filter="(&(objectClass=person)(uid=*)(authorizedService=sshd)(!(gidnumber=27)))";
             $filtersudo="(&(objectClass=person)(uid=*)(gidnumber=27))";
             $allusers=$Ldap->search($ldapconn,$ldaptree, $filter);
             $sudouser=$Ldap->search($ldapconn,$ldaptree, $filtersudo);
@@ -202,8 +202,9 @@ if ($ldapbind) {
             $sudo_username=$sudouser[0]["uid"][0];
 
             //default webmaster will be user with sudo (uid 10000);
+            echo '<label for="seluser">' . sprintf (_("Asignar administrador web")) . '</label>';
             echo '<select id="seluser" name="seluser">';
-            echo '<option value="' . $sudo_username .'">Seleccionar Administrador web</option>';
+            //echo '<option value="' . $sudo_username .'">Seleccionar Administrador web</option>';
             echo '<option value="' . $sudo_username .'">' . $sudo_username .' - Usuario por defecto</option>';
             echo '<option value="newuser">Crear nuevo usuario</option>';
             for ($c=0; $c<$allusers["count"]; $c++) {
@@ -211,7 +212,7 @@ if ($ldapbind) {
             echo '<option value="' . $allusers[$c]["uid"][0] .'">' . $allusers[$c]["uid"][0] . '</option>';
                   }
             echo '</select>';
-            echo '<div class="newuser" id="new_user" style="display:none;">';
+            echo '<div class="newuser" id="new_user">';
             echo '<label for="new_username">Nombre de usuario</label>';
             echo '<input id="new_username" type="text" name="new_username" />';
             echo '<label for="webmaster_password">Contraseña: </label><input id="webmaster_password" type="password" name="webmaster_password" />';
@@ -293,8 +294,10 @@ if ($ldapbind) {
         echo "</td>";
         if($_SESSION["login"]["level"] == '10') {
             echo "<td>";
-            echo "<form action='' method='POST' class='form-table'><input type='hidden' name='domainid' value='". $domain."' /> <input type='submit' name='deldomain' value='Eliminar' class='btn btn-small btn-primary'  onclick=\"return confirm('Quieres borrar el dominio " . $domain ."? Si Aceptas borrarás todo el contenido relacionado con el mismo:  incluidas todas las cuentas de correo electrónico creadas para este dominio así como su contenido (bandeja de euntrada,bandeja de salida, borradores, etc etc)');\" /></form>";
-			/*echo "<form action='#' method='POST' class='form-table'><input type='hidden' name='domainid' value='". $domain."' /> <input type='submit' name='deldomain' value='Eliminar' class='btn btn-small btn-primary confirm' onclick=\"return alertify.confirm('Confirm Message', function(){ alertify.success('Ok') }, function(){ alertify.error('Cancel')})\"  /></form>";	*/
+/*            echo "<form action='' autocomplete='off' method='POST' class='form-table' id='del-domain'><input type='hidden' name='domainid' value='". $domain."' /> <input data-domain='". $domain."' data-toggle='modal' data-target='#myModal' type='submit' name='deldomain' value='Eliminar' class='btn btn-small btn-primary confirm' /></form>";*/
+           // echo "<button id='del-domain' type='button' class='btn btn-info btn-lg' data-domain='". $domain."' data-toggle='modal' data-target='#myModal'>Open Modal</button>";
+           // echo "<a data-toggle='modal' href='proc/confirm-deldomain.php?domain=". $domain . "' data-target='#myModal'>Eliminar</a>";
+            echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-domain="' . $domain .  '">' . sprintf (_('Eliminar')) . '</button>';
           echo "</td>";
         }
 
@@ -307,6 +310,23 @@ if ($ldapbind) {
     </table>
   </div><!--ineer-->
 
+<!-- Modal -->
+<div class="bd-example">
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="exampleModalLabel"></h4>
+        </div>
+        <div class="modal-body" id="modal-body">
+        </div>
+      </div><!--modal-content-->
+    </div><!--modal-dialog-->
+  </div><!--exampleModal-->
+</div><!--bd-example-->
 </div><!--row-->
 <?php
 ?>
@@ -314,12 +334,4 @@ if ($ldapbind) {
 <?php 
   ldap_close($ldapconn);
   require_once('footer.php');?>
-<script type="text/javascript">
-    $(function() {
-        $('#seluser').change(function(){
-            $('#new_user').hide();
-            $('.' + $(this).val()).show();
-        });
-    });
-</script>
 

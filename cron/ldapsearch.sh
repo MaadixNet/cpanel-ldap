@@ -6,10 +6,9 @@
 PATH=/sbin:/bin:/usr/bin
 
 # Set ldap variables
-
-ldapbase=$(awk -F\" '/LDAP_BASE/{print $(NF-1)}'  ../site-config.php)
-suffix=$(awk -F\" '/SUFFIX/{print $(NF-1)}'  ../site-config.php)
-
+suffix="dc=example,dc=tld"
+ldapbase="o=hosting,"$suffix
+peopletree="ou=sshd,ou=People,"$suffix
 delete="0"
 checkfile="/tmp/checkfile.txt"
 
@@ -63,6 +62,7 @@ fi
 PATH=/sbin:/bin:/usr/bin
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo "directory is " $dir;
+echo "suffix is " $suffix;
 cd $dir
 has_new_domains=false #No new domains by default = do not reload the apache config.
 vhroot='/etc/apache2/ldap-enabled'
@@ -77,7 +77,7 @@ appsWebRoot='/usr/share'
 #chek all monted point
 mountresult=()
 #The default user which is sudo (in our configurations is usually user 10000
-defaultsudouser=$(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "$suffix" "gidNumber=27" | grep -o -P "(?<=uid: ).*")
+defaultsudouser=$(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "$peopletree" "(&(objectClass=person)(gidnumber=27))" | grep -o -P "(?<=uid: ).*")
 
 while read domain 
 do
@@ -108,6 +108,8 @@ do
         </VirtualHost>" > $vhroot/"$domain".conf
 
         mkdir $documenRoot/$domain
+        ## TODO add a check ...if user does not exists
+        # te owner will be the default user
         chown -R $webmaster:www-data $documenRoot/$domain
         chmod 755 $documenRoot/$domain
         #chmod g+s $documenRoot/$domain

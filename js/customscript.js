@@ -1,6 +1,6 @@
-$(document).ready(function() {
+/*$(document).ready(function() {
 
-    $('.mobileSlider').flexslider({
+   $('.mobileSlider').flexslider({
         animation: "slide",
         slideshowSpeed: 3000,
         controlNav: false,
@@ -58,7 +58,7 @@ $(document).ready(function() {
     };
         
 });
-
+*/
 $(document).ready(function() {
   var li=$("h4 a.active").closest("li");
       li.find(".sub-menu").slideToggle();
@@ -88,6 +88,88 @@ $(document).ready(function() {
       $(this).next(".sub-form").slideToggle();
     return false;
   }); 
+
+/* set language 
+ * In footer.php */
+
+  $(".set-language").change(function() {
+      $("#lang").submit();
+    });
+
+  /* select user
+   * Used in edomain.php
+   */
+
+  $('#seluser').change(function(){
+      $('#new_user').hide();
+      $('.' + $(this).val()).show();
+  });
+
+  /*Confrm button on delete Domain
+   * in page edomain.php
+   * 
+   */
+
+$('#exampleModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget); // Button that triggered the modal
+  var domain= button.data('domain'); // Extract info from data-* attributes
+  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+  var modal = $(this);
+  modal.find('.modal-title').text( domain);
+  var body=modal.find('.modal-body');
+            $.ajax({
+
+                type : 'POST',
+                url  : 'proc/confirm-deldomain.php',
+                data : {domain: domain},
+                success : function(data)
+                          {
+                            body.html(data);
+                          }
+                });
+})
+
+$('#mailModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget); // Button that triggered the modal
+  var domain =  button.data('domain');
+  var mail= button.data('email'); // Extract info from data-* attributes
+  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+  var modal = $(this);
+  modal.find('.modal-title').text( mail );
+  var body=modal.find('.modal-body');
+            $.ajax({
+
+                type : 'POST',
+                url  : 'proc/confirm-delmail.php',
+                data : {mail: mail, domain:domain},
+                success : function(data)
+                          { 
+                            body.html(data);
+                          }
+                });
+})
+
+$('#userModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget); // Button that triggered the modal
+  var user = button.data('user'); // Extract info from data-* attributes
+  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+  var modal = $(this);
+  modal.find('.modal-title').text( user );
+  var body=modal.find('.modal-body');
+            $.ajax({
+
+                type : 'POST',
+                url  : 'proc/confirm-deluser.php',
+                data : {user: user},
+                success : function(data)
+                          {
+                            body.html(data);
+                          }
+                });
+})
 
 /* Check password match*/
     $("#pswd2").blur(function()
@@ -122,7 +204,6 @@ $(document).ready(function() {
     {
         /* minim 3 characters*/
         var name = $(this).val();
-        console.log(name);
             $("#result").html('<i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i>');
 
             /*$.post("username-check.php", $("#reg-form").serialize())
@@ -138,6 +219,7 @@ $(document).ready(function() {
                 success : function(data)
                           {
                              $("#result").html(data);
+                            
                             console.log(data);
                           }
                 });
@@ -158,5 +240,12 @@ $(document).ready(function() {
 
 
 });
-
-
+//Only used in index.php
+$(document).ready(function() {
+    //in index.php get used space bar width from data-width
+    $('.used').each(function(){
+    var bar= $(this);
+    var barwidth=bar.data('width');
+    bar.css('width',barwidth);
+    });
+});

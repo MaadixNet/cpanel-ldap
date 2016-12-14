@@ -45,8 +45,8 @@ function locale_select()
     //global $locale;
     global $supported_languages;
 
-    $tag = '<form method="post" action="" name="lang">';
-    $tag .= '<select class="form-control" name="language" onchange="document.lang.submit()">'."\n";
+    $tag = '<form method="post" action="" id="lang" name="lang">';
+    $tag .= '<select class="form-control set-language" name="language">'."\n";
 
     foreach ($supported_languages as $l_k => $l_v)
     {   
