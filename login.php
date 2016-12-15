@@ -7,9 +7,29 @@ session_start();
 require_once 'classes/class.ldap.php';
 $user_home = new LDAP();
 $message="";
+
+$permission = $_SESSION["login"]["level"];
+
+        switch ($permission) :
+        case "10" :
+          $url='index.php';
+        break;
+        case "4" :
+          $url='mails.php';
+        break;
+        case "2":
+          $url='edit-mail.php';
+        break;
+
+        default:
+        break;
+        endswitch;
+
+
+
 if($user_home->is_logged_in())
 {
-        $user_home->redirect('index.php');
+      $user_home->redirect($url);
 }
 
 $result=(isset($_GET["chpsw"]))?$_GET["chpsw"]:'';
@@ -47,7 +67,8 @@ if(isset($_POST['user']) && isset($_POST['password'])){
 
         } else {
 
-            $user_home->redirect('index.php');
+            $user_home->redirect($url);
+
 
         }
 

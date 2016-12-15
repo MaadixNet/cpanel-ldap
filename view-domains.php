@@ -27,7 +27,7 @@ if ($ldapconn){
 		$filter="(vd=*)";
 	break;
         case "4" :
-        $binddn=LDAP_BASE;
+                $binddn=LDAP_BASE;
 		$who=$_SESSION["phamm"]["domain"];
 		$filter="(vd=" . $who .")";
 		
@@ -145,6 +145,31 @@ if(isset($_POST['deldomain'])){
 
 }
 
+if (isset($_POST["chadmin"])){
+    $webmaster=$_POST['seladmin'];
+    $domainid = $_POST['domainid'];
+    $entry["adminid"] = $webmaster;    
+    $modifydn="vd=" . $domainid ."," . LDAP_BASE;
+    $chadmin = $Ldap->modifyRecord($ldapconn, $modifydn, $entry );
+    if ($chadmin){
+      $message="
+        <div class='alert alert-success'>
+        <button class='close' data-dismiss='alert'>&times;</button>
+        <strong>" . sprintf(_("Cambio registrado con éxito")) . "</strong>
+        </div>
+        ";
+
+    } else {
+
+        $message=  "
+        <div class='alert alert-error'>
+        <button class='close' data-dismiss='alert'>&times;</button>
+        <strong>" . sprintf(_("Error")) . "</strong> 
+        </div>
+        ";
+    }
+}
+
 //Modifiy Passord
 if(isset($_POST['chpsw'])){
     //$ldapbind=$Ldap->bind($ldapconn, $_SESSION["login"]["dn"] , $_SESSION["login"]["password"]);
@@ -172,64 +197,21 @@ if(isset($_POST['chpsw'])){
     }
 }
 
-//Query domains in database
 if ($ldapbind) {
+    //Query domains in database
     $result=$Ldap->search($ldapconn,$binddn, $filter);
+
+    //Get a list of all available usrs wu¡ith sftp access
+    $filtersftp="(&(objectClass=person)(uid=*)(authorizedService=sshd))";
+    $ldaptree    = LDAP_PEOPLE;
+    $allsftpusers=$Ldap->search($ldapconn,$ldaptree, $filtersftp);
+
 }
 
 ?>
 <div id="admin-content" class="content">
     <?php if($message) echo $message;?>
-    <?php if($_SESSION["login"]["level"] == '10'){//Only admin can add Domains 
-    ?>
-    <span><button class="togglevisibility btn btn-small btn-secondary">Añadir dominio</button>  </span>
-    <div class="clear"></div>
-    <div id="change">
-    <form autocomplete="off" action="#" method="POST" class="form-signin">
-        <hr>
-            <label for="domain">Nombre de Dominio </label><p class="little">(Inserta un nombre de dominio válido. Para los dominios activado en este panel podrás crear cuentas de correo electrónico o páginas web)</p><input id="domain_new" type="text" name="domain_new" required />
-            <label for="password">Contraseña: </label><p class="little">Esta contraseña se puede utilizar para acceder a este mismo panel de control como administrador del dominio identificándose con <b>User:</b> <em>Nombre Dominio</em> <b>Contraseña: </b><em>La que insertes en este campo</em>. El administrador de dominio tiene privilegios límitados y sólo podrá crear, editar y borrar las cuentas de cooreo electrónico asociadas a su dominio. No podrá en ningún caso acceder a ninguna otra función y no podrá eliminar el dominio</p><input id="password" type="password" name="password" required />
-            <label for="webmaster">Webmaster (Administrador sito web) </label><p class="little">Por cada dominio que actives en este panel se creará una carpeta en la que puedes subir tu aplicación web, accesible desde un navegador. Pudedes permitir que un usuario concreto tenga acceso a la carpeta para que pueda editar sus archivos. Puedes elegir un usuario ya creado o crear uno nuevo. Si no asignas ningún usuario solo podrá editar los archivos el usuario por defecto del sistema, tanto por ssh como por sftp</p>
-             <?php 
-            $ldaptree    = LDAP_PEOPLE;
-            $filter="(&(objectClass=person)(uid=*)(authorizedService=sshd)(!(gidnumber=27)))";
-            $filtersudo="(&(objectClass=person)(uid=*)(gidnumber=27))";
-            $allusers=$Ldap->search($ldapconn,$ldaptree, $filter);
-            $sudouser=$Ldap->search($ldapconn,$ldaptree, $filtersudo);
-
-            // This is the default user which has sudo and will be the default owner
-            // in case no webmaster is selected or created
-            $sudo_username=$sudouser[0]["uid"][0];
-
-            //default webmaster will be user with sudo (uid 10000);
-            echo '<label for="seluser">' . sprintf (_("Asignar administrador web")) . '</label>';
-            echo '<select id="seluser" name="seluser">';
-            //echo '<option value="' . $sudo_username .'">Seleccionar Administrador web</option>';
-            echo '<option value="' . $sudo_username .'">' . $sudo_username .' - Usuario por defecto</option>';
-            echo '<option value="newuser">Crear nuevo usuario</option>';
-            for ($c=0; $c<$allusers["count"]; $c++) {
-            $usernames = $allusers[$c]["uid"][0];
-            echo '<option value="' . $allusers[$c]["uid"][0] .'">' . $allusers[$c]["uid"][0] . '</option>';
-                  }
-            echo '</select>';
-            echo '<div class="newuser" id="new_user">';
-            echo '<label for="new_username">Nombre de usuario</label>';
-            echo '<input id="new_username" type="text" name="new_username" />';
-            echo '<label for="webmaster_password">Contraseña: </label><input id="webmaster_password" type="password" name="webmaster_password" />';
-            echo '</div>';?>
-            <input class="form-control" type="hidden" name="values[domain][maxmail]" value="100">
-            <input class="form-control" type="hidden" name="values[domain][maxalias]" value="100">
-            <input class="form-control" type="hidden" name="values[domain][maxquota]" value="100">
-            <input class="form-control" type="hidden" name="values[domain][accountactive]" value="TRUE">
-            <input class="form-control" type="hidden" name="values[domain][editav]" value="TRUE">
-            <input class="form-control" type="hidden" name="values[domain][delete]" value="FALSE">
-            <input class="form-control" type="hidden" name="values[mail][editaccounts]" value="TRUE">
-            <input class="form-control" type="hidden" name="values[domain][postfixtransport]" value="maildrop:">
-            <input type="submit" name="adddomain" value="Guardar" class="btn btn-small btn-primary" />
-
-            </form>
-    </div><!--change-->
-    <?php } ?>
+    <?php echo 'session phamm: ' .$_SESSION["phamm"]["domain"] . ' filter: ' . $filter . 'psw: ' .$psw;?>
     <div class="row">
 
 	<div class="inner"i id="maincol">
@@ -237,12 +219,16 @@ if ($ldapbind) {
         <thead>
         <tr>
             <th>Dominio</th>
-            <th>Contraseña Cpanel</th>
             <th>Cuentas email </th>
             <th>Administrador web</th>
             <th>DNS</th>
             <th>Status</th>
-             <?php if($_SESSION["login"]["level"] == '10') echo '<th>Borrar</th>';//Only admin can delete Domains  ?>
+            <?php if($_SESSION["login"]["level"] == '10') {
+
+              echo '<th>' .sprintf (_('Editar')) . '</th>';
+              echo '<th>' . sprintf (_('Eliminar')) . '</th>';//Only admin can edit or delete Domains  
+
+            }?>
         </tr>
         </thead>
         <tbody>
@@ -274,16 +260,12 @@ if ($ldapbind) {
         echo $domain;
         echo "</td>";
         echo "<td>";
-        $domainpass=$Ldap->search($ldapconn, 'vd='.$domain.','.LDAP_BASE, '(cn=postmaster)');
-        $oldpass =  $domainpass[0]['userpassword'][0];
-        echo "<a class='showform'>Cambiar Contaseña</a>";
-        echo "<form action='#' method='POST' class='form-table sub-form' autocomplete='off'><input id='changepsw' type='password' name='changepsw' /><input type='hidden' name='domainid' value='" . $domain . "' /><input type='submit' name='chpsw' value='Cambiar' class='btn btn-small btn-primary' /></form>";
-        echo "</td>";
-        echo "<td>";
         echo "<a href='/". BASE_PATH ."/mails.php?domain=" . $domain ."'>Administrar cuentas de correo</a> ";
         echo "</td>";
         echo "<td>";
-        echo $result[$i]["adminid"][0];
+        //echo $result[$i]["adminid"][0];
+        $webmaster = $result[$i]["adminid"][0];
+        echo $webmaster;
         echo "</td>";
         echo "<td class='center'>";
         echo "<a href='editdns.php?domain=" . $domain ."'>Ver</a>";
@@ -294,9 +276,10 @@ if ($ldapbind) {
         echo "</td>";
         if($_SESSION["login"]["level"] == '10') {
             echo "<td>";
-/*            echo "<form action='' autocomplete='off' method='POST' class='form-table' id='del-domain'><input type='hidden' name='domainid' value='". $domain."' /> <input data-domain='". $domain."' data-toggle='modal' data-target='#myModal' type='submit' name='deldomain' value='Eliminar' class='btn btn-small btn-primary confirm' /></form>";*/
-           // echo "<button id='del-domain' type='button' class='btn btn-info btn-lg' data-domain='". $domain."' data-toggle='modal' data-target='#myModal'>Open Modal</button>";
-           // echo "<a data-toggle='modal' href='proc/confirm-deldomain.php?domain=". $domain . "' data-target='#myModal'>Eliminar</a>";
+            echo "<a href='edit-domain.php?domain=". $domain ."'><button class='btn btn-small'><i class='fa fa-cogs' aria-hidden='true'></i> ". sprintf(_('Editar')) ."</button></a>";
+            echo "</td>";
+
+            echo "<td>";
             echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-domain="' . $domain .  '">' . sprintf (_('Eliminar')) . '</button>';
           echo "</td>";
         }

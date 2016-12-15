@@ -21,12 +21,12 @@ $newuser=$_POST["username"];
         $userexist=exec($cmnd);
 
         if(!empty($userexist)) {
-            echo "<span class='error'><i class='fa fa-exclamation-triangle icon checkko alert-danger'></i>". sprintf(_('El usuario %s Nombre de usuario no disponible'), $newuser) ."</span>";
+            echo "<span class='error'><i class='fa fa-exclamation-triangle icon checkko alert-danger'></i>". sprintf(_('El nombre de usuario %s no está disponible'), $newuser) ."</span>";
 
           //We check syntax for usename
         } elseif(!check_syntax ('account',$newuser, $length="2")) {
 
-           echo "<span class='error'><i class='fa fa-exclamation-triangle icon checkko alert-danger'></i>". sprintf(_('% no es un nombre de usuario válido. El nombre tiene que tener mínimo dos carácteres y solo puede contener cifras y/o números. Los carácteres especiales y los espacios no están admitidos')) ."</span>"; 
+           echo "<span class='error'><i class='fa fa-exclamation-triangle icon checkko alert-danger'></i> ". sprintf(_('%s no es un nombre de usuario válido. El nombre tiene que tener mínimo dos carácteres y solo puede contener cifras y/o números. Los carácteres especiales y los espacios no están admitidos'), $newuser) ."</span>"; 
 
         } else {
           echo "<span class='success'><i class='fa fa-check icon alert-success' aria-hidden='true'></i><span>";

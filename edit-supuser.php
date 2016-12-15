@@ -81,7 +81,7 @@ $username=$result[0]['uid'][0];
   <hr>
   <h4><?php printf(_("Este es el usuario por defecto del sistema y tiene total acceso al servidor. Por esto no lo puedes borrar ni puedes administrar su acceso sftp, que siempre está garantizado"));?></h4>
 	<div class="clear"></div>
-		<form autocomplete="off" action="" method="POST" class="form-signin">
+		<form autocomplete="off" action="" method="POST" class="form-signin jquery-check">
 
                 <label for="commonname"><h4><?php echo  sprintf(_("Nombre"));?></h4></label><input id="commonname" name="commonname" type="text" maxlength="64" value="<?php echo $result[0]['cn'][0];?>" />                  
 

@@ -1,54 +1,46 @@
 <?php 
-
 session_start();
 require_once 'classes/class.ldap.php';
 $Ldap= new LDAP();
-
 if(!$Ldap->is_logged_in())
 {
-	$Ldap->redirect('login.php');
+  $Ldap->redirect('login.php');
 }
-
 require_once('header.php');
 //connect and BInd
 $errorttpe="";
 $message="";
 $statok='<i class="fa fa-check-circle-o icon checkok"></i>';
 $loading='<span class="loading"></span>';
-
 $ldapconn=$Ldap->connect();
 $psw=$Ldap->decrypt_psw();
 if ($ldapconn){
-	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$psw); 
-	$permissions= $_SESSION["login"]["level"];
-	switch ($permissions) :
-	case "10" :
-		$binddn=LDAP_BASE;
-		$filter="(vd=*)";
-	break;
+  $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$psw); 
+  $permissions= $_SESSION["login"]["level"];
+  switch ($permissions) :
+  case "10" :
+    $binddn=LDAP_BASE;
+    $filter="(vd=*)";
+  break;
         case "4" :
         $binddn=LDAP_BASE;
-		$who=$_SESSION["phamm"]["domain"];
-		$filter="(vd=" . $who .")";
-		
-	break;
-	case "2":
-		$who= $_SESSION['login']["username"];
-		$binddn="vd=".$_SESSION["phamm"]["domain"].",".LDAP_BASE;		
-		$filter="(mail=" . $who .")";
-	break;
-
-	default:
-	break;
-	endswitch;
-
+    $who=$_SESSION["phamm"]["domain"];
+    $filter="(vd=" . $who .")";
+    
+  break;
+  case "2":
+    $who= $_SESSION['login']["username"];
+    $binddn="vd=".$_SESSION["phamm"]["domain"].",".LDAP_BASE;           
+    $filter="(mail=" . $who .")";
+  break;
+  default:
+  break;
+  endswitch;
 }
-
 //Add new domain
 if(isset($_POST['adddomain'])){
     $webmaster=$_POST['seluser'];
     if($webmaster=='newuser'){
-
       //$webmaster=$_POST['new_username'];
             /*$password = $_POST['webmaster_password'];
             $add_user=$Ldap->add_sftp_user($webmaster,$password);
@@ -56,19 +48,15 @@ if(isset($_POST['adddomain'])){
         $ldaptree    = LDAP_PEOPLE;
         $groupinfo = posix_getgrnam("sftpusers");
         $grid=$groupinfo["gid"];
-
-
         $entryus=array();
         $newuser=trim($_POST['username']);
         $first_name=(isset($_POST['firstname']))?$_POST['firstname']:$newuser;
         $second_name=(isset($_POST['surname']))?$_POST['surname']:$newuser;
         $user_email=trim($_POST['usermail']);
         $password=$_POST['pswd2'];
-
         // SEt these variables to none in case in only vpn account
         $entryus['loginshell']='none';
         $entryus['homedirectory']='none';
-
         $c=0;
         if (isset($_POST['sshd'])){
           $entryus['gidnumber']=(int)$grid;
@@ -90,27 +78,19 @@ if(isset($_POST['adddomain'])){
           $add_user=$Ldap->add_user($newuser,$entryus);
           if (isset($_POST["sendinstruction"]) && $add_user)$Ldap->send_vpn_instructions($user_email,$newuser);
           $message=$add_user['message'];
-
     }
-
-
     $values = $_POST["values"];
     $domain_new = $_POST["domain_new"];
     $syntax= check_syntax ('domain',$domain_new);
     $password = $_POST["password"];
     $entry["objectclass"][0]    = "top";
     $entry["objectclass"][1]    = "VirtualDomain";
-
     $entry["vd"]                = $domain_new;
     $entry["lastChange"]        = time();
     $entry["adminid"]           = $webmaster;
     // Merge static values with domain values
-
     $entry = array_merge($entry,$values["domain"]);
-
-	######Create cn=Postmaster ###########3
-
-
+  ######Create cn=Postmaster ###########3
     $entrypm = array();
     $entrypm["objectclass"][0]    = "top";
     $entrypm["objectclass"][1]    = "VirtualMailAlias";
@@ -132,32 +112,30 @@ if(isset($_POST['adddomain'])){
     $entry_abuse["accountActive"] = "TRUE";
     $entry_abuse["creationDate"] = date('Ymd');
     $entry_abuse["lastChange"] = time();
-
     // iCheck Domain syntax
     if (!$syntax){
       $errorttpe="El dominio " . $domain_new . " no es válido";
     } else {
-      //if syntax is ok add records	
+      //if syntax is ok add records     
       $addDomain=$Ldap->addRecord($ldapconn, 'vd='.$domain_new.','.LDAP_BASE, $entry);
       $addDomainpm=$Ldap->addRecord($ldapconn, 'cn=postmaster,vd='.$domain_new.','.LDAP_BASE, $entrypm);
       $addAbuse=$Ldap->addRecord($ldapconn,'mail=abuse@'.$domain_new.',vd='.$domain_new.','.LDAP_BASE,$entry_abuse); 
     }
-
     if ($addDomain && $addAbuse && $addDomainpm) {
        $message .= "
-		<div class='alert alert-success'>
-		<button class='close' data-dismiss='alert'>&times;</button>
-		<strong>Dominio " . $domain_new ." añadido correctamente</strong> 
-		</div>
+    <div class='alert alert-success'>
+    <button class='close' data-dismiss='alert'>&times;</button>
+    <strong>Dominio " . $domain_new ." añadido correctamente</strong> 
+    </div>
         ";
       } else {
-          $errorttpe 	= (ldap_errno($ldapconn)==68)?"El dominio " . $domain_new . " ya existe": $errorttpe;
+          $errorttpe    = (ldap_errno($ldapconn)==68)?"El dominio " . $domain_new . " ya existe": $errorttpe;
           $message .=  "
-		<div class='alert alert-error'>
-		<button class='close' data-dismiss='alert'>&times;</button>
-		<strong>Ha habido un error. " . $errorttpe ." </strong> 
-		</div>
-		";
+    <div class='alert alert-error'>
+    <button class='close' data-dismiss='alert'>&times;</button>
+    <strong>Ha habido un error. " . $errorttpe ." </strong> 
+    </div>
+    ";
       }
   
 }
@@ -166,7 +144,7 @@ if(isset($_POST['adddomain'])){
     <?php if($message) echo $message;?>
     <?php if($_SESSION["login"]["level"] == '10'){//Only admin can add Domains 
     ?>
-    <form autocomplete="off" action="#" method="POST" class="form-signin">
+    <form autocomplete="off" action="#" method="POST" class="form-signin jquery-check">
         <hr>
         <label for="domain"><?php printf (_("Nombre de Dominio"))?> </label><p class="little"> <?php printf (_("(Inserta un nombre de dominio válido. Para los dominios activado en este panel podrás crear cuentas de correo electrónico o páginas web)"))?></p><input id="domain_new" type="text" name="domain_new" required />
         <label for="password"><?php printf (_("Contraseña:"));?> </label><p class="little">Esta contraseña se puede utilizar para acceder a este mismo panel de control como administrador del dominio identificándose con <b>User:</b> <em>Nombre Dominio</em> <b>Contraseña: </b><em>La que insertes en este campo</em>. El administrador de dominio tiene privilegios límitados y sólo podrá crear, editar y borrar las cuentas de cooreo electrónico asociadas a su dominio. No podrá en ningún caso acceder a ninguna otra función y no podrá eliminar el dominio</p><input id="password" type="password" name="password" required />
@@ -177,11 +155,9 @@ if(isset($_POST['adddomain'])){
         $filtersudo="(&(objectClass=person)(uid=*)(gidnumber=27))";
         $allusers=$Ldap->search($ldapconn,$ldaptree, $filter);
         $sudouser=$Ldap->search($ldapconn,$ldaptree, $filtersudo);
-
         // This is the default user which has sudo and will be the default owner
         // in case no webmaster is selected or created
         $sudo_username=$sudouser[0]["uid"][0];
-
         //default webmaster will be user with sudo (uid 10000);
         echo '<label for="seluser">' . sprintf (_("Asignar administrador web")) . '</label>';
         echo '<select id="seluser" name="seluser">';
@@ -201,7 +177,6 @@ if(isset($_POST['adddomain'])){
             <input id="firstname" type="text" name="firstname" />
             <label for="surname">' .  sprintf(_("Apeliidos (Opcional)")) . '</label>
             <input id="surname" type="text" name="surname" />
-
             <label for="usermail">' . sprintf(_("Correo electrónico")) .'* </label>
             <p class="little">Puedes insertar un correo electrónico externo o elegir una entre las cuentas creadas en el servidor</p>
             <input id="usermail" type="mail" name="usermail" required />';
@@ -264,4 +239,3 @@ if(isset($_POST['adddomain'])){
 <?php 
   ldap_close($ldapconn);
   require_once('footer.php');?>
-

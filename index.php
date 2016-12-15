@@ -6,6 +6,8 @@ if(!$user_home->is_logged_in())
 {
   $user_home->redirect('login.php');
 }
+if($_SESSION["login"]["level"]<10)$user_home->redirect('404.php');
+
 require_once('header.php');
 require_once 'classes/class.DiskStatus.php';
 try {

@@ -78,7 +78,8 @@ require_once('header.php');?>
     <h4><?php printf(_(" Esta página solo se muestra la primera vez que accedes al Cpanel. Si quieres volver a cambiar algun parámetro de tu cuenta, lo podrás hacer en cualquier momento desde la página de 'Perfil' "));?></h4>
     <hr>
     <?php echo $message;?>
-<form action='' autocomplete='off' method='POST' class='form' id="activate">
+    <?php echo 'login level: ' . $_SESSION["login"]["level"];?>
+<form action='' autocomplete='off' method='POST' class='jquery-check form'  id="activate">
     
       <label for="oldpsw"><h4><?php printf(_("Contraseña actual"));?></h4></label>    
       <input id='oldpsw' type='password' name='oldpsw' required /><?php echo $msg1 ;?>

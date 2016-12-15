@@ -102,7 +102,7 @@ $firstuid_availabe=system($commuid);*/?>
 	<span><button class="togglevisibility btn btn-small btn-secondary">Añadir usuario</button>	</span>
 	<div class="clear"></div>
 	<div id="change">
-		<form autocomplete="off" action="" method="POST" class="form-signin" id="adduser-form">
+		<form autocomplete="off" action="" method="POST" class="form-signin jquery-check"  id="adduser-form">
 		<hr>
                 <h2>Crea un nuevo usuario:</h2>                  
 		<label for="username"><h4><?php printf(_("Nombre de usuario"));?> *</h4></label>

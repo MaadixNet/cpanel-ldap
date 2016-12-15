@@ -11,65 +11,53 @@ if(!$Ldap->is_logged_in())
 $message='';
 require_once('header.php');
 //connect and BInd
+$psw=$Ldap->decrypt_psw();
 $ldapconn=$Ldap->connect();
 if ($ldapconn){
-	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$_SESSION["login"]["password"]); 
+	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,  $psw); 
 	#TODO: Check user level to show and allow differents permissions
 	#Level 10= admin : can read and manage all accounts
 	#Level 4 postmaste (domain administratod) can read and edit all accounts related to his domain
 	#level 2 : simple user. Can read and edit only his own data
 	#need LDAP ACL to be set
-	$permissions= $_SESSION["login"]["level"];
+                        
 	switch ($permissions) :
 	case "10" :
 		$binddn=LDAP_BASE;
 		$filter="(vd=*)";
 		$col=10; //when there is left sidebar
 	break;
-    case "4" :
-        $binddn=LDAP_BASE;
+        case "4" :
+                $binddn='vd=gadix.net,o=hosting,dc=example,dc=tld';
 		$who=$_SESSION["phamm"]["domain"];
 		$filter="(vd=" . $who .")";
+                $binddn='vd=' . $who . ',o=hosting,dc=example,dc=tld';
 		$col=12; // for fullwidth page -no sidebar
 		
 	break;
 	case "2":
 		$who= $_SESSION['login']["username"];
-		$binddn="vd=".$_SESSION["phamm"]["domain"].",".LDAP_BASE;		
-		$filter="(mail=" . $who .")";
+		$binddn=$_SESSION["login"]["dn"];
+		$filter="";
 		$col=12;
 	break;
 
 	default:
 	break;
 	endswitch;
-
+ 
 //Modifiy Passord
 	if(isset($_POST['chpsw'])){
 		$domain=$_POST['domainid'];
 		$mailaccount = $_POST['mailaccount'];
 		$modifydn='mail=' . $mailaccount . ',vd='.$domain.','.LDAP_BASE;
 		//$info['userpassword'][0]="{MD5}".base64_encode(pack("H*",md5($_POST['changepsw'])));
-		$info['userpassword'][0]=ldap_password_hash($_POST['changepsw'], 'md5crypt');
-		if($permissions==10) {
+		$info['userpassword'][0]=ldap_password_hash($_POST['changepsw'], 'ssha');
+		//if($permissions==10) {
 		#TODO: Allow lower level users to change his own password
 		#User will need to be logged out in order to be able to bind again
-		$Ldap->modifyRecord($ldapconn, $modifydn, $info );
-		} else {
-			$modifs = [
-		[
-			"attrib"  => "userPassword",
-			"modtype" => LDAP_MODIFY_BATCH_REMOVE,
-			"values"  => [$_SESSION["login"]["password"]],
-		],
-		[
-			"attrib"  => "userPassword",
-			"modtype" => LDAP_MODIFY_BATCH_ADD,
-			"values"  => [$info['userpassword'][0]],
-    	],
-		];
-    	ldap_modify_batch($ldapconn, $modifydn, $modifs);
-    	}
+		$mod_result=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
+                $message=$mod_result["message"];
 	}
 
 	//Add mail accounts
@@ -167,8 +155,8 @@ if ($ldapconn){
 		}
 
 	if ($ldapbind) {
-		 $result=$Ldap->search($ldapconn,$binddn, $filter);
-	}
+            $result=$Ldap->search($ldapconn,$binddn, $filter);
+        }
 }?>
 
 <div id="admin-content" class="content">
@@ -212,7 +200,7 @@ if ($ldapconn){
 			echo $message; 
 			if($permissions > 2){
 			# This is only for postmaster or admin. Normal user will only be able to see his own email account
-			$queryvar=$_GET['domain']?$_GET['domain'] :'';
+			$queryvar=($_GET['domain'])?$_GET['domain'] :'';
 			$querymess=($queryvar)?'para el dominio ' . $queryvar:'';
 			echo '<h4 class="tone">Cuentas de correo activadas' . $querymess. '</h4>';?>
                         <span><button class="togglevisibility btn btn-small btn-secondary"><?php printf(_("Añadir cuenta"));?></button>  </span>

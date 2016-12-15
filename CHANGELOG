@@ -5,6 +5,7 @@
 - Localization (English and Spanish)
 - Anonymous bind for apache for first level
 - Bootstrao modal for confirmation on delete items
+- Addedd template for edit-domain
 
 ### Changed
 - Ldap tree changed. All users are in ou=People

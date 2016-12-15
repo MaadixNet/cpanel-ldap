@@ -225,7 +225,7 @@ class LDAP{
             $_SESSION["login"]["username"] = strtolower($proposed["login_username"]);
 
             $_SESSION["login"]["level"] = $proposed["level"];
-            //$_SESSION["login"]["password"] = $login_password; // @todo crypt it
+            $_SESSION["login"]["password"] = $login_password; // @todo crypt it
 
             # Create Key for encrypt password
             $key = OneTimePadCreate ($length=100);
@@ -245,6 +245,9 @@ class LDAP{
               $admin_data=$this->search($this->connection,SUFFIX,$filter);
               $status=$admin_data[0]["status"][0];
               $_SESSION["login"]["status"] = $status;
+            } else {
+              $_SESSION["login"]["status"] = 'active';
+
             }
 
             return true;
@@ -611,14 +614,15 @@ class LDAP{
     function is_logged_in()
 	{
 
-          if (isset($_SESSION["login"]["dn"]) &&  $_SESSION["login"]["status"] == "active")
+
+          if ((isset($_SESSION["login"]["dn"]) && (isset( $_SESSION["login"]["status"]) && $_SESSION["login"]["status"] == "active") && $_SESSION["login"]["level"]==10) || (isset($_SESSION["login"]["dn"]) && $_SESSION["login"]["level"] < 10) )
           {
 
               return true;
           
           }
           
-           elseif (isset($_SESSION["login"]["dn"]) &&  $_SESSION["login"]["status"] != "active")
+           elseif (isset($_SESSION["login"]["dn"]) && $_SESSION["login"]["level"]==10  &&  $_SESSION["login"]["status"] != "active")
 
           {
           

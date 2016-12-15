@@ -74,34 +74,34 @@ if (isset($_POST["language"]))
                                 </ul>
                             </li>
                         </ul>
-                        <?php if(isset($_SESSION["login"]["status"]) && $_SESSION["login"]["status"] == "active"){ ?>
+                        <?php if( ($_SESSION["login"]["status"] == "active") && $permissions >2 ){ //normal users are always active. Admin has to activate account ?>
                         <ul class="nav">
-                            <li>
-                              <a href="/<?php echo BASE_PATH;?>"><?php printf(_("Detalles"));?></a>
-                            </li>
-
-                            <?php if (is_dir('/var/www/html/ownclowd')){?>
+                            <?php if($permissions==10){?>
                               <li>
-                                <a href="https://<?php echo $_SERVER['HTTP_HOST'];?>/owncloud"><?php printf(_("Owncloud"));?></a>
+                                <a href="/<?php echo BASE_PATH;?>"><?php printf(_("Detalles"));?></a>
                               </li>
-                            <?php }?>
 
-                            <?php if ($permissions == '10') {?>
+                              <?php if (is_dir('/var/www/html/ownclowd')){?>
+                                <li>
+                                  <a target="_blank" href="https://<?php echo $_SERVER['HTTP_HOST'];?>/owncloud"><?php printf(_("Owncloud"));?></a>
+                                </li>
+                              <?php }?>
                             <li class="dropdown">
-                                <a href="#" data-toggle="dropdown" class="dropdown-toggle"><?php printf (_("Dominios"));?><b class="caret"></b>
-                                </a>
-                                <ul class="dropdown-menu" id="menu0">
-                                  <li><a href="/<?php echo BASE_PATH;?>/view-domains.php"><?php printf(_("Ver Dominios"));?></a></li>
-                                  <li><a href="/<?php echo BASE_PATH;?>/add-domain.php"><?php printf(_("Añadir Dominio"));?></a></li>
-                                </ul>
-                              </li>                        
+                            <a href="#" data-toggle="dropdown" class="dropdown-toggle"><?php printf (_("Dominios"));?><b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu" id="menu0">
+                                <li><a href="/<?php echo BASE_PATH;?>/view-domains.php"><?php printf(_("Ver Dominios"));?></a></li>
+                                  <?php if ($permissions >= 10) { //only admin can add domains?>
+                                    <li><a href="/<?php echo BASE_PATH;?>/add-domain.php"><?php printf(_("Añadir Dominio"));?></a></li>
+                                  <?php } ?>
+                            </ul>
+                            </li>                        
 
-                            <?php } ?>
-
+                            <?php }?>
                             <li><a href="/<?php echo BASE_PATH;?>/mails.php"><?php printf(_("Email"));?></a></li>
-                            <li><a href="/<?php echo BASE_PATH;?>/usuarios.php"><?php printf(_("Usuarios"));?></a></li>
 
-                            <?php if ($permissions >= '4') {?>
+                            <?php if ($permissions >= 10) {?>
+                            <li><a href="/<?php echo BASE_PATH;?>/usuarios.php"><?php printf(_("Usuarios"));?></a></li>
                             <li><a href="/<?php echo BASE_PATH;?>/notificaciones.php"><?php printf(_("Notificaciones"));?></a></li>
                             <?php } ?>	
 

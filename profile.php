@@ -57,7 +57,7 @@ require_once('header.php');?>
     <h2><?php printf(_("Editar perfil"));?></h2>
     <hr>
     <?php echo $message;?>
-<form action='' autocomplete='off' method='POST' class='form' id="activate">
+<form action='' autocomplete='off' method='POST' class='form jquery-check' id="activate">
 
       <label for="oldpsw"><h4><?php printf(_("Contraseña actual"));?></h4></label>
       <input id='oldpsw' type='password' name='oldpsw' required /><?php echo $msg1 ;?>
