@@ -25,6 +25,9 @@ p {
 a:focus {
     outline: none;
 }
+.pink {color: #a30942;}
+#services h3 {color: #a30942;}
+#services hr {border-width: 2px 0;}
 .btn:focus, .btn:active:focus, .btn.active:focus {
     outline: none;
 }
@@ -320,6 +323,13 @@ h4 a.active{text-decoration: underline;}
         background-color: #02535e;
             background-image: linear-gradient(to bottom, #02535e, #086673);
         }
+
+.service-img img{
+ padding: 0 20px;
+ max-width: 120px;
+ width: 20%;
+ float: left;
+}
 /*FORMS*/
 form.form-table {margin:0;width:50%;}
 form.form-table input[type="password"] {margin:0; width: 60%;}

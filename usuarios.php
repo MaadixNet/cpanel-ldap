@@ -114,7 +114,7 @@ $firstuid_availabe=system($commuid);*/?>
 
                 <label for="usermail"><?php printf(_("Correo electrónico"));?> *</label>
                 <p class="little"><?php printf(_("Puedes insertar un correo electrónico externo o elegir una entre las cuentas creadas en el servidor"));?></p>
-                <input id="usermail" type="mail" name="usermail" required />  
+                <input id="usermail" class="usermail"  type="mail" name="usermail" required />  
                 <?php $resultmail = $Ldap->search($ldapconn,LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
                 $mailcount = $resultmail["count"];
                 if($mailcount>0) {

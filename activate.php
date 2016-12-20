@@ -92,7 +92,7 @@ require_once('header.php');?>
 
       <label for='usermail'><h4><?php printf(_("Correo electrónico"));?></h4></label><div id="emailresult"></div>
       <p><?php printf(_("Averigua que el correo electrónico asociado a tu cuenta sea válido y que tengas acceso a él: si pierdes la contraseña solo podrás resetearla a través de este correo electrónico."),$user );?></p>
-      <input id='usermail' type='email' name='usermail' value="<?php echo $rootusermail;?>" required />
+      <input id='usermail' class='usermail' type='email' name='usermail' value="<?php echo $rootusermail;?>" required />
 
       <div id="formresult"></div>
       <hr>

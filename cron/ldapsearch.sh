@@ -22,14 +22,17 @@ if [ -f "$checkfile" ] && [ -f "$ldiffile" ];then
   ldapmodify -H ldapi:// -Y EXTERNAL -f "$ldiffile" && delete="1" 2> /tmp/dnconfig.error
 fi
 
+# Get the ldap admin name
+ldapadmin=$(ldapsearch -H ldapi:// -Y EXTERNAL -b "$suffix" "(&(objectClass=extensibleObject)(cn=*))" cn | grep -o -P "(?<=cn: ).*")
 # If all process was successfully send confirmaion mail to user and delete files
 if [ "$delete" == "1" ];then
-  mail=$(ldapsearch -H ldapi:// -Y EXTERNAL -b "$suffix" "(&(objectClass=extensibleObject)(cn=admincp))" email | grep -o -P "(?<=email: ).*")
+  mail=$(ldapsearch -H ldapi:// -Y EXTERNAL -b "$suffix" "(&(objectClass=extensibleObject)(cn="$ldapadmin"))" email | grep -o -P "(?<=email: ).*")
 
   mail -s "Contraseña cambiada" "$mail" <<< "El proceso de recuperación de contraseña ha terminado. Ahora puedes acceder al Cpanel con tu nueva contraseña"
-
-  rm "$ldiffile"
-  rm "$checkfile"
+  if [ -f "$checkfile" ] && [ -f "$ldiffile" ];then
+    rm "$ldiffile"
+    rm "$checkfile"
+  fi
 fi
 
 # Script to create Apache virtual hos when a new record is detected
@@ -85,9 +88,10 @@ do
     # We will use this arryay to check deleted domains from ldap that are
     # still present in /etc/apache2/ldap-enabled, so we can remove them.
     ldapresult+=("$domain".conf)
-    #Check is there is a webmaster for current domain. We are using adminID
+    # Check if there is a webmaster for current domain. We are using adminID
     # attribute, which i not a required attribute. so is better to check if
     # this value is empty or not
+
     webmaster=$(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "vd=$domain,$ldapbase" "adminID=*" | grep -o -P "(?<=adminID: ).*")
     #issudouser=$(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "uid="$webmaster",ou=sshd,ou=People,dc=example,dc=tld" "gidNumber=*" | grep -o -P "(?<=gidNumber: ).*")
     #webmaster=$(ldapsearch -x -D "cn=admin,dc=example,dc=tld" -p 389 -h ldap://localhost -b "vd=$domain,o=hosting,dc=example,dc=tld" "adminID=*" -w $bindpass | grep -o -P "(?<=adminID: ).*")
@@ -109,7 +113,15 @@ do
 
         mkdir $documenRoot/$domain
         ## TODO add a check ...if user does not exists
-        # te owner will be the default user
+        # the owner will be the default user
+
+        userexists=$(getent passwd | grep "<\$webmaster\>")
+        if [[ -z "$webmaster" ]];
+        then
+          $webmaster="$defaultsudouser"
+        fi
+
+
         chown -R $webmaster:www-data $documenRoot/$domain
         chmod 755 $documenRoot/$domain
         #chmod g+s $documenRoot/$domain
@@ -192,7 +204,7 @@ do
       done
     fi     
   done < <(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "$ldapbase" "(objectclass=VirtualDomain)" | grep -o -P '(?<=vd=).*(?=,o=hosting,dc=example)') 
-#delete vhost that are not anymre in ldap tree but still in apache
+#delete vhost that are not anymore in ldap tree but still in apache
 printf "%s\n" "${ldapresult[@]}"
 for vhost in "$vhroot"/*;
 do

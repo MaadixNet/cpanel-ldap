@@ -28,7 +28,7 @@ if ($ldapconn){
 		$col=10; //when there is left sidebar
 	break;
         case "4" :
-                $binddn='vd=gadix.net,o=hosting,dc=example,dc=tld';
+                //$binddn='vd=gadix.net,o=hosting,dc=example,dc=tld';
 		$who=$_SESSION["phamm"]["domain"];
 		$filter="(vd=" . $who .")";
                 $binddn='vd=' . $who . ',o=hosting,dc=example,dc=tld';
@@ -93,7 +93,7 @@ if ($ldapconn){
 		$entry["vacationactive"] = "FALSE" ;
 		$entry["smtpauth"] = "TRUE";
 		$entry["delete"] = "FALSE";
-		$entry["mailautoreply"] = $mail_account .'autoreply';
+		$entry["mailautoreply"] = $mail_account;
 		$entry["uid"] = $mail_new  . '.' . $mail_domain;
 		$entry["mailbox"] = $mail_domain .'/' . $mail_new;
 		$entry["vdhome"] = '/home/vmail/domains';
@@ -182,12 +182,12 @@ if ($ldapconn){
 						if($mailcount>0) {
 							echo '<ul class="sub-menu">';
 							for ($c=0; $c<$resultmail["count"]; $c++) {
-								echo '<li>' . $resultmail[$c]["mail"][0] . '</li>';
-							}
+                                                          echo '<li>' . $resultmail[$c]["mail"][0] . '</li>';
+                                                        }
 							echo '</ul>';
 						}
 						echo '</li>';
-						}
+                                            }
 					echo '</ul>';
 					}?>
 
@@ -218,25 +218,25 @@ if ($ldapconn){
 					echo '<input type="hidden" name="maildomain" value="' .$result[0]["vd"][0] .'" />';
 					echo '<span class="inline">@' . $result[0]["vd"][0] .'</span>';
 				} else {
-                	echo '<span class="inline">@<select id="seldomain" name="maildomain" required>';
-                	echo '<option value="">Seleccionar dominio</option>';
-                	for ($c=0; $c<$result["count"]; $c++) {
-						$selected=($queryvar==$result[$c]["vd"][0])?"selected":"";
-                    	echo '<option ' . $selected . ' value="' . $result[$c]["vd"][0] .'">' . $result[$c]["vd"][0] . '</option>';
-                	}
-             		echo '</select></span>';
-            	};?>
+                                    echo '<span class="inline">@<select id="seldomain" name="maildomain" required>';
+                                    echo '<option value="">Seleccionar dominio</option>';
+                                    for ($c=0; $c<$result["count"]; $c++) {
+                                        $selected=($queryvar==$result[$c]["vd"][0])?"selected":"";
+                                          echo '<option ' . $selected . ' value="' . $result[$c]["vd"][0] .'">' . $result[$c]["vd"][0] . '</option>';
+                                    }
+                                    echo '</select></span>';
+                                };?>
 
-                        <label for="password"><?php printf(_("Contraseña"));?> </label><input id="password" type="password" name="password" required />
-                          <label for="givenname"><?php printf(_("Nombre"));?> </label><input id="givenname" type="text" name="givenname" required />
-                          <label for="surname"><?php printf(_("Apellidos"));?></label><input id="surname" type="text" name="surname" required />
-				<br>
-            	<input type="submit" name="adduser" value="Guardar" class="btn btn-small btn-primary" />
-            </form>
-			<?php 
+                                <label for="password"><?php printf(_("Contraseña"));?> </label><input id="password" type="password" name="password" required />
+                                <label for="givenname"><?php printf(_("Nombre"));?> </label><input id="givenname" type="text" name="givenname" required />
+                                <label for="surname"><?php printf(_("Apellidos"));?></label><input id="surname" type="text" name="surname" required />
+                                <br>
+                                <input type="submit" name="adduser" value="Guardar" class="btn btn-small btn-primary" />
+                                </form>
+                        <?php 
 			} //end if permissions > 2
 		} //end if domain not =  0?>
-    </div><!--change-->
+                </div><!--change-->
 
 			<?php
 			if ($permissions == 4 ){
@@ -255,43 +255,41 @@ if ($ldapconn){
 				echo '<table id="email">';
 				echo '<thead>';
 				echo '<tr>';
-				echo '<th>Email</th>';
-				echo '<th>Nombre</th>';
-				echo '<th>Contraseña</th>';
-              	if($_SESSION["login"]["level"] != 2) echo '<th>Borrar</th>';//Only admin can delete  VPN Users or postmaster
-        		echo '</tr>';
-        		echo '</thead>';
-        		echo '<tbody>';
+				echo '<th>' . sprintf(_("Correo electrónico")) . '</th>';
+				echo '<th>' . sprintf(_("Nombre")) . '</th>';
+                                echo '<th>' . sprintf(_("Editar")). '</th>';
+
+                                if($_SESSION["login"]["level"] != 2) echo '<th>Borrar</th>';//Only admin or postamster can delete email account
+                                        echo '</tr>';
+                                        echo '</thead>';
+                                        echo '<tbody>';
 
 	
-            for ($c=0; $c<$resultmail["count"]; $c++) {
-				$queryvar=(explode("@",$resultmail[$c]["mail"][0]));
-				$domain=$queryvar[1];
-				echo "<tr>";
-				echo "<td>";
-				echo $resultmail[$c]["mail"][0];
-				echo "</td>";
-                echo "<td>";
-                echo $resultmail[$c]["givenname"][0];
-                echo "</td>";
-                echo "<td>";
-				$oldpass=$resultmail[$c]["userpassword"][0];
-				echo "<a class='showform'>Cambiar Contaseña</a>";
-		        echo "<form action='#' autocomplete='off' method='POST' class='form-table sub-form'><input id='chpass' type='password' name='changepsw' /><input type='hidden' name='domainid' value='" . $domain ."' /> <input type='hidden' name='mailaccount' value='" . $resultmail[$c]['mail'][0] . "' /><input type='submit' name='chpsw' value='Cambiar' class='btn btn-small btn-primary' /></form>";
-                echo "</td>";
-				if($permissions > 2) { //a normal user cannot deñlete his own account
-            	echo "<td>";
-            //	echo "<form action='#' method='POST' class='form-table'><input type='hidden' name='userid' value='".  $resultmail[$c]['mail'][0]."' /><input type='hidden' name='domain' value='" . $domain ."' /> <input type='submit' onclick=\"return confirm('Quieres borrar la cuenta " . $resultmail[$c]["mail"][0] ." y  todos sus mensajes?');\" name='deluser' value='Borrar' class='btn btn-small btn-primary' /></form>";
-                echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-domain="' . $domain .'" data-language="' . $_SESSION["language"] .'" data-target="#mailModal" data-email="' . $resultmail[$c]["mail"][0] .  '">' . sprintf (_('Eliminar')) . '</button>';
-            	echo "</td>";
-				}//end permissions >2
-				echo '</tr>';
+                                  for ($c=0; $c<$resultmail["count"]; $c++) {
+                                        $queryvar=(explode("@",$resultmail[$c]["mail"][0]));
+                                        $domain=$queryvar[1];
+                                        echo "<tr>";
+                                        echo "<td>";
+                                        echo $resultmail[$c]["mail"][0];
+                                        echo "</td>";
+                                        echo "<td>";
+                                        echo html_entity_decode($resultmail[$c]["cn"][0]);
+                                        echo "</td>";
+                                        echo "<td>";
+                                        echo "<a href='edit-mail.php?mail=". $resultmail[$c]["mail"][0] ."'><button class='btn btn-small'><i class='fa fa-cogs' aria-hidden='true'></i> ". sprintf(_('Ver | Editar')) ."</button></a>";
+                                        echo "</td>";
+                                        if($permissions > 2) { //a normal user cannot deñlete his own account
+                                        echo "<td>";
+                                        echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-domain="' . $domain .'" data-language="' . $_SESSION["language"] .'" data-target="#mailModal" data-email="' . $resultmail[$c]["mail"][0] .  '">' . sprintf (_('Eliminar')) . '</button>';
+                                        echo "</td>";
+                                        }//end permissions >2
+                                  echo '</tr>';
 
 
-            }
+                          }
 			echo '</tbody>';
 			echo '</table>';
-        }
+            }
 
 ?>
 

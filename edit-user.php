@@ -99,7 +99,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
 
               <label for="usermail"><h4><?php printf(_("Correo electrónico"));?></h4></label> 
 
-              <input id="usermail" type="mail" name="usermail" value="<?php echo $result[0]['mail'][0];?>" required />  
+              <input id="usermail" class="usermail" type="mail" name="usermail" value="<?php echo $result[0]['mail'][0];?>" required />  
                 <?php $resultmail = $Ldap->search($ldapconn,LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
                 $mailcount = $resultmail["count"];
                 if($mailcount>0) {

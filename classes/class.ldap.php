@@ -1,12 +1,12 @@
 <?php
-require_once __DIR__.('/../site-config.php');
+//require_once __DIR__.('/../site-config.php');
 require_once __DIR__.('/../functions.php');
 class LDAP{
  
     private $server = "ldap://" . LDAP_HOST_NAME ;
-    private $port = "389";
-    private $basedn = BINDDN ;
-    private $lddn=SUFFIX;
+    private $port = LDAP_PORT;
+    //private $basedn = BINDDN ;
+    //private $lddn=SUFFIX;
     public $connection;
     public $bind;
 
@@ -22,13 +22,12 @@ class LDAP{
     }
  
     function bind($connection,$dn, $psw){
-        //$bind = ldap_bind($connection, BINDDN ,$_SESSION["userSessionpsw"]);
         $bind = ldap_bind($connection,$dn, $psw);
         return $bind;
 
  
     } 
-    //Add ou=vnp firts time if not exixt . check it in vpn.php
+    
     /*function addVpnObject ($ldapconn){
         //Only admin can add vpn accounts. Check level
         if($_SESSION["login"]["level"] == '10'){				
@@ -78,6 +77,8 @@ class LDAP{
         $modifydn,
         $record);
         if($modifyProcess){
+            //check if ==1
+            $result="true";
             $message= "
             <div class='alert alert-success'>
             <button class='close' data-dismiss='alert'>&times;</button>
@@ -85,15 +86,18 @@ class LDAP{
             </div>
             <hr><br>";
         } else {
+            $result="false";
             $message= "
             <div class='alert alert-error'>
                 <button class='close' data-dismiss='alert'>&times;</button>
-                <strong>" . sprintf(_('Cambio registrado con éxito')) ."</strong> 
+                <strong>" . sprintf(_('Error')) ."</strong> 
               </div>
             <hr><br>";
         }
         //return  $message;
-        return array('message' => $message);
+        return array('message' => $message,
+                      'result' => $result
+                    );
 
     }
  
@@ -389,7 +393,7 @@ class LDAP{
                             );
 }
 
-        function add_user($newuser,$entry){
+    function add_user($newuser,$entry){
         $ldaptree    = LDAP_PEOPLE;
         $filter="(&(objectClass=person)(uid=*))";
           $adddn='uid='. $newuser . ',' . $ldaptree;
@@ -465,7 +469,7 @@ class LDAP{
           $message="
           <div class='alert alert-success'>
           <button class='close' data-dismiss='alert'>&times;</button>
-          <strong>". sprintf ('Account %s successfully added', $newuser) . "</strong> 
+          <strong>". sprintf ('Usuario %s añadido con éxito', $newuser) . "</strong> 
           </div>";
 
         } else {
@@ -490,6 +494,12 @@ class LDAP{
           echo  $filesdir=dirname(__DIR__).'/files';
           echo  $folderpath=$filesdir.'/'.$foldername;
 }
+
+  function check_installed_service() {
+        $serv_enabled = $this->search($this->connection, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled))');
+        return $serv_enabled;
+
+  }       
 
   function send_vpn_instructions($to,$username) {
         {

@@ -39,7 +39,7 @@ if (isset($_POST['updateuser'])){
   # Only update pswd if fields are filled and matches
 
   if ((!empty($psw1)) && (!empty($psw2)) && ($psw2==$psw1) ) {
-    $newpass=ldap_password_hash($psw2);
+    $newpass=ldap_password_hash($psw2,'ssha');
     $info['userpassword'][0]=$newpass;
     $info['shadowlastchange'][0] = floor(time()/86400);
   }
@@ -89,7 +89,7 @@ $username=$result[0]['uid'][0];
 
               <label for="usermail"><h4><?php printf(_("Correo electrónico"));?></h4></label> 
 
-              <input id="usermail" type="mail" name="usermail" value="<?php echo $result[0]['mail'][0];?>" required />  
+              <input id="usermail" class="usermail" type="mail" name="usermail" value="<?php echo $result[0]['mail'][0];?>" required />  
                 <?php $resultmail = $Ldap->search($ldapconn,LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
                 $mailcount = $resultmail["count"];
                 if($mailcount>0) {

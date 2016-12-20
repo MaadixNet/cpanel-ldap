@@ -54,21 +54,13 @@ if(isset($_POST['adddomain'])){
         $second_name=(isset($_POST['surname']))?$_POST['surname']:$newuser;
         $user_email=trim($_POST['usermail']);
         $password=$_POST['pswd2'];
-        // SEt these variables to none in case in only vpn account
-        $entryus['loginshell']='none';
-        $entryus['homedirectory']='none';
-        $c=0;
-        if (isset($_POST['sshd'])){
           $entryus['gidnumber']=(int)$grid;
           $entryus['loginshell']='/bin/bash';
           $entryus['homedirectory']='/home/sftpusers/' . $newuser;
-          $entryus['authorizedservice'][$c]='sshd';
-          $c++;
-        }
+          $entryus['authorizedservice'][0]='sshd';
         if (isset($_POST['vpn'])){
-          $entryus['authorizedservice'][$c]='openvpn';
+          $entryus['authorizedservice'][1]='openvpn';
           //$entry['homedirectory']='none';
-          $c++;
         }
           $entryus['uid']=$newuser;
           $entryus['cn']=(!empty($first_name))?$first_name:$newuser;
@@ -76,6 +68,16 @@ if(isset($_POST['adddomain'])){
           $entryus['mail']=$user_email;
           $entryus['userpassword']=ldap_password_hash($password,'ssha');
           $add_user=$Ldap->add_user($newuser,$entryus);
+          if($add_user['result'] == 1){
+            // If we could create the new user assign it as adminid
+            // else we will assign the default user as admin
+            $webmaster=$newuser;
+            $usererro="";
+          } else {
+            $wemaster=$Ldap->get_sudo_user();
+            $usererror = sprintf (_("El usuario %s no se ha podido crear.Se ha establecido el usuario por defecto %s como administrador del dominio"),$newuser,$wemaster);
+          }
+
           if (isset($_POST["sendinstruction"]) && $add_user)$Ldap->send_vpn_instructions($user_email,$newuser);
           $message=$add_user['message'];
     }
@@ -125,7 +127,7 @@ if(isset($_POST['adddomain'])){
        $message .= "
     <div class='alert alert-success'>
     <button class='close' data-dismiss='alert'>&times;</button>
-    <strong>Dominio " . $domain_new ." añadido correctamente</strong> 
+    <strong>Dominio " . $domain_new ." añadido correctamente . " .$usererro . " . ". $add_user['result'] ."</strong> 
     </div>
         ";
       } else {
@@ -179,7 +181,7 @@ if(isset($_POST['adddomain'])){
             <input id="surname" type="text" name="surname" />
             <label for="usermail">' . sprintf(_("Correo electrónico")) .'* </label>
             <p class="little">Puedes insertar un correo electrónico externo o elegir una entre las cuentas creadas en el servidor</p>
-            <input id="usermail" type="mail" name="usermail" required />';
+            <input id="usermail" class="usermail" type="mail" name="usermail" required />';
             $resultmail = $Ldap->search($ldapconn,LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
             $mailcount = $resultmail["count"];
             if($mailcount>0) {
@@ -191,11 +193,6 @@ if(isset($_POST['adddomain'])){
                    echo '</select>';
             };?>
             <div id="emailresult"></div>
-
-            <hr>
-            <h4><?php printf(_("Acceso Sftp"));?></h4>
-            <input type="checkbox" name="sshd" id="sshd" />
-            <label for="sshd">&nbsp;</label>
 
             <hr>
             <h4><?php printf(_("Cuenta VPN"));?></h4>

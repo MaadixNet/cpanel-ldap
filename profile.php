@@ -63,14 +63,14 @@ require_once('header.php');?>
       <input id='oldpsw' type='password' name='oldpsw' required /><?php echo $msg1 ;?>
 
       <label for="pswd1"><h4><?php printf(_("Nueva contraseña"));?></h4></label>
-      <input id='pswd1' type='password' name='pswd1' required /> <?php echo $msg2 ;?>
+      <input readonly id='pswd1' type='password' name='pswd1' required /> <?php echo $msg2 ;?>
 
       <label for="pswd2"><h4><?php printf(_("Repetir nueva contraseña"));?></h4></label><div id="pswresult"></div>
       <input id='pswd2' type='password' name='pswd2' required />
 
       <label for='usermail'><h4><?php printf(_("Correo electrónico"));?></h4></label><div id="emailresult"></div>
       <p><?php printf(_("Averigua que el correo electrónico asociado a tu cuenta sea válido y que tengas acceso a él: si pierdes la contraseña solo podrás resetearla a través de este correo electrónico."),$user );?></p>
-      <input id='usermail' type='email' name='usermail' value="<?php echo $rootusermail;?>" required />
+      <input id='usermail' class='usermail' type='email' name='usermail' value="<?php echo $rootusermail;?>" required />
 
       <div id="formresult"></div>
       <hr>

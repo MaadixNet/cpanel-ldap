@@ -62,3 +62,4 @@ else
 
 header("Location: $url");
  */
+ldap_close($ldapconn);

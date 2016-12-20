@@ -1,11 +1,13 @@
-## Version 0.1.2.2 Alpha 2016-12-06
+## Version 0.1.2.2 Alpha 2016-12-06  
 
-### Added
-- Encryption for user password session
-- Localization (English and Spanish)
-- Anonymous bind for apache for first level
-- Bootstrao modal for confirmation on delete items
-- Addedd template for edit-domain
+### Added  
+- Encryption for user password session  
+- Localization (English and Spanish)  
+- Anonymous bind for apache for first level  
+- Bootstrao modal for confirmation on delete items  
+- Addedd template for edit-domain and edit user   
+- Added Services pages  
+- Added ou=groups in ldap directory to store services statu or availability  
 
 ### Changed
 - Ldap tree changed. All users are in ou=People

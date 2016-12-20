@@ -1,5 +1,6 @@
 <?php require_once 'site-config.php';
 require_once 'classes/class.locale.php';
+require_once 'classes/class.ldap.php';
 /////////////////////////////////////////////////////////////////
 //// Set language and locale
 $locale = new CpanelLocale();
@@ -12,6 +13,14 @@ if (isset($_POST["language"]))
     bind_textdomain_codeset("messages","UTF-8");
 
 /////////////////////////////////////////////////////////////////
+$Ldap= new LDAP();
+$ldapconn=$Ldap->connect();
+$psw=$Ldap->decrypt_psw();
+if ($ldapconn){
+    $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw);
+}
+
+$serv_installed = $Ldap->check_installed_service();
 ?>
 <!DOCTYPE html>
 <html class="no-js">
@@ -68,9 +77,11 @@ if (isset($_POST["language"]))
                                     <li>
                                         <a tabindex="-1" href="logout.php">Logout</a>
                                     </li>
+                                    <?php if($permissions==10){?>
                                     <li>
                                         <a tabindex="-1" href="profile.php">Perfil</a>
                                     </li>
+                                    <?php } ?>
                                 </ul>
                             </li>
                         </ul>
@@ -80,8 +91,16 @@ if (isset($_POST["language"]))
                               <li>
                                 <a href="/<?php echo BASE_PATH;?>"><?php printf(_("Detalles"));?></a>
                               </li>
+                            <li class="dropdown">
+                            <a href="#" data-toggle="dropdown" class="dropdown-toggle"><?php printf(_("Servicios"));?><b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu" id="menuserv">
+                                  <li><a href="/<?php echo BASE_PATH;?>/services.php"><?php printf(_("Servicios instalados"));?></a></li>
+                                  <li><a href="/<?php echo BASE_PATH;?>/service-available.php" target="_blank"><?php printf(_("Servicios disponibles"));?></a></li>
+                                </ul>
+                           </li>
+                              <?php if(array_search('owncloud', array_column($serv_installed, 'ou')) !== false){?>
 
-                              <?php if (is_dir('/var/www/html/ownclowd')){?>
                                 <li>
                                   <a target="_blank" href="https://<?php echo $_SERVER['HTTP_HOST'];?>/owncloud"><?php printf(_("Owncloud"));?></a>
                                 </li>
@@ -109,7 +128,7 @@ if (isset($_POST["language"]))
                                 <a href="#" data-toggle="dropdown" class="dropdown-toggle">Tutoriales <b class="caret"></b>
                                 </a>
                                 <ul class="dropdown-menu" id="menu1">
-                                <li><a href="#" target="_blank"><?php printf(_("Owncloud"));?></a></li>
+                                <li><a href="https://owncloud.org/" target="_blank"><?php printf(_("Owncloud"));?></a></li>
                                 <li><a href="http://docs.maadix.net/dominios/" target="_blank"><?php printf(_("Dominios"));?></a></li>
                                 <li><a href="http://docs.maadix.net/email" target="_blank"><?php printf(_("Email"));?></a></li>
                                 <li><a href="http://docs.maadix.net/vpn/" target="_blank"><?php printf(_("VPN"));?></a></li>

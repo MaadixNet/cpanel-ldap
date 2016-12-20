@@ -211,7 +211,6 @@ if ($ldapbind) {
 ?>
 <div id="admin-content" class="content">
     <?php if($message) echo $message;?>
-    <?php echo 'session phamm: ' .$_SESSION["phamm"]["domain"] . ' filter: ' . $filter . 'psw: ' .$psw;?>
     <div class="row">
 
 	<div class="inner"i id="maincol">
@@ -266,7 +265,6 @@ if ($ldapbind) {
         //echo $result[$i]["adminid"][0];
         $webmaster = $result[$i]["adminid"][0];
         echo $webmaster;
-        echo "</td>";
         echo "<td class='center'>";
         echo "<a href='editdns.php?domain=" . $domain ."'>Ver</a>";
         echo "</td>";
