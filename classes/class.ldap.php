@@ -644,9 +644,7 @@ class LDAP{
 
 	function redirect($url)
 	{
-            //header('HTTP/1.0 302 Found');
-            header("Location: $url");
-            exit;
+			header("refresh:5;Location: $url");
 	}
 	function logout()
 	{
