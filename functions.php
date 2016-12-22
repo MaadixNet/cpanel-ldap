@@ -364,6 +364,28 @@ function check_syntax ($type,$arg,$length="0")
         return true;
     }
 }
+function print_mail_client_settings($email,$domain){
+      $fqdn=$fqdn=trim(shell_exec('hostname -f'));
+      echo '<h3>' . sprintf (_("Configurar cliente de correo") ) .  '</h3>';  
+      echo '<h4>' . sprintf (_("Correo entrante")) . '</h4>';
+      echo '<ul>';
+
+      echo '<li>' . sprintf (_("Servidor: %s"), $domain) . '</li>';
+      echo '<li>' . sprintf (_("Puerto: 993" )) . '</li>';
+      echo '<li>' . sprintf (_("Seguridad: SSL/TLS" )) . '</li>';
+      echo '<li>' . sprintf (_("Nombre de usuario: %s"),$email) . '</li>';
+      echo '<li>' . sprintf (_("Contraseña: Normal ")) . '</li>';
+      echo '</ul>';
+      echo '<h4>' . sprintf (_("Correo saliente")) . '</h4>';
+      echo '<ul>';
+      $fqdn=trim(shell_exec('hostname -f')) . '</li>';
+      echo '<li>' . sprintf (_("Servidor: %s"), $fqdn) . '</li>';
+      echo '<li>' . sprintf (_("Puerto: 465" )); 
+      echo '<li>' . sprintf (_("Seguridad: SSL/TLS" )) . '</li>';
+      echo '<li>' . sprintf (_("Nombre de usuario: %s"),$email) . '</li>';
+      echo '<li>' . sprintf (_("Contraseña: Normal")) . '</li>';
+      echo '</ul>';
+}
 /* from Squirrelmail code
  * http://squirrelmail.org/docs/devel-code/__filesource/fsource_squirrelmail__functionsstrings.php.html#a585
  */

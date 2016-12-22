@@ -102,7 +102,7 @@ $(document).ready(function(){
         } 
       }
 
-      $('#forward').change(function () {
+    $('#forward').change(function () {
     if(this.checked) {
         $("#hidden").show();
         $('input#maildrop').prop('required', true);
@@ -110,7 +110,15 @@ $(document).ready(function(){
         $("#hidden").hide();
         $('input#maildrop').prop('required', false);
     }
-});
+    });
+
+    if($('#vpn').length){
+      console.log('ok');
+      if(document.getElementById('vpn').checked ) {
+          $("#hidden").show();
+      }
+    }
+
 
 });
 
@@ -136,7 +144,27 @@ $(document).ready(function() {
   $('#seluser').change(function(){
       $('#new_user').hide();
       $('.' + $(this).val()).show();
+      if($('#new_user.newuser').is(":visible")){
+        console.log('visible');
+        $('input#username').prop('required', true);
+        $('input#usermail').prop('required', true);
+        $('input#pswd1').prop('required', true);
+        $('input#pswd2').prop('required', true);
+      } else {
+        console.log('invisible');
+          $('input#username').prop('required', false);
+          $('input#dwiusermail').prop('required', false);
+          $('input#pswd1').prop('required', false);
+          $('input#pswd2').prop('required', false);
+      }
   });
+
+ 
+  /*set some inpout field as required
+   * if a new user is created 
+   * when adding domain
+   * TODO
+   */
 
   /*Confrm button on delete Domain
    * in page edomain.php

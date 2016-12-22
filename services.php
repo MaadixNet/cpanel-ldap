@@ -29,7 +29,6 @@ if ($ldapconn){
 if ($ldapbind) {
   $serv_enabled= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled))');
 }
-// var_dump($serv_enabled);
 ?>
 
 <div id="admin-content" class="content">

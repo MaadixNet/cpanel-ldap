@@ -130,6 +130,35 @@ if(isset($_POST['adddomain'])){
     <strong>Dominio " . $domain_new ." añadido correctamente . " .$usererro . " . ". $add_user['result'] ."</strong> 
     </div>
         ";
+
+       //We have to create the .ini file for rainloop for this domain
+       //if rainloop is installed in /var/www/rainloop/data/_data_/_default_/domains/
+      if ($Ldap->check_installed_service('rainloop')){
+          $filename ='/var/www/rainloop/data/_data_/_default_/domains/'. $domain_new .'.ini';
+          if (!file_exists( $filename)){
+            $ini_file= fopen($filename, "w") or die("Unable to open file!");
+            $fqdn=trim(shell_exec('hostname -f'));
+            $content='imap_host = "' . $domain_new . '"
+imap_port = 993
+imap_secure = "SSL"
+imap_short_login = Off
+sieve_use = Off
+sieve_allow_raw = Off
+sieve_host = ""
+sieve_port = 4190
+sieve_secure = "None"
+smtp_host = "' . $fqdn . '"
+smtp_port = 465
+smtp_secure = "SSL"
+smtp_short_login = Off
+smtp_auth = On
+smtp_php_mail = Off
+white_list = ""';
+
+              fwrite($ini_file, $content);
+              fclose($ini_file);
+          }
+        }
       } else {
           $errorttpe    = (ldap_errno($ldapconn)==68)?"El dominio " . $domain_new . " ya existe": $errorttpe;
           $message .=  "
@@ -146,10 +175,10 @@ if(isset($_POST['adddomain'])){
     <?php if($message) echo $message;?>
     <?php if($_SESSION["login"]["level"] == '10'){//Only admin can add Domains 
     ?>
-    <form autocomplete="off" action="#" method="POST" class="form-signin jquery-check">
+    <form autocomplete="off" action="" method="POST" class="form-signin jquery-check">
         <hr>
-        <label for="domain"><?php printf (_("Nombre de Dominio"))?> </label><p class="little"> <?php printf (_("(Inserta un nombre de dominio válido. Para los dominios activado en este panel podrás crear cuentas de correo electrónico o páginas web)"))?></p><input id="domain_new" type="text" name="domain_new" required />
-        <label for="password"><?php printf (_("Contraseña:"));?> </label><p class="little">Esta contraseña se puede utilizar para acceder a este mismo panel de control como administrador del dominio identificándose con <b>User:</b> <em>Nombre Dominio</em> <b>Contraseña: </b><em>La que insertes en este campo</em>. El administrador de dominio tiene privilegios límitados y sólo podrá crear, editar y borrar las cuentas de cooreo electrónico asociadas a su dominio. No podrá en ningún caso acceder a ninguna otra función y no podrá eliminar el dominio</p><input id="password" type="password" name="password" required />
+        <label for="domain"><?php printf (_("Nombre de Dominio"))?> </label><p class="little"> <?php printf (_("(Inserta un nombre de dominio válido (o un subdominio). Para los dominios activados en este panel podrás crear cuentas de correo electrónico o páginas web)"))?></p><input id="domain_new" type="text" name="domain_new" required />
+        <label for="password"><?php printf (_("Contraseña:"));?> </label><p class="little">Esta contraseña se puede utilizar para acceder a este mismo panel de control como administrador del dominio identificándose con <b>User:</b> <em>Nombre Dominio</em> <b>Contraseña: </b><em>La que insertes en este campo</em>. El administrador de dominio tiene privilegios límitados y sólo podrá crear, editar y borrar las cuentas de correo electrónico asociadas a su dominio. No podrá en ningún caso acceder a ninguna otra función y no podrá eliminar el dominio</p><input id="password" type="password" name="password" required />
         <label for="webmaster"><?php printf (_("Webmaster (Administrador sito web)"));?> </label><p class="little">Por cada dominio que actives en este panel se creará una carpeta en la que puedes subir tu aplicación web, accesible desde un navegador. Pudedes permitir que un usuario concreto tenga acceso a la carpeta para que pueda editar sus archivos. Puedes elegir un usuario ya creado o crear uno nuevo. Si no asignas ningún usuario solo podrá editar los archivos el usuario por defecto del sistema, tanto por ssh como por sftp</p>
          <?php 
         $ldaptree    = LDAP_PEOPLE;
@@ -174,14 +203,14 @@ if(isset($_POST['adddomain'])){
             echo '<div class="newuser" id="new_user">';
             echo '
             <label for="username">' . sprintf(_("Nombre de usuario")) .' *</label>
-            <input id="username" type="text" name="username" required /><div id="result"></div>
+            <input id="username" type="text" name="username" /><div id="result"></div>
             <label for="firstname">'. sprintf(_("Primer nombre (Opcional)")) .'</label>
             <input id="firstname" type="text" name="firstname" />
             <label for="surname">' .  sprintf(_("Apeliidos (Opcional)")) . '</label>
             <input id="surname" type="text" name="surname" />
             <label for="usermail">' . sprintf(_("Correo electrónico")) .'* </label>
             <p class="little">Puedes insertar un correo electrónico externo o elegir una entre las cuentas creadas en el servidor</p>
-            <input id="usermail" class="usermail" type="mail" name="usermail" required />';
+            <input id="usermail" class="usermail" type="mail" name="usermail" />';
             $resultmail = $Ldap->search($ldapconn,LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
             $mailcount = $resultmail["count"];
             if($mailcount>0) {
@@ -207,8 +236,9 @@ if(isset($_POST['adddomain'])){
               <label for="sendinstruction" class="left small">&nbsp;</label>&nbsp;<span><?php printf(_("Enviar instrucciones"));?></span></h4>
             </div>
             <hr>
-            <label for="pswd1"><?php printf(_("Contraseña"));?> *</label><input id="pswd1" type="password" name="pswd1" required />
-            <label for="pswd2"><?php printf(_("Confirma contraseña"));?> *</label><input id="pswd2" type="password" name="pswd2" required />
+            <h4><?php printf (_("Contraseña personal de usuario"));?></h4>
+            <label for="pswd1"><?php printf(_("Contraseña"));?> *</label><input id="pswd1" type="password" name="pswd1" />
+            <label for="pswd2"><?php printf(_("Confirma contraseña"));?> *</label><input id="pswd2" type="password" name="pswd2"  />
             <div id="pswresult"></div>
             <hr>
 

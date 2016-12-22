@@ -495,9 +495,13 @@ class LDAP{
           echo  $folderpath=$filesdir.'/'.$foldername;
 }
 
-  function check_installed_service() {
+  function check_installed_service($service) {
         $serv_enabled = $this->search($this->connection, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled))');
-        return $serv_enabled;
+        if(array_search($service, array_column(array_column($serv_enabled, 'ou'),0)) !== false){
+          return true;
+        } else {
+          return false;
+        }
 
   }       
 
@@ -511,71 +515,63 @@ class LDAP{
             $subject='Cuenta VPN activada';
             $ipaddr=$_SERVER['SERVER_ADDR'];
             $foldername='VPN-'.$_SERVER['SERVER_ADDR'];
-            $filesdir=dirname(__DIR__).'/files';
+            //here we have the config files without ip
+            $code_filesdir=dirname(__DIR__).'/files';
+            $code_folderpath=$code_filesdir.'/'.$foldername;
+            //Here we make a copy to create zip folder with custom data (IP)
+            if(!is_dir('/tmp/vpn_files'))mkdir('/tmp/vpn_files');
+            $filesdir='/tmp/vpn_files';
+            if(!is_dir($filesdir.'/'.$foldername))mkdir($filesdir.'/'.$foldername);
             $folderpath=$filesdir.'/'.$foldername;
-
-            //Check if a ca.crt is available
-            if (file_exists("/etc/openvpn/ca.crt")){
-
-              $ca=shell_exec("cat /etc/openvpn/ca.crt > $filesdir/ca.crt");
-            } elseif (file_exists($filesdir.'/ca.crt')){
-
-              $ca=$filesdir. '/ca.crt';
-
-            } else {
-
-              $error=1;
-              $message="no hay ca.crt";
-
-            }
 
             if (file_exists($folderpath.'zip')) {
               $attachments=$folderpath.'.zip';
             }
             else
             {
-            #TODO for  mac. If it's the same so a foreach
-            $src=$filesdir.'/vpn_config';
+              //Check if a ca.crt is available
+              if (file_exists("/etc/openvpn/" . $fqdn . "/keys/ca.crt")){
 
-            //create directory and copy generic config files
-            //If files already exists is ok to overwrite them
-            //slash before command calls it without alias which may be -i
-            if (file_exists("/etc/openvpn/ca.crt")){
-              
-              $ca=shell_exec("cat /etc/openvpn/ca.crt > $filesdir/ca.crt");
-            } elseif (file_exists($filesdir.'/ca.crt')){
-        
-              $ca=$filesdir. '/ca.crt';
+                shell_exec("cat /etc/openvpn/" . $fqdn . "/keys/ca.crt > $filesdir/ca.crt");
+                $ca=$filesdir. '/ca.crt';
 
-            } else {
+              } else {
 
-              $error=1;
-              $message="no hay ca.crt";
+                $error=1;
+                $message="no hay ca.crt";
 
-            }
+              }
 
-            shell_exec("find $src/ -type d -exec cp $ca {} \;");
-            shell_exec("mkdir $folderpath; \cp -r -f $src/* $folderpath");
-            $addip_text='remote ' . $_SERVER['SERVER_ADDR'];
-            $filesnames=array($folderpath.'/linux/vpn.conf',$folderpath.'/windows/vpn.ovpn', $folderpath.'/android/android-client.ovpn');
-            foreach ($filesnames as $configfile){
+              #TODO for  mac. If it's the same so a foreach
+              $src=$code_filesdir.'/vpn_config';
 
-              if (is_writable($configfile)) {
-                if (!$handle = fopen($configfile, 'a')) {
-                 // echo "Cannot open file ($configfile)";
-                  exit;
-                }
+              //create directory and copy generic config files
+              //If files already exists is ok to overwrite them
+              //slash before command calls it without alias which may be -i
 
-                if (fwrite($handle, $addip_text) === FALSE ) {
-                 //   echo "Cannot write to file ($configfile)";
+              //shell_exec("find $src/ -type d -exec cp $ca {} \;");
+              shell_exec("\cp -r -f $src/* $folderpath");
+              shell_exec("find $folderpath/ -type d -exec cp $ca {} \;");
+              $addip_text='remote ' . $_SERVER['SERVER_ADDR'];
+              $filesnames=array($folderpath.'/linux/vpn.conf',$folderpath.'/windows/vpn.ovpn', $folderpath.'/android/android-client.ovpn');
+              foreach ($filesnames as $configfile){
+
+                if (is_writable($configfile)) {
+                  if (!$handle = fopen($configfile, 'a')) {
+                   // echo "Cannot open file ($configfile)";
                     exit;
-                }
-                fclose($handle);
-                } else {
-                 //   echo "The file $configfile not writable";
-                }
+                  }
 
-            }
+                  if (fwrite($handle, $addip_text) === FALSE ) {
+                   //   echo "Cannot write to file ($configfile)";
+                    exit;
+                  }
+                  fclose($handle);
+                  } else {
+                   //   echo "The file $configfile not writable";
+                  }
+
+                }
                 shell_exec("cd $filesdir && zip -r $foldername.zip $foldername");
                 $attachments=$filesdir.'/'.$foldername .'.zip';
           }
@@ -584,13 +580,11 @@ class LDAP{
           Buenos días,<br><br>
           El administrador de " . $_SERVER['SERVER_NAME'] . " ha activado una cuenta VPN para ti<br>
           <b>Usuario: </b> " . $username ."<br>
-          <b>Contraseña: <em>Solicitala al administrador</em>
+          <b>Contraseña:</b> <em>Solicitala al administrador - por razones de seguridad no se envian contraseñas por correo electrónico</em>
           <br>
           <br>
-          Por favor, desacrga el archivo adjunto y sigue las instrucciones para tu sistema operativo que encontrarás 
-          <br>
+          Por favor, desacrga el archivo adjunto y sigue las instrucciones para tu sistema operativo que encontrarás en: 
           <br><br>
-          Puedes encontrar más información sobre VPN aquí:<br>
           <a href='http://docs.maadix.net/vpn'>http://docs.maadix.net/vpn/</a>";
 
         $action=send_mail($from,$to,$body,$subject,$attachments);
@@ -650,7 +644,9 @@ class LDAP{
 
 	function redirect($url)
 	{
-			header("Location: $url");
+            //header('HTTP/1.0 302 Found');
+            header("Location: $url");
+            exit;
 	}
 	function logout()
 	{

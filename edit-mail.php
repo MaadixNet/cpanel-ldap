@@ -163,22 +163,7 @@ require_once('header.php');
                   </form>
               </div>
               <div class="col-sm-3">
-                <?php echo '<h3>' . sprintf (_("Configurar cliente de correo") ) .  '</h3>';  
-                echo '<h4>' . sprintf (_("Correo entrante")) . '</h4>';
-                echo '<ul>';
-
-                echo '<li>' . sprintf (_("Servidor: %s"), $domain) . '</li>';
-                echo '<li>' . sprintf (_("Puerto: 993" )) . '</li>';
-                echo '<li>' . sprintf (_("Nombre de usuario: %s"),$email) . '</li>';
-                echo '</ul>';
-                echo '<h4>' . sprintf (_("Correo saliente")) . '</h4>';
-                echo '<ul>';
-                $fqdn=trim(shell_exec('hostname -f')) . '</li>';
-                echo '<li>' . sprintf (_("Servidor: %s"), $fqdn) . '</li>';
-                echo '<li>' . sprintf (_("Puerto: 25" ));
-                echo '<li>' . sprintf (_("Nombre de usuario: %s"),$email) . '</li>';
-                echo '</ul>';
-                ?>
+                <?php print_mail_client_settings($email,$domain);?>
               </div>
             </div><!--ineer-->
         </div><!--col-sm-8-->

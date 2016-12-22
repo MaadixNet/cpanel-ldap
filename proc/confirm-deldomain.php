@@ -45,7 +45,7 @@ $sudouser=$Ldap->get_sudo_user();
   if ($admin_id != $sudouser){
      printf(_("El usuario '%s' es actualmente el webmaster de este dominio. Al eliminar el dominio no se borra ni el usuario ni la carpeta /var/www/html/%s. El nuevo propietario de la carpeta será el usuario por defetcto %s, para que pueda acceder a los archivos y editarlos o eliminarlos manualmente a través de una conexión ssh/sftp"), $admin_id, $domain,$sudouser );
   } else {
-    echo 'el admin es el sudo ';
+    printf(_("¿Seguro que quieres eliminar el dominio %s?"),$domain);
   }
   echo '</p>';
 // print_r($result)

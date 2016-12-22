@@ -34,7 +34,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
   $modifydn='uid='.$selecteduser. ',' . $ldaptree;
   $psw1=trim($_POST['pswd1']);
   $psw2=trim($_POST['pswd2']);
-
+  $user_email=$_POST['usermail']; 
   # Only update pswd if fields are filled and matches
 
   if ((!empty($psw1)) && (!empty($psw2)) && ($psw2==$psw1) ) {
@@ -45,7 +45,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
 
   $info['cn']=$_POST['commonname'];
   $info['sn']=$_POST['surname'];
-  $info['mail']=$_POST['usermail'];
+  $info['mail']=$user_email;
 
   ## Check authorizesServices
   #
@@ -76,6 +76,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
   }
 
   $edit_user=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
+  if($edit_user && isset($_POST["sendinstruction"]) && isset($_POST["vpn"]))$Ldap->send_vpn_instructions($user_email,$selecteduser);
   $message=$edit_user["message"];
 }
 
@@ -123,7 +124,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
                 
                 $services=(isset($result[0]['authorizedservice']))?$result[0]['authorizedservice']:array();
                 $sshd=(in_array("sshd",$services))?'checked="checked"':'';
-                $vpn=(in_array("vpn",$services))?'checked="checked"':'';
+                $vpn=(in_array("openvpn",$services))?'checked="checked"':'';
                 ?>
 
                 <div class="clear"></div>
@@ -137,9 +138,19 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
                   echo '<pre>' . $result[0]['homedirectory'][0] . '</pre>';
                 }?>
 
-                <h4><?php printf(_("Cuenta VPN"));?></h4>
-                <input type="checkbox" name="vpn" id="vpn" <?php echo $vpn;?> />
-                <label for="vpn">&nbsp;</label></h4>
+                <?php if ($Ldap->check_installed_service('openvpn')){?>
+                  <h4><?php printf(_("Cuenta VPN"));?></h4>
+                  <input type="checkbox" name="vpn" id="vpn" <?php echo $vpn;?> />
+                  <label for="vpn" class="togglehidden" >&nbsp;</label>
+
+                  <div id="hidden">
+                  <h4><?php printf(_("Instrucciones"));?></h4>
+                  <p><?php printf(_("Puedes enviar al usuario un email con instrucciones para configurar el cliente VPN"));?></p>
+                  <p><?php printf(_("NOTA: Las instrucciones incluyen todos los datos necesarios menos la contraseña. Por razones de seguridad proporciona al usuario la  contraseña por otro canal"));?></p>
+                  <input type="checkbox" name="sendinstruction" id="sendinstruction" />
+                  <label for="sendinstruction" class="left small">&nbsp;</label>&nbsp;<span><?php printf(_("Enviar instrucciones"));?></span></h4> 
+                  </div>
+                <?php } ?>
 
                 <div class="clear"></div>
                 <hr>

@@ -19,8 +19,12 @@ $psw=$Ldap->decrypt_psw();
 if ($ldapconn){
     $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw);
 }
+//Get all installed services to show or not in menu
+if ($ldapbind) {
+  $serv_installed= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled))');
+}
 
-$serv_installed = $Ldap->check_installed_service();
+//:w!$serv_installed = $Ldap->check_installed_service();
 ?>
 <!DOCTYPE html>
 <html class="no-js">
@@ -91,15 +95,15 @@ $serv_installed = $Ldap->check_installed_service();
                               <li>
                                 <a href="/<?php echo BASE_PATH;?>"><?php printf(_("Detalles"));?></a>
                               </li>
-                            <li class="dropdown">
-                            <a href="#" data-toggle="dropdown" class="dropdown-toggle"><?php printf(_("Servicios"));?><b class="caret"></b>
+                              <li class="dropdown">
+                                <a href="#" data-toggle="dropdown" class="dropdown-toggle"><?php printf(_("Servicios"));?><b class="caret"></b>
                                 </a>
                                 <ul class="dropdown-menu" id="menuserv">
                                   <li><a href="/<?php echo BASE_PATH;?>/services.php"><?php printf(_("Servicios instalados"));?></a></li>
                                   <li><a href="/<?php echo BASE_PATH;?>/service-available.php" target="_blank"><?php printf(_("Servicios disponibles"));?></a></li>
                                 </ul>
                            </li>
-                              <?php if(array_search('owncloud', array_column($serv_installed, 'ou')) !== false){?>
+                              <?php if(array_search('owncloud', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
 
                                 <li>
                                   <a target="_blank" href="https://<?php echo $_SERVER['HTTP_HOST'];?>/owncloud"><?php printf(_("Owncloud"));?></a>
@@ -108,6 +112,7 @@ $serv_installed = $Ldap->check_installed_service();
                             <li class="dropdown">
                             <a href="#" data-toggle="dropdown" class="dropdown-toggle"><?php printf (_("Dominios"));?><b class="caret"></b>
                             </a>
+
                             <ul class="dropdown-menu" id="menu0">
                                 <li><a href="/<?php echo BASE_PATH;?>/view-domains.php"><?php printf(_("Ver Dominios"));?></a></li>
                                   <?php if ($permissions >= 10) { //only admin can add domains?>
@@ -117,7 +122,21 @@ $serv_installed = $Ldap->check_installed_service();
                             </li>                        
 
                             <?php }?>
-                            <li><a href="/<?php echo BASE_PATH;?>/mails.php"><?php printf(_("Email"));?></a></li>
+                            <?php if(array_search('mail', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+                            <li class="dropdown">
+                              <a href="#" data-toggle="dropdown" class="dropdown-toggle"><?php printf (_("Email"));?><b class="caret"></b>
+                              </a>
+
+                              <ul class="dropdown-menu" id="menu-mail">
+
+                                 <li><a href="/<?php echo BASE_PATH;?>/mails.php"><?php printf(_("Cuentas mail"));?></a></li>
+                                 <?php if(array_search('rainloop', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+                                  <li><a href="https://<?php echo $_SERVER['HTTP_HOST'];?>/rainloop" target="_blank"><?php printf(_("Webmail"));?></a></li>
+                                 <?php } ?>
+                              </ul>
+                            </li>
+                            <?php } ?>
+
 
                             <?php if ($permissions >= 10) {?>
                             <li><a href="/<?php echo BASE_PATH;?>/usuarios.php"><?php printf(_("Usuarios"));?></a></li>

@@ -133,17 +133,19 @@ $firstuid_availabe=system($commuid);*/?>
                 <label for="sshd">&nbsp;</label>
               
                 <hr>
-                <h4><?php printf(_("Cuenta VPN"));?></h4>
-                <input type="checkbox" name="vpn" id="vpn" />
-                <label for="vpn" class="togglehidden" >&nbsp;</label></h4>
-  
-                <div id="hidden">
-                <h4><?php printf(_("Instrucciones"));?></h4> 
-                <p><?php printf(_("Puedes enviar al usuario un email con instrucciones para configurar el cliente VPN"));?></p>
-                <p><?php printf(_("NOTA: Las instrucciones incluyen todos los datos necesarios menos la contraseña. Por razones de seguridad proporciona al usuario la  contraseña por otro canal"));?></p>
-                <input type="checkbox" name="sendinstruction" id="sendinstruction" />
-                <label for="sendinstruction" class="left small">&nbsp;</label>&nbsp;<span><?php printf(_("Enviar instrucciones"));?></span></h4>   
-                </div>
+                <?php if ($Ldap->check_installed_service('openvpn')){?>
+                  <h4><?php printf(_("Cuenta VPN"));?></h4>
+                  <input type="checkbox" name="vpn" id="vpn" />
+                  <label for="vpn" class="togglehidden" >&nbsp;</label></h4>
+    
+                  <div id="hidden">
+                  <h4><?php printf(_("Instrucciones"));?></h4> 
+                  <p><?php printf(_("Puedes enviar al usuario un email con instrucciones para configurar el cliente VPN"));?></p>
+                  <p><?php printf(_("NOTA: Las instrucciones incluyen todos los datos necesarios menos la contraseña. Por razones de seguridad proporciona al usuario la  contraseña por otro canal"));?></p>
+                  <input type="checkbox" name="sendinstruction" id="sendinstruction" />
+                  <label for="sendinstruction" class="left small">&nbsp;</label>&nbsp;<span><?php printf(_("Enviar instrucciones"));?></span></h4>   
+                  </div>
+                <?php } ?>
 
                <div class="clear"></div> 
               <hr>
