@@ -7,7 +7,7 @@ if(!$Ldap->is_logged_in())
 {
           $Ldap->redirect('login.php');
 }
-$message="";
+$message=$msg1=$msg2="";
 $ldapconn=$Ldap->connect();
 if ($ldapconn){
   $psw=$Ldap->decrypt_psw();

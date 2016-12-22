@@ -14,16 +14,18 @@ if (isset($_POST["language"]))
 
 /////////////////////////////////////////////////////////////////
 $Ldap= new LDAP();
-$ldapconn=$Ldap->connect();
-$psw=$Ldap->decrypt_psw();
-if ($ldapconn){
-    $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw);
-}
-//Get all installed services to show or not in menu
-if ($ldapbind) {
-  $serv_installed= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled))');
-}
+if($Ldap->is_logged_in()){
 
+  $ldapconn=$Ldap->connect();
+  $psw=$Ldap->decrypt_psw();
+  if ($ldapconn){
+      $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw);
+  }
+  //Get all installed services to show or not in menu
+  if ($ldapbind) {
+    $serv_installed= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled))');
+  }
+}
 //:w!$serv_installed = $Ldap->check_installed_service();
 ?>
 <!DOCTYPE html>
@@ -103,7 +105,7 @@ if ($ldapbind) {
                                   <li><a href="/<?php echo BASE_PATH;?>/service-available.php" target="_blank"><?php printf(_("Servicios disponibles"));?></a></li>
                                 </ul>
                            </li>
-                              <?php if(array_search('owncloud', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+                              <?php if( !empty($serv_installed) && array_search('owncloud', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
 
                                 <li>
                                   <a target="_blank" href="https://<?php echo $_SERVER['HTTP_HOST'];?>/owncloud"><?php printf(_("Owncloud"));?></a>
@@ -122,7 +124,7 @@ if ($ldapbind) {
                             </li>                        
 
                             <?php }?>
-                            <?php if(array_search('mail', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+                            <?php if(!empty($serv_installed) && array_search('mail', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
                             <li class="dropdown">
                               <a href="#" data-toggle="dropdown" class="dropdown-toggle"><?php printf (_("Email"));?><b class="caret"></b>
                               </a>
@@ -130,7 +132,7 @@ if ($ldapbind) {
                               <ul class="dropdown-menu" id="menu-mail">
 
                                  <li><a href="/<?php echo BASE_PATH;?>/mails.php"><?php printf(_("Cuentas mail"));?></a></li>
-                                 <?php if(array_search('rainloop', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+                                 <?php if( !empty($serv_installed) &&  array_search('rainloop', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
                                   <li><a href="https://<?php echo $_SERVER['HTTP_HOST'];?>/rainloop" target="_blank"><?php printf(_("Webmail"));?></a></li>
                                  <?php } ?>
                               </ul>

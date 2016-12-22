@@ -8,7 +8,6 @@ if(!$user_home->is_logged_in())
 }
 if($_SESSION["login"]["level"]<10)$user_home->redirect('404.php');
 
-require_once('header.php');
 require_once 'classes/class.DiskStatus.php';
 try {
   $diskStatus = new DiskStatus('/');
@@ -19,6 +18,7 @@ try {
   echo 'Error ('.$e->getMessage().')';
   exit();
 }
+require_once('header.php');
 ?>
 <div id="admin-content" class="content">
 <?php

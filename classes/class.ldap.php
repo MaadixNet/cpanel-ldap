@@ -497,7 +497,7 @@ class LDAP{
 
   function check_installed_service($service) {
         $serv_enabled = $this->search($this->connection, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled))');
-        if(array_search($service, array_column(array_column($serv_enabled, 'ou'),0)) !== false){
+        if(!empty($serv_installed) && array_search($service, array_column(array_column($serv_enabled, 'ou'),0)) !== false){
           return true;
         } else {
           return false;
@@ -644,7 +644,8 @@ class LDAP{
 
 	function redirect($url)
 	{
-			header("refresh:5;Location: $url");
+			header("Location: $url");
+                        exit;
 	}
 	function logout()
 	{

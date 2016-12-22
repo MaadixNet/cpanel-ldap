@@ -29,8 +29,11 @@ if ($ldapconn){
 if ($ldapbind) {
   $serv_enabled= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled))');
 }
+/*echo '<pre>';
+var_dump($serv_enabled);
+echo '</pre>';
+ */
 ?>
-
 <div id="admin-content" class="content">
         <div class="col-sm-12">
             <div class="inner" id="maincol">
@@ -52,7 +55,6 @@ if ($ldapbind) {
               echo "<hr>";
               echo "</div>";//col-md-10
               echo "</div>";//row
-                ;
               };?>
 
         <br>

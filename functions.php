@@ -80,81 +80,80 @@ function get_service_data($service){
 
   case 'openvpn':
     $image = "images/services/openvpn.png";
-    $title=sprintf(_("Servidor VPN"));
-    $software=sprintf(_("OpenVpn"));
-    $description=sprintf(_(" Envía toda tu actividad y la de tus colaboradores por tu propia VPN garantizando por ti mismo el máximo nivel de confidencialidad de tu actividad online mediante tu propia conexión segura. Visita cualquier sitio desde cualquier parte de forma privada creando conexiones seguras y directas a través de internet. Protégete cuando usas redes WiFi públicas o abiertas y accede a sitios bloqueados en el país desde donde te conectas. Con MaadiX puedes crear todos los usuarios VPN que necesites para tu familia, compañeros o empleados desde una sencilla pantalla y con un clic.
+    $title = sprintf(_("Servidor VPN"));
+    $software = sprintf(_("OpenVpn"));
+    $description = sprintf(_(" Envía toda tu actividad y la de tus colaboradores por tu propia VPN garantizando por ti mismo el máximo nivel de confidencialidad de tu actividad online mediante tu propia conexión segura. Visita cualquier sitio desde cualquier parte de forma privada creando conexiones seguras y directas a través de internet. Protégete cuando usas redes WiFi públicas o abiertas y accede a sitios bloqueados en el país desde donde te conectas. Con MaadiX puedes crear todos los usuarios VPN que necesites para tu familia, compañeros o empleados desde una sencilla pantalla y con un clic.
       "));
     break;
 
   case 'owncloud':
     $image = "images/services/owncloud.png";
-    $title=sprintf(_("Servidor de alojamiento y sincronización de archivos"));
-    $software=sprintf(_("Owncloud"));
-    $description=sprintf(_("Trabaja en documentos, presentaciones, hojas de cálculo, bases de datos... siempre a mano y listos para compartir. Edita y comenta documentos colaborativamente. Impórtalos y expórtalos de otras plataformas. Trabaja en ellos en cualquier momento y desde cualquier dispositivo incluso cuando estás sin conexión. Importa automàticamente tus contactos desde Gmail, Outlook, thunderbird, Yahoo u otros formatos de archivos. Organiza tu trabajo en línea decidiendo el nivel de acceso que quieres darle a cada usuario que autorices."));
+    $title = sprintf(_("Servidor de alojamiento y sincronización de archivos"));
+    $software = sprintf(_("Owncloud"));
+    $description = sprintf(_("Trabaja en documentos, presentaciones, hojas de cálculo, bases de datos... siempre a mano y listos para compartir. Edita y comenta documentos colaborativamente. Impórtalos y expórtalos de otras plataformas. Trabaja en ellos en cualquier momento y desde cualquier dispositivo incluso cuando estás sin conexión. Importa automàticamente tus contactos desde Gmail, Outlook, thunderbird, Yahoo u otros formatos de archivos. Organiza tu trabajo en línea decidiendo el nivel de acceso que quieres darle a cada usuario que autorices."));
     break;
 
   case 'rainloop':
     $image = "images/services/rainloop.png";
-    $title=sprintf(_("Webmail"));
-    $software=sprintf(_("Rainloop"));
-    $description=sprintf(_("Interfaz web para consulta e envío de correo electrónico. Puedeis ver una demo aquí: <a href='https://mail.rainloop.net/' title='Rainloop demo' target=_'blank'>https://mail.rainloop.net/</a>"));
+    $title = sprintf(_("Webmail"));
+    $software = sprintf(_("Rainloop"));
+    $description = sprintf(_("Interfaz web para consulta e envío de correo electrónico. Puedeis ver una demo aquí: <a href='https://mail.rainloop.net/' title='Rainloop demo' target=_'blank'>https://mail.rainloop.net/</a>"));
     break;
 
   case 'afterlogic':
     $image = "images/services/email-text.png";
-    $title=sprintf(_("Webmail"));
-    $software=sprintf(_("After Logic"));
-    $description=sprintf(_("Interfaz web para consulta e envío de correo electrónico. Puedeis ver una demo aquí: <a href='https://lite.afterlogic.com/' title='After Logic demo' target=_'blank'>https://lite.afterlogic.com/</a>"));
+    $title = sprintf(_("Webmail"));
+    $software = sprintf(_("After Logic"));
+    $description = sprintf(_("Interfaz web para consulta e envío de correo electrónico. Puedeis ver una demo aquí: <a href='https://lite.afterlogic.com/' title='After Logic demo' target=_'blank'>https://lite.afterlogic.com/</a>"));
     break;
 
   case 'roundcube':
     $image = "images/services/email-text.png";
-    $title=sprintf(_("Webmail"));
-    $software=sprintf(_("Roundcube"));
-    $description=sprintf(_("Interfaz web para consulta e envío de correo electrónico. Web del proyecto: <a href='https://roundcube.net/about/' title='Roundcube website' target=_'blank'>https://roundcube.net/about/</a>"));
+    $title = sprintf(_("Webmail"));
+    $software = sprintf(_("Roundcube"));
+    $description = sprintf(_("Interfaz web para consulta e envío de correo electrónico. Web del proyecto: <a href='https://roundcube.net/about/' title='Roundcube website' target=_'blank'>https://roundcube.net/about/</a>"));
     break;
 
   case 'phpmyadmin':
     $image = "images/services/phpmyadmin.png";
-    $title=sprintf(_("Mysql"));
-    $software=sprintf(_("phpMyAdmin"));
-    $description=sprintf(_("Interfaz web para administración de base de datos mysql. Demo: <a href='https://demo.phpmyadmin.net/master-config/' title='PhpMyAdmin Demo' target=_'blank'>https://demo.phpmyadmin.net/master-config/</a>"));
+    $title = sprintf(_("Mysql"));
+    $software = sprintf(_("phpMyAdmin"));
+    $description = sprintf(_("Interfaz web para administración de base de datos mysql. Demo: <a href='https://demo.phpmyadmin.net/master-config/' title='PhpMyAdmin Demo' target=_'blank'>https://demo.phpmyadmin.net/master-config/</a>"));
     break;
-
 
   case 'piwik':
     $image = "images/services/piwik.png";
-    $title=sprintf(_("Estadísticas"));
-    $software=sprintf(_("Piwik"));
-    $description=sprintf(_("Alternativa OpenSource a Google Analytics. Rastrea en tiempo real páginas vistas y visitas de tus sitio web. Piwik muestra informes con respecto a la ubicación geográfica de las visitas, origen de las visitas,el tiempo de visitas y más. <a href='https://piwik.org/' title='PhpMyAdmin Demo' target=_'blank'>https://piwik.org</a>"));
+    $title = sprintf(_("Estadísticas"));
+    $software = sprintf(_("Piwik"));
+    $description = sprintf(_("Alternativa OpenSource a Google Analytics. Rastrea en tiempo real páginas vistas y visitas de tus sitio web. Piwik muestra informes con respecto a la ubicación geográfica de las visitas, origen de las visitas,el tiempo de visitas y más. <a href='https://piwik.org/' title='PhpMyAdmin Demo' target=_'blank'>https://piwik.org</a>"));
     break;
 
   case 'wordpress':
     $image = "images/services/wordpress.png";
-    $title=sprintf(_("Web"));
-    $software=sprintf(_("Wordpress"));
+    $title = sprintf(_("Web"));
+    $software = sprintf(_("Wordpress"));
     $description=sprintf(_("Sistema de gestión de contenidos o CMS enfocado a la creación de cualquier tipo de sitio web. <a href='https://es.wordpress.org/' target=_'blank'>https://es.wordpress.org/</a>"));
     break;
 
   case 'drupal':
     $image = "images/services/drupal.png";
-    $title=sprintf(_("Web"));
-    $software=sprintf(_("Drupal"));
-    $description=sprintf(_("Sistema de gestión de contenidos o CMS enfocado a la creación de cualquier tipo de sitio web. <a href='https://www.drupal.org/' target=_'blank'>https://www.drupal.org/</a>"));
+    $title = sprintf(_("Web"));
+    $software = sprintf(_("Drupal"));
+    $description = sprintf(_("Sistema de gestión de contenidos o CMS enfocado a la creación de cualquier tipo de sitio web. <a href='https://www.drupal.org/' target=_'blank'>https://www.drupal.org/</a>"));
     break;
 
   case 'etherpad':
     $image = "images/services/etherpad.png";
-    $title=sprintf(_("Edición colaborativa online"));
-    $software=sprintf(_("Etherpad Lite"));
+    $title = sprintf(_("Edición colaborativa online"));
+    $software = sprintf(_("Etherpad Lite"));
     $description=sprintf(_("Editor web basado en la colaboración en tiempo real, lo que permite a varios autores editar simultáneamente un documento de texto, y ver todos los participantes en las ediciones en tiempo real, con la capacidad de mostrar el texto de cada autor en diferente color. También hay una ventana de chat en la barra lateral para permitir la comunicación directa.<href='http://etherpad.org/' target=_'blank'>http://etherpad.org/</a>"));
     break;
 
   case 'mailman':
     $image = "images/services/mailman.png";
-    $title=sprintf(_("Listas de correo"));
-    $software=sprintf(_("GNU Mailman"));
-    $description=sprintf(_("aplicación de software del proyecto GNU, que maneja listas de correo electrónico o simplemente listas de correo. <href='http://www.list.org/' target=_'blank'>http://www.list.org/</a>"));
+    $title = sprintf(_("Listas de correo"));
+    $software = sprintf(_("GNU Mailman"));
+    $description = sprintf(_("aplicación de software del proyecto GNU, que maneja listas de correo electrónico o simplemente listas de correo. <href='http://www.list.org/' target=_'blank'>http://www.list.org/</a>"));
     break;
 
   default:

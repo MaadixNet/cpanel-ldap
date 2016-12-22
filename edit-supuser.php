@@ -75,6 +75,7 @@ print_r($result);
 echo '</pre>';
  */
 $username=$result[0]['uid'][0];
+$usermail = (isset($result[0]['mail'][0]))?$result[0]['mail'][0]:'';
 ?>
 <div id="admin-content" class="content">
 <?php echo $message;?>
@@ -89,8 +90,8 @@ $username=$result[0]['uid'][0];
                <label for="surname"><h4><?php echo  sprintf(_("Apellidos"));?></h4></label><input id="surname" name="surname" type="text" maxlength="64" value="<?php echo $result[0]['sn'][0];?>" />
 
               <label for="usermail"><h4><?php printf(_("Correo electrónico"));?></h4></label> 
-
-              <input id="usermail" class="usermail" type="mail" name="usermail" value="<?php echo $result[0]['mail'][0];?>" required />  
+            
+              <input id="usermail" class="usermail" type="mail" name="usermail" value="<?php echo $usermail;?>" required />  
                 <?php $resultmail = $Ldap->search($ldapconn,LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
                 $mailcount = $resultmail["count"];
                 if($mailcount>0) {
