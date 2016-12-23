@@ -260,6 +260,33 @@ $('#userModal').on('show.bs.modal', function (event) {
 
      }); 
 
+/* Check password match*/
+    $("#pswd4").blur(function()
+    {
+        var pass1 = $(this).val();
+        var pass2 = $("#pswd3").val();
+        if(pass2!=pass1)
+        {   
+            $("#pswresultsudo").html('<span class="error"><i class="fa fa-exclamation-triangle icon checkko alert-danger"></i> <em>Las contraseñas no coinciden</em>');
+        }else {
+            $("#pswresultsudo").html('');
+        }
+     
+     });
+
+/* Check password match*/
+    $("#pswd3").blur(function()
+    {   
+        var pass1 = $(this).val();
+        var pass2 = $("#pswd4").val();
+        if(pass2!=pass1)
+        {
+            $("#pswresultsudo").html('<span class="error"><i class="fa fa-exclamation-triangle icon checkko alert-danger"></i> <em>Las contraseñas no coinciden</em>');
+        }else {
+            $("#pswresultsudo").html('');
+        }
+
+     }); 
 
 
 

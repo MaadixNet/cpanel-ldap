@@ -1,13 +1,10 @@
 <?php 
-
 session_start();
 require_once 'classes/class.ldap.php';
 $Ldap= new LDAP();
 
-if(!$Ldap->is_logged_in())
-{
-	$Ldap->redirect('login.php');
-}
+$current_page=basename(__FILE__);
+$Ldap->check_login_or_redirect($current_page);
 
 require_once('header.php');
 //connect and BInd
@@ -263,8 +260,10 @@ if ($ldapbind) {
         echo "</td>";
         echo "<td>";
         //echo $result[$i]["adminid"][0];
+        $current_admin=shell_exec("find /var/www/html/$domain -maxdepth 0 -printf '%u\n'");
         $webmaster = $result[$i]["adminid"][0];
-        echo $webmaster;
+        $ownersip=($current_admin==$webmaster)?$statok:$loading;
+        echo $webmaster . '&nbsp;&nbsp;' . $ownersip;
         echo "<td class='center'>";
         echo "<a href='editdns.php?domain=" . $domain ."'>Ver</a>";
         echo "</td>";

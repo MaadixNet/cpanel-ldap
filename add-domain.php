@@ -2,10 +2,10 @@
 session_start();
 require_once 'classes/class.ldap.php';
 $Ldap= new LDAP();
-if(!$Ldap->is_logged_in())
-{
-  $Ldap->redirect('login.php');
-}
+
+$current_page=basename(__FILE__);
+$Ldap->check_login_or_redirect($current_page);
+
 require_once('header.php');
 //connect and BInd
 $errorttpe="";
@@ -138,9 +138,9 @@ if(isset($_POST['adddomain'])){
           if (!file_exists( $filename)){
             $ini_file= fopen($filename, "w") or die("Unable to open file!");
             $fqdn=trim(shell_exec('hostname -f'));
-            $content='imap_host = "' . $domain_new . '"
-imap_port = 993
-imap_secure = "SSL"
+            $content='imap_host = "' . $fqdn . '"
+imap_port = 143
+imap_secure = "TLS"
 imap_short_login = Off
 sieve_use = Off
 sieve_allow_raw = Off
@@ -148,7 +148,7 @@ sieve_host = ""
 sieve_port = 4190
 sieve_secure = "None"
 smtp_host = "' . $fqdn . '"
-smtp_port = 465
+smtp_port = 25
 smtp_secure = "SSL"
 smtp_short_login = Off
 smtp_auth = On

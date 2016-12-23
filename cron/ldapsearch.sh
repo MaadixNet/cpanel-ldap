@@ -62,6 +62,7 @@ fi
 # GNU General Public License v3
 # based on this topic: http://stackoverflow.com/questions/14171340/dilemma-realtime-crate-virtual-hosts-or-with-a-crontab/38901618#38901618
 # TODO: add let's encrypt script to create certificates for the domain
+
 PATH=/sbin:/bin:/usr/bin
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo "directory is " $dir;
@@ -87,9 +88,11 @@ do
     # Create array with all the domains in ldap and add .conf to all them
     # We will use this arryay to check deleted domains from ldap that are
     # still present in /etc/apache2/ldap-enabled, so we can remove them.
+
     ldapresult+=("$domain".conf)
+
     # Check if there is a webmaster for current domain. We are using adminID
-    # attribute, which i not a required attribute. so is better to check if
+    # attribute, which is not a required attribute. so is better to check if
     # this value is empty or not
 
     webmaster=$(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "vd=$domain,$ldapbase" "adminID=*" | grep -o -P "(?<=adminID: ).*")
@@ -112,7 +115,8 @@ do
         </VirtualHost>" > $vhroot/"$domain".conf
 
         mkdir $documenRoot/$domain
-        ## TODO add a check ...if user does not exists
+
+        ##Add a check ...if user does not exists
         # the owner will be the default user
 
         userexists=$(getent passwd | grep "<\$webmaster\>")
@@ -167,7 +171,7 @@ do
         fi
         # Crete the Mounting point for the website into sftpuser's home 
         # if webmaster is the default user don't mount . Default user
-        #is not jailed and will acces websites folder directlyfrom /var/www/
+        # is not jailed and will acces websites folder directlyfrom /var/www/
         # NOTE: sftp users home is created the first time they login
         # If it's a new created user this home does not exixst, so we 
         # create before mounting
@@ -258,15 +262,18 @@ cd
 # without existing user
 # When deleting an sftuser from ldap, his home will still be there
 # and only root will be able to remove it.
-# To avoid that and allow the defolt user to acees these folders
-# with an sftp connecction Let's move it into the default user 
+# To avoid that and allow the defaullt user to acees these folders
+# with an sftp connection Let's move it into the default user 
 # home and change ownerships
 
 
-
-sftpfolder="/home/sftpusers"
-existingusers=$(ldapsearch -H ldapi:// -Y EXTERNAL -b "$peopletree" "(&(objectClass=person)(authorizedservice=sshd)(uid=*))" uid | grep -o -P "(?<=uid: ).*")
+sftpusershome="/home/sftpusers"
+existingusers=$(ldapsearch -H ldapi:// -Y EXTERNAL -b "$peopletree" "(&(objectClass=person)(authorizedservice=sshd)(uid=*)(!(gidnumber=27)))" uid | grep -o -P "(?<=uid: ).*")
 # Create the directory in which to move the orphaned homes
+
+if [[ ! -d '/home/'"$defaultsudouser" ]];then
+  mkhomedir_helper "$defaultsudouser" 0002
+fi
 
 if [[ -d '/home/'"$defaultsudouser"'/sftp-deleted' ]];then
   moveto='/home/'"$defaultsudouser"'/sftp-deleted'
@@ -276,7 +283,7 @@ else
   moveto='/home/'"$defaultsudouser"'/sftp-deleted'
 fi
 echo "$moveto"
-for sftphome in "$sftpfolder"/*;
+for sftphome in "$sftpusershome"/*;
 do
   basehome=$(basename $sftphome)
   if echo ${existingusers[@]} | grep -q -w "$basehome"; then

@@ -6,11 +6,34 @@
 session_start();
 require_once 'classes/class.ldap.php';
 $user_home = new LDAP();
-$message="";
-
+$message=$permission="";
+$url='index.php';
+$ldapconn=$user_home->connect();
 if($user_home->is_logged_in())
 {
-        $user_home->redirect($url);
+$permission = $_SESSION["login"]["level"];
+
+  switch ($permission) :
+  case 10 :
+    $url='index.php';
+  break;
+  case 4 :
+    $url='mails.php';
+  break;
+  case 2:
+    $url='edit-mail.php';
+  break;
+
+  default:
+  break;
+  endswitch;
+
+if ($permission==10 && $_SESSION["login"]["status"] != "active") {
+
+    $url='activate.php';
+
+}
+  $user_home->redirect($url);
 }
 
 
@@ -25,7 +48,6 @@ if ($result=='ok'){
 }
 
 if(isset($_POST['user']) && isset($_POST['password'])){
-    $ldapconn=$user_home->connect();
     $username = trim($_POST['user']);
     $password = $_POST['password'];
 
@@ -40,8 +62,8 @@ if(isset($_POST['user']) && isset($_POST['password'])){
         switch ($permission) :
         case 10 :
           $url='index.php';
-        break;
-        case 4 : 
+        break; 
+        case 4 :
           $url='mails.php';
         break;
         case 2:
@@ -51,7 +73,6 @@ if(isset($_POST['user']) && isset($_POST['password'])){
         default:
         break;
         endswitch;
-
 
        if ($permission && $_SESSION["login"]["status"] != "active") {
 

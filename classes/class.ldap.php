@@ -82,7 +82,7 @@ class LDAP{
             $message= "
             <div class='alert alert-success'>
             <button class='close' data-dismiss='alert'>&times;</button>
-            <strong>" . sprintf(_('Cambio registrado con éxito')) ."<strong> 
+            <strong>" . sprintf(_('Cambio registrado con éxito')) ."</strong> 
             </div>
             <hr><br>";
         } else {
@@ -497,7 +497,7 @@ class LDAP{
 
   function check_installed_service($service) {
         $serv_enabled = $this->search($this->connection, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled))');
-        if(!empty($serv_installed) && array_search($service, array_column(array_column($serv_enabled, 'ou'),0)) !== false){
+        if(!empty($serv_enabled) && array_search($service, array_column(array_column($serv_enabled, 'ou'),0)) !== false){
           return true;
         } else {
           return false;
@@ -612,6 +612,42 @@ class LDAP{
   } 
 
 
+    function check_login_or_redirect($current_page){
+
+      if (isset($_SESSION["login"]["dn"]))
+      { 
+        # user is logged in but some pages are not allowed
+        #oe we need to check that admin has activated his account
+
+        $permission = $_SESSION["login"]["level"];
+        
+        # Is admin
+        if ($permission==10 && ($_SESSION["login"]["status"] != "active")) {
+
+          $this->redirect('activate.php');
+
+          # is domain admin (postmaster)
+          # Restrict some pages
+          //$current_page=basename(__FILE__);
+        }
+         elseif ( $current_page != 'edit-mail.php' && $current_page != 'mails.php' && $permission==4 ) {
+
+          $this->redirect('mails.php');
+        } elseif ($permission==2 && $current_page != 'edit-mail.php'){
+      
+          $this->redirect('edit-mail.php');
+        }
+        else {
+        return true;
+        }
+      } else { //user is not logged in
+        
+        $this->redirect('login.php');
+      }
+    }
+
+
+
 
 
 
@@ -619,19 +655,11 @@ class LDAP{
 	{
 
 
-          if ((isset($_SESSION["login"]["dn"]) && (isset( $_SESSION["login"]["status"]) && $_SESSION["login"]["status"] == "active") && $_SESSION["login"]["level"]==10) || (isset($_SESSION["login"]["dn"]) && $_SESSION["login"]["level"] < 10) )
+          if (isset($_SESSION["login"]["dn"]))
           {
 
               return true;
           
-          }
-          
-           elseif (isset($_SESSION["login"]["dn"]) && $_SESSION["login"]["level"]==10  &&  $_SESSION["login"]["status"] != "active")
-
-          {
-          
-          $this->redirect('activate.php');
-
           }
 
           else

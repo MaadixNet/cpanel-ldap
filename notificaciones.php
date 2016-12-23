@@ -4,10 +4,9 @@ session_start();
 require_once 'classes/class.ldap.php';
 $Ldap= new LDAP();
 
-if(!$Ldap->is_logged_in())
-{
-  $Ldap->redirect('login.php');
-}
+$current_page=basename(__FILE__);
+$Ldap->check_login_or_redirect($current_page);
+
 $message='';
 require_once('header.php');
 //connect and BInd
@@ -73,20 +72,21 @@ if(!$mailsenderou){
         echo 'Puedes cambiar esta configuración y elegir una entre  las cuentas email activadas en tu sistema, para que sea el remitente de las notificaciones.<br>
         Para cambiar este valor, elije un correo electrónico disponible en el listado y haz click en Guardar';?>
 
-          <form autocomplete="off" action="#" method="POST" class="form-signin">
+          <form autocomplete="off" action="" method="POST" class="form-signin">
         <hr>
         <?php
-                  echo '<select id="selmail" name="selmail" required>';
-                  echo '<option value="">Seleccionar email</option>';
-                  for ($c=0; $c<$result["count"]; $c++) {
-            $selected=($queryvar==$result[$c]["mail"][0])?"selected":"";
-                      echo '<option ' . $selected . ' value="' . $result[$c]["mail"][0] .'">' . $result[$c]["mail"][0] . '</option>';
-                  }
-          echo '<option value="www-data@'.$fqdn . '">www-data@'.$fqdn . '</option>';
+                echo '<select id="selmail" name="selmail" required>';
+                echo '<option value="">Seleccionar email</option>';
+                for ($c=0; $c<$result["count"]; $c++) {
+                    //$selected=($queryvar==$result[$c]["mail"][0])?"selected":"";
+                    echo '<option value="' . $result[$c]["mail"][0] .'">' . $result[$c]["mail"][0] . '</option>';
+                }
+                echo '<option value="www-data@'.$fqdn . '">www-data@'.$fqdn . '</option>';
                 echo '</select></span>';
               };?>
 
-        <br>
+                <br>
+                <hr>
               <input type="submit" name="chmail_notif" value="Guardar" class="btn btn-small btn-primary" />
             </form>
       <?php 

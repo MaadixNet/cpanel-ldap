@@ -6,15 +6,10 @@ session_start();
 require_once 'classes/class.ldap.php';
 $Ldap = new LDAP();
 
-if(!$Ldap->is_logged_in())
-{
-	$Ldap->redirect('login.php');
-}
-$permissions=$_SESSION["login"]["level"];
-if ($Ldap->is_logged_in()&& $permissions != '10'){
+$current_page=basename(__FILE__);
+$Ldap->check_login_or_redirect($current_page);
 
-        $Ldap->redirect('404.php');
-}
+$permissions=$_SESSION["login"]["level"];
 require_once('header.php');?>
 
 <?php

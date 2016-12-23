@@ -1,6 +1,7 @@
 <?php require_once 'site-config.php';
 require_once 'classes/class.locale.php';
 require_once 'classes/class.ldap.php';
+
 /////////////////////////////////////////////////////////////////
 //// Set language and locale
 $locale = new CpanelLocale();
@@ -13,6 +14,7 @@ if (isset($_POST["language"]))
     bind_textdomain_codeset("messages","UTF-8");
 
 /////////////////////////////////////////////////////////////////
+    //
 $Ldap= new LDAP();
 if($Ldap->is_logged_in()){
 
