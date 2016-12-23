@@ -80,6 +80,8 @@ documenRoot='/var/www/html'
 appsWebRoot='/usr/share'
 #chek all monted point
 mountresult=()
+fqdn="$(hostname -f)"
+myip=$(ip route get 8.8.8.8 | awk '/8.8.8.8/ {print $NF}')
 #The default user which is sudo (in our configurations is usually user 10000
 defaultsudouser=$(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "$peopletree" "(&(objectClass=person)(gidnumber=27))" | grep -o -P "(?<=uid: ).*")
 
@@ -89,7 +91,7 @@ do
     # We will use this arryay to check deleted domains from ldap that are
     # still present in /etc/apache2/ldap-enabled, so we can remove them.
 
-    ldapresult+=("$domain".conf)
+    ldapresult+=("$domain"-nossl.conf)
 
     # Check if there is a webmaster for current domain. We are using adminID
     # attribute, which is not a required attribute. so is better to check if
@@ -99,8 +101,11 @@ do
     #issudouser=$(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "uid="$webmaster",ou=sshd,ou=People,dc=example,dc=tld" "gidNumber=*" | grep -o -P "(?<=gidNumber: ).*")
     #webmaster=$(ldapsearch -x -D "cn=admin,dc=example,dc=tld" -p 389 -h ldap://localhost -b "vd=$domain,o=hosting,dc=example,dc=tld" "adminID=*" -w $bindpass | grep -o -P "(?<=adminID: ).*")
 
+    # Check DNS for current domain
+    domainip="$(dig +short "$domain")"
+
     # If virtualhost does not exists Let's create it
-    if [[ ! -f $vhroot/"$domain".conf ]];
+    if [ "$domainip" == $myip ] && [ ! -f $vhroot/"$domain"-nossl.conf ];
     then
         #New domain. Let's create virtual host
         has_new_domains=true #true = at least one new domain = reload apache config
@@ -112,7 +117,7 @@ do
         Alias /webmail '"$appsWebRoot"/webmail'
         ServerAdmin postmaster@"$domain"
         DocumentRoot /var/www/html/"$domain"
-        </VirtualHost>" > $vhroot/"$domain".conf
+        </VirtualHost>" > $vhroot/"$domain"-nossl.conf
 
         mkdir $documenRoot/$domain
 
@@ -151,6 +156,66 @@ do
         </p>
         </body> </html>">$documenRoot/$domain/index.html
         #a2ensite "$domain".conf
+        #Need to reload apache to create ssl certifciate with webroot and 
+        # Let's encrypt
+        /etc/init.d/apache2 reload && certbot-auto certonly --agree-tos --staging --non-interactive --text --rsa-key-size 4096 --email $mail --webroot-path $documenRoot/$domain --domains "$domain, www.$domain" && \
+        echo "<VirtualHost *:80>
+        ServerName "$domain"
+
+        ## Vhost docroot
+        DocumentRoot "/var/www/html/$domain"
+
+        ## Directories, there should at least be a declaration for /var/www/html
+
+        <Directory "/var/www/html/$domain">
+          Options Indexes FollowSymLinks MultiViews
+          AllowOverride None
+          Require all granted
+        </Directory>
+
+        ## Logging
+        ErrorLog "/var/log/apache2/$domain-nonssl_error.log"
+        ServerSignature Off
+        CustomLog "/var/log/apache2/$domain-nonssl_access.log" combined 
+        ## Rewrite rules
+        RewriteEngine On
+
+        #redirect non-SSL traffic to SSL site but certbot .well-known folder
+        RewriteCond %{REQUEST_URI} !^/\.well\-known/acme\-challenge/
+        RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+        </VirtualHost>"> $vhroot/"$domain"-ssl.conf
+
+        echo "<VirtualHost *:443>
+        ServerName $domain
+
+        ## Vhost docroot
+        DocumentRoot "/var/www/html/$domain"
+
+        ## Directories, there should at least be a declaration for /var/www/html
+
+        <Directory "/var/www/html/$domain">
+          Options Indexes FollowSymLinks MultiViews
+          AllowOverride None
+          Require all granted
+        </Directory>
+
+        ## Logging
+        ErrorLog "/var/log/apache2/$domain-ssl_error_ssl.log"
+        ServerSignature Off
+        CustomLog "/var/log/apache2/$domain-ssl_access_ssl.log" combined 
+
+        ## SSL directives
+        SSLEngine on
+        SSLCertificateFile      "/etc/letsencrypt/live/$domain/cert.pem"
+        SSLCertificateKeyFile   "/etc/letsencrypt/live/$domain/privkey.pem"
+        SSLCACertificatePath    "/etc/ssl/certs"
+        </VirtualHost>"> $vhroot/"$domain"-ssl.conf
+
+     
+
+    else
+      echo 'Cambia los dns'
     fi
     # Check ownership and mountpoints for all domains in ldap
     # as administrator should change this ownership in any time
@@ -222,7 +287,7 @@ do
         echo $folderdomain 'is present in system'
     else
         if [ ! -z "$basevhost" ]; then
-            folderdomain=${basevhost:0:-5}
+            folderdomain=${basevhost:0:-12}
 
             #disable and delete apache virtualhost, and web files
             echo $basevhost 'is NOT present in ldap so we can delete it'
@@ -272,7 +337,7 @@ existingusers=$(ldapsearch -H ldapi:// -Y EXTERNAL -b "$peopletree" "(&(objectCl
 # Create the directory in which to move the orphaned homes
 
 if [[ ! -d '/home/'"$defaultsudouser" ]];then
-  mkhomedir_helper "$defaultsudouser" 0002
+  mkhomedir_helper "$defaultsudouser" 0077
 fi
 
 if [[ -d '/home/'"$defaultsudouser"'/sftp-deleted' ]];then

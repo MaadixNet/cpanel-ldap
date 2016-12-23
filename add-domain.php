@@ -127,7 +127,9 @@ if(isset($_POST['adddomain'])){
        $message .= "
     <div class='alert alert-success'>
     <button class='close' data-dismiss='alert'>&times;</button>
-    <strong>Dominio " . $domain_new ." añadido correctamente . " .$usererro . " . ". $add_user['result'] ."</strong> 
+    <strong>Dominio " . $domain_new ." añadido correctamente.
+    El sistema está creando la configuración para que tu nuevo dominio sea accesible.
+    Este proceso puede tardar tardar hasta 5 minutos. Comsulta la página de <a class='alert-link' href='view-domains.php'>dominios</a> para ver el el estado de la operación</strong> 
     </div>
         ";
 
@@ -224,6 +226,7 @@ white_list = ""';
             <div id="emailresult"></div>
 
             <hr>
+            <?php if ($Ldap->check_installed_service('openvpn')){?>
             <h4><?php printf(_("Cuenta VPN"));?></h4>
             <input type="checkbox" name="vpn" id="vpn" />
             <label for="vpn" class="togglehidden" >&nbsp;</label></h4>
@@ -235,6 +238,7 @@ white_list = ""';
               <input type="checkbox" name="sendinstruction" id="sendinstruction" />
               <label for="sendinstruction" class="left small">&nbsp;</label>&nbsp;<span><?php printf(_("Enviar instrucciones"));?></span></h4>
             </div>
+            <?php } ?>
             <hr>
             <h4><?php printf (_("Contraseña personal de usuario"));?></h4>
             <label for="pswd1"><?php printf(_("Contraseña"));?> *</label><input id="pswd1" type="password" name="pswd1" />

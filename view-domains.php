@@ -218,7 +218,7 @@ if ($ldapbind) {
             <th>Cuentas email </th>
             <th>Administrador web</th>
             <th>DNS</th>
-            <th>Status</th>
+            <th>Activado</th>
             <?php if($_SESSION["login"]["level"] == '10') {
 
               echo '<th>' .sprintf (_('Editar')) . '</th>';
@@ -260,10 +260,10 @@ if ($ldapbind) {
         echo "</td>";
         echo "<td>";
         //echo $result[$i]["adminid"][0];
-        $current_admin=shell_exec("find /var/www/html/$domain -maxdepth 0 -printf '%u\n'");
-        $webmaster = $result[$i]["adminid"][0];
-        $ownersip=($current_admin==$webmaster)?$statok:$loading;
-        echo $webmaster . '&nbsp;&nbsp;' . $ownersip;
+        $current_admin=trim(shell_exec("find /var/www/html/$domain -maxdepth 0 -printf '%u\n'"));
+        $webmaster = trim($result[$i]["adminid"][0]);
+        $ownersip=($current_admin==$webmaster?$statok:$loading);
+        echo $webmaster . '&nbsp;&nbsp; ' . $ownersip;
         echo "<td class='center'>";
         echo "<a href='editdns.php?domain=" . $domain ."'>Ver</a>";
         echo "</td>";
