@@ -12,6 +12,12 @@ peopletree="ou=sshd,ou=People,"$suffix
 delete="0"
 checkfile="/tmp/checkfile.txt"
 
+#get ldap admin username and email. it's used by Pets' Encrypt
+# Get the ldap admin name
+ldapadmin=$(ldapsearch -H ldapi:// -Y EXTERNAL -b "$suffix" "(&(objectClass=extensibleObject)(cn=*))" cn | grep -o -P "(?<=cn: ).*")
+mail=$(ldapsearch -H ldapi:// -Y EXTERNAL -b "$suffix" "(&(objectClass=extensibleObject)(cn="$ldapadmin"))" email | grep -o -P "(?<=email: ).*")
+
+
 if [ -f "$checkfile" ];then
   token=$(cat /tmp/checkfile.txt |  python -c "import sys, json; print json.load(sys.stdin)['token']")
   username=$(cat /tmp/checkfile.txt |  python -c "import sys, json; print json.load(sys.stdin)['username']")
@@ -22,12 +28,8 @@ if [ -f "$checkfile" ] && [ -f "$ldiffile" ];then
   ldapmodify -H ldapi:// -Y EXTERNAL -f "$ldiffile" && delete="1" 2> /tmp/dnconfig.error
 fi
 
-# Get the ldap admin name
-ldapadmin=$(ldapsearch -H ldapi:// -Y EXTERNAL -b "$suffix" "(&(objectClass=extensibleObject)(cn=*))" cn | grep -o -P "(?<=cn: ).*")
 # If all process was successfully send confirmaion mail to user and delete files
 if [ "$delete" == "1" ];then
-  mail=$(ldapsearch -H ldapi:// -Y EXTERNAL -b "$suffix" "(&(objectClass=extensibleObject)(cn="$ldapadmin"))" email | grep -o -P "(?<=email: ).*")
-
   mail -s "Contraseña cambiada" "$mail" <<< "El proceso de recuperación de contraseña ha terminado. Ahora puedes acceder al Cpanel con tu nueva contraseña"
   if [ -f "$checkfile" ] && [ -f "$ldiffile" ];then
     rm "$ldiffile"
@@ -91,7 +93,7 @@ do
     # We will use this arryay to check deleted domains from ldap that are
     # still present in /etc/apache2/ldap-enabled, so we can remove them.
 
-    ldapresult+=("$domain"-nossl.conf)
+    ldapresult+=("$domain".conf)
 
     # Check if there is a webmaster for current domain. We are using adminID
     # attribute, which is not a required attribute. so is better to check if
@@ -105,19 +107,16 @@ do
     domainip="$(dig +short "$domain")"
 
     # If virtualhost does not exists Let's create it
-    if [ "$domainip" == $myip ] && [ ! -f $vhroot/"$domain"-nossl.conf ];
+    if [ "$domainip" == $myip ] && [ ! -f $vhroot/"$domain".conf ];
     then
         #New domain. Let's create virtual host
         has_new_domains=true #true = at least one new domain = reload apache config
         echo "<VirtualHost *:80>
         ServerName  "$domain"
         ServerAlias www."$domain"
-        Alias /cpanel '"$appsWebRoot"/cpanel'
-        Alias /owncloud '"$appsWebRoot"/owncloud'
-        Alias /webmail '"$appsWebRoot"/webmail'
         ServerAdmin postmaster@"$domain"
-        DocumentRoot /var/www/html/"$domain"
-        </VirtualHost>" > $vhroot/"$domain"-nossl.conf
+        DocumentRoot $documenRoot/"$domain"
+        </VirtualHost>" > $vhroot/"$domain".conf
 
         mkdir $documenRoot/$domain
 
@@ -151,23 +150,26 @@ do
         <h1>Welcome to "$domain"</h1>
         <h3>You can now start building your website</h3>
 
-        <p>
-          Please start builing your website 
-        </p>
         </body> </html>">$documenRoot/$domain/index.html
         #a2ensite "$domain".conf
         #Need to reload apache to create ssl certifciate with webroot and 
         # Let's encrypt
-        /etc/init.d/apache2 reload && certbot-auto certonly --agree-tos --staging --non-interactive --text --rsa-key-size 4096 --email $mail --webroot-path $documenRoot/$domain --domains "$domain, www.$domain" && \
+        # in production remove --staging
+        #/etc/init.d/apache2 reload && certbot certonly --agree-tos --staging --non-interactive --text --rsa-key-size 4096 --email $mail --webroot-path $documenRoot/$domain --domains "$domain, www.$domain" && \
+        /etc/init.d/apache2 reload && letsencrypt --dry-run --server https://acme-staging.api.letsencrypt.org/directory \
+            -d "$domain" --agree-tos --email $mail --webroot --webroot-path $documenRoot/$domain --non-interactive --text --rsa-key-size 4096  certonly && \
         echo "<VirtualHost *:80>
         ServerName "$domain"
+        Alias /cpanel '"$appsWebRoot"/cpanel'
+        Alias /owncloud '"$documenRoot"/owncloud'
+        Alias /rainloop '"$documenRoot"/rainloop
 
         ## Vhost docroot
         DocumentRoot "/var/www/html/$domain"
 
         ## Directories, there should at least be a declaration for /var/www/html
 
-        <Directory "/var/www/html/$domain">
+        <Directory "$documenRoot/$domain">
           Options Indexes FollowSymLinks MultiViews
           AllowOverride None
           Require all granted
@@ -184,17 +186,18 @@ do
         RewriteCond %{REQUEST_URI} !^/\.well\-known/acme\-challenge/
         RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
-        </VirtualHost>"> $vhroot/"$domain"-ssl.conf
-
-        echo "<VirtualHost *:443>
+        </VirtualHost>  
+        <VirtualHost *:443>
         ServerName $domain
-
+        Alias /cpanel '"$appsWebRoot"/cpanel'
+        Alias /owncloud '"$documenRoot"/owncloud'
+        Alias /rainloop '"$documenRoot"/rainloop
         ## Vhost docroot
-        DocumentRoot "/var/www/html/$domain"
+        DocumentRoot "$documenRoot/$domain"
 
         ## Directories, there should at least be a declaration for /var/www/html
 
-        <Directory "/var/www/html/$domain">
+        <Directory "$documenRoot/$domain">
           Options Indexes FollowSymLinks MultiViews
           AllowOverride None
           Require all granted
@@ -210,10 +213,7 @@ do
         SSLCertificateFile      "/etc/letsencrypt/live/$domain/cert.pem"
         SSLCertificateKeyFile   "/etc/letsencrypt/live/$domain/privkey.pem"
         SSLCACertificatePath    "/etc/ssl/certs"
-        </VirtualHost>"> $vhroot/"$domain"-ssl.conf
-
-     
-
+        </VirtualHost>" > $vhroot/"$domain".conf
     else
       echo 'Cambia los dns'
     fi
