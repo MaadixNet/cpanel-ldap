@@ -9,7 +9,7 @@ $Ldap->check_login_or_redirect($current_page);
 require_once('header.php');
 //connect and BInd
 $errorttpe="";
-$message="";
+$message=$dns_result="";
 $statok='<i class="fa fa-check-circle-o icon checkok"></i>';
 $loading='<span class="loading"></span>';
 $ldapconn=$Ldap->connect();
@@ -83,6 +83,11 @@ if(isset($_POST['adddomain'])){
     }
     $values = $_POST["values"];
     $domain_new = $_POST["domain_new"];
+
+    # Check if DNS are ok for this server
+    $check_dns=check_domain_dns($domain_new);
+    $dns_result=$check_dns["message"];
+
     $syntax= check_syntax ('domain',$domain_new);
     $password = $_POST["password"];
     $entry["objectclass"][0]    = "top";
@@ -127,9 +132,8 @@ if(isset($_POST['adddomain'])){
        $message .= "
     <div class='alert alert-success'>
     <button class='close' data-dismiss='alert'>&times;</button>
-    <strong>Dominio " . $domain_new ." añadido correctamente.
-    El sistema está creando la configuración para que tu nuevo dominio sea accesible.
-    Este proceso puede tardar tardar hasta 5 minutos. Comsulta la página de <a class='alert-link' href='view-domains.php'>dominios</a> para ver el el estado de la operación</strong> 
+    <strong>Dominio " . $domain_new ." añadido correctamente.<br>"
+    . $dns_result . "</strong>
     </div>
         ";
 

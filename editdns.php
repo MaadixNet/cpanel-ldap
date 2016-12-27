@@ -41,7 +41,7 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
 	elseif (($server_ipaddr==$domain_ip && in_array($correct_mx , $allMX)) || ($server_ipaddr==$domain_ip && in_array($fqdn, $allMX))): 
 		echo '<div class="alert alert-success">La configuración de tu dominio es correcta para que funcione en tu servidor</div>';
 	else:
-		echo '<div class="alert alert-error">El dominio '. $domain . ' está incluido correctamente en tu sistema. Sin embargo necesitas aplicar configuraciones para que funcione en tu servidor.</br>Sigue los pasos a continuación.</div>';
+		echo '<div class="alert alert-error">El dominio '. $domain . ' está incluido correctamente en tu sistema. Sin embargo necesitas cambiar ciertos parámetros del dominio para que todos los servicios funcionen en tu servidor.</br>Sigue los pasos a continuación.</div>';
 	endif;
         if ($resultA){
 	echo '
@@ -51,6 +51,7 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
 		<thead>
 		<tr>
 			<th>Tipo Registro</th>
+                        <th>Servicio</th>
 			<th>Configuración Actual</th>
 			<th>Configuración Requerida</th>
 			<th>Estado</th>
@@ -59,6 +60,7 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
 		<tbody>
 			<tr>
 				<td>A</td>
+                                <td>Páginas web</td>
 				<td>' . $domain_ip . '</td>
 				<td>' . $server_ipaddr .'</td>';
 				$domain_stat=($domain_ip==$server_ipaddr)?$statok:$staterr . " <a href='#ACorrect'>Como Corregir? </a>";
@@ -68,6 +70,7 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
 			foreach($resultMX as $value){
 				echo "<tr>";
 				echo "<td>MX</td>";
+                                echo "<td>Servidor de correo</td>";
 				echo "<td>";
 				echo $value['target'];
 				echo "</td>";

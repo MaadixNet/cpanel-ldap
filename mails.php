@@ -153,12 +153,37 @@ if ($ldapconn){
 			}	
 		}
 
-	if ($ldapbind) {
-            $result=$Ldap->search($ldapconn,$binddn, $filter);
-        }
+  if ($ldapbind) {
+      $result=$Ldap->search($ldapconn,$binddn, $filter);
+  }
 }?>
 
 <div id="admin-content" class="content">
+<?php 
+  # Check if the domain has correct MX Recodrs for this server
+  #
+  $queryvar=(isset($_GET['domain']))?$_GET['domain'] :'';
+
+  $this_domain='(vd='. $queryvar . ' )';
+  $domain_exist_in_ldap= $Ldap->search($ldapconn,LDAP_BASE, $this_domain);
+
+  $domain_dns=(!empty($queryvar))?check_domain_dns($queryvar):'';
+  $dns_result=$domain_dns["result"];
+
+  # Check if rainloop is installed
+  $has_webmail = $Ldap->check_installed_service('rainloop');
+
+  #
+  # If MX records for this domain are not correct for this server
+  # inform user that it's not possible to create or manage accounts
+  # but is still possible to use webmail interface to read and write emails
+  #
+
+  if ($dns_result===2 && (!empty($queryvar)) && $has_webmail && $domain_exist_in_ldap["count"]>0){
+    printf(_("<pre><p>Los DNS del dominio %s no están configurados para que el correo electrónico sea administrado por este servidor. Esto significa que no puedes crear cuentas de email desde este panel.</br>
+      Sin embargo, si tienes alguna cuenta de correo electrónico existente para este dominio puedes consultarla desde la aplicación <a href='rainloop.php'>Webmail</a>.</p></pre>
+      "), $queryvar);
+  } else { ?>
     <div class="row">
 		<?php if ($permissions ==10) {//Show domains list on left sidebar only to admin ?> 
         <div class="col-sm-2">
@@ -221,7 +246,17 @@ if ($ldapconn){
                                     echo '<option value="">Seleccionar dominio</option>';
                                     for ($c=0; $c<$result["count"]; $c++) {
                                         $selected=($queryvar==$result[$c]["vd"][0])?"selected":"";
-                                          echo '<option ' . $selected . ' value="' . $result[$c]["vd"][0] .'">' . $result[$c]["vd"][0] . '</option>';
+                                        # If a domain is recorded in Ldap but MX record is
+                                        # not correct , show it but as  disabled
+                                        # and not selected
+
+                                        $domain_dns_status=check_domain_dns($result[$c]["vd"][0]);
+                                        $domain_MX=$domain_dns_status["result"];
+                                        if ($domain_MX===2){
+                                            $selected='';
+                                            $disabled='disabled';
+                                        }
+                                          echo '<option ' . $selected . ' ' . $disabled . '  value="' . $result[$c]["vd"][0] .'">' . $result[$c]["vd"][0] . '</option>';
                                     }
                                     echo '</select></span>';
                                 };?>
@@ -312,6 +347,7 @@ if ($ldapconn){
   </div><!--exampleModal-->
 </div><!--bd-example-->
 
+<?php } ?>
 	</div><!--row-->
 <?php
 ?>

@@ -130,6 +130,7 @@ function print_rec_form($error){
                 <label for="usermail">Email: </label>
                 <p class="little">Inserta la cuenta de correo electrónico asociada al usuario administrador</p>
                 <input id="usermail" class="usermail" type="mail" name="usermail" required />
+                <hr>
                 <input type="submit" name="submit" value="Submit" class="btn btn-large btn-primary" />
     		</form>';
 }

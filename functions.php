@@ -262,6 +262,64 @@ function random_salt($length) {
 }
 
 /**
+* Check DNS for domain 
+*
+* @author Maddish
+*
+* @param string $domain The domain to check
+* @return  array (message) 
+**/
+
+function check_domain_dns($domain){
+
+  #Current server pubblic IP addres
+  $server_ipaddr=$_SERVER["SERVER_ADDR"];
+
+  # Give domain dns records
+  $resultA=dns_get_record ( $domain,  DNS_A );
+  $resultMX=dns_get_record ( $domain,  DNS_MX );
+  $resultNS = dns_get_record($domain,  DNS_NS );
+  $domain_ip=($resultA[0]['ip'])?($resultA[0]['ip']):'No hay registro';
+
+  $fqdn=trim(shell_exec('hostname -f'));
+  $correct_mx=$fqdn;
+  $allMX[]='';
+
+  # Get all MX record into array
+  foreach($resultMX as $value){
+    array_push($allMX,$value['target']);
+  }
+
+  $message='';
+  if(!$resultA):
+          $message = '<div class="alert alert-error">Este dominio no existe. Tienes que registrarlo antes de poder utilizarlo. </div>';
+          $result=0;
+  elseif ($server_ipaddr==$domain_ip && in_array($correct_mx , $allMX)):
+          $message = 'El sistema está creando la configuración para que tu nuevo dominio sea accesible. Esto te permitirá alojar una aplicación web o crear cuentas de correo para este dominio.<br>
+    Este proceso puede tardar tardar hasta 5 minutos. Comsulta la página de <a class="alert-link" href="view-domains.php">dominios</a> para ver el el estado de la operación';
+          $result=1;
+  elseif(!in_array($correct_mx , $allMX)):
+          # Need this in case somebody wish to use webmaiol with external mail server (eg: google or any other)
+          $message .= '';
+          $result=2;
+
+  else:
+          $message = 'La configuración de los DNS no es la correcta para que todos los servicios disponibles puedan ser activados. Consulta la página de <a class="alert-link" href="editdns.php?domain=' . $domain . '">configuración de DNS</a> para sbaer más.';
+          $result=3;
+  endif;
+
+  //return  $message;
+  return array('message' => $message,
+                'result' => $result
+              );
+
+
+}
+
+
+
+
+/**
 * Various syntax check (IP address, domain, email address...)
 *
 * @author Alessandro De Zorzi <adezorzi@rhx.it>

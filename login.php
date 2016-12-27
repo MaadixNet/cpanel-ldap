@@ -99,6 +99,8 @@ function print_form(){
 		<hr>
         	<label for="user">Username: </label><input id="user" type="text" name="user" />
         	<label for="password">Password: </label><input id="password" type="password" name="password" />        <input type="submit" name="submit" value="Submit" class="btn btn-large btn-primary" />
+                <br>
+                <a class="navbar-nav" href="recover.php">' . sprintf(_("He olvidado la contraseña")) . '</a>
     		</form>';
 }
 

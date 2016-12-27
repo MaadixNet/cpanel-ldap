@@ -116,7 +116,7 @@ do
         ServerAlias www."$domain"
         ServerAdmin postmaster@"$domain"
         DocumentRoot $documenRoot/"$domain"
-        </VirtualHost>" > $vhroot/"$domain".conf
+        </VirtualHost>" > $vhroot/"$domain"-nossl-.conf
 
         mkdir $documenRoot/$domain
 
@@ -155,14 +155,12 @@ do
         #Need to reload apache to create ssl certifciate with webroot and 
         # Let's encrypt
         # in production remove --staging
-        #/etc/init.d/apache2 reload && certbot certonly --agree-tos --staging --non-interactive --text --rsa-key-size 4096 --email $mail --webroot-path $documenRoot/$domain --domains "$domain, www.$domain" && \
-        /etc/init.d/apache2 reload && letsencrypt --dry-run --server https://acme-staging.api.letsencrypt.org/directory \
+        #/etc/init.d/apache2 reload && certbot certonly --agree-tos --staging --non-interactive --text --rsa-key-size 4096 --email $mail --webroot-path $documenRoot/$domain --domains "$domain, www.$domain" && \                 
+        # En modo producció : https://acme-v01.api.letsencrypt.org/directory
+        /etc/init.d/apache2 reload && letsencrypt  --dry-run --server https://acme-staging.api.letsencrypt.org/directory \
             -d "$domain" --agree-tos --email $mail --webroot --webroot-path $documenRoot/$domain --non-interactive --text --rsa-key-size 4096  certonly && \
         echo "<VirtualHost *:80>
         ServerName "$domain"
-        Alias /cpanel '"$appsWebRoot"/cpanel'
-        Alias /owncloud '"$documenRoot"/owncloud'
-        Alias /rainloop '"$documenRoot"/rainloop
 
         ## Vhost docroot
         DocumentRoot "/var/www/html/$domain"
@@ -189,9 +187,6 @@ do
         </VirtualHost>  
         <VirtualHost *:443>
         ServerName $domain
-        Alias /cpanel '"$appsWebRoot"/cpanel'
-        Alias /owncloud '"$documenRoot"/owncloud'
-        Alias /rainloop '"$documenRoot"/rainloop
         ## Vhost docroot
         DocumentRoot "$documenRoot/$domain"
 
@@ -214,6 +209,7 @@ do
         SSLCertificateKeyFile   "/etc/letsencrypt/live/$domain/privkey.pem"
         SSLCACertificatePath    "/etc/ssl/certs"
         </VirtualHost>" > $vhroot/"$domain".conf
+        rm $vhroot/"$domain"-nossl-.conf
     else
       echo 'Cambia los dns'
     fi
