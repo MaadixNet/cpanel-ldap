@@ -232,7 +232,7 @@ if ($ldapconn){
     		<div id="change">
 
 			<?php if($result["count"] == 0){
-				echo '<h2>Para poder crear cuentas de correos tienes que activar antes el dominio correspondiente en la <a href="view-domains.php">página de administración de dominios</h2>';
+				echo '<h2>Para poder crear cuentas de correos tienes que activar antes el dominio correspondiente en la <a href="add-domain.php">página Añadir dominios</h2>';
 			} else { ?>
    	 			<form autocomplete="off" action="#" method="POST" class="form-signin">
 				<hr>

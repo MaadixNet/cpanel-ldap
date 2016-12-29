@@ -194,7 +194,7 @@ class LDAP{
         }
 
         // Manager
-        elseif ('cn='.$login_username.','.SUFFIX == BINDDN)
+        elseif ('cn='.$login_username.','.SUFFIX)
         {
             $proposed["dn"] = 'cn='.$login_username.','.SUFFIX;
             $proposed["level"] = 10;
@@ -229,7 +229,7 @@ class LDAP{
             $_SESSION["login"]["username"] = strtolower($proposed["login_username"]);
 
             $_SESSION["login"]["level"] = $proposed["level"];
-            $_SESSION["login"]["password"] = $login_password; // @todo crypt it
+            //$_SESSION["login"]["password"] = $login_password; // @todo crypt it
 
             # Create Key for encrypt password
             $key = OneTimePadCreate ($length=100);
@@ -530,9 +530,9 @@ class LDAP{
             else
             {
               //Check if a ca.crt is available
-              if (file_exists("/etc/openvpn/" . $fqdn . "/keys/ca.crt")){
+              if (file_exists("/etc/openvpn/ca.crt")){
 
-                shell_exec("cat /etc/openvpn/" . $fqdn . "/keys/ca.crt > $filesdir/ca.crt");
+                shell_exec("cat /etc/openvpn/ca.crt > $filesdir/ca.crt");
                 $ca=$filesdir. '/ca.crt';
 
               } else {
