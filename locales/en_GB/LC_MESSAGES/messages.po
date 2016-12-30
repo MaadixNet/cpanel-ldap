@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: phamm 0.5.13\n"
+"Project-Id-Version: cpanel-ldap 0.1.1.2\n"
 "POT-Creation-Date: 2016-11-16 11:46+0200\n"
-"PO-Revision-Date: 2016-12-03 12:05+0100\n"
+"PO-Revision-Date: 2016-12-30 19:01-0000\n"
 "Last-Translator: maddish <maddish@xnet-x.net>\n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
@@ -17,8 +17,8 @@ msgstr "¡%s not added!"
 msgid "Activo"
 msgstr "Active"
 
-msgid "Añadir nueva cuenta"
-msgstr "Add new account"
+msgid "Añadir cuenta"
+msgstr "Add account"
 
 msgid "Añadir nuevo dominio"
 msgstr "Add new domain"
@@ -32,8 +32,11 @@ msgstr "Mailbox"
 msgid "Confirma contraseña"
 msgstr "Confirm password"
 
-msgid "Nueva Contraseña"
-msgstr "New Password"
+msgid "Nueva contraseña"
+msgstr "New password"
+
+msgid "Repetir nueva contraseña"
+msgstr "Repeat new password"
 
 msgid "Código "
 msgstr "Code "
@@ -43,6 +46,15 @@ msgstr "Account"
 
 msgid "Cuenta %s añadida con éxito"
 msgstr "Account %s successfully added"
+
+msgid "Cambio registrado con éxito"
+msgstr "Changes successfully applied"
+
+msgid "Utiliza la nueva contraseña para entrar"
+msgstr "Use your new password to login back"
+
+msgid "Acceso al servidor Sftp/ssh"
+msgstr "Access to server through sftp/ssh"
 
 msgid "Cuenta ya existente"
 msgstr "Account or Alias already exists"
@@ -131,6 +143,9 @@ msgstr "Password too short!"
 msgid "¡Las contraseñas no coinciden!"
 msgstr "Passwords don't match!"
 
+msgid "¡Contraseña actual equivocada!"
+msgstr "Current password don't match"
+
 msgid "No se permiten caracteres especiales en la dirección de correo"
 msgstr "Special Characters not Allowed in E-mail address"
 
@@ -144,6 +159,12 @@ msgid ""
 "La sintaxis no es válida, o se han encontrado caracteres especiales en el "
 "nombre del dominio"
 msgstr "Syntax not valid or special chars found in domain name"
+
+msgid "Nombre del dominio"
+msgstr "Domain name"
+
+msgid "Webmaster (Administrador sito web)"
+msgstr "Webmaster (Website administator)"
 
 msgid "Teléfono"
 msgstr "Telephone"
@@ -230,6 +251,12 @@ msgstr "Domains"
 msgid "Detalles"
 msgstr "Details"
 
+msgid "Editar"
+msgstr "Edit"
+
+msgid "Editar perfil"
+msgstr "Edit profile"
+
 msgid "Editar usuario"
 msgstr "Edit User"
 
@@ -245,5 +272,209 @@ msgstr "VPN Account"
 msgid "Guardar"
 msgstr "Save"
 
+msgid "Cancelar"
+msgstr "Cancel"
+
+msgid "Eliminar"
+msgstr "Remove"
+
 msgid "Cuenta eliminada con éxito"
 msgstr "Account successfully removed"
+
+msgid ""
+"¿Quieres borrar la cuenta para el usuario %s? Esto eliminará su acceso al "
+"servidor"
+msgstr ""
+"Do you really want to delete the account for user %s? It will remove access "
+"to the server"
+
+msgid "Acceso sftp"
+msgstr "sftp Access"
+
+msgid "Acceso VPN"
+msgstr "VPN Access"
+
+msgid "Cambiar Contaseña"
+msgstr "Change Passowrd"
+
+msgid "Contraseña actual"
+msgstr "Current passowrd"
+
+msgid ""
+"Este es el usuario por defecto del sistema y tiene total acceso al servidor. "
+"Por esto no lo puedes borrar ni puedes administrar su acceso sftp, que "
+"siempre está garantizado"
+msgstr ""
+"This is the default system user who has total access to the server. This is "
+"the reason why you can not remove it or edit sftp access, which is always "
+"granted "
+
+msgid "Activar Cpanel"
+msgstr "Activate Cpanel"
+
+msgid "Credenciales de administrador inválidas"
+msgstr "Invalid credential for administrator"
+
+msgid "Processando operación"
+msgstr "Processing"
+
+msgid "Username"
+msgstr "Nombre de usuario"
+
+msgid "User"
+msgstr "Usuario"
+
+msgid "Enviar al usuario email con instrucciones para configurar cliente VPN"
+msgstr "Send user an email with instructions to set VPN client"
+
+msgid "El nombre de usuario %s no está disponible"
+msgstr "Username %s not available"
+
+msgid ""
+"El usuario '%s' es actualmente el webmaster de este dominio. Al eliminar el "
+"dominio no se borra ni el usuario ni la carpeta /var/www/html/%s. El nuevo "
+"propietario de la carpeta será el usuario por defetcto %s, para que pueda "
+"acceder a los archivos y editarlos o eliminarlos manualmente a través de una "
+"conexión ssh/sftp"
+msgstr ""
+"The current webmaster for this domain is %s. Deleting it means that neither "
+"the user nor the /var/www/html/%s will be removed. The system will change "
+"the ownership of the above mentioned website folder assigning it to the "
+"default user %s"
+
+msgid ""
+"¿Estás seguro de que quieres eliminar esta cuenta de correo? Esta acción no "
+"podrá deshacerse."
+msgstr "Username %s not available"
+
+msgid ""
+"Puedes insertar un correo electrónico externo o elegir una entre las cuentas "
+"creadas en el servidor"
+msgstr "You can insert an external email address or select one from the list"
+
+msgid "¡Por favor, inserta un destino para el reenvío o desactiva el Reenvío!"
+msgstr "Please, inseFrt an email address where to forward incoming messages"
+
+msgid "Servicios"
+msgstr "Services"
+
+msgid "Servicios instalados"
+msgstr "Installed services"
+
+msgid "Servidor de correo electrónico"
+msgstr "Email server"
+
+msgid "Servidor email: Postfix. Dovecot"
+msgstr "Email server: Postfix, Dovecot"
+
+msgid "Servidor VPN"
+msgstr "VPN Server"
+
+msgid "Ver | Editar"
+msgstr "View | Edit"
+
+msgid ""
+"El usuario %s es actualmente el administrador de %d dominio%s Para poder "
+"eliminar el usuario tienes antes que asignar otro administrador para los "
+"siguientes dominios:"
+msgstr ""
+"%s is actually the webmaster of %d domain%s. To delete this user you must "
+"first assign another webmaste to the following domains:"
+
+msgid "¿Estás seguro de que quieres eliminar el usuario %s?"
+msgstr "Are you shure that you want to remove user %s?"
+
+msgid ""
+"Trabaja en documentos, presentaciones, hojas de cálculo, bases de datos... "
+"siempre a mano y listos para compartir. Edita y comenta documentos "
+"colaborativamente. Impórtalos y expórtalos de otras plataformas. Trabaja en "
+"ellos en cualquier momento y desde cualquier dispositivo incluso cuando "
+"estás sin conexión. Importa automàticamente tus contactos desde Gmail, "
+"Outlook, thunderbird, Yahoo u otros formatos de archivos. Organiza tu "
+"trabajo en línea decidiendo el nivel de acceso que quieres darle a cada "
+"usuario que autorices."
+msgstr ""
+"Work on documents, presentations, spreadsheets, databases... always on hand "
+"and ready to share. Edit and annotate documents collaboratively. Import and "
+"export them to other platforms. Work with them at any time, from any device, "
+"even offline. Automatically import your contacts from Gmail, Outlook, "
+"Thunderbird, Yahoo or other file formats. Manage your work online authorise "
+"users and determine their level of access."
+
+msgid ""
+" Envía toda tu actividad y la de tus colaboradores por tu propia VPN "
+"garantizando por ti mismo el máximo nivel de confidencialidad de tu "
+"actividad online mediante tu propia conexión segura. Visita cualquier sitio "
+"desde cualquier parte de forma privada creando conexiones seguras y directas "
+"a través de internet. Protégete cuando usas redes WiFi públicas o abiertas y "
+"accede a sitios bloqueados en el país desde donde te conectas. Con MaadiX "
+"puedes crear todos los usuarios VPN que necesites para tu familia, "
+"compañeros o empleados desde una sencilla pantalla y con un clic"
+msgstr ""
+"Send all your work through your own VPN, guaranteeing the maximum level of "
+"confidentiality for yourself and your collaborators through your own secure "
+"connection. Visit any website privately whereever you are, creating secure, "
+"direct internet connections. Protect yourself when you use public or open "
+"WiFi networks and access geo-blocked sites. With MaadiX you can create all "
+"the VPN users you need for your family, colleagues and employees with a "
+"single click on a simple screen."
+
+msgid ""
+"Crea todos los correos electrónicos que necesites para todos los dominios "
+"que quieras de manera sencilla sin salir de tu propia nube. Direcciones, "
+"listas y grupos de trabajo (como Google Groups) ilimitados. Mantén "
+"almacenado tu correo en tu propio espacio sin depender en ningún momento de "
+"terceros. Consúltalo desde todos tus dispositivos en una página rápida y "
+"fácil de usar o agrega otras cuentas de otras plataformas."
+msgstr ""
+"Create as many e-mail addresses as you need for as many domains as you wish, "
+"easily and without leaving your cloud. Store your messages in your own "
+"space, without depending on third parties at any time. Access it on all your "
+"devices from a quick, user-friendly interface, or add accounts from other "
+"platforms"
+
+msgid "Configurar cliente de correo"
+msgstr "Email client settings"
+
+msgid "Correo entrante"
+msgstr "Incoming"
+
+msgid "Correo saliente"
+msgstr "Outgoing"
+
+msgid "Servidor: %s"
+msgstr "Server: %s"
+
+msgid "Puerto: 465"
+msgstr "Port: 465"
+
+msgid "Puerto: 993"
+msgstr "Port: 993"
+
+msgid "Seguridad: SSL/TLS"
+msgstr "Security: SSL/TLS"
+
+msgid "Seguridad: STARTTLS"
+msgstr "Security: STARTTLS"
+
+msgid "Contraseña: Normal"
+msgstr "Authentication method: Normal password"
+
+msgid "Contraseña personal de usuario"
+msgstr "Personal user password"
+
+msgid ""
+"Esta acción desactiva la cuenta pero no borra los mensajes enviados y "
+"recibidos hasta ahora que se matendrán almacenados en el servidor.<br> Si en "
+"un futuro vuelves a crear la misma cuenta, los mismos mensajes volverán a "
+"estar accesibles.<br> Para eliminar definitivamente todos los mensajes del "
+"servidor tienes dos opciones"
+msgstr ""
+"Esta acción desactiva la cuenta pero no borra los mensajes enviados y "
+"recibidos hasta ahora que se matendrán almacenados en el servidor.<br> Si en "
+"un futuro vuelves a crear la misma cuenta, los mismos mensajes volverán a "
+"estar accesibles.<br> Para eliminar definitivamente todos los mensajes del "
+"servidor tienes dos opciones"
+
+msgid "¿Seguro que quieres eliminar el dominio %s?"
+msgstr "¿Seguro que quieres eliminar el dominio %s?"
