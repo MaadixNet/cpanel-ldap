@@ -298,11 +298,11 @@ function check_domain_dns($domain){
           $message = 'El sistema está creando la configuración para que tu nuevo dominio sea accesible. Esto te permitirá alojar una aplicación web o crear cuentas de correo para este dominio.<br>
     Este proceso puede tardar tardar hasta 5 minutos. Comsulta la página de <a class="alert-link" href="view-domains.php">dominios</a> para ver el el estado de la operación';
           $result=1;
-  elseif(!in_array($correct_mx , $allMX)):
+/*  elseif(!in_array($correct_mx , $allMX)):
           # Need this in case somebody wish to use webmaiol with external mail server (eg: google or any other)
           $message .= '';
           $result=2;
-
+   */
   else:
           $message = 'La configuración de los DNS no es la correcta para que todos los servicios disponibles puedan ser activados. Consulta la página de <a class="alert-link" href="editdns.php?domain=' . $domain . '">configuración de DNS</a> para sbaer más.';
           $result=3;
