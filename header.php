@@ -121,6 +121,7 @@ if($Ldap->is_logged_in()){
                                 <li><a href="/<?php echo BASE_PATH;?>/view-domains.php"><?php printf(_("Ver Dominios"));?></a></li>
                                   <?php if ($permissions >= 10) { //only admin can add domains?>
                                     <li><a href="/<?php echo BASE_PATH;?>/add-domain.php"><?php printf(_("Añadir Dominio"));?></a></li>
+                                    <li><a href="/<?php echo BASE_PATH;?>/domain-instruccions.php"><?php printf(_("Instrucciones"));?></a></li>
                                   <?php } ?>
                             </ul>
                             </li>                        
