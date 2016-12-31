@@ -226,7 +226,7 @@ if ($ldapconn){
 			# This is only for postmaster or admin. Normal user will only be able to see his own email account
 			$queryvar=(isset($_GET['domain']))?$_GET['domain'] :'';
 			$querymess=($queryvar)?'para el dominio ' . $queryvar:'';
-			echo '<h4 class="tone">Cuentas de correo activadas' . $querymess. '</h4>';?>
+			echo '<h4 class="tone">Cuentas de correo activadas ' . $querymess. '</h4>';?>
                         <span><button class="togglevisibility btn btn-small btn-secondary"><?php printf(_("Añadir cuenta"));?></button>  </span>
     		<div class="clear"></div>
     		<div id="change">

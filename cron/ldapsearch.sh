@@ -157,7 +157,8 @@ do
         # in production remove --staging
         #/etc/init.d/apache2 reload && certbot certonly --agree-tos --staging --non-interactive --text --rsa-key-size 4096 --email $mail --webroot-path $documenRoot/$domain --domains "$domain, www.$domain" && \                 
         # En modo producció : https://acme-v01.api.letsencrypt.org/directory
-        /etc/init.d/apache2 reload && letsencrypt  --server https://acme-staging.api.letsencrypt.org/directory \
+          # En modo prueba : https://acme-staging.api.letsencrypt.org/directory 
+          /etc/init.d/apache2 reload && letsencrypt  --server https://acme-v01.api.letsencrypt.org/directory \
             -d "$domain" --agree-tos --email $mail --webroot --webroot-path $documenRoot/$domain --non-interactive --text --rsa-key-size 4096  certonly && \
         echo "<VirtualHost *:80>
         ServerName "$domain"
