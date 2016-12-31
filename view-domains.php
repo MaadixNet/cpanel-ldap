@@ -211,7 +211,8 @@ if ($ldapbind) {
     <div class="row">
 
 	<div class="inner"i id="maincol">
-  		<table>
+                <table id="domains">
+        <thead>>
         <thead>
         <tr>
             <th>Dominio</th>

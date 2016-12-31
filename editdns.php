@@ -47,7 +47,7 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
 	echo '
 	<h3>Configuración de DNS activa para el dominio ' . $domain . '</h3>
 	</br>
-	<table>
+	<table id="dns">
 		<thead>
 		<tr>
 			<th>Tipo Registro</th>

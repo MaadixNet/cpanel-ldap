@@ -161,7 +161,6 @@ $firstuid_availabe=system($commuid);*/?>
                 <th><?php printf (_('Usuario'));?></th>
                 <th><?php printf (_('Acceso sftp'));?></th>
                 <th><?php printf (_('Acceso VPN'));?></th>
-                <th><?php printf (_('Contraseña'));?></th>
                 <th><?php printf (_('Editar'));?></th>
                 <th><?php printf (_('Borrar'))?></th>
 		</tr>
@@ -185,9 +184,6 @@ $firstuid_availabe=system($commuid);*/?>
 
                 echo "<td class='center'>";
                 echo $isvpn;
-                echo "</td>";
-                echo "<td>";
-                echo "Opción no disponible para este usuario";
                 echo "</td>";
                 echo "<td>";
                 echo "<a href='edit-supuser.php?user=". $username ."'><button class='btn btn-small'><i class='fa fa-cogs' aria-hidden='true'></i> Editar</button></a>";
@@ -217,10 +213,6 @@ $firstuid_availabe=system($commuid);*/?>
                 echo "<td class='center'>";
                 echo $isvpn;
                 echo "</td>";
-		echo "<td>";
-		echo "<a class='showform'>". sprintf(_('Cambiar Contaseña')) ."</a>";
-		echo "<form action='#' autocomplete='off' method='POST' class='form-table sub-form'><input size='4' id='username' type='password' name='changepsw' /><input type='hidden' name='userid' value='". $username ."' /><input type='submit' name='chpsw' value='Cambiar' class='btn btn-small btn-primary' /></form>";
-		echo "</td>";
                 echo "<td>";
                 echo "<a href='edit-user.php?user=". $username ."'><button class='btn btn-small'><i class='fa fa-cogs' aria-hidden='true'></i> ". sprintf(_('Editar')) ."</button></a>";
                 echo "</td>";
