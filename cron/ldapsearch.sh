@@ -170,7 +170,7 @@ do
 
         <Directory "$documenRoot/$domain">
           Options Indexes FollowSymLinks MultiViews
-          AllowOverride None
+          AllowOverride All 
           Require all granted
         </Directory>
 
@@ -195,7 +195,7 @@ do
 
         <Directory "$documenRoot/$domain">
           Options Indexes FollowSymLinks MultiViews
-          AllowOverride None
+          AllowOverride All
           Require all granted
         </Directory>
 
