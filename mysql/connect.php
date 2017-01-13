@@ -77,6 +77,22 @@ class MysqlCreator{
                     );
   }      
 
+  function show_databases(){
+
+    try
+    {
+        $stmt=$this->conn->prepare("select schema_name from information_schema.schemata;");
+        $stmt->execute();
+        $dbs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        //$databases=array();
+        //array_push($db[0],$databases); 
+      }
+    catch(PDOException $ex)
+    {
+      echo $ex->getMessage();
+    }
+    return $dbs;
+  }
 }
 
 
