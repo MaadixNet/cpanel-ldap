@@ -15,6 +15,11 @@ $errorttpe="";
 $message="";
 
 $psw=$Ldap->decrypt_psw();
+$ldapconn=$Ldap->connect();
+$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw);
+$ldaptree='ou=Mysql,'. SUFFIX;
+$filter=('uid=*');
+$mysqlusers=$Ldap->search($ldapconn,$ldaptree, $filter);
 ?>
 <div id="admin-content" class="content">
 	<?php if($message) echo $message;?>
@@ -26,6 +31,7 @@ $psw=$Ldap->decrypt_psw();
         <pre>
         <?php var_dump($DBquery);?>
         <?php echo 'result' . $result;?>
+        <?php var_dump($mysqlusers);?>
         </pre>
 
          </div><!--ineer-->
