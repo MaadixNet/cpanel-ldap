@@ -75,29 +75,34 @@ function get_service_data($service){
     $image = "images/services/postfix-dovecot.png";
     $title = sprintf(_("Servidor de correo electrónico"));
     $software = sprintf(_("Postfix. Dovecot"));
-    $description = sprintf(_("Crea todos los correos electrónicos que necesites para todos los dominios que quieras de manera sencilla sin salir de tu propia nube. Direcciones, listas y grupos de trabajo (como Google Groups) ilimitados. Mantén almacenado tu correo en tu propio espacio sin depender en ningún momento de terceros. Consúltalo desde todos tus dispositivos en una página rápida y fácil de usar o agrega otras cuentas de otras plataformas."));
+    $description = sprintf(_("Puedes añadir infinitas cuentas de correo por cada dominio o subdominio que tengas activado en el Cpanel. Para ello tienes que primero <a href='/cpanel/add-domain.php'>Activar un dominio</a> y luego podrás <a href='/cpanel/mails.php'>crear cuentas de correo electrónico</a> asociadas al mismo dominio. Puedes también consultar este tutorial para más información : <a href='http://docs.maadix.net/email' target='_blank'>Cómo crear cuentas de correo electrónico</a>"));
+
     break;
 
   case 'openvpn':
     $image = "images/services/openvpn.png";
     $title = sprintf(_("Servidor VPN"));
     $software = sprintf(_("OpenVpn"));
-    $description = sprintf(_(" Envía toda tu actividad y la de tus colaboradores por tu propia VPN garantizando por ti mismo el máximo nivel de confidencialidad de tu actividad online mediante tu propia conexión segura. Visita cualquier sitio desde cualquier parte de forma privada creando conexiones seguras y directas a través de internet. Protégete cuando usas redes WiFi públicas o abiertas y accede a sitios bloqueados en el país desde donde te conectas. Con MaadiX puedes crear todos los usuarios VPN que necesites para tu familia, compañeros o empleados desde una sencilla pantalla y con un clic.
-      "));
+    $description = sprintf(_("Activa  cuentas VPN para habilitar conexiones seguras y cifradas al servidor, o para navegaqr por Internet.
+       Las cuentas VPN van asoicadas a cunetas de usuarios. Para utlizar este servicio puedes <a href='/cpanel/usuarios.php'>crear un nuevo usuario o bien editar uno</a> ya existente activando la casilla 'Cuenta VPN'. <br>
+       Puedes también consultar este tutorial para más información : <a href='http://docs.maadix.net/vpn'>Cómo activar cuentas VPN</a> "));
     break;
 
   case 'owncloud':
     $image = "images/services/owncloud.png";
     $title = sprintf(_("Servidor de alojamiento y sincronización de archivos"));
     $software = sprintf(_("Owncloud"));
-    $description = sprintf(_("Trabaja en documentos, presentaciones, hojas de cálculo, bases de datos... siempre a mano y listos para compartir. Edita y comenta documentos colaborativamente. Impórtalos y expórtalos de otras plataformas. Trabaja en ellos en cualquier momento y desde cualquier dispositivo incluso cuando estás sin conexión. Importa automàticamente tus contactos desde Gmail, Outlook, thunderbird, Yahoo u otros formatos de archivos. Organiza tu trabajo en línea decidiendo el nivel de acceso que quieres darle a cada usuario que autorices."));
+    $description = sprintf(_("Trabaja en documentos, presentaciones, hojas de cálculo, bases de datos... siempre a mano y listos para compartir. Edita y comenta documentos colaborativamente. Impórtalos y expórtalos de otras plataformas. Trabaja en ellos en cualquier momento y desde cualquier dispositivo incluso cuando estás sin conexión. Importa automàticamente tus contactos desde Gmail, Outlook, thunderbird, Yahoo u otros formatos de archivos. Organiza tu trabajo en línea decidiendo el nivel de acceso que quieres darle a cada usuario que autorices.
+          <br>  <a href='/cpanel/owncloud' target='_blank'>Ir a la aplicación</a>"));
+
     break;
 
   case 'rainloop':
     $image = "images/services/rainloop.png";
     $title = sprintf(_("Webmail"));
     $software = sprintf(_("Rainloop"));
-    $description = sprintf(_("Interfaz web para consulta e envío de correo electrónico. Puedeis ver una demo aquí: <a href='https://mail.rainloop.net/' title='Rainloop demo' target=_'blank'>https://mail.rainloop.net/</a>"));
+    $description = sprintf(_("Interfaz web para consulta e envío de correo electrónico desde el navegador. <br> <a href='/cpanel/rainloop/' title='Rainloop' target=_'blank'>Ir a la aplicación</a>"));
+    
     break;
 
   case 'afterlogic':
@@ -118,14 +123,16 @@ function get_service_data($service){
     $image = "images/services/phpmyadmin.png";
     $title = sprintf(_("Mysql"));
     $software = sprintf(_("phpMyAdmin"));
-    $description = sprintf(_("Interfaz web para administración de base de datos mysql. Demo: <a href='https://demo.phpmyadmin.net/master-config/' title='PhpMyAdmin Demo' target=_'blank'>https://demo.phpmyadmin.net/master-config/</a>"));
+    $description = sprintf(_("Interfaz web para administración de base de datos mysql.  <br> <a href='/cpanel/phpmyadmin/' title='PhpMyAdmin' target=_'blank'>Ir a la aplicación</a>"));
     break;
 
   case 'piwik':
     $image = "images/services/piwik.png";
     $title = sprintf(_("Estadísticas"));
     $software = sprintf(_("Piwik"));
-    $description = sprintf(_("Alternativa OpenSource a Google Analytics. Rastrea en tiempo real páginas vistas y visitas de tus sitio web. Piwik muestra informes con respecto a la ubicación geográfica de las visitas, origen de las visitas,el tiempo de visitas y más. <a href='https://piwik.org/' title='PhpMyAdmin Demo' target=_'blank'>https://piwik.org</a>"));
+    $description = sprintf(_("Alternativa OpenSource a Google Analytics. Rastrea en tiempo real páginas vistas y visitas de tus sitio web. Piwik muestra infoo
+      rmes con respecto a la ubicación geográfica de las visitas, origen de las visitas,el tiempo de visitas y más. <a href='cpanel/piwik' title='Piwik' target=_'bb
+      lank'>Ir al a aplicación</a>"));
     break;
 
   case 'wordpress':
