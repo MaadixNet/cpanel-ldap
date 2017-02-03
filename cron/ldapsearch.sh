@@ -131,7 +131,7 @@ do
 
 
         chown -R $webmaster:www-data $documenRoot/$domain
-        chmod 755 $documenRoot/$domain
+        chmod -R 775 $documenRoot/$domain
         #chmod g+s $documenRoot/$domain
         echo 'Folder created'
         echo "<!DOCTYPE html>
