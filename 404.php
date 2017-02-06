@@ -12,7 +12,7 @@ require_once('header.php');
 
 ?>
 <div id="admin-content" class="content">
-<h3>Oooooops! Página no encontrada</h3>
+<h3>Oooooops! Página no encontrada.</h3>
 </div><!--admin-content-->
 <?php require_once('footer.php');?>
 
