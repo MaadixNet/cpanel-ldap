@@ -103,6 +103,7 @@ echo '</pre>';
     <?php echo "<h2>" . sprintf(_("Editar dominio %s"),$domain) . "</h2>";?>
     <form autocomplete="off" id="up-domain" class="jquery-check form-signin" method="POST" action="">
     <label for="pswd1"><?php printf(_("Nueva contraseña"));?></label>
+    <div id="pswcheck"></div>
     <input autocomplete="false" readonly id="pswd1" type="password" name="pswd1" value="" size="4" />
     <label for="pswd2"><?php printf(_("Repetir nueva contraseña"));?></label>
     <input id='pswd2' type='password' name='pswd2' value='' /><div id="pswresult"></div>

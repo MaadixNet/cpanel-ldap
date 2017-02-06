@@ -97,7 +97,9 @@ $usermail = (isset($result[0]['mail'][0]))?$result[0]['mail'][0]:'';
                     }
                  echo '</select>';
                 };?>
-              <label for="pswd1"><h4><?php printf(_("Nueva Contraseña"));?></h4></label><input size='4' id='pswd1' type='password' name='pswd1' />
+              <label for="pswd1"><h4><?php printf(_("Nueva Contraseña"));?></h4></label>
+              <div id="pswcheck"></div>
+              <input size='4' id='pswd1' type='password' name='pswd1' />
 
               <label for="pswd2"><h4><?php printf(_("Confirma Contraseña"));?></h4></label><input type='password' id='pswd2' name='pswd2' /><div id="pswresult"></div>
                 

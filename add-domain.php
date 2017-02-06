@@ -245,8 +245,11 @@ white_list = ""';
             <?php } ?>
             <hr>
             <h4><?php printf (_("Contraseña personal de usuario"));?></h4>
-            <label for="pswd1"><?php printf(_("Contraseña"));?> *</label><input id="pswd1" type="password" name="pswd1" />
-            <label for="pswd2"><?php printf(_("Confirma contraseña"));?> *</label><input id="pswd2" type="password" name="pswd2"  />
+            <label for="pswd1"><?php printf(_("Contraseña"));?> *</label>
+            <div id="pswcheck"></div>
+            <input id="pswd1" type="password" name="pswd1" />
+            <label for="pswd2"><?php printf(_("Confirma contraseña"));?> *</label>
+            <input id="pswd2" type="password" name="pswd2"  />
             <div id="pswresult"></div>
             <hr>
 

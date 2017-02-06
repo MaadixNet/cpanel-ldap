@@ -131,6 +131,7 @@ require_once('header.php');
                     <form autocomplete="off" action="" method="POST" class="form-signin">
                         <hr>
                         <label for="pswd1"><h4><?php printf(_("Nueva contraseña"));?></h4></label>
+                        <div id="pswcheck"></div>
                         <input id="pswd1" type="password" name="pswd1" readonly />
 
                         <label for="pswd2"><h4><?php printf(_("Repetir nueva contraseña"));?></h4></label>

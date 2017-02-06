@@ -147,7 +147,9 @@ $firstuid_availabe=system($commuid);*/?>
 
                <div class="clear"></div> 
               <hr>
-              <label for="pswd1"><?php printf(_("Contraseña"));?> *</label><input id="pswd1" type="password" name="pswd1" required />
+              <label for="pswd1"><?php printf(_("Contraseña"));?> *</label>
+              <div id="pswcheck"></div>
+              <input id="pswd1" type="password" name="pswd1" required />
               <label for="pswd2"><?php printf(_("Confirma contraseña"));?> *</label><input id="pswd2" type="password" name="pswd2" required />
               <div id="pswresult"></div>
               <hr>

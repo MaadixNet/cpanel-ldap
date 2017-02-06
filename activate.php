@@ -12,6 +12,27 @@ if ($ldapconn){
   $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw);
 }
 
+//check which services are enabled and set to enabled in ldap directory
+
+$str = shell_exec('cat /etc/facter/facts.d/classifier.yaml | grep default_groups | cut -d "[" -f2 | cut -d "]" -f1');
+$activated_services =   preg_replace('/\s+/', '', $str);
+$serv_array = explode(',' , $activated_services);
+
+$groups= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=*))');
+
+for ($i=0; $i<$groups["count"]; $i++) {
+
+  $name=$groups[$i]['ou'][0];
+  if (in_array($name, $serv_array)) {
+    $infog['status']= 'enabled';
+  } else {
+    $infog['status']= 'disabled';
+  }
+  $Ldap->modifyRecord($ldapconn, 'ou='.$name.','.LDAP_SERVICES, $infog);
+
+}
+
+
 
 
 if (isset($_POST["activate"])){
@@ -87,7 +108,7 @@ $filter="(&(objectClass=extensibleObject)(cn=$user))";
 $rootuser=$Ldap->search($ldapconn,$ldaptree, $filter);
 $rootusermail=$rootuser[0]["email"][0];
 $rootusername = $rootuser[0]["cn"][0];
-
+var_dump($rootuser);
 ## Get sudo user data
 $filtersudo="(&(objectClass=person)(uid=*)(gidnumber=27))";
 $ldapuserstree    = LDAP_PEOPLE;
@@ -114,6 +135,7 @@ printf(_("<h2><mark>%s</mark> <small class='pink'>Este usuario no tiene acceso a
       <input id='oldpsw' type='password' name='oldpsw' required /><?php echo $msg1 ;?>
 
       <label for="pswd1"><h4><?php printf(_("Nueva contraseña"));?></h4></label>
+      <div id="pswcheck"></div>
       <input id='pswd1' type='password' name='pswd1' required /> <?php echo $msg2 ;?>
 
       <label for="pswd2"><h4><?php printf(_("Repetir nueva contraseña"));?></h4></label><div id="pswresult"></div>
@@ -126,6 +148,7 @@ printf(_("<h2><mark>%s</mark> <small class='pink'>Este usuario no tiene acceso a
      <?php printf(_("<h3>Usuario root con acceso ssh/sftp - <mark>%s</mark></h3>"),$sudousername); ?>   
 
       <label for="pswd3"><h4><?php printf(_("Nueva contraseña"));?></h4></label>
+      <div id="pswchecksudo"></div>
       <input id='pswd3' type='password' name='pswd3' required /> <?php echo $msg2 ;?>
 
       <label for="pswd4"><h4><?php printf(_("Repetir nueva contraseña"));?></h4></label><div id="pswresultsudo"></div>

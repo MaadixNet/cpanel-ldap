@@ -232,7 +232,7 @@ $('#userModal').on('show.bs.modal', function (event) {
                 });
 })
 
-/* Check password match*/
+/* Check password strenght*/
     $("#pswd2").blur(function()
     {
         var pass2 = $(this).val();
@@ -244,6 +244,16 @@ $('#userModal').on('show.bs.modal', function (event) {
             $("#pswresult").html('');
         }
 
+     });
+
+    $("#pswd1").blur(function()
+    {
+        var pass1 = $(this).val();
+        if(!pass1.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z\W]{8,}$/) && pass1.length > 0){
+              $("#pswcheck").html('<span class="error"><i class="fa fa-exclamation-triangle icon checkko alert-danger"></i> <em>La contraseña debe ser de mínimo 8 cáracteres y debe contener almenos una cifra, una letra mayúscula y una minúscula</em>');        
+        }else {
+            $("#pswcheck").html('');
+        }
      });
 
 /* Check password match*/
@@ -278,6 +288,12 @@ $('#userModal').on('show.bs.modal', function (event) {
     $("#pswd3").blur(function()
     {   
         var pass1 = $(this).val();
+        if(!pass1.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z\W]{8,}$/)){
+              $("#pswchecksudo").html('<span class="error"><i class="fa fa-exclamation-triangle icon checkko alert-danger"></i> <em>La contraseña debe ser de mínimo 8 cáracteres y debe contener almenos una cifra, una letra mayúscula y una minúscula</em>');
+        }else {
+            $("#pswchecksudo").html('');
+        }
+
         var pass2 = $("#pswd4").val();
         if(pass2!=pass1)
         {
