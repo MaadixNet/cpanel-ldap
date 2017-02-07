@@ -158,10 +158,17 @@ do
         #/etc/init.d/apache2 reload && certbot certonly --agree-tos --staging --non-interactive --text --rsa-key-size 4096 --email $mail --webroot-path $documenRoot/$domain --domains "$domain, www.$domain" && \                 
         # En modo producció : https://acme-v01.api.letsencrypt.org/directory
           # En modo prueba : https://acme-staging.api.letsencrypt.org/directory 
-          /etc/init.d/apache2 reload && letsencrypt  --server https://acme-v01.api.letsencrypt.org/directory \
-            -d "$domain" --agree-tos --email $mail --webroot --webroot-path $documenRoot/$domain --non-interactive --text --rsa-key-size 4096  certonly && \
+        cerbotdomain="$domain"
+        wwwdomainip="$(dig +short "www.$domain")"
+        if [ "$wwwdomainip" == $myip ];then
+          cerbotdomain+=" -d www."$domain""
+        fi
+
+          /etc/init.d/apache2 reload && letsencrypt --server https://acme-v01.api.letsencrypt.org/directory \
+            -d $cerbotdomain --agree-tos --email $mail --webroot --webroot-path $documenRoot/$domain --non-interactive --text --rsa-key-size 4096  certonly && \
         echo "<VirtualHost *:80>
         ServerName "$domain"
+        ServerAlias www."$domain"
 
         ## Vhost docroot
         DocumentRoot "/var/www/html/$domain"
@@ -188,6 +195,8 @@ do
         </VirtualHost>  
         <VirtualHost *:443>
         ServerName $domain
+        ServerAlias www."$domain"
+
         ## Vhost docroot
         DocumentRoot "$documenRoot/$domain"
 
@@ -206,7 +215,7 @@ do
 
         ## SSL directives
         SSLEngine on
-        SSLCertificateFile      "/etc/letsencrypt/live/$domain/cert.pem"
+        SSLCertificateFile      "/etc/letsencrypt/live/$domain/fullchain.pem"
         SSLCertificateKeyFile   "/etc/letsencrypt/live/$domain/privkey.pem"
         SSLCACertificatePath    "/etc/ssl/certs"
         </VirtualHost>" > $vhroot/"$domain".conf
@@ -284,7 +293,7 @@ do
         echo $folderdomain 'is present in system'
     else
         if [ ! -z "$basevhost" ]; then
-            folderdomain=${basevhost:0:-12}
+            folderdomain=${basevhost:0:-5}
 
             #disable and delete apache virtualhost, and web files
             echo $basevhost 'is NOT present in ldap so we can delete it'
