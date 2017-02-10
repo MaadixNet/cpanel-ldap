@@ -11,7 +11,13 @@ if ($ldapconn){
   //$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$_SESSION["login"]["password"]);
   $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw);
 }
-
+/* Get guid for goup web
+$groupinfo = posix_getgrnam("web");
+$grid=$groupinfo["gid"];
+$users_group_tree = "cn=web,ou=groups,ou=People," . SUFFIX;
+$users_in = $Ldap->search($ldapconn, $users_group_tree ,'(&(objectClass=*))');
+var_dump($users_in);
+   */
 //check which services are enabled and set to enabled in ldap directory
 
 $str = shell_exec('cat /etc/facter/facts.d/classifier.yaml | grep default_groups | cut -d "[" -f2 | cut -d "]" -f1');
@@ -64,9 +70,10 @@ if (isset($_POST["activate"])){
           $sudohashedpsw=ldap_password_hash($pass4,'ssha');
           $sudoinfo['userpassword'][0]=$sudohashedpsw;
           $sudoinfo['authorizedservice'][0]='sshd';
+          $sudoinfo['authorizedservice'][1]='apache';
           $change_sudo=$Ldap->modifyRecord($ldapconn, $modifysudodn, $sudoinfo);
           $message=$change_sudo["message"];
-          if ($change_sudo){
+          if ($change_sudo ){
               $change_success=ldap_mod_replace($ldapconn, $modifydn, $info );
               if ($change_success) {
                 $Ldap->logout();
@@ -88,7 +95,7 @@ if (isset($_POST["activate"])){
           if (isset($_SESSION["login"]["dn"]) && isset( $_SESSION["login"]["status"]) && $_SESSION["login"]["status"] == "active")
           {
 
-              $Ldap->redirect('index.php');;
+                $Ldap->redirect('index.php');;
     
           }
     
@@ -108,7 +115,6 @@ $filter="(&(objectClass=extensibleObject)(cn=$user))";
 $rootuser=$Ldap->search($ldapconn,$ldaptree, $filter);
 $rootusermail=$rootuser[0]["email"][0];
 $rootusername = $rootuser[0]["cn"][0];
-var_dump($rootuser);
 ## Get sudo user data
 $filtersudo="(&(objectClass=person)(uid=*)(gidnumber=27))";
 $ldapuserstree    = LDAP_PEOPLE;

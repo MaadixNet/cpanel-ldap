@@ -31,6 +31,12 @@ $grid=$groupinfo["gid"];
 //Only show sftpusers
 $filtersftp="(&(objectClass=person)(uid=*)(!(gidnumber=27)))";
 $filtersudo="(&(objectClass=person)(uid=*)(gidnumber=27))";
+
+$groupinfo = posix_getgrnam("web");
+$webgrid=$groupinfo["gid"];
+$users_group_tree = "cn=web,ou=groups,ou=People," . SUFFIX;
+$users_in = $Ldap->search($ldapconn, $users_group_tree ,'(&(objectClass=*))');
+var_dump ($users_in);
 //Add new User
 if(isset($_POST['adduser'])){
         $entry=array();
@@ -39,17 +45,19 @@ if(isset($_POST['adduser'])){
         $second_name=(isset($_POST['surname']))?$_POST['surname']:$newuser;
         $user_email=trim($_POST['usermail']);
         $password=$_POST['pswd2'];
-
+        
         // SEt these variables to none in case in only vpn account
         $entry['loginshell']='none';
         $entry['homedirectory']='none';
 
         $c=0;
         if (isset($_POST['sshd'])){
-          $entry['gidnumber']=(int)$grid;
+          $entry['gidnumber'][0]=(int)$grid;
           $entry['loginshell']='/bin/bash';
           $entry['homedirectory']='/home/sftpusers/' . $newuser;
           $entry['authorizedservice'][$c]='sshd';
+          $c++;
+          $entry['authorizedservice'][$c]='apache';
           $c++;
         }
         if (isset($_POST['vpn'])){
@@ -63,6 +71,14 @@ if(isset($_POST['adduser'])){
           $entry['mail']=$user_email;
           $entry['userpassword']=ldap_password_hash($password,'ssha');
           $add_user=$Ldap->add_user($newuser,$entry);
+          // if user has been succesfully created and has ssh add to web group
+          // he will be able to write in /var/www/html, bur as he is chrooted he will only see his webistes
+          if ($add_user && isset($_POST['sshd'])){
+            $group['memberUid'] = $newuser;                                   
+
+            ldap_mod_add($ldapconn, $users_group_tree, $group);
+          }        
+        
           if (isset($_POST["sendinstruction"]) && $add_user)$Ldap->send_vpn_instructions($user_email,$newuser); 
           $message=$add_user['message'];
 }
@@ -78,11 +94,17 @@ if(isset($_POST['chpsw'])){
 
 //delete user
 if(isset($_POST['deluser'])){
-    $deletedn='uid='. $_POST['userid']. ',' . $ldaptree;
+    $selecteduser = $_POST['userid'];
+    $deletedn='uid='. $selecteduser . ',' . $ldaptree;
+    $users_group_tree = "cn=web,ou=groups,ou=People," . SUFFIX;
+    $users_in = $Ldap->search($ldapconn, $users_group_tree ,"(&(memberuid=$selecteduser))");
+    if ($users_in["count"] > 0 ){
+      $group['memberuid'] = $selecteduser;
+      ldap_mod_del($ldapconn, $users_group_tree, $group);
+    }
     $del_user=$Ldap->deleteRecord($ldapconn, $deletedn, $recursive = false);
+    
     $message=$del_user['message'];
-### @TODO: if deleted user is webadmin for some domain, we need to update
-    # the adminID for this domain and set to default user
 }
 
 if ($ldapbind) {

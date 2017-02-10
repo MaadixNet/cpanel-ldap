@@ -93,7 +93,7 @@ function get_service_data($service){
     $title = sprintf(_("Servidor de alojamiento y sincronización de archivos"));
     $software = sprintf(_("Owncloud"));
     $description = sprintf(_("Trabaja en documentos, presentaciones, hojas de cálculo, bases de datos... siempre a mano y listos para compartir. Edita y comenta documentos colaborativamente. Impórtalos y expórtalos de otras plataformas. Trabaja en ellos en cualquier momento y desde cualquier dispositivo incluso cuando estás sin conexión. Importa automàticamente tus contactos desde Gmail, Outlook, thunderbird, Yahoo u otros formatos de archivos. Organiza tu trabajo en línea decidiendo el nivel de acceso que quieres darle a cada usuario que autorices.
-          <br>  <a href='/cpanel/owncloud' target='_blank'>Ir a la aplicación</a>"));
+          <br>  <a href='/owncloud' target='_blank'>Ir a la aplicación</a>"));
 
     break;
 
@@ -101,7 +101,7 @@ function get_service_data($service){
     $image = "images/services/rainloop.png";
     $title = sprintf(_("Webmail"));
     $software = sprintf(_("Rainloop"));
-    $description = sprintf(_("Interfaz web para consulta e envío de correo electrónico desde el navegador. <br> <a href='/cpanel/rainloop/' title='Rainloop' target=_'blank'>Ir a la aplicación</a>"));
+    $description = sprintf(_("Interfaz web para consulta e envío de correo electrónico desde el navegador. <br> <a href='/rainloop/' title='Rainloop' target=_'blank'>Ir a la aplicación</a>"));
     
     break;
 
@@ -123,7 +123,7 @@ function get_service_data($service){
     $image = "images/services/phpmyadmin.png";
     $title = sprintf(_("Mysql"));
     $software = sprintf(_("phpMyAdmin"));
-    $description = sprintf(_("Interfaz web para administración de base de datos mysql.  <br> <a href='/cpanel/phpmyadmin/' title='PhpMyAdmin' target=_'blank'>Ir a la aplicación</a>"));
+    $description = sprintf(_("Interfaz web para administración de base de datos mysql. Para proteger ultriormente tus bases de datos, esta aplicación está protegida con doble contraseña. Solo los usuarios que tengan activado el acceso sftp y el usuario por defecto del sistema pueden acceder a este interfaz. Para la prinera autentificación, que se muestra con una ventana emergente, tendrás que insertar un usuario válido (sftp o usuario por defecto del sistema). En la segunda tienes que utilizar las credenciales de un usuario Mysql que tengas creado. Es aconsejable crear un usuario Mysql diferente por cada base de datos.<br> Tanto los usuarios como las mismas base de datos se pueden crear desde este interfaz. Por defecto solo el usuario root de Mysql tiene los privilegios necesarios para crear nuevas bases de datos, nuevos usuarios,  y otorgar permisos a cada uno de ellos. <br> <a href='/phpmyadmin/' title='PhpMyAdmin' target=_'blank'>Ir a la aplicación</a>"));
     break;
 
   case 'piwik':

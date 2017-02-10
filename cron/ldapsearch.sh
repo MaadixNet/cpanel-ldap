@@ -130,8 +130,8 @@ do
         fi
 
 
-        chown -R $webmaster:www-data $documenRoot/$domain
-        chmod -R 775 $documenRoot/$domain
+        chown -R $webmaster:web $documenRoot/$domain
+        chmod -R 2775 $documenRoot/$domain
         #chmod g+s $documenRoot/$domain
         echo 'Folder created'
         echo "<!DOCTYPE html>
@@ -165,7 +165,7 @@ do
         fi
 
           /etc/init.d/apache2 reload && letsencrypt --server https://acme-v01.api.letsencrypt.org/directory \
-            -d $cerbotdomain --agree-tos --email $mail --webroot --webroot-path $documenRoot/$domain --non-interactive --text --rsa-key-size 4096  certonly && \
+            -d $cerbotdomain --agree-tos --email $mail --webroot --webroot-path $documenRoot/$domain --non-interactive --text --rsa-key-size 4096  certonly &&  \
         echo "<VirtualHost *:80>
         ServerName "$domain"
         ServerAlias www."$domain"
@@ -218,6 +218,12 @@ do
         SSLCertificateFile      "/etc/letsencrypt/live/$domain/fullchain.pem"
         SSLCertificateKeyFile   "/etc/letsencrypt/live/$domain/privkey.pem"
         SSLCACertificatePath    "/etc/ssl/certs"
+        php_value max_execution_time "3600"
+        php_value max_input_time "3600"
+        php_value memory_limit "512M"
+        php_value post_max_size "2G"
+        php_value upload_max_filesize "2G"
+
         </VirtualHost>" > $vhroot/"$domain".conf
         rm $vhroot/"$domain"-nossl-.conf
     else

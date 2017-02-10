@@ -24,7 +24,9 @@ if ($ldapconn){
 $message='';
 $ldaptree    = LDAP_PEOPLE;
 $selecteduser=(isset($_GET['user']))?$_GET['user']:'';
-
+$users_group_tree = "cn=web,ou=groups,ou=People," . SUFFIX;
+$users_in = $Ldap->search($ldapconn, $users_group_tree ,"(&(memberuid=$selecteduser))");
+#$all_users_in = $Ldap->search($ldapconn, $users_group_tree ,"(&(memberuid=*))");
 if (isset($_POST['updateuser']) && (!empty($selecteduser))){
   $modifydn='uid='.$selecteduser. ',' . $ldaptree;
   $psw1=trim($_POST['pswd1']);
@@ -56,10 +58,26 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
       $info['homedirectory']='/home/sftpusers/' . $selecteduser;
       $info['authorizedservice'][$c]='sshd';
       $c++;
+      $info['authorizedservice'][$c]='apache';
+      $c++;
+      if ($users_in["count"] == 0){
+        //This user was not in the web gorup so Add  user to  web group as he has sftp 
+            $group['memberuid'] = $selecteduser;
+            ldap_mod_add($ldapconn, $users_group_tree, $group);
+      }
   } else {
 
       $info['loginshell']='none';
       $info['homedirectory']='none';
+      //dont know if in php set an empty attribute wors as to remove it
+      $info['authorizedservice']='';
+      if ($users_in["count"] > 0){
+        //This user was  in the web gorup sftp access has been removed, so remove user from group
+        // web and from apache authorized service
+        $group['memberuid'] = $selecteduser;
+        ldap_mod_del($ldapconn, $users_group_tree, $group); 
+      }
+    
   }
   if (isset($_POST['vpn'])){
       $info['authorizedservice'][$c]='openvpn';
