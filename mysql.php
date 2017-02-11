@@ -1,59 +1,66 @@
-<?php
+<?php 
+
 session_start();
 require_once 'classes/class.ldap.php';
-require_once 'mysql/connect.php';
-$user_home = new LDAP();
-$messg= '';
-/*if(!$user_home->is_logged_in())
-{
-  $user_home->redirect('login.php');
-}
+$Ldap= new LDAP();
 
-if($_SESSION["login"]["level"]<10)$user_home->redirect('404.php');
- */
-if (isset($_POST["createdb"])){
-  $user=$_POST["mysqluser"];
-  $password=$_POST["pswd2"];
-  $dbname=$_POST["dbname"];
-  $mysql_start= new MysqlCreator();
-  $createuser=$mysql_start->createUser($user,$password);
-  $result=$createuser["result"];
-  if ($result=='true'){
-
-  //close previous connection
-    try {
-      //Create a nuew connection with the new created user;     
-        $DBH = new PDO("mysql:host=localhost", $user,$password);
-        $DBH->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-        }
-    catch(PDOException $e) {
-    echo $e->getMessage();
-    }
-
-    $newddbb=$DBH->exec("CREATE DATABASE $dbname;");
-    $messg=(isset($newddbb))?'DDBB created': 'no se ha podido crear la base de datos';
-  } else {
-      $messg= 'no se ha podido crear el usurio';
-  }
-
-}
 $current_page=basename(__FILE__);
-$user_home->check_login_or_redirect($current_page);
+$Ldap->check_login_or_redirect($current_page);
+
+$message='';
 require_once('header.php');
-echo '<h3>'. sprintf(_("Crear Base de datos")). '</h3>';
-echo $messg;
-?>
+//connect and BInd
+$ldapconn=$Ldap->connect();
+$psw=$Ldap->decrypt_psw();
+if ($ldapconn){
+  $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
+
+  #TODO: Check user level to show and allow differents permissions
+  #Level 10= admin : can read and manage all accounts
+  #Level 4 postmaster (domain administrator) can read and edit all accounts related to his domain excluded VPN
+  #level 2 : simple user. Can read and edit only his own data (basically email related)
+  #need LDAP ACL to be set
+  #
+
+  $permissions= $_SESSION["login"]["level"];
+  $ldaptree    = LDAP_PEOPLE;
+  $filtersudo="(&(objectClass=person)(uid=*)(gidnumber=27))";
+
+  
+  //Check if a custom mail has been set
+  if ($ldapbind) {
+    $resultsudo=$Ldap->search($ldapconn,$ldaptree, $filtersudo);
+    $username = $resultsudo[0]["uid"][0];
+  }
+  
+
+}?>
+
 <div id="admin-content" class="content">
-  <form id="mysql-create" action="" method="POST">
-  <label for"dbname"><?php printf(_("Nombre base de datos"));?></label>
-  <input type="text" name="dbname" id="dbname">
-  <label for="mysqluser"><?php printf(_("Usuario base de datos"));?></label>
-  <input type="text" name="mysqluser" id="mysqluser">
-  <label for"pswd1"><?php printf(_("Contraseña base de datos"));?></label>
-  <input type="password" name="pswd1" id="pswd1">
-  <label for"pswd1"><?php printf(_("Confirma contraseña base de datos"));?></label>
-  <input type="password" name="pswd2" id="pswd2">
-  <input type="submit" name="createdb" value="<?php printf(_('Crear Base de datos'));?>">
-</form>
-<!--admin-content-->
-<?php require_once('footer.php');?>
+
+  <div class="row">
+        <div class="col-sm-12">
+            <div class="inner" id="maincol">
+      <?php
+  echo '<h3> Mysql - PhpMyAdmin</h3>';
+  printf(_("En este servidor tienes instalada una interfaz gráfica para poder administrar bases de datos mysql.<br>
+  Se trata de una aplicación externa al Panel de Control y que requiere otra autentificación para acceder a ella.<br><br>
+Para reforzar la seguridad de tu sistema y tus bases de datos, esta aplicación está protegida con doble contraseña. Solo los usuarios que tengan activado el acceso sftp y el usuario %s (usuario por defecto del sistema) pueden acceder a esta interfaz.<br><br>
+ Para la prinera autentificación, que se muestra con una ventana emergente, tendrás que insertar las credenciales de un usuario válido. Puedes utilizar las credenciales del usuario %s, o bien de un usuario que hayas creado y al que hayas activado el acceso sftp.<br> 
+Una vez efectuada satisfactoriamente esta autentificación, encontrarás el interfaz de la aplicación PhpMyAdmin, que solicitará un usuario Mysql. Por defecto exite un único usuario Mysql cuyo nombre es root y cuya contraseña has recibido por correo electrónico al activar el servidor.<br><br>
+ Es buena práctica crear un usuario Mysql diferente por cada base de datos y otorgarle permisos solo sobre una y no todas las bases de datos que tengas creadas.<br><br>
+      Tanto las bases de datos como los usuarios mysql y sus contraseñas se pueden crear e administrar desde PhpMyadmin. <br>
+Por defecto solo el usuario root de Mysql tiene los privilegios necesarios para crear nuevas bases de datos, nuevos usuarios, y otorgar permisos a cada uno de ellos.
+<br><br>
+Puedes encontrar aquí la <a href='https://www.phpmyadmin.net/docs/' target='_blank' title='Phpmyadmin documentation'>documentación oficial para el uso de la aplicación</a>"),$username, $username);?>
+<br><br>
+<a class="btn btn-primary" href="/phpmyadmin" target="_blank">Ir a la aplicación</a>
+            </div><!--ineer-->
+        </div><!--col-sm-8-->
+  </div><!--row-->
+</div><!--admin-content-->
+<?php
+  ldap_close($ldapconn);   
+  require_once('footer.php');?>
+
+

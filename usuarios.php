@@ -36,7 +36,6 @@ $groupinfo = posix_getgrnam("web");
 $webgrid=$groupinfo["gid"];
 $users_group_tree = "cn=web,ou=groups,ou=People," . SUFFIX;
 $users_in = $Ldap->search($ldapconn, $users_group_tree ,'(&(objectClass=*))');
-var_dump ($users_in);
 //Add new User
 if(isset($_POST['adduser'])){
         $entry=array();
@@ -129,7 +128,7 @@ $firstuid_availabe=system($commuid);*/?>
 		<input id="username" type="text" name="username" required /><div id="result"></div>
                 <label for="firstname"><?php printf(_("Nombre"));?></label>
                 <input id="firstname" type="text" name="firstname" />
-                <label for="surname"><?php printf(_("Apeliidos"));?></label>
+                <label for="surname"><?php printf(_("Apellidos"));?></label>
                 <input id="surname" type="text" name="surname" />
 
                 <label for="usermail"><?php printf(_("Correo electrónico"));?> *</label>
@@ -171,7 +170,7 @@ $firstuid_availabe=system($commuid);*/?>
               <hr>
               <label for="pswd1"><?php printf(_("Contraseña"));?> *</label>
               <div id="pswcheck"></div>
-              <input id="pswd1" type="password" name="pswd1" required />
+              <input id="pswd1" type="password" name="pswd1" required readonly />
               <label for="pswd2"><?php printf(_("Confirma contraseña"));?> *</label><input id="pswd2" type="password" name="pswd2" required />
               <div id="pswresult"></div>
               <hr>

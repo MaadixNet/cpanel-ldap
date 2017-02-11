@@ -26,7 +26,7 @@ echo '</h4>';
     echo '<pre><b>IP de este servidor:</b> ' . $_SERVER['SERVER_ADDR'] . '</pre>';
     echo '<p>';
     printf (_("Si cuando añades un dominio no hay coincidencia entre los dos valores el sistema te permitirá igualmente efectuar la operación, pero no creará la configuración interna necesaria para que una página web sea accesible a través de este dominio.<br>
-    Periódicamente el sistema preguntará si existe esta coincidencia, y en cuanto reciba respuesta afermativa creará la configuración necesaria y podrás visitar tu aplicación web a través del dominio.
+    Periódicamente el sistema preguntará si existe esta coincidencia, y en cuanto reciba respuesta afirmativa creará la configuración necesaria y podrás visitar tu aplicación web a través del dominio.
     "));
     echo '</p>';
     echo '<hr><h4 class="pink">';

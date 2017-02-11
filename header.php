@@ -107,12 +107,6 @@ if($Ldap->is_logged_in()){
                                   <li><a href="/<?php echo BASE_PATH;?>/service-available.php" target="_blank"><?php printf(_("Servicios disponibles"));?></a></li>
                                 </ul>
                            </li>
-                              <?php if( !empty($serv_installed) && array_search('owncloud', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
-
-                                <li>
-                                  <a target="_blank" href="https://<?php echo $_SERVER['HTTP_HOST'];?>/owncloud"><?php printf(_("Owncloud"));?></a>
-                                </li>
-                              <?php }?>
                             <li class="dropdown">
                             <a href="#" data-toggle="dropdown" class="dropdown-toggle"><?php printf (_("Dominios"));?><b class="caret"></b>
                             </a>
@@ -147,6 +141,22 @@ if($Ldap->is_logged_in()){
                             <li><a href="/<?php echo BASE_PATH;?>/usuarios.php"><?php printf(_("Usuarios"));?></a></li>
                             <li><a href="/<?php echo BASE_PATH;?>/notificaciones.php"><?php printf(_("Notificaciones"));?></a></li>
                             <?php } ?>	
+                              <?php if( !empty($serv_installed) && array_search('owncloud', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+
+                                <li>
+                                  <a target="_blank" href="https://<?php echo $_SERVER['HTTP_HOST'];?>/owncloud"><?php printf(_("Owncloud"));?></a>
+                                </li>
+                              <?php }?> 
+                             <?php if( !empty($serv_installed) && array_search('phpmyadmin', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+                              <li class="dropdown">
+                                <a href="#" data-toggle="dropdown" class="dropdown-toggle">Mysql<b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu" id="menu2">
+                                  <li><a href="/<?php echo BASE_PATH;?>/mysql.php"><?php printf(_("Instrucciones"));?></a></li>
+                                  <li><a target="_blank" href="https://<?php echo $_SERVER['HTTP_HOST'];?>/phpmyadmin"><?php printf(_("Phpmyadmin"));?></a></li>
+                                </ul>
+                              </li>
+                              <?php }?> 
 
                             <li class="dropdown">
                                 <a href="#" data-toggle="dropdown" class="dropdown-toggle">Tutoriales <b class="caret"></b>

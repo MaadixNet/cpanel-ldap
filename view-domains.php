@@ -210,9 +210,8 @@ if ($ldapbind) {
     <?php if($message) echo $message;?>
     <div class="row">
 
-	<div class="inner"i id="maincol">
-                <table id="domains">
-        <thead>>
+	<div class="inner" id="maincol">
+        <table id="domains">
         <thead>
         <tr>
             <th>Dominio</th>

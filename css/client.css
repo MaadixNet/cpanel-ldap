@@ -153,8 +153,8 @@ h3.sectionTitle {
 .navbar .brand{margin:0 auto;
 padding:0;}
 .navbar-inner{padding:20px;}*/
-	.navbar-fixed-top, .navbar-fixed-bottom, .navbar-static-top {margin: 0 auto;}
-
+.navbar-fixed-top, .navbar-fixed-bottom, .navbar-static-top {margin: 0 auto;}
+.brand {width:70%;}
 /**********************************************************************/
 /************************* FOOTER ************************************/
 /********************************************************************/

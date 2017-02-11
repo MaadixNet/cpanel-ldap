@@ -97,8 +97,8 @@ function print_form(){
     		echo '<form action="" method="POST" class="form-signin">
 		<h2 class="form-signin-heading">Entrar</h2>
 		<hr>
-        	<label for="user">Username: </label><input id="user" type="text" name="user" />
-        	<label for="password">Password: </label><input id="password" type="password" name="password" />        <input type="submit" name="submit" value="Submit" class="btn btn-large btn-primary" />
+        	<label for="user">'. sprintf(_("Usuario")) . ' </label><input id="user" type="text" name="user" />
+        	<label for="password">'. sprintf(_("Contraseña")) . '</label><input id="password" type="password" name="password" />        <input type="submit" name="submit" value="Submit" class="btn btn-large btn-primary" />
                 <br>
                 <a class="navbar-nav" href="recover.php">' . sprintf(_("He olvidado la contraseña")) . '</a>
     		</form>';
