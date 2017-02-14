@@ -6,6 +6,7 @@ $current_page=basename(__FILE__);
 $user_home->check_login_or_redirect($current_page);
 require_once 'classes/class.DiskStatus.php';
 require_once('header.php');
+require_once('sidebar.php');
 ?>
 <div id="admin-content" class="content">
 <?php

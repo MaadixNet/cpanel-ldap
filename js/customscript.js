@@ -62,6 +62,21 @@
 
 $(document).ready(function() {
 
+     var pgurl = window.location.href.substr(window.location.href
+.lastIndexOf("/")+1);
+      
+     $("#sidebar-menu a").each(function(){
+          var itemurl= $(this).attr("href").substr($(this).attr("href").lastIndexOf("/")+1);
+          if( itemurl  == pgurl && itemurl != '' )
+          $(this).parent('li').addClass("active");
+          $("#sidebar-menu ul:has(li.active)").addClass('collapse in');
+          $("#sidebar-menu li:has(ul.in)").addClass('active');
+
+});
+
+
+
+
   /* fix firefox autocomplete for password input
    * autocomplete="0ff" didn't work
    * setting input field to read only
@@ -72,7 +87,7 @@ $(document).ready(function() {
     $('#pswd1').removeAttr('readonly');
 
 
-  var li=$("h4 a.active").closest("li");
+  var li=$("h5 a.active").closest("li");
       li.find(".sub-menu").slideToggle();
     $("#menu-main-menu-m").on("click", ".arrow", function() {  
       var li = $(this).closest("li");

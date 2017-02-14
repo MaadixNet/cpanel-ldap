@@ -156,9 +156,11 @@ if ($ldapconn){
   if ($ldapbind) {
       $result=$Ldap->search($ldapconn,$binddn, $filter);
   }
-}?>
-
-<div id="admin-content" class="content">
+}
+require_once('sidebar.php');
+?>
+<article class="content forms-page">
+  <section class="section">
 <?php 
   # Check if the domain has correct MX Recodrs for this server
   #
@@ -187,13 +189,15 @@ if ($ldapconn){
     <div class="row">
 		<?php if ($permissions ==10) {//Show domains list on left sidebar only to admin ?> 
         <div class="col-sm-2">
+          <div class="title-block">
+            <h3 class="title"> <?php printf(_("Dominios Activados"));?></h3>
+          </div>
             <div id="sidebarleft" class="inner">
-                <h4 class="tone">Dominios Activados</h4>
 
 				<?php
 					if($result["count"]>0){
 					$queryvar=(isset($_GET['domain']))?$_GET['domain'] :'';
-					echo '<ul id="menu-main-menu-m" class="menu">';
+					echo '<ul id="menu-main-menu-m" class="menul">';
 					for ($i=0; $i<$result["count"]; $i++) {
 						$domain = $result[$i]["vd"][0];
 						$active = ($queryvar == $domain)?'active':'';
@@ -202,7 +206,7 @@ if ($ldapconn){
 						$mailcount = $resultmail["count"];
 						$haschildren = ($mailcount>0) ? '<i class=" arrow arrowleft"></i><i class="arrow arrowdown"></i>':'';
 						echo '<li class=' .  $active . '>';	
-						echo '<h4>' . $haschildren . ' <a class="biglist ' .  $active . '"   href="/' .  BASE_PATH . '/mails.php?domain=' . $domain . '">' . $domain .'</a> <span class="counter">' . $mailcount . '</span></h4>';
+						echo '<h5>' . $haschildren . ' <a class=" ' .  $active . '"   href="/' .  BASE_PATH . '/mails.php?domain=' . $domain . '">' . $domain .'</a> <span class="counter">' . $mailcount . '</span></h5>';
 						if($mailcount>0) {
 							echo '<ul class="sub-menu">';
 							for ($c=0; $c<$resultmail["count"]; $c++) {
@@ -211,6 +215,7 @@ if ($ldapconn){
 							echo '</ul>';
 						}
 						echo '</li>';
+                                                echo '<hr>';
                                             }
 					echo '</ul>';
 					}?>
@@ -218,25 +223,33 @@ if ($ldapconn){
 			</div><!--sidebar-left-->
 		</div><!--col-sm.2-->
 		<?php } ?>
+                <?php   echo $message;
+                        if($permissions > 2){
+                        # This is only for postmaster or admin. Normal user will only be able to see his own email account
+                        $queryvar=(isset($_GET['domain']))?$_GET['domain'] :'';
+                        $querymess=($queryvar)?'para el dominio ' . $queryvar:'';?>
+
         <div class="col-sm-<?php echo $col ?>">
-            <div class="inner"i id="maincol">
-			<?php
-			echo $message; 
-			if($permissions > 2){
-			# This is only for postmaster or admin. Normal user will only be able to see his own email account
-			$queryvar=(isset($_GET['domain']))?$_GET['domain'] :'';
-			$querymess=($queryvar)?'para el dominio ' . $queryvar:'';
-			echo '<h4 class="tone">Cuentas de correo activadas ' . $querymess. '</h4>';?>
-                        <span><button class="togglevisibility btn btn-small btn-secondary"><?php printf(_("Añadir cuenta"));?></button>  </span>
+          <div class="title-block">
+            <h3 class="title"> <?php printf(_("Cuentas de correo activadas %s"),$querymess);?></h3>
+          </div>
+
+            <div class="inner" id="maincol">
+                <div class="form-group">
+                <span><button class="togglevisibility btn btn-small btn-secondary"><?php printf(_("Añadir cuenta"));?></button>  </span>
+                </div>
     		<div class="clear"></div>
     		<div id="change">
-
+                <div class="card card-block">
 			<?php if($result["count"] == 0){
 				echo '<h2>Para poder crear cuentas de correos tienes que activar antes el dominio correspondiente en la <a href="add-domain.php">página Añadir dominios</h2>';
 			} else { ?>
-   	 			<form autocomplete="off" action="#" method="POST" class="form-signin">
-				<hr>
-				<label for="username">Email de usuario: </label><input id="mailnew" type="text" name="mailnew" required />
+                              
+   	 			<form autocomplete="off" action="#" method="POST" class="form-signin standard">
+                                <div class="form-group">
+                                <label for="username">Email de usuario: </label>
+                                <p></p>
+                                <input class="form-control col-sm-4" id="mailnew" type="text" name="mailnew" required />
 				<?php
 				if($result["count"] == 1){
 					echo '<input type="hidden" name="maildomain" value="' .$result[0]["vd"][0] .'" />';
@@ -260,17 +273,28 @@ if ($ldapconn){
                                     }
                                     echo '</select></span>';
                                 };?>
+                                </div>
 
-                                <label for="password"><?php printf(_("Contraseña"));?> </label><input id="password" type="password" name="password" required />
-                                <label for="givenname"><?php printf(_("Nombre"));?> </label><input id="givenname" type="text" name="givenname" required />
-                                <label for="surname"><?php printf(_("Apellidos"));?></label><input id="surname" type="text" name="surname" required />
+                                 <div class="form-group">   
+                                    <label for="password"><?php printf(_("Contraseña"));?> </label><input class="form-control" d="password" type="password" name="password" required />
+                                  </div>
+
+                                <div class="form-group">
+                                <label for="givenname"><?php printf(_("Nombre"));?> </label><input class="form-control" id="givenname" type="text" name="givenname" required />
+                                </div>
+
+                                <div class="form-group">
+                                <label for="surname"><?php printf(_("Apellidos"));?></label><input id="surname" type="text" name="surname" class="form-control" required />
+                                </div>
                                 <br>
                                 <input type="submit" name="adduser" value="Guardar" class="btn btn-small btn-primary" />
                                 </form>
+                                <br>
                         <?php 
 			} //end if permissions > 2
 		} //end if domain not =  0?>
                 </div><!--change-->
+                </div>
 
 			<?php
 			if ($permissions == 4 ){
@@ -351,7 +375,8 @@ if ($ldapconn){
 	</div><!--row-->
 <?php
 ?>
-</div><!--admin-content-->
+  </section>
+</article>
 <?php
 	ldap_close($ldapconn);   
 	require_once('footer.php');?>

@@ -6,7 +6,6 @@ $Ldap= new LDAP();
 $current_page=basename(__FILE__);
 $Ldap->check_login_or_redirect($current_page);
 
-require_once('header.php');
 //connect and BInd
 $errorttpe="";
 $message=$dns_result="";
@@ -89,7 +88,10 @@ if(isset($_POST['adddomain'])){
     $dns_result=$check_dns["message"];
 
     $syntax= check_syntax ('domain',$domain_new);
-    $password = $_POST["password"];
+    
+    #$password = $_POST["password"];
+    $rand_sr = create_password();
+    $password = ldap_password_hash($rand_sr,'ssha');
     $entry["objectclass"][0]    = "top";
     $entry["objectclass"][1]    = "VirtualDomain";
     $entry["vd"]                = $domain_new;
@@ -176,104 +178,127 @@ white_list = ""';
       }
   
 }
+require_once('header.php');
+require_once('sidebar.php');
 ?>
-<div id="admin-content" class="content">
+
+<article class="content forms-page">
+  <div class="title-block">
+    <h3 class="title"> <?php printf(_("Añadir Dominio"));?> </h3>
+      <p class="title-description"> <?php printf(_("Activa dominios o subdominios para este servidor."));?></p>
+  </div>
+  <div class="subtitle-block">
+  <h3 class="subtitle"> <?php printf(_(" Activar un dominio en este panel creará la configuración necesaria para:"));?></h3>
+    <p><?php printf(_("<ul> <li> Crear cuentas de correo electrónico</li> <li> Alojar contenido visble visitando el dominio con un navegador </li><li> Crear certificcado SSL para navegaci'on segura ( https) </li> </ul>
+    Recuerda que para un correcto funcionamiento de tus dominios en el servidor es necesario que configures correctamente los DNS desde el panel de configuración de tu proveedor de dominio. <a href='/" . BASE_PATH ."/domain-instruccions.php'>+ info</a> "));?> </p>
+  </div>
+<section class="section">
+<div id="admin-content" class="row sameheight-container">
     <?php if($message) echo $message;?>
     <?php if($_SESSION["login"]["level"] == '10'){//Only admin can add Domains 
     ?>
-    <form autocomplete="off" action="" method="POST" class="form-signin jquery-check">
-        <hr>
-        <label for="domain"><?php printf (_("Nombre de Dominio"))?> </label><p class="little"> <?php printf (_("(Inserta un nombre de dominio válido (o un subdominio). Para los dominios activados en este panel podrás crear cuentas de correo electrónico o páginas web)"))?></p><input id="domain_new" type="text" name="domain_new" required />
-        <label for="password"><?php printf (_("Contraseña:"));?> </label><p class="little">Esta contraseña se puede utilizar para acceder a este mismo panel de control como administrador del dominio identificándose con <b>User:</b> <em>Nombre Dominio</em> <b>Contraseña: </b><em>La que insertes en este campo</em>. El administrador de dominio tiene privilegios límitados y sólo podrá crear, editar y borrar las cuentas de correo electrónico asociadas a su dominio. No podrá en ningún caso acceder a ninguna otra función y no podrá eliminar el dominio</p><input id="password" type="password" name="password" required />
-        <label for="webmaster"><?php printf (_("Webmaster (Administrador sito web)"));?> </label><p class="little">Por cada dominio que actives en este panel se creará una carpeta en la que puedes subir tu aplicación web, accesible desde un navegador. Pudedes permitir que un usuario concreto tenga acceso a la carpeta para que pueda editar sus archivos. Puedes elegir un usuario ya creado o crear uno nuevo. Si no asignas ningún usuario solo podrá editar los archivos el usuario por defecto del sistema, tanto por ssh como por sftp</p>
-         <?php 
-        $ldaptree    = LDAP_PEOPLE;
-        $filter="(&(objectClass=person)(uid=*)(authorizedService=sshd)(!(gidnumber=27)))";
-        $filtersudo="(&(objectClass=person)(uid=*)(gidnumber=27))";
-        $allusers=$Ldap->search($ldapconn,$ldaptree, $filter);
-        $sudouser=$Ldap->search($ldapconn,$ldaptree, $filtersudo);
-        // This is the default user which has sudo and will be the default owner
-        // in case no webmaster is selected or created
-        $sudo_username=$sudouser[0]["uid"][0];
-        //default webmaster will be user with sudo (uid 10000);
-        echo '<label for="seluser">' . sprintf (_("Asignar administrador web")) . '</label>';
-        echo '<select id="seluser" name="seluser">';
-        //echo '<option value="' . $sudo_username .'">Seleccionar Administrador web</option>';
-        echo '<option value="' . $sudo_username .'">' . $sudo_username .' - Usuario por defecto</option>';
-        echo '<option value="newuser">Crear nuevo usuario</option>';
-        for ($c=0; $c<$allusers["count"]; $c++) {
-            $usernames = $allusers[$c]["uid"][0];
-            echo '<option value="' . $allusers[$c]["uid"][0] .'">' . $allusers[$c]["uid"][0] . '</option>';
-                  }
+  <div class="card card-block">
+    <form role="form" autocomplete="off" action="" method="POST" class="form-signin standard jquery-check">
+        <div class="form-group">
+          <label for="domain"><?php printf (_("Nombre de Dominio"))?> </label><p class=""> <?php printf (_("(Inserta un nombre de dominio válido (o un subdominio). Para los dominios activados en este panel podrás crear cuentas de correo electrónico o páginas web)"))?></p>
+          <input class="form-control" id="domain_new" type="text" name="domain_new" required />
+        </div>
+
+        <div class="form-group">
+          <label for="webmaster"><?php printf (_("Webmaster (Administrador sito web)"));?> </label><p class="">Por cada dominio que actives en este panel se creará una carpeta en /var/www/html/<em>example.com/</em> en la que puedes subir tu aplicación web, accesible desde un navegador.<p>
+<p>
+El Webmaster tendrá permisos para crear, borrar o modificar archivos dentro de la carpeta /var/www/html/example.com/, donde podrá crear la aplicación web. Este usuario tendrá acceso por SFTP o SSH a esta carpeta y a su home, pero no podrá acceder ni ver el resto archivos y carpetas en tu servidor.</p>
+
+<p>Si no asignas ningún usuario como Webmaster, se establecerá por defecto como Webmaster el SuperUsuario del sistema.</p>
+
+<p>Recomendamos encarecidamente que crees un usuario Webmaster, sobretodo si quieres otorgar a alguien el acceso para que trabaje sobre la web, aplicación o contenidos de la carpeta /var/www/html/example.com/, y que nunca compartas el acceso como SuperUsuario, cuyos privilegios son ilimitados en el sistema. </p>
+           <?php 
+            $ldaptree    = LDAP_PEOPLE;
+            $filter="(&(objectClass=person)(uid=*)(authorizedService=sshd)(!(gidnumber=27)))";
+            $filtersudo="(&(objectClass=person)(uid=*)(gidnumber=27))";
+            $allusers=$Ldap->search($ldapconn,$ldaptree, $filter);
+            $sudouser=$Ldap->search($ldapconn,$ldaptree, $filtersudo);
+            // This is the default user which has sudo and will be the default owner
+            // in case no webmaster is selected or created
+            $sudo_username=$sudouser[0]["uid"][0];
+            //default webmaster will be user with sudo (uid 10000);
+            echo '<div class="form-group">';
+            echo '<label for="seluser">' . sprintf (_("Asignar administrador web")) . '</label>';
+            echo '<div class="clear"></div>';
+            echo '<select id="seluser" name="seluser" class="form-control">';
+            //echo '<option value="' . $sudo_username .'">Seleccionar Administrador web</option>';
+            echo '<option value="' . $sudo_username .'">' . $sudo_username .' - SuperusUario</option>';
+            echo '<option value="newuser">Crear nuevo usuario</option>';
+            for ($c=0; $c<$allusers["count"]; $c++) {
+              $usernames = $allusers[$c]["uid"][0];
+              echo '<option value="' . $allusers[$c]["uid"][0] .'">' . $allusers[$c]["uid"][0] . '</option>';
+            }
             echo '</select>';
+            echo '</div>';
+            echo '<br>';
+          
             echo '<div class="newuser" id="new_user">';
-            echo '
-            <label for="username">' . sprintf(_("Nombre de usuario")) .' *</label>
-            <input id="username" type="text" name="username" /><div id="result"></div>
-            <label for="firstname">'. sprintf(_("Primer nombre (Opcional)")) .'</label>
-            <input id="firstname" type="text" name="firstname" />
-            <label for="surname">' .  sprintf(_("Apeliidos (Opcional)")) . '</label>
-            <input id="surname" type="text" name="surname" />
-            <label for="usermail">' . sprintf(_("Correo electrónico")) .'* </label>
-            <p class="little">Puedes insertar un correo electrónico externo o elegir una entre las cuentas creadas en el servidor</p>
-            <input id="usermail" class="usermail" type="mail" name="usermail" />';
+            echo '<div class="form-group">
+              <label for="username">' . sprintf(_("Nombre de usuario")) .' *</label>
+              <input class="form-control" id="username" type="text" name="username" /><div id="result"></div>
+            </div>
+            <div class="form-group">
+              <label for="firstname">'. sprintf(_("Primer nombre (Opcional)")) .'</label>
+              <input class="form-control" id="firstname" type="text" name="firstname" />
+            </div>
+            <div class="form-group">
+              <label for="surname">' .  sprintf(_("Apellidos (Opcional)")) . '</label>
+              <input class="form-control" id="surname" type="text" name="surname" />
+            </div>
+            <div class="form-group">
+              <label for="usermail">' . sprintf(_("Correo electrónico")) .'* </label>
+              <p class="">Puedes insertar un correo electrónico externo o elegir una entre las cuentas creadas en el servidor</p>
+                <input class="form-control col-sm-4 usermail" id="usermail" type="mail" name="usermail" />';
             $resultmail = $Ldap->search($ldapconn,LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
             $mailcount = $resultmail["count"];
             if($mailcount>0) {
-                    echo '<select id="selmail">';
+                    echo '<select id="selmail" class="">';
                     echo '<option value="">' . sprintf(_("Seleccionar cuenta existente")) . '</option>';
                     for ($c=0; $c<$resultmail["count"]; $c++) {
                           echo '<option value="' . $resultmail[$c]["mail"][0] .'">' . $resultmail[$c]["mail"][0] . '</option>';
                     }
                    echo '</select>';
-            };?>
+            }?>
+            
             <div id="emailresult"></div>
-
             <hr>
-            <?php if ($Ldap->check_installed_service('openvpn')){?>
-            <h4><?php printf(_("Cuenta VPN"));?></h4>
-            <input type="checkbox" name="vpn" id="vpn" />
-            <label for="vpn" class="togglehidden" >&nbsp;</label></h4>
-
-            <div id="hidden">
-              <h4><?php printf(_("Instrucciones"));?></h4>
-              <p><?php printf(_("Puedes enviar al usuario un email con instrucciones para configurar el cliente VPN"));?></p>
-              <p><?php printf(_("NOTA: Las instrucciones incluyen todos los datos necesarios menos la contraseña. Por razones de seguridad proporciona al usuario la  contraseña por otro canal"));?></p>
-              <input type="checkbox" name="sendinstruction" id="sendinstruction" />
-              <label for="sendinstruction" class="left small">&nbsp;</label>&nbsp;<span><?php printf(_("Enviar instrucciones"));?></span></h4>
-            </div>
-            <?php } ?>
-            <hr>
-            <h4><?php printf (_("Contraseña personal de usuario"));?></h4>
+            <div class="form-group">
             <label for="pswd1"><?php printf(_("Contraseña"));?> *</label>
             <div id="pswcheck"></div>
-            <input id="pswd1" type="password" name="pswd1" />
+            <input class="form-control" id="pswd1" type="password" name="pswd1" autocomplete="off" readonly />
+            </div>
+            <div class="form-group">
             <label for="pswd2"><?php printf(_("Confirma contraseña"));?> *</label>
-            <input id="pswd2" type="password" name="pswd2"  />
+            <input class="form-control" id="pswd2" type="password" name="pswd2"  />
             <div id="pswresult"></div>
+            </div>
             <hr>
 
+            </div>
             </div>
 
             <div class="clear"></div>
-            <hr>
-            <input class="form-control" type="hidden" name="values[domain][maxmail]" value="100">
-            <input class="form-control" type="hidden" name="values[domain][maxalias]" value="100">
-            <input class="form-control" type="hidden" name="values[domain][maxquota]" value="100">
-            <input class="form-control" type="hidden" name="values[domain][accountactive]" value="TRUE">
-            <input class="form-control" type="hidden" name="values[domain][editav]" value="TRUE">
-            <input class="form-control" type="hidden" name="values[domain][delete]" value="FALSE">
-            <input class="form-control" type="hidden" name="values[mail][editaccounts]" value="TRUE">
-            <input class="form-control" type="hidden" name="values[domain][postfixtransport]" value="maildrop:">
+            <input type="hidden" name="values[domain][maxmail]" value="100">
+            <input type="hidden" name="values[domain][maxalias]" value="100">
+            <input type="hidden" name="values[domain][maxquota]" value="100">
+            <input type="hidden" name="values[domain][accountactive]" value="TRUE">
+            <input type="hidden" name="values[domain][editav]" value="TRUE">
+            <input type="hidden" name="values[domain][delete]" value="FALSE">
+            <input type="hidden" name="values[mail][editaccounts]" value="TRUE">
+            <input type="hidden" name="values[domain][postfixtransport]" value="maildrop:">
             <input type="submit" name="adddomain" value="Guardar" class="btn btn-small btn-primary" />
 
             </form>
         <?php } ?>
-        </tbody>
-    </table>
-  </div><!--ineer-->
-
-</div><!--admin-content-->
+    </div><!--card card-block sameheight-item--!>
+  </div><!--admin-content-->
+  </section>
+</article>
 <?php 
   ldap_close($ldapconn);
   require_once('footer.php');?>

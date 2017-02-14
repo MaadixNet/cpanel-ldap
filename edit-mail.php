@@ -108,13 +108,13 @@ if ($ldapconn){
             echo '</pre>';*/
         }
 require_once('header.php');
+require_once('sidebar.php');
 }?>
 
 <div id="admin-content" class="content">
     <div class="row">
         <div class="col-sm-12">
             <div class="inner" id="maincol">
-              <div class="col-sm-9">
                 <?php
                 echo $message; 
                 $forward = $result[0]["forwardactive"][0];
@@ -125,42 +125,60 @@ require_once('header.php');
                 $checked = ($forward=="TRUE")?'checked="checked"':'';
                 //$required = ($forward=="TRUE")?'required':'';
                 $maildrop=(isset($result[0]["maildrop"][0]))?$result[0]["maildrop"][0]:'';
-                echo '<h4>' . sprintf (_("Editar cuenta de correo %s") , $email) .  '</h4>';?>
-                <div class="clear"></div>
+                echo '<div class="title-block">';
+                echo '<h3>' . sprintf (_("Editar cuenta de correo %s") , $email) .  '</h3>';
+                echo '<span class="sparkline bar" data-type="bar"></span></div>';
+                ?>
+             <div class="col-sm-6">
+                <div class="card card card-block">
 
-                    <form autocomplete="off" action="" method="POST" class="form-signin">
-                        <hr>
-                        <label for="pswd1"><h4><?php printf(_("Nueva contraseña"));?></h4></label>
-                        <div id="pswcheck"></div>
-                        <input id="pswd1" type="password" name="pswd1" readonly />
+                    <form role="form" autocomplete="off" action="" method="POST" class="form-signin">
+                        <div class="form-group">
+                          <label for="pswd1"><?php printf(_("Nueva contraseña"));?></label>
+                          <div id="pswcheck"></div>
+                          <input class="form-control boxed" id="pswd1" type="password" name="pswd1" readonly />
+                        </div>
 
-                        <label for="pswd2"><h4><?php printf(_("Repetir nueva contraseña"));?></h4></label>
-                        <input id="pswd2" type="password" name="pswd2" />
-                        <div id="pswresult"></div>          
-                        
-                        <label for="givenname"><h4><?php echo  sprintf(_("Nombre"));?></h4></label>
-                        <input id="givenname" name="givenname" type="text" value="<?php echo $result[0]['givenname'][0];?>" required />
+                        <div class="form-group">
+                          <label class="control-label" for="pswd2"><?php printf(_("Repetir nueva contraseña"));?></label>
+                          <input class="form-control boxed"  id="pswd2" type="password" name="pswd2" />
+                          <div id="pswresult"></div>          
+                        </div>
 
-                        <label for="surname"><h4><?php printf(_("Apellidos"));?></h4></label>
-                        <input id="surname" type="text" name="surname" value="<?php echo $result[0]["sn"][0];?>" required />
-                      
-                        <h4><?php printf(_("Reenvío automático"));?></h4>
-                        <input type="checkbox" name="forward" id="forward" <?php echo $checked;?> />
-                        <label class="togglehidden" for="forward">&nbsp;</label>
+                        <div class="form-group"> 
+                          <label class="control-label" for="givenname"><?php echo  sprintf(_("Nombre"));?></label>
+                          <input class="form-control boxed" id="givenname" name="givenname" type="text" value="<?php echo $result[0]['givenname'][0];?>" required />
+                        </div>
 
+                        <div class="form-group">
+                          <label class="control-label" for="surname"><?php printf(_("Apellidos"));?></label>
+                          <input class="form-control boxed" id="surname" type="text" name="surname" value="<?php echo $result[0]["sn"][0];?>" required />
+                        </div>
+
+                        <div class="form-group"> 
+                          <h4><?php printf(_("Reenvío automático"));?></h4>
+                          <div> <label>
+                          <input class="checkbox" type="checkbox" name="forward" id="forward">
+                          <span><?php printf(_("Activar reenvío automático a otra cuenta" ));?></span>
+                          </label> </div>
+                        </div>
+      
                         <div id="hidden">
-                          <label for="maildrop"><h4><?php printf(_("Cuenta de destino para reenvío automático"));?></h4></label>
-                          <input id="maildrop" class="usermail" type="mail" name="maildrop" value="<?php echo $maildrop;?>"  />
-                          <div id="emailresult"></div>
+                          <div class="form-group">
+                            <label for="maildrop"><?php printf(_("Cuenta de destino para reenvío automático"));?></label>
+                            <input class="form-control boxed" id="maildrop" class="usermail" type="mail" name="maildrop" value="<?php echo $maildrop;?>"  />
+                            <div id="emailresult"></div>
+                          </div>
                         </div>
 
                         <br>
                         <hr>
                         <input type="hidden" name="domain" value="<?php echo $domain;?>" />
                         <input type="submit" name="editmail" value="Guardar" class="btn btn-small btn-primary" />
-                  </form>
+                    </form>
+                </div>
               </div>
-              <div class="col-sm-3">
+              <div class="col-sm-6">
                 <?php print_mail_client_settings($email,$domain);?>
               </div>
             </div><!--ineer-->

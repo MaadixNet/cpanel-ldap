@@ -5,7 +5,6 @@ require_once 'classes/class.ldap.php';
 $Ldap= new LDAP();
 $current_page=basename(__FILE__);
 $Ldap->check_login_or_redirect($current_page);
-$message='';
 require_once('header.php');
 //connect and BInd
 $ldapconn=$Ldap->connect();
@@ -13,72 +12,95 @@ $psw=$Ldap->decrypt_psw();
 if ($ldapconn){
   $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
 }
-  #TODO: Check user level to show and allow differents permissions
-  #Level 10= admin : can read and manage all accounts
-  #Level 4 postmaster (domain administrator) can read and edit all accounts related to his domain excluded VPN
-  #level 2 : simple user. Can read and edit only his own data (basically email related)
-  #need LDAP ACL to be set
-  #
-
-  $permissions= $_SESSION["login"]["level"];
 
 //Only admin can see this page
 if ($permissions==2){
     $Ldap->redirect('404.php');
 }
 
-//Check if a custom mail has been set
-if ($ldapbind) {
-  $serv_avail= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=disabled)(type=available))');
+//Gett all installed services
+if ($ldapbind) { 
+  $serv_installed= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled))');
 }
 // var_dump($serv_enabled);
     
 
 // Get current language and swith url
-if ($_SESSION["language"]=="en_GB"){ 
+/*if ($_SESSION["language"]=="en_GB"){ 
   $url = 'https://maadix.net/en/services-available.php';
 } else {
   $url = 'https://maadix.net/services-available.php';  
 }
-    //echo file_get_contents($url);
+ */
+$url = "https://maadix.net/service.json";
+//echo file_get_contents($url);
+require_once('sidebar.php');
+$json = file_get_contents($url);
+$obj = json_decode($json, true);
 ?>
 
 
-<div id="admin-content" class="content">
-        <div class="col-sm-12">
-            <div class="inner" id="maincol">
             <?php
             //echo "<h2>" . sprintf(_("Servicios disponibles")) . "</h2>";
-
-            echo file_get_contents($url);
-            //$num_serv=$serv_enabled["count"];
-            /*for ($c=0; $c<$serv_avail["count"]; $c++) {
-              $service=$serv_avail[$c]["ou"][0];
-              $service_data=get_service_data($service);
-              echo "<div class='row'>";
-              echo "<div class='col-sm-2'>";
-              echo "<div class='img service-img'><img src='" . $service_data['image'] . "' /></div>";
-              echo "</div>";
-              echo "<div class='col-sm-12'>";
-              echo "<h3 class='title'>" . $service_data['title'] . "</h3>";
-              echo "<div class='img service-img'><img src='" . $service_data['image'] . "' /></div>";
-              echo "<h4>Software: " . $service_data['software'] ."</h4>";
-              echo "<p>" . $service_data['description'] . "</p>";
-              echo "</div>";//col-md-10
-              echo "</div>";//row
-              echo "<hr>";
-                ;
-            };*/
+            //echo $obj->Apps->Mysql->title;
+            echo '<pre>';
+            //print_r($obj);
+            echo '</pre>';
+            echo $obj[0]["name"];
 ?>
 
-        <br>
-            </div><!--change-->
+<article class="content cards-page">
+            <div class="title-block">
+                <h3 class="title"> <?php printf(_("Aplicaciones Disponibles"));?> </h3>
+                <p class="title-description"> <?php printf(_("La instalación automática de las aplicaciones no está todavía disponible. Si quieres añadir una o más de estas aplicaciones ponte en contacto con el team de Maadix en: contact@maadix.net"));?> </p>
+            </div>
+                 <section class="section">
+                        <div class="row ">
+                       <?php $c = 0;?> 
+                       <?php foreach ($obj as $service_data ) {
+                          if ( $c % 3 == 0 ){; ?>
+                           <div class="clearfix visible-xs"></div>
+                          <?php }
+                          ?>
+                            <?php if( !empty($serv_installed) && array_search($service_data['id'], array_column(array_column($serv_installed, 'ou'),0)) == false){?>
+                            <div class="col-xl-4">
+                                <div class="card ">
+                                    <div class="card-block">
+                                        <!-- Nav tabs -->
+                                        <div class="card-title-block">
+                                            <h3 class="title"><?php echo  $service_data['title'];?></h3>
+                                        </div>
+                                        <ul class="nav nav-tabs nav-tabs-bordered">
+                                            <li class="nav-item"> <a href="#home-<?php echo $c;?>" class="nav-link active" data-target="#home-<?php echo $c;?>" data-toggle="tab" aria-controls="home-<?php echo $c;?>" role="tab">App</a> </li>
+                                            <li class="nav-item"> <a href="#desc-<?php echo $c;?>" class="nav-link" data-target="#desc-<?php echo $c;?>" aria-controls="desc-<?php echo $c;?>" data-toggle="tab" role="tab"><?php printf(_("Descripción"));?></a> </li>
 
-          </div><!--ineer-->
-      </div><!--col-sm-8-->
+                                        </ul>
+                                        <!-- Tab panes -->
+                                        <div class="tab-content tabs-bordered">
+                                            <div class="tab-pane fade in active" id="home-<?php echo $c;?>">
+                                                <h4></h4>
+                                                <p><div class='img service-img'><img src="<?php echo $service_data['img'];?> " /></div></p>
+                                            </div>
+                                            <div class="tab-pane fade" id="desc-<?php echo $c;?>">
+                                                <h4><?php echo $service_data['name'];?></h4>
+                                                <p><?php echo $service_data['description'];?></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /.card-block -->
+                                </div>
+                                <!-- /.card -->
+                            </div>
+                            <!-- /.col-xl-4 -->
+                          <?php $c++;
+                            }
+                          };?>
+                        </div>
+                    </section>
 
-  </div><!--row-->
-</div><!--admin-content-->
+</article>
+
+
 <?php
   ldap_close($ldapconn);   
   require_once('footer.php');?>

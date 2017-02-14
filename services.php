@@ -24,46 +24,69 @@ if ($ldapconn){
 
   $permissions= $_SESSION["login"]["level"];
 
-//Check if a custom mail has been set
+//Gett all installed services
 if ($ldapbind) {
   $serv_enabled= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled))');
 }
+
 /*echo '<pre>';
 var_dump($serv_enabled);
 echo '</pre>';
  */
+require_once('sidebar.php');
+
 ?>
-<div id="admin-content" class="content">
-        <div class="col-sm-12">
-            <div class="inner" id="maincol">
-            <?php
-            echo "<h2>" . sprintf(_("Servicios activados")) . "</h2>";
-            //$num_serv=$serv_enabled["count"];
-            for ($c=0; $c<$serv_enabled["count"]; $c++) {
-              $service=$serv_enabled[$c]["ou"][0];
-              $service_data=get_service_data($service);
-              echo "<div class='row'>";
-/*              echo "<div class='col-sm-2'>";
-              echo "<div class='img service-img'><img src='" . $service_data['image'] . "' /></div>";
-              echo "</div>";*/
-              echo "<div class='col-sm-12'>";
-              echo "<h3 class='title'>" . $service_data['title'] . "</h3>";
-              echo "<div class='img service-img'><img src='" . $service_data['image'] . "' /></div>";
-              echo "<h4>Software: " . $service_data['software'] ."</h4>";
-              echo "<p>" . $service_data['description'] . "</p>";
-              echo "<hr>";
-              echo "</div>";//col-md-10
-              echo "</div>";//row
-              };?>
+<article class="content cards-page">
+            <div class="title-block">
+                <h3 class="title"> <?php printf(_("Aplicaciones Instaladas"));?> </h3>
+                <p class="title-description"> Cards can contain almost any kind of element inside </p>
+            </div>
+                 <section class="section">
+                        <div class="row ">
+                       <?php for ($c=0; $c<$serv_enabled["count"]; $c++) {
+                          $service=$serv_enabled[$c]["ou"][0];
+                          $service_data=get_service_data($service);
+                          if ( $c % 3 == 0 ){; ?>
+                           <div class="clearfix visible-xs"></div>
+                          <?php }
+                          ?>
+                            <div class="col-xl-4">
+                                <div class="card ">
+                                    <div class="card-block">
+                                        <!-- Nav tabs -->
+                                        <div class="card-title-block">
+                                            <h3 class="title"><?php echo  $service_data['title'];?></h3>
+                                        </div>
+                                        <ul class="nav nav-tabs nav-tabs-bordered">
+                                            <li class="nav-item"> <a href="#home-<?php echo $c;?>" class="nav-link active" data-target="#home-<?php echo $c;?>" data-toggle="tab" aria-controls="home-<?php echo $c;?>" role="tab">App</a> </li>
+                                            <li class="nav-item"> <a href="#desc-<?php echo $c;?>" class="nav-link" data-target="#desc-<?php echo $c;?>" aria-controls="desc-<?php echo $c;?>" data-toggle="tab" role="tab"><?php printf(_("Descripción"));?></a> </li>
+ 
+                                        </ul>
+                                        <!-- Tab panes -->
+                                        <div class="tab-content tabs-bordered">
+                                            <div class="tab-pane fade in active" id="home-<?php echo $c;?>">
+                                                <h4></h4>
+                                                <p><div class='img service-img'><img src="<?php echo $service_data['image'];?> " /></div></p>
+                                            </div>
+                                            <div class="tab-pane fade" id="desc-<?php echo $c;?>">
+                                                <h4><?php echo $service_data['software'];?></h4>
+                                                <p><?php echo $service_data['description'];?></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /.card-block -->
+                                </div>
+                                <!-- /.card -->
+                            </div>
+                            <!-- /.col-xl-4 -->
+                          <?php  ;
+                          };?> 
+                        </div>
+                    </section>
 
-        <br>
-            </div><!--change-->
 
-          </div><!--ineer-->
-      </div><!--col-sm-8-->
 
-  </div><!--row-->
-</div><!--admin-content-->
+</article>
 <?php
   ldap_close($ldapconn);   
   require_once('footer.php');?>

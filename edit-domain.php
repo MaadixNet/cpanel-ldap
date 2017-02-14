@@ -96,55 +96,71 @@ if ($ldapbind) {
 print_r($result);
 echo '</pre>';
  */
-
+require_once('sidebar.php');
 ?>
-<div id="admin-content" class="content">
+<article>
+  <section>
+    <div id="admin-content" class="content">
     <?php if($message) echo $message;?>
-    <?php echo "<h2>" . sprintf(_("Editar dominio %s"),$domain) . "</h2>";?>
-    <form autocomplete="off" id="up-domain" class="jquery-check form-signin" method="POST" action="">
-    <label for="pswd1"><?php printf(_("Nueva contraseña"));?></label>
-    <div id="pswcheck"></div>
-    <input autocomplete="false" readonly id="pswd1" type="password" name="pswd1" value="" size="4" />
-    <label for="pswd2"><?php printf(_("Repetir nueva contraseña"));?></label>
-    <input id='pswd2' type='password' name='pswd2' value='' /><div id="pswresult"></div>
-    <label for="webmaster"><?php printf(_("Webmaster (Administrador sito web)"));?></label> 
+     <div class="title-block">
+       <h3 class="title"> <?php printf(_("Editar dominio %s"),$domain);?><span class="sparkline bar" data-type="bar"></span> </h3>
+    </div> 
+    <div class="card card-block">
+    <form role="form"  autocomplete="off" id="up-domain" class="jquery-check standard form-signin" method="POST" action="">
+    <div class="form-group">
+      <label class="control-label" for="pswd1"><?php printf(_("Nueva contraseña"));?></label>
+      <div id="pswcheck"></div>
+      <input class="form-control boxed" autocomplete="off" readonly id="pswd1" type="password" name="pswd1" value="" size="4" />
+    </div>
+    <div class="form-group">
+      <label class="control-label" or="pswd2"><?php printf(_("Repetir nueva contraseña"));?></label>
+      <input class="form-control boxed" id='pswd2' type='password' name='pswd2' value='' /><div id="pswresult"></div>
+    </div>
+    <div class="form-group">
+    <label class="control-label" for="webmaster"><?php printf(_("Webmaster (Administrador sito web)"));?></label> 
     <?php $curwebmaster=$result[0]["adminid"][0];?>
     <select id='seladmin' name='seladmin'>";
         <?php for ($c=0; $c<$allsftpusers["count"]; $c++) {
           $username = $allsftpusers[$c]["uid"][0];
+          $grid=  $allsftpusers[$c]["gidnumber"][0];
+          $issudo = ($grid == '27')? sprintf(_(" - superusuario")):"";
           # Show all sftpusers in a drop down list and set current webmaste as selected
           $selected = ($username == $curwebmaster) ? "selected='selected'":'';
-          echo "<option " . $selected . " value='" . $username . "'>" . $username . "</option>";
+          echo "<option " . $selected . " value='" . $username . "'>" . $username . $issudo . "</option>";
         }
         echo "</select>";?>
     <input type="hidden" name="old-webmaster" value="<?php echo $curwebmaster;?>" />
+    </div>
     <hr>
     <input type='submit' name='update-domain' value='Guardar' class='btn btn-small btn-primary' />
     </form>
+    </div>
     
   </div><!--ineer-->
 
 <!-- Modal -->
-<div class="bd-example">
-  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <h4 class="modal-title" id="exampleModalLabel"></h4>
-        </div>
-        <div class="modal-body" id="modal-body">
-        </div>
-      </div><!--modal-content-->
-    </div><!--modal-dialog-->
-  </div><!--exampleModal-->
-</div><!--bd-example-->
-</div><!--row-->
-<?php
-?>
-</div><!--admin-content-->
+  <div class="bd-example">
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="exampleModalLabel"></h4>
+          </div>
+          <div class="modal-body" id="modal-body">
+          </div>
+        </div><!--modal-content-->
+      </div><!--modal-dialog-->
+    </div><!--exampleModal-->
+  </div><!--bd-example-->
+  </div><!--row-->
+  <?php
+  ?>
+  </div><!--admin-content-->
+  </section>
+</article>
 <?php 
   ldap_close($ldapconn);
   require_once('footer.php');?>

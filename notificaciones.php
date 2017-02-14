@@ -9,6 +9,7 @@ $Ldap->check_login_or_redirect($current_page);
 
 $message='';
 require_once('header.php');
+require_once('sidebar.php');
 //connect and BInd
 $ldapconn=$Ldap->connect();
 $psw=$Ldap->decrypt_psw();
@@ -56,25 +57,30 @@ if(!$mailsenderou){
 
   $result = $Ldap->search($ldapconn, LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
 }?>
+<article class="content forms-page">
+    <div class="title-block">
+      <h3 class="title"> <?php printf(_("Configurar Notificaciones"));?></h3>
+    </div>
+    <section class="section">
+        <div class="row">
 
-<div id="admin-content" class="content">
-        <div class="col-sm-12">
+          <div class="col-sm-12">
             <div class="inner"i id="maincol">
-      <?php
-      echo $message; 
-          echo '<p>Tu sistema puede enviar emails de notificaciones a los usuarios. Por ejemplo, si creas una cuenta VPN, puedes enviar instrucciones al usuario para configurar correctamente su conexión.<br>
-            Actualmente, el correo electrónico desde el que se envian los email del sistema es:<br>
-        <pre>'. $sender_email .'</pre>';
-      if($result["count"] == 0){
-        echo ' Todavia no has activado ninguna cuenta de correo en el servidor. Una vez haya creado almenos una, podrás designarla como remitente para las notificaciones';
+              <?php
+              echo $message; 
+              echo '<p>Tu sistema puede enviar emails de notificaciones a los usuarios. Por ejemplo, si creas una cuenta VPN, puedes enviar instrucciones al usuario para configurar correctamente su conexión.<br>
+              Actualmente, el correo electrónico desde el que se envian los email del sistema es:<br>
+              <div class="box-placeholder">'. $sender_email .'</div>';
+              if($result["count"] == 0){
+                  echo ' Todavia no has activado ninguna cuenta de correo en el servidor. Una vez haya creado almenos una, podrás designarla como remitente para las notificaciones';
 
-      } else {
-        echo 'Puedes cambiar esta configuración y elegir una entre  las cuentas email activadas en tu sistema, para que sea el remitente de las notificaciones.<br>
-        Para cambiar este valor, elije un correo electrónico disponible en el listado y haz click en Guardar';?>
+              } else {
+                  echo 'Puedes cambiar esta configuración y elegir una entre  las cuentas email activadas en tu sistema, para que sea el remitente de las notificaciones.<br>
+              Para cambiar este valor, elije un correo electrónico disponible en el listado y haz click en Guardar';?>
 
-          <form autocomplete="off" action="" method="POST" class="form-signin">
-        <hr>
-        <?php
+              <form autocomplete="off" action="" method="POST" class="form-signin standard">
+              <hr>
+              <?php
                 echo '<select id="selmail" name="selmail" required>';
                 echo '<option value="">Seleccionar email</option>';
                 for ($c=0; $c<$result["count"]; $c++) {
@@ -89,14 +95,14 @@ if(!$mailsenderou){
                 <hr>
               <input type="submit" name="chmail_notif" value="Guardar" class="btn btn-small btn-primary" />
             </form>
-      <?php 
-     //end if domain not =  0?>
-    </div><!--change-->
+            <?php 
+           //end if domain not =  0?>
+        </div><!--inner-->
 
-            </div><!--ineer-->
-        </div><!--col-sm-8-->
-
+      </div><!--col-sm-12-->
   </div><!--row-->
+</section>
+</article>
 <?php
 ?>
 </div><!--admin-content-->

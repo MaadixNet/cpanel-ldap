@@ -185,6 +185,22 @@ function ssha_hash_password($password) // SSHA with random 4-character salt
 
 }
 
+function create_password(){
+  $chrList = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+  // Minimum/Maximum times to repeat character List to seed from
+  $chrRepeatMin = 1; // Minimum times to repeat the seed string
+  $chrRepeatMax = 10; // Maximum times to repeat the seed string
+
+  // Length of Random String returned
+  $chrRandomLength = mt_rand(8, 15);
+
+  // The ONE LINE random command with the above variables.
+  return substr(str_shuffle(str_repeat($chrList, mt_rand($chrRepeatMin,$chrRepeatMax))),1,$chrRandomLength);
+
+
+}
+
 function ldap_password_hash($password_clear,$enc_type)
 {
     $salt = substr(str_shuffle(str_repeat('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',4)),0,4);
@@ -430,7 +446,20 @@ function check_syntax ($type,$arg,$length="0")
 }
 function print_mail_client_settings($email,$domain){
       $fqdn=$fqdn=trim(shell_exec('hostname -f'));
-      echo '<h3>' . sprintf (_("Configurar cliente de correo") ) .  '</h3>';  
+      echo '<div class="card sameheight-item">
+              <div class="card-block">
+              <!-- Nav tabs -->'; 
+      echo '<div class="card-title-block">
+            <h3 class="title">' . sprintf (_("Configurar cliente de correo") ) .  '</h3>
+            </div>';
+      echo '<ul class="nav nav-tabs nav-tabs-bordered">
+              <li class="nav-item"> <a href="#imap" class="nav-link active" data-target="#imap" data-toggle="tab" aria-controls="imap" role="tab">IMAP</a></li>
+              <li class="nav-item"> <a href="#pop" class="nav-link" data-target="#pop" aria-controls="pop" data-toggle="tab" role="tab">POP</a> </li>
+              </ul>';
+      echo '<div class="tab-content tabs-bordered">
+                <div class="tab-pane fade in active" id="imap">
+                  <h4>IMAP</h4>
+                  <p>';
       echo '<h4>' . sprintf (_("Correo entrante")) . '</h4>';
       echo '<ul>';
 
@@ -449,6 +478,38 @@ function print_mail_client_settings($email,$domain){
       echo '<li>' . sprintf (_("Nombre de usuario: %s"),$email) . '</li>';
       echo '<li>' . sprintf (_("Contraseña: Normal")) . '</li>';
       echo '</ul>';
+      echo '</p>
+            </div>';
+
+      echo '<div class="tab-pane fade" id="pop">
+                  <h4>POP</h4>
+                  <p>';
+      echo '<h4>' . sprintf (_("Correo entrante")) . '</h4>';
+      echo '<ul>';
+
+      echo '<li>' . sprintf (_("Servidor: %s"), $domain) . '</li>';
+      echo '<li>' . sprintf (_("Puerto: 110" )) . '</li>';
+      echo '<li>' . sprintf (_("Seguridad: STARTTLS" )) . '</li>';
+      echo '<li>' . sprintf (_("Nombre de usuario: %s"),$email) . '</li>';
+      echo '<li>' . sprintf (_("Contraseña: Normal ")) . '</li>';
+      echo '</ul>';
+      echo '<h4>' . sprintf (_("Correo saliente")) . '</h4>';
+      echo '<ul>';
+      $fqdn=trim(shell_exec('hostname -f')) . '</li>';
+      echo '<li>' . sprintf (_("Servidor: %s"), $fqdn) . '</li>';
+      echo '<li>' . sprintf (_("Puerto: 465" ));
+      echo '<li>' . sprintf (_("Seguridad: SSL/TLS" )) . '</li>';
+      echo '<li>' . sprintf (_("Nombre de usuario: %s"),$email) . '</li>';
+      echo '<li>' . sprintf (_("Contraseña: Normal")) . '</li>';
+      echo '</ul>';
+      echo '</p>
+            </div>';
+
+      echo '</div>
+          <!-- /.card-block -->
+            </div>
+          <!-- /.card -->
+          </div>';
 }
 /* from Squirrelmail code
  * http://squirrelmail.org/docs/devel-code/__filesource/fsource_squirrelmail__functionsstrings.php.html#a585

@@ -15,9 +15,12 @@ $message="";
 $psw=$Ldap->decrypt_psw();
 $domain=(isset($_GET["domain"]))?$_GET["domain"]:'';
 $server_ipaddr=$_SERVER["SERVER_ADDR"];
+require_once('sidebar.php');
 ?>
-<div id="admin-content" class="content">
-	<?php if($message) echo $message;?>
+<article>
+  <section>
+  <div id="admin-content" class="content">
+    <?php if($message) echo $message;?>
     <div class="row">
 
 	<div class="inner" id="maincol">
@@ -36,14 +39,11 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
         foreach($resultMX as $value){
           array_push($allMX,$value['target']);
         }
-	if(!$resultA):
-		echo   '<div class="alert alert-error">Este dominio no existe. Tienes que registrarlo antes de poder utilizarlo. </div>';
-	elseif (($server_ipaddr==$domain_ip && in_array($correct_mx , $allMX)) || ($server_ipaddr==$domain_ip && in_array($fqdn, $allMX))): 
+	if (($server_ipaddr==$domain_ip && in_array($correct_mx , $allMX)) || ($server_ipaddr==$domain_ip && in_array($fqdn, $allMX))): 
 		echo '<div class="alert alert-success">La configuración de tu dominio es correcta para que funcione en tu servidor</div>';
 	else:
 		echo '<div class="alert alert-error">El dominio '. $domain . ' está incluido correctamente en tu sistema. Sin embargo necesitas cambiar ciertos parámetros del dominio para que todos los servicios funcionen en tu servidor.</br>Sigue los pasos a continuación.</div>';
 	endif;
-        if ($resultA){
 	echo '
 	<h3>Configuración de DNS activa para el dominio ' . $domain . '</h3>
 	</br>
@@ -96,7 +96,7 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
                   echo '<h5>El dominio ' . $domain . ' no está registrado o no está creado. </h5>';
                 }
 		if ($server_ipaddr==$domain_ip){
-		echo 'La configuración es correcta para que puedas acceder a tus aplicaciones desde el navegador, usando tu propio dominio</br>';}
+		echo '<p>La configuración es correcta para que puedas acceder a tus aplicaciones desde el navegador, usando tu propio dominio</p></br>';}
 		else {
 		echo '<p>
 		Cuando registramos un dominio hay un apartado en su configuración llamado DNS.
@@ -144,6 +144,7 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
 					</thead>
 					<tbody>';
 				$i=1;	
+                                if(!$resultMX)$resultMX[0]["target"]='no hay registro';
 				foreach($resultMX as $value){
 						echo "<tr>";
 						echo "<td>";
@@ -179,18 +180,19 @@ $server_ipaddr=$_SERVER["SERVER_ADDR"];
 					echo $value['target'] . '</br>';
 				}
 			}
-                }//End if($resultA)
 		
 		?>
 	<div class="result"></div>
 
 
-     </div><!--ineer-->
+       </div><!--ineer-->
 
-	</div><!--row-->
+      </div><!--row-->
 <?php 
 ?>
-</div><!--admin-content-->
+  </div><!--admin-content-->
+  </section>
+</article>
 <?php 
 	ldap_close($ldapconn);
 	require_once('footer.php');?>

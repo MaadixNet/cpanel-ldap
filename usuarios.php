@@ -14,7 +14,8 @@ if ($Ldap->is_logged_in()&& $permissions != '10'){
         $Ldap->redirect('404.php');
 }
 
-require_once('header.php');?>
+require_once('header.php');
+require_once('sidebar.php');?>
 
 <?php
 
@@ -121,62 +122,91 @@ $firstuid_availabe=system($commuid);*/?>
 	<span><button class="togglevisibility btn btn-small btn-secondary">Añadir usuario</button>	</span>
 	<div class="clear"></div>
 	<div id="change">
-		<form autocomplete="off" action="" method="POST" class="form-signin jquery-check"  id="adduser-form">
-		<hr>
-                <h2>Crea un nuevo usuario:</h2>                  
-		<label for="username"><h4><?php printf(_("Nombre de usuario"));?> *</h4></label>
-		<input id="username" type="text" name="username" required /><div id="result"></div>
-                <label for="firstname"><?php printf(_("Nombre"));?></label>
-                <input id="firstname" type="text" name="firstname" />
-                <label for="surname"><?php printf(_("Apellidos"));?></label>
-                <input id="surname" type="text" name="surname" />
+          <div class="card card-block">
+              <div class="title-block">
+              <h3 class="title"> <?php printf(_("Crear nuevo usuario"));?></h3>
+              </div>
+		<form role="form" autocomplete="off" action="" method="POST" class="form-signin standard jquery-check"  id="adduser-form">
+                <div class="form-group">
+                  <label class="control-label" for="username"><?php printf(_("Nombre de usuario"));?> *</label>
+                  <input class="form-control" id="username" type="text" name="username" required /><div id="result"></div>
+                </div>
+        
+                <div class="form-group">
+                  <label class="control-label" for="firstname"><?php printf(_("Nombre"));?></label>
+                  <input id="firstname" type="text" name="firstname"  class="form-control" />
+                </div>
 
-                <label for="usermail"><?php printf(_("Correo electrónico"));?> *</label>
-                <p class="little"><?php printf(_("Puedes insertar un correo electrónico externo o elegir una entre las cuentas creadas en el servidor"));?></p>
-                <input id="usermail" class="usermail"  type="mail" name="usermail" required />  
-                <?php $resultmail = $Ldap->search($ldapconn,LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
-                $mailcount = $resultmail["count"];
-                if($mailcount>0) {
+                <div class="form-group">
+                  <label class="control-label"  for="surname"><?php printf(_("Apellidos"));?></label>
+                  <input id="surname" type="text" name="surname" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                  <label class="control-label"  for="usermail"><?php printf(_("Correo electrónico"));?> *</label>
+                  <p class=""><?php printf(_("Puedes insertar un correo electrónico externo o elegir una entre las cuentas creadas en el servidor"));?></p>
+                  <input id="usermail" class="usermail form-control col-sm-4"  type="mail" name="usermail" required />  
+                  <?php $resultmail = $Ldap->search($ldapconn,LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
+                  $mailcount = $resultmail["count"];
+                  if($mailcount>0) {
                         echo '<select id="selmail">';
                         echo '<option value="">Seleccionar cuenta existente</option>';
                         for ($c=0; $c<$resultmail["count"]; $c++) {
                                 echo '<option value="' . $resultmail[$c]["mail"][0] .'">' . $resultmail[$c]["mail"][0] . '</option>';
                         }
-                 echo '</select>';
-                };?>
-                <div id="emailresult"></div>
+                   echo '</select>';
+                  };?>
+                
+                  <div id="emailresult"></div>
+                </div>
+                <hr>
+                <div class="form-group">
+                <h4><?php printf(_("Acceso Sftp"));?></h4>
+                  <div> <label>
+                    <input name="sshd" id="sshd" class="checkbox" type="checkbox">
+                    <span><?php printf(_("Activar acceso sftp"));?></span>
+                    </label> </div>
+                </div>
 
                 <hr>
-                <h4><?php printf(_("Acceso Sftp"));?></h4>
-                <input type="checkbox" name="sshd" id="sshd" />
-                <label for="sshd">&nbsp;</label>
-              
-                <hr>
                 <?php if ($Ldap->check_installed_service('openvpn')){?>
+                  <div class="form-group">
                   <h4><?php printf(_("Cuenta VPN"));?></h4>
-                  <input type="checkbox" name="vpn" id="vpn" />
-                  <label for="vpn" class="togglehidden" >&nbsp;</label></h4>
-    
+                  <div> <label>
+
+                    <input name="vpn" id="vpn" class="checkbox togglehidden" type="checkbox">
+                    <span><?php printf(_("Activar cuenta vpn"));?></span>
+                    </label> </div>
+                  </div>
+
                   <div id="hidden">
                   <h4><?php printf(_("Instrucciones"));?></h4> 
                   <p><?php printf(_("Puedes enviar al usuario un email con instrucciones para configurar el cliente VPN"));?></p>
                   <p><?php printf(_("NOTA: Las instrucciones incluyen todos los datos necesarios menos la contraseña. Por razones de seguridad proporciona al usuario la  contraseña por otro canal"));?></p>
-                  <input type="checkbox" name="sendinstruction" id="sendinstruction" />
-                  <label for="sendinstruction" class="left small">&nbsp;</label>&nbsp;<span><?php printf(_("Enviar instrucciones"));?></span></h4>   
+                  <div> <label>
+                    <input class="checkbox" type="checkbox" name="sendinstruction" id="sendinstruction">
+                    <span class="small"><?php printf(_("Enviar instrucciones"));?></span>
+                  </label> </div>
                   </div>
                 <?php } ?>
 
                <div class="clear"></div> 
               <hr>
-              <label for="pswd1"><?php printf(_("Contraseña"));?> *</label>
+              <div class="form-group">
+              <label class="control-label" for="pswd1"><?php printf(_("Contraseña"));?> *</label>
               <div id="pswcheck"></div>
-              <input id="pswd1" type="password" name="pswd1" required readonly />
-              <label for="pswd2"><?php printf(_("Confirma contraseña"));?> *</label><input id="pswd2" type="password" name="pswd2" required />
+              <input id="pswd1" type="password" name="pswd1" class="form-control" required readonly />
+              </div>
+
+              <div class="form-group">
+              <label class="control-label" for="pswd2"><?php printf(_("Confirma contraseña"));?> *</label><input class="form-control" id="pswd2" type="password" name="pswd2" required />
               <div id="pswresult"></div>
+              </div>
               <hr>
 
 		<input type="submit" name="adduser" value="Guardar" class="btn btn-small btn-primary" />
 		</form>
+          </div><!--card-->
 	</div><!--change-->
 	<table id="users">
 		<thead>
@@ -199,7 +229,7 @@ $firstuid_availabe=system($commuid);*/?>
                 $isvpn=(in_array('openvpn',$services)&& (!empty ($services)))?'<i class="fa fa-check-circle-o icon checkok"></i>':'<i class="fa fa-exclamation-triangle icon checkko"></i>';
                 echo "<tr>";
                 echo "<td>";
-                echo $username;
+                echo $username . sprintf(_(" - SuperUsuario"));
                 echo "</td>";
                 echo "<td class='center'>";
                 echo $issftp; 

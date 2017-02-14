@@ -12,10 +12,42 @@ if($user_home->is_logged_in())
 {
         $user_home->redirect('index.php');
 }
-require_once('header.php');
 ?>
-<div class="cpntainer container-fluid" id="login">
+<!doctype html>
+<html class="no-js" lang="en">
 
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title> ModularAdmin - Free Dashboard Theme | HTML Version </title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <!-- Place favicon.ico in the root directory -->
+        <link rel="stylesheet" href="css/vendor.css">
+        <!-- Theme initialization -->
+        <script>
+            var themeSettings = (localStorage.getItem('themeSettings')) ? JSON.parse(localStorage.getItem('themeSettings')) :
+            {};
+            var themeName = themeSettings.themeName || '';
+            if (themeName)
+            {
+                document.write('<link rel="stylesheet" id="theme-style" href="css/app-' + themeName + '.css">');
+            }
+            else
+            {
+                document.write('<link rel="stylesheet" id="theme-style" href="css/app.css">');
+            }
+        </script>
+    </head>
+        <div class="auth">
+            <div class="auth-container">
+                <div class="card">
+                    <header class="auth-header">
+                        <h1 class="auth-title">
+                         <?php printf(_("Recuperar contraseña"));?></h1>
+                    </header>
+                    <div class="auth-content">
 <?php 
 
 $code=md5(uniqid(rand(), true));
@@ -120,16 +152,18 @@ if(isset($_POST['user']) && isset($_POST['usermail'])){
 function print_rec_form($error){
                 if (isset($error)) echo $error;
     		echo '<form action="" method="POST" class="form-signin">
-		<h2 class="form-signin-heading">Recuperar contraseña</h2>
                 <h5>Para recuperar la contraseña de acceso al Cpanel necesitas conocer el nombre de usuario y el correo electrónico asociado al mismo. Si has olvidado estos datos, y no los has cambiado, los encontrarás en tu <a href="https://maadix.net/client-area/" target="_blank">Área Cliente</a></h5>
 		<hr>
-
+                <div class="form-group">
                 <label for="user">Usuario: </label>
                 <p class="little">Inserta el nombre de usuario del administrador del Cpanel</p>
-                <input id="user" type="text" name="user" required />
+                <input class="form-control " id="user" type="text" name="user" required />
+                </div>
+                <div class="form-group">
                 <label for="usermail">Email: </label>
                 <p class="little">Inserta la cuenta de correo electrónico asociada al usuario administrador</p>
-                <input id="usermail" class="usermail" type="mail" name="usermail" required />
+                <input class="form-control" id="usermail" class="usermail" type="mail" name="usermail" required />
+                </div>
                 <hr>
                 <input type="submit" name="submit" value="Submit" class="btn btn-large btn-primary" />
     		</form>';
@@ -159,7 +193,30 @@ function getToken($length=32){
     return $token;
 }
 ?>
-	</div><!--container-->
-	<?php include 'footer.php';?>
+                    </div>
+                </div>
+                <div class="text-xs-center">
+                <a href="/<?php echo BASE_PATH;?>/login.php" class="btn btn-secondary rounded btn-sm"> <i class="fa fa-arrow-left"></i> Back to login </a>
+                </div>
+            </div>
+        </div>
+        <!-- Reference block for JS -->
+        <div class="ref" id="ref">
+            <div class="color-primary"></div>
+            <div class="chart">
+                <div class="color-primary"></div>
+                <div class="color-secondary"></div>
+            </div>
+        </div>
+        <script src="js/vendor.js"></script>
+        <script src="js/app.js"></script>
+        <script src="js/customscript.js"></script>
+
+  <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+  </body>
+</html>
+
   </body>
 </html>

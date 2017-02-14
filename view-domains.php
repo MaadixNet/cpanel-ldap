@@ -204,7 +204,7 @@ if ($ldapbind) {
     $allsftpusers=$Ldap->search($ldapconn,$ldaptree, $filtersftp);
 
 }
-
+require_once('sidebar.php');
 ?>
 <div id="admin-content" class="content">
     <?php if($message) echo $message;?>

@@ -10,8 +10,9 @@ $current_page=basename(__FILE__);
 $Ldap->check_login_or_redirect($current_page);
 
 $permissions=$_SESSION["login"]["level"];
-require_once('header.php');?>
-
+require_once('header.php');
+require_once('sidebar.php');
+?>
 <?php
 
 //Set variables for ldap connection
@@ -104,16 +105,21 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
 <?php echo $message;?>
  <h1 class=""><?php printf(_("Editar Usuario %s"), $selecteduser);?>  </h1>
  <hr>
-	<div class="clear"></div>
-		<form autocomplete="off" action="" method="POST" class="form-signin jquery-check">
+            <div class="card card-block">
+		<form role="form"  autocomplete="off" action="" method="POST" class="form-signin standard jquery-check">
+                
+                <div class="form-group">
+                  <label for="commonname"><?php echo  sprintf(_("Nombre"));?></label><input class="form-control" id="commonname" name="commonname" type="text" maxlength="64" value="<?php echo $result[0]['cn'][0];?>" />                  
+                </div>
 
-                <label for="commonname"><h4><?php echo  sprintf(_("Nombre"));?></h4></label><input id="commonname" name="commonname" type="text" maxlength="64" value="<?php echo $result[0]['cn'][0];?>" />                  
+              <div class="form-group">
+                 <label for="surname"><?php echo  sprintf(_("Apellidos"));?></label><input class="form-control" id="surname" name="surname" type="text" maxlength="64" value="<?php echo $result[0]['sn'][0];?>" />
+              </div>
 
-               <label for="surname"><h4><?php echo  sprintf(_("Apellidos"));?></h4></label><input id="surname" name="surname" type="text" maxlength="64" value="<?php echo $result[0]['sn'][0];?>" />
-
-              <label for="usermail"><h4><?php printf(_("Correo electrónico"));?></h4></label> 
-
-              <input id="usermail" class="usermail" type="mail" name="usermail" value="<?php echo $result[0]['mail'][0];?>" required />  
+              <div class="form-group">
+                <label for="usermail"><?php printf(_("Correo electrónico"));?></label> 
+                <p>Puedes insertar un correo electrónico externo o elegir uno entre las cuentas creadas en el servidor</p>
+                <input id="usermail" class="form-control col-sm-4 usermail" type="mail" name="usermail" value="<?php echo $result[0]['mail'][0];?>" required />  
                 <?php $resultmail = $Ldap->search($ldapconn,LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
                 $mailcount = $resultmail["count"];
                 if($mailcount>0) {
@@ -124,12 +130,17 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
                         }
                  echo '</select>';
                 };?>
+              </div>
 
-              <label for="pswd1"><h4><?php printf(_("Nueva Contraseña"));?></h4></label>
-              <div id="pswcheck"></div>
-              <input size='4' id='pswd1' type='password' name='pswd1' readonly />
+              <div class="form-group">
+                <label for="pswd1"><?php printf(_("Nueva Contraseña"));?></label>
+                <div id="pswcheck"></div>
+                <input  class="form-control" id='pswd1' type='password' name='pswd1' readonly />
+              </div>
 
-              <label for="pswd2"><h4><?php printf(_("Confirma Contraseña"));?></h4></label><input type='password' id='pswd2' name='pswd2' /><div id="pswresult"></div>
+              <div class="form-group">
+                <label for="pswd2"><?php printf(_("Confirma Contraseña"));?><</label><input type='password' class="form-control" id='pswd2' name='pswd2' /><div id="pswresult"></div>
+              </div>
                 
                 <?php 
 
@@ -144,8 +155,10 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
 
                 <div class="clear"></div>
                 <h4><?php printf(_("Acceso Sftp"));?></h4>
-                <input type="checkbox" name="sshd" id="sshd" <?php echo $sshd;?> />
-                <label for="sshd">&nbsp;</label>
+                    <div> <label>
+                    <input name="sshd" id="sshd" class="checkbox" type="checkbox"  <?php echo $sshd;?>>
+                    <span><?php printf(_("Activar acceso Sftp"));?></span>
+                    </label> </div>
                 <?php
 
                 if(!empty($sshd)){                       
@@ -155,15 +168,20 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
 
                 <?php if ($Ldap->check_installed_service('openvpn')){?>
                   <h4><?php printf(_("Cuenta VPN"));?></h4>
-                  <input type="checkbox" name="vpn" id="vpn" <?php echo $vpn;?> />
-                  <label for="vpn" class="togglehidden" >&nbsp;</label>
+                  <div> <label>
+                    <input type="checkbox" name="vpn" id="vpn" class="checkbox" type="checkbox" <?php echo $vpn;?> />
+                     <span><?php printf(_("Activair cuenta VPN"));?></span>
+                  </label> </div>
 
                   <div id="hidden">
                   <h4><?php printf(_("Instrucciones"));?></h4>
                   <p><?php printf(_("Puedes enviar al usuario un email con instrucciones para configurar el cliente VPN"));?></p>
                   <p><?php printf(_("NOTA: Las instrucciones incluyen todos los datos necesarios menos la contraseña. Por razones de seguridad proporciona al usuario la  contraseña por otro canal"));?></p>
-                  <input type="checkbox" name="sendinstruction" id="sendinstruction" />
-                  <label for="sendinstruction" class="left small">&nbsp;</label>&nbsp;<span><?php printf(_("Enviar instrucciones"));?></span></h4> 
+
+                  <div> <label>
+                    <input type="checkbox" name="sendinstruction" id="sendinstruction" class="checkbox small" type="checkbox"  />
+                     <span><?php printf(_("Enviar instrucciones"));?></span>
+                   </label> </div>
                   </div>
                 <?php } ?>
 
@@ -172,7 +190,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
 
 		<input type="submit" name="updateuser" value="Guardar Cambios" class="btn btn-small btn-primary" />
 		</form>
-
+        </div>
 </div><!--admin-content-->
 <?php ldap_close($ldapconn);
 require_once('footer.php');?>

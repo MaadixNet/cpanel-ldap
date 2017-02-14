@@ -22,6 +22,7 @@ try {
   exit();
 }
 require_once('header.php');
+require_once('sidebar.php');
 ?>
 <div id="admin-content" class="content">
 <?php

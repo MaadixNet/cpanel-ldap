@@ -51,33 +51,50 @@ $rootuser=$Ldap->search($ldapconn,$ldaptree, $filter);
 $rootusermail=$rootuser[0]["email"][0];
 
 
-require_once('header.php');?>
-<div id="admin-content" class="content">
-    <h2><?php printf(_("Editar perfil"));?></h2>
-    <hr>
-    <?php echo $message;?>
-<form action='' autocomplete='off' method='POST' class='form jquery-check' id="activate">
+require_once('header.php');
+require_once('sidebar.php');?>
 
-      <label for="oldpsw"><h4><?php printf(_("Contraseña actual"));?></h4></label>
-      <input id='oldpsw' type='password' name='oldpsw' required /><?php echo $msg1 ;?>
+<article class="content forms-page">
+    <div class="title-block">
+    <h3 class="title"> <?php printf(_("Editar perfil"));?></h3>
+        <p class="title-description"> Sample form elements </p>
+    </div>
+    <section class="section">
+        <div class="row">
+            <div class="card card-block ">
+                <?php echo $message;?>
+                <form role="form" action='' autocomplete='off' method='POST' class='form standard jquery-check' id="activate">
 
-      <label for="pswd1"><h4><?php printf(_("Nueva contraseña"));?></h4></label>
-      <div id="pswcheck"></div>
-      <input readonly id='pswd1' type='password' name='pswd1' required /> <?php echo $msg2 ;?>
+                      <div class="form-group">
+                      <label for="oldpsw"><?php printf(_("Contraseña actual"));?></label>
+                      <input class="form-control" id='oldpsw' type='password' name='oldpsw' required /><?php echo $msg1 ;?>
+                      </div>
 
-      <label for="pswd2"><h4><?php printf(_("Repetir nueva contraseña"));?></h4></label><div id="pswresult"></div>
-      <input id='pswd2' type='password' name='pswd2' required />
+                      <div class="form-group">
+                      <label for="pswd1"><?php printf(_("Nueva contraseña"));?></label>
+                      <div id="pswcheck"></div>
+                      <input readonly class="form-control" id='pswd1' type='password' name='pswd1' required /> <?php echo $msg2 ;?>
+                      </div>
 
-      <label for='usermail'><h4><?php printf(_("Correo electrónico"));?></h4></label><div id="emailresult"></div>
-      <p><?php printf(_("Averigua que el correo electrónico asociado a tu cuenta sea válido y que tengas acceso a él: si pierdes la contraseña solo podrás resetearla a través de este correo electrónico."),$user );?></p>
-      <input id='usermail' class='usermail' type='email' name='usermail' value="<?php echo $rootusermail;?>" required />
+                      <div class="form-group">
+                      <label for="pswd2"><?php printf(_("Repetir nueva contraseña"));?></label><div id="pswresult"></div>
+                      <input class="form-control" id='pswd2' type='password' name='pswd2' required />
+                      </div>
 
-      <div id="formresult"></div>
-      <hr>
+                      <div class="form-group">
+                      <label for='usermail'><?php printf(_("Correo electrónico"));?></label><div id="emailresult"></div>
+                      <p><?php printf(_("Averigua que el correo electrónico asociado a tu cuenta sea válido y que tengas acceso a él: si pierdes la contraseña solo podrás resetearla a través de este correo electrónico."),$user );?></p>
+                      <input id='usermail' class='usermail form-control' type='email' name='usermail' value="<?php echo $rootusermail;?>" required />
+                      </div>
+                      <div id="formresult"></div>
+                    <hr>
 
-      <input type='submit' class="btn btn-small btn-primary" name='activate' value='Cambiar contraseña' class='btn btn-small btn-primary' />
-      </form>
-</div>
+                <input type='submit' class="btn btn-small btn-primary" name='activate' value='Cambiar contraseña' class='btn btn-small btn-primary' />
+                </form>
+              </div>
+      </div>
+  </section>
+</article>
 
 
 <?php 
