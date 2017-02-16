@@ -360,7 +360,7 @@ else
   moveto='/home/'"$defaultsudouser"'/sftp-deleted'
 fi
 echo "$moveto"
-for sftphome in "$sftpusershome"/*;
+for sftphome in "$sftpusershome"/*/;
 do
   basehome=$(basename $sftphome)
   if echo ${existingusers[@]} | grep -q -w "$basehome"; then

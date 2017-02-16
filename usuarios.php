@@ -227,10 +227,10 @@ $firstuid_availabe=system($commuid);*/?>
                 $binddn= LDAP_BASE;
 
                 for ($i=0; $i<$resultsudo["count"]; $i++) {
-                $username = $resultsudo[$i]["uid"][0];
+                $sudousername = $resultsudo[$i]["uid"][0];
 
                 # Get domians of which is webmaster
-                $filteradmin="(&(vd=*)(adminid=".$username."))";
+                $filteradmin="(&(vd=*)(adminid=".$sudousername."))";
                 $resultsdomain=$Ldap->search($ldapconn,$binddn,$filteradmin);
 
                 $services=$resultsudo[$i]["authorizedservice"];
@@ -238,7 +238,7 @@ $firstuid_availabe=system($commuid);*/?>
                 $isvpn=(in_array('openvpn',$services)&& (!empty ($services)))?'<i class="fa fa-check-circle-o icon checkok"></i>':'<i class="fa fa-exclamation-triangle icon checkko"></i>';
                 echo "<tr>";
                 echo "<td>";
-                echo $username . sprintf(_(" - SuperUsuario"));
+                echo $sudousername . sprintf(_(" - SuperUsuario"));
                 echo "</td>";
                 echo "<td class=''>";
                   
@@ -258,7 +258,7 @@ $firstuid_availabe=system($commuid);*/?>
                 echo $isvpn;
                 echo "</td>";
                 echo "<td>";
-                echo "<a href='edit-supuser.php?user=". $username ."'><button class='btn btn-small'><i class='fa fa-cogs' aria-hidden='true'></i> Editar</button></a>";
+                echo "<a href='edit-supuser.php?user=". $sudousername ."'><button class='btn btn-small'><i class='fa fa-cogs' aria-hidden='true'></i> Editar</button></a>";
 
                 echo "</td>";
                 echo "<td>";
@@ -303,7 +303,7 @@ $firstuid_availabe=system($commuid);*/?>
                 echo "<td>";
                 $deletestring=sprintf(_('¿Quieres borrar la cuenta para el usuario %s? Esto eliminará su acceso al servidor'),$username);
 //                echo "<form action='' method='POST' class='form-table'><input type='hidden' name='userid' value='". $username ."' /> <input type='submit' name='deluser' value='". sprintf(_('Borrar')) ."' class='btn btn-small btn-primary' onclick=\"return confirm('" . $deletestring ."');\" /></form>";
-                echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#userModal" data-user="' . $username .  '">' . sprintf (_('Eliminar')) . '</button>';
+                echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#userModal" data-superuser ="' . $sudousername . '" data-user="' . $username .  '">' . sprintf (_('Eliminar')) . '</button>';
                 echo "</td>";
 
 		echo "</tr>";

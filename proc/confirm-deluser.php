@@ -8,6 +8,7 @@
  *
  */
 $user=$_POST['user'];
+$superuser=$_POST['superuser'];
 session_start();
 require_once  __DIR__.'/../classes/class.ldap.php';
 require_once __DIR__.'/../site-config.php';
@@ -44,9 +45,13 @@ if ($number>0) {
 else 
 {
 
-    printf(_("¿Estás seguro de que quieres eliminar el usuario %s?"), $user);
+    printf(_("<p>¿Estás seguro de que quieres eliminar el usuario %s?</p>"), $user);
+
+    printf(_("<p>El usuario perderá el acceso SFTP al servidor. Los archivos de su directorio personal se moverán al directorio: <br>
+      <pre>/home/%s/sftp-deleted/%s/</pre>
+ Puedes decidir si conservarlos o borrarlos manualmente.</p>"),$superuser,$user);
+
     echo "<div class='modal-footer'>
-          <form action='' method='POST'><input type='hidden' name='userid' value='". $user ."' /> <button type='submit' name='deluser' class='btn btn-small btn-primary'>". sprintf(_('Borrar')) ."</button><button type='button' class='btn btn-secondary' data-dismiss='modal'>" . sprintf (_("Cancelar")) . "</button></form>
-          </div>";
+          <form action='' method='POST'><input type='hidden' name='userid' value='". $user ."' /> <button type='submit' name='deluser' class='btn btn-small btn-primary'>". sprintf(_('Borrar')) ."</button><button type='button' class='btn btn-secondary' data-dismiss='modal'>" . sprintf (_("Cancelar")) . "</button></form></div>";
 }
 ldap_close($ldapconn);

@@ -76,10 +76,10 @@ require_once('sidebar.php');
 <?php echo $message;?>
 <article class="content forms-page">
   <div class="title-block">
-  <h3 class="title"> <?php printf(_("Editar Usuario %s"), $username);?></h3>
+  <h1 class=""> <?php printf(_("Editar Usuario %s - SuperUsuario"), $username);?></h1>
   </div>
     <div class="subtitle-block">
-    <h3 class="subtitle"> <?php printf(_("Este es el usuario por defecto del sistema y tiene total acceso al servidor. Por esto no lo puedes borrar ni puedes administrar su acceso sftp, que siempre está garantizado"));?></h3>
+  <h3 class="subtitle"> <?php printf(_("Este es el usuario por defecto del sistema y tiene total acceso al servidor. No lo puedes borrar ni puedes administrar su acceso SFTP, que siempre está garantizado."));?></h3>
     </div>
   <section class="section">
   <div id="admin-content" cass="row">

@@ -179,6 +179,7 @@
   line-height: 30px;
   overflow: auto;
   border-top: 1px solid #ececec;
+  width: 100%;
 }
 .plugin last-update{
   font-size: 11px;
@@ -309,7 +310,7 @@ table.metrics-table {
 canvas {
   float: none;
   margin: 0 auto;
-  max-width: 100%;
+/*  max-width: 100%;*/
 }
 /*********************************************
     Widget Elements

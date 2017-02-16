@@ -22,12 +22,11 @@ require_once('header.php');?>
 
 <?php require_once('sidebar.php');
 ?>
-<article>
-  <section>
+<article class="content dashboard-page">
+  <section class="section">
         <!-- Templates Get Rendered Here -->
         <div class="hero">
             <h4 class="title">Linux Dash</h4>
-            <theme-switcher></theme-switcher>
             <nav-bar></nav-bar>
         </div>
 
