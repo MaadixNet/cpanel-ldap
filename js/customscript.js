@@ -286,7 +286,7 @@ $('#userModal').on('show.bs.modal', function (event) {
      });
 
 /* Check password match*/
-    $("#pswd1").blur(function()
+    /*$("#pswd1").blur(function()
     {   
         var pass1 = $(this).val();
         var pass2 = $("#pswd2").val();
@@ -297,7 +297,7 @@ $('#userModal').on('show.bs.modal', function (event) {
             $("#pswresult").html('');
         }   
 
-     }); 
+     });*/ 
 
 /* Check password match*/
     $("#pswd4").blur(function()

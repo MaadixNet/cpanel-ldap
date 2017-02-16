@@ -225,15 +225,13 @@ $firstuid_availabe=system($commuid);*/?>
                 #list sudo user without pssword change option
                 # and check if is webmaster of some domain
                 $binddn= LDAP_BASE;
-                $filter="(&(vd=*)(adminid=".$user."))";
-                $results=$Ldap->search($ldapconn,$binddn,$filter);
 
                 for ($i=0; $i<$resultsudo["count"]; $i++) {
                 $username = $resultsudo[$i]["uid"][0];
 
                 # Get domians of which is webmaster
-                $filter="(&(vd=*)(adminid=".$username."))";
-                $resultsdomain=$Ldap->search($ldapconn,$binddn,$filter);
+                $filteradmin="(&(vd=*)(adminid=".$username."))";
+                $resultsdomain=$Ldap->search($ldapconn,$binddn,$filteradmin);
 
                 $services=$resultsudo[$i]["authorizedservice"];
                 $issftp=(in_array('sshd',$services)&& (!empty ($services)))?'<i class="fa fa-check-circle-o icon checkok"></i>':'<i class="fa fa-exclamation-triangle icon checkko"></i>';
@@ -245,8 +243,8 @@ $firstuid_availabe=system($commuid);*/?>
                 echo "<td class=''>";
                   
                 if ($resultsdomain["count"] >0 ){
-                        for ($i=0; $i<$resultsdomain["count"]; $i++) {
-                        $domain= $resultsdomain[$i]["vd"][0];
+                        for ($c=0; $c<$resultsdomain["count"]; $c++) {
+                        $domain= $resultsdomain[$c]["vd"][0];
                         echo "<p>" . $domain . "</p>";
                         }                      
                 }
@@ -285,8 +283,8 @@ $firstuid_availabe=system($commuid);*/?>
 		echo "</td>";
                 echo "<td>";
                 if ($resultsdomain["count"] >0 ){
-                        for ($i=0; $i<$resultsdomain["count"]; $i++) {
-                        $domain= $resultsdomain[$i]["vd"][0];
+                        for ($c=0; $c<$resultsdomain["count"]; $c++) {
+                        $domain= $resultsdomain[$c]["vd"][0];
                         echo "<p>" . $domain . "</p>";
                         }          
                 }
