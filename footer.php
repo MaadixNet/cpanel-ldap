@@ -6,7 +6,7 @@
                     </div>
                     <div class="footer-block author">
                         <ul>
-                            <li> created by <a href="https://github.com/MaadixNet">Maadix</a> </li>
+                            <li> Created by <a href="https://maadix.net">MaadiX</a> </li>
                         </ul>
                     </div>
                 </footer>

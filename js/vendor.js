@@ -21900,7 +21900,6 @@ jQuery.fn.vectorMap('addMap', 'world_en', {"width":950,"height":550,"paths":{"id
   }
 
   var MetisMenu = function(element, options) {
-    console.log('AAAAAAAAAAAAAAAAAAAAAAAAA');
     this.$element = $(element);
     this.options = $.extend({}, MetisMenu.DEFAULTS, options);
     this.transitioning = null;
@@ -21920,7 +21919,6 @@ jQuery.fn.vectorMap('addMap', 'world_en', {"width":950,"height":550,"paths":{"id
   };
 
   MetisMenu.prototype.init = function() {
-    console.log('BBBBBBBBBBBBBBBB');
     var $this = this;
     var activeClass = this.options.activeClass;
     var collapseClass = this.options.collapseClass;

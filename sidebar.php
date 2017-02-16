@@ -10,7 +10,7 @@
                         <nav class="menu">
                             <ul class="nav metismenu" id="sidebar-menu">
                                <?php if($permissions==10){?>
-                                <li>
+                                <li class="home">
                                 <a href="/<?php echo BASE_PATH;?>/"> <i class="fa fa-home"></i> <?php printf(_("Detalles"));?></a>
                                 </li>
                                 <li>

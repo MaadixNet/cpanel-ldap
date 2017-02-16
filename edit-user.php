@@ -139,7 +139,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
               </div>
 
               <div class="form-group">
-                <label for="pswd2"><?php printf(_("Confirma Contraseña"));?><</label><input type='password' class="form-control" id='pswd2' name='pswd2' /><div id="pswresult"></div>
+                <label for="pswd2"><?php printf(_("Confirma Contraseña"));?></label><input type='password' class="form-control" id='pswd2' name='pswd2' /><div id="pswresult"></div>
               </div>
                 
                 <?php 
@@ -154,10 +154,10 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
                 ?>
 
                 <div class="clear"></div>
-                <h4><?php printf(_("Acceso Sftp"));?></h4>
+                <h4><?php printf(_("Acceso SFTP"));?></h4>
                     <div> <label>
                     <input name="sshd" id="sshd" class="checkbox" type="checkbox"  <?php echo $sshd;?>>
-                    <span><?php printf(_("Activar acceso Sftp"));?></span>
+                    <span><?php printf(_("Activar acceso SFTP"));?></span>
                     </label> </div>
                 <?php
 
@@ -170,12 +170,12 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
                   <h4><?php printf(_("Cuenta VPN"));?></h4>
                   <div> <label>
                     <input type="checkbox" name="vpn" id="vpn" class="checkbox" type="checkbox" <?php echo $vpn;?> />
-                     <span><?php printf(_("Activair cuenta VPN"));?></span>
+                     <span><?php printf(_("Activar cuenta VPN"));?></span>
                   </label> </div>
 
                   <div id="hidden">
                   <h4><?php printf(_("Instrucciones"));?></h4>
-                  <p><?php printf(_("Puedes enviar al usuario un email con instrucciones para configurar el cliente VPN"));?></p>
+                  <p><?php printf(_("Envia al usuario un email con los archivos de configuración y las instrucciones para configurar el cliente VPN."));?></p>
                   <p><?php printf(_("NOTA: Las instrucciones incluyen todos los datos necesarios menos la contraseña. Por razones de seguridad proporciona al usuario la  contraseña por otro canal"));?></p>
 
                   <div> <label>

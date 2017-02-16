@@ -67,7 +67,7 @@ if ($ldapconn){
 			$message='
 			<div class="alert alert-error">
 			<button class="close" data-dismiss="alert">×</button>
-			<strong>Nombre n válido para cuenta de correo</strong>
+			<strong>Nombre no válido para cuenta de correo</strong>
 			</div>';
 			} else {
 
@@ -148,7 +148,7 @@ if ($ldapconn){
 			$message = '
 			<div class="alert alert-error">
 			<button class="close" data-dismiss="alert">×</button>
-			<strong>Ha ocurrido un error. La cuenta no se ha podido eliminar>/strong>
+			<strong>Ha ocurrido un error. La cuenta no se ha podido eliminar</strong>
 			</div>';
 			}	
 		}
@@ -182,13 +182,24 @@ require_once('sidebar.php');
   #
 
   if ($dns_result===2 && (!empty($queryvar)) && $has_webmail && $domain_exist_in_ldap["count"]>0){
-    printf(_("<pre><p>Los DNS del dominio %s no están configurados para que el correo electrónico sea administrado por este servidor. Esto significa que no puedes crear cuentas de email desde este panel.</br>
+    printf(_("<pre><p>Los DNS del dominio %s no están configurados para que el correo electrónico sea administrado por este servidor. Esto significa que no puedes crear cuentas de email desde este panel. Revisa su configuración en:<a href=' https://client-area.maadix.net/cpanel-ldap/editdns.php?domain=%s'>Configuración de DNS activa para el dominio %s</a>.
+      </br>
       Sin embargo, si tienes alguna cuenta de correo electrónico existente para este dominio puedes consultarla desde la aplicación <a href='rainloop.php'>Webmail</a>.</p></pre>
       "), $queryvar);
   } else { ?>
     <div class="row">
+      <div class="col-sm-12">
+
+
+                 <?php   echo $message;
+                         if($permissions > 2){
+                         # This is only for postmaster or admin. Normal user will only be able to see his own email account
+                         $queryvar=(isset($_GET['domain']))?$_GET['domain'] :'';
+                         $querymess=($queryvar)?'para el dominio <br>' . $queryvar:'';?>
+
+
 		<?php if ($permissions ==10) {//Show domains list on left sidebar only to admin ?> 
-        <div class="col-sm-2">
+        <div class="col-sm-3">
           <div class="title-block">
             <h3 class="title"> <?php printf(_("Dominios Activados"));?></h3>
           </div>
@@ -205,7 +216,7 @@ require_once('sidebar.php');
 						$resultmail = $Ldap->search($ldapconn,'vd='. $domain . ','. LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');  
 						$mailcount = $resultmail["count"];
 						$haschildren = ($mailcount>0) ? '<i class=" arrow arrowleft"></i><i class="arrow arrowdown"></i>':'';
-						echo '<li class=' .  $active . '>';	
+						echo '<li class="' .  $active . '">';	
 						echo '<h5>' . $haschildren . ' <a class=" ' .  $active . '"   href="/' .  BASE_PATH . '/mails.php?domain=' . $domain . '">' . $domain .'</a> <span class="counter">' . $mailcount . '</span></h5>';
 						if($mailcount>0) {
 							echo '<ul class="sub-menu">';
@@ -219,17 +230,12 @@ require_once('sidebar.php');
                                             }
 					echo '</ul>';
 					}?>
-
+                            <br>                    
 			</div><!--sidebar-left-->
 		</div><!--col-sm.2-->
 		<?php } ?>
-                <?php   echo $message;
-                        if($permissions > 2){
-                        # This is only for postmaster or admin. Normal user will only be able to see his own email account
-                        $queryvar=(isset($_GET['domain']))?$_GET['domain'] :'';
-                        $querymess=($queryvar)?'para el dominio ' . $queryvar:'';?>
 
-        <div class="col-sm-<?php echo $col ?>">
+        <div class="col-sm-9">
           <div class="title-block">
             <h3 class="title"> <?php printf(_("Cuentas de correo activadas %s"),$querymess);?></h3>
           </div>
@@ -242,20 +248,21 @@ require_once('sidebar.php');
     		<div id="change">
                 <div class="card card-block">
 			<?php if($result["count"] == 0){
-				echo '<h2>Para poder crear cuentas de correos tienes que activar antes el dominio correspondiente en la <a href="add-domain.php">página Añadir dominios</h2>';
+				echo '<h3>Para poder crear cuentas de correos tienes que activar antes el dominio correspondiente en la página <a href="add-domain.php">Añadir Dominios</h3>';
 			} else { ?>
                               
    	 			<form autocomplete="off" action="#" method="POST" class="form-signin standard">
                                 <div class="form-group">
                                 <label for="username">Email de usuario: </label>
                                 <p></p>
-                                <input class="form-control col-sm-4" id="mailnew" type="text" name="mailnew" required />
+                                <div class="row">
+                                  <input class="form-control col-sm-4" id="mailnew" type="text" name="mailnew" required />
 				<?php
 				if($result["count"] == 1){
 					echo '<input type="hidden" name="maildomain" value="' .$result[0]["vd"][0] .'" />';
 					echo '<span class="inline">@' . $result[0]["vd"][0] .'</span>';
 				} else {
-                                    echo '<span class="inline">@<select id="seldomain" name="maildomain" required>';
+                                    echo '<span class="inline">@<select id="seldomain" name="maildomain" style="display:inline" required>';
                                     echo '<option value="">Seleccionar dominio</option>';
                                     for ($c=0; $c<$result["count"]; $c++) {
                                         $selected=($queryvar==$result[$c]["vd"][0])?"selected":"";
@@ -352,7 +359,7 @@ require_once('sidebar.php');
 ?>
 
             </div><!--ineer-->
-        </div><!--col-sm-8-->
+        </div><!--col-sm-9-->
 <!-- Modal -->
 <div class="bd-example">
   <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
@@ -372,6 +379,7 @@ require_once('sidebar.php');
 </div><!--bd-example-->
 
 <?php } ?>
+          </div> <!--class="col-sm-12"-->
 	</div><!--row-->
 <?php
 ?>

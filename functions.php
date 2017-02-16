@@ -74,6 +74,8 @@ function get_service_data($service){
   case 'mail':
     $image = "images/services/postfix-dovecot.png";
     $title = sprintf(_("Servidor de correo electrónico"));
+    $link_url = '/' . BASE_PATH . '/mails.php';
+    $link_text = sprintf(_("Administrar email"));
     $software = sprintf(_("Postfix. Dovecot"));
     $description = sprintf(_("Puedes añadir infinitas cuentas de correo por cada dominio o subdominio que tengas activado en el Cpanel. Para ello tienes que primero <a href='/cpanel/add-domain.php'>Activar un dominio</a> y luego podrás <a href='/cpanel/mails.php'>crear cuentas de correo electrónico</a> asociadas al mismo dominio. Puedes también consultar este tutorial para más información : <a href='http://docs.maadix.net/email' target='_blank'>Cómo crear cuentas de correo electrónico</a>"));
 
@@ -82,6 +84,8 @@ function get_service_data($service){
   case 'openvpn':
     $image = "images/services/openvpn.png";
     $title = sprintf(_("Servidor VPN"));
+    $link_url = '/' .  BASE_PATH . '/usuarios.php';
+    $link_text = sprintf(_("Activar cuentas VPN "));
     $software = sprintf(_("OpenVpn"));
     $description = sprintf(_("Activa  cuentas VPN para habilitar conexiones seguras y cifradas al servidor, o para navegaqr por Internet.
        Las cuentas VPN van asoicadas a cunetas de usuarios. Para utlizar este servicio puedes <a href='/cpanel/usuarios.php'>crear un nuevo usuario o bien editar uno</a> ya existente activando la casilla 'Cuenta VPN'. <br>
@@ -91,6 +95,8 @@ function get_service_data($service){
   case 'owncloud':
     $image = "images/services/owncloud.png";
     $title = sprintf(_("Servidor de alojamiento y sincronización de archivos"));
+    $link_url = $_SERVER['HTTP_HOST'] . '/owncloud';
+    $link_text = sprintf(_("Ir a la Aplicación "));
     $software = sprintf(_("Owncloud"));
     $description = sprintf(_("Trabaja en documentos, presentaciones, hojas de cálculo, bases de datos... siempre a mano y listos para compartir. Edita y comenta documentos colaborativamente. Impórtalos y expórtalos de otras plataformas. Trabaja en ellos en cualquier momento y desde cualquier dispositivo incluso cuando estás sin conexión. Importa automàticamente tus contactos desde Gmail, Outlook, thunderbird, Yahoo u otros formatos de archivos. Organiza tu trabajo en línea decidiendo el nivel de acceso que quieres darle a cada usuario que autorices.
           <br>  <a href='/owncloud' target='_blank'>Ir a la aplicación</a>"));
@@ -100,6 +106,9 @@ function get_service_data($service){
   case 'rainloop':
     $image = "images/services/rainloop.png";
     $title = sprintf(_("Webmail"));
+    $link_url = $_SERVER['HTTP_HOST'] . '/rainloop';
+    $link_text = sprintf(_("Ir a la Aplicación "));
+
     $software = sprintf(_("Rainloop"));
     $description = sprintf(_("Interfaz web para consulta e envío de correo electrónico desde el navegador. <br> <a href='/rainloop/' title='Rainloop' target=_'blank'>Ir a la aplicación</a>"));
     
@@ -108,6 +117,9 @@ function get_service_data($service){
   case 'afterlogic':
     $image = "images/services/email-text.png";
     $title = sprintf(_("Webmail"));
+    $link_url = $_SERVER['HTTP_HOST'] . '/afterlogic';
+    $link_text = sprintf(_("Ir a la Aplicación "));
+
     $software = sprintf(_("After Logic"));
     $description = sprintf(_("Interfaz web para consulta e envío de correo electrónico. Puedeis ver una demo aquí: <a href='https://lite.afterlogic.com/' title='After Logic demo' target=_'blank'>https://lite.afterlogic.com/</a>"));
     break;
@@ -115,6 +127,9 @@ function get_service_data($service){
   case 'roundcube':
     $image = "images/services/email-text.png";
     $title = sprintf(_("Webmail"));
+    $link_url = $_SERVER['HTTP_HOST'] . '/roundcube';
+    $link_text = sprintf(_("Ir a la Aplicación "));
+
     $software = sprintf(_("Roundcube"));
     $description = sprintf(_("Interfaz web para consulta e envío de correo electrónico. Web del proyecto: <a href='https://roundcube.net/about/' title='Roundcube website' target=_'blank'>https://roundcube.net/about/</a>"));
     break;
@@ -122,6 +137,8 @@ function get_service_data($service){
   case 'phpmyadmin':
     $image = "images/services/phpmyadmin.png";
     $title = sprintf(_("Mysql"));
+    $link_url = $_SERVER['HTTP_HOST'] . '/phpmyadmin';
+    $link_text = sprintf(_("Ir a la Aplicación "));
     $software = sprintf(_("phpMyAdmin"));
     $description = sprintf(_("Interfaz web para administración de base de datos mysql. Para proteger ultriormente tus bases de datos, esta aplicación está protegida con doble contraseña. Solo los usuarios que tengan activado el acceso sftp y el usuario por defecto del sistema pueden acceder a este interfaz. Para la prinera autentificación, que se muestra con una ventana emergente, tendrás que insertar un usuario válido (sftp o usuario por defecto del sistema). En la segunda tienes que utilizar las credenciales de un usuario Mysql que tengas creado. Es aconsejable crear un usuario Mysql diferente por cada base de datos.<br> Tanto los usuarios como las mismas base de datos se pueden crear desde este interfaz. Por defecto solo el usuario root de Mysql tiene los privilegios necesarios para crear nuevas bases de datos, nuevos usuarios,  y otorgar permisos a cada uno de ellos. <br> <a href='/phpmyadmin/' title='PhpMyAdmin' target=_'blank'>Ir a la aplicación</a>"));
     break;
@@ -129,6 +146,8 @@ function get_service_data($service){
   case 'piwik':
     $image = "images/services/piwik.png";
     $title = sprintf(_("Estadísticas"));
+    $link_url = $_SERVER['HTTP_HOST'] . '/piwik';
+    $link_text = sprintf(_("Ir a la Aplicación "));
     $software = sprintf(_("Piwik"));
     $description = sprintf(_("Alternativa OpenSource a Google Analytics. Rastrea en tiempo real páginas vistas y visitas de tus sitio web. Piwik muestra infoo
       rmes con respecto a la ubicación geográfica de las visitas, origen de las visitas,el tiempo de visitas y más. <a href='cpanel/piwik' title='Piwik' target=_'bb
@@ -152,6 +171,8 @@ function get_service_data($service){
   case 'etherpad':
     $image = "images/services/etherpad.png";
     $title = sprintf(_("Edición colaborativa online"));
+    $link_url = $_SERVER['HTTP_HOST'] . '/etherpad';
+    $link_text = sprintf(_("Ir a la Aplicación "));
     $software = sprintf(_("Etherpad Lite"));
     $description=sprintf(_("Editor web basado en la colaboración en tiempo real, lo que permite a varios autores editar simultáneamente un documento de texto, y ver todos los participantes en las ediciones en tiempo real, con la capacidad de mostrar el texto de cada autor en diferente color. También hay una ventana de chat en la barra lateral para permitir la comunicación directa.<href='http://etherpad.org/' target=_'blank'>http://etherpad.org/</a>"));
     break;
@@ -159,6 +180,8 @@ function get_service_data($service){
   case 'mailman':
     $image = "images/services/mailman.png";
     $title = sprintf(_("Listas de correo"));
+    $link_url = $_SERVER['HTTP_HOST'] . '/mailman';
+    $link_text = sprintf(_("Ir a la Aplicación "));
     $software = sprintf(_("GNU Mailman"));
     $description = sprintf(_("aplicación de software del proyecto GNU, que maneja listas de correo electrónico o simplemente listas de correo. <href='http://www.list.org/' target=_'blank'>http://www.list.org/</a>"));
     break;
@@ -168,6 +191,8 @@ function get_service_data($service){
   }
     $result=array (
       'image' => $image,
+      'link_url' => $link_url,
+      'link_text' => $link_text,
       'title' =>$title,
       'software' => $software,
       'description' => $description

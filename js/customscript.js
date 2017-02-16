@@ -67,10 +67,15 @@ $(document).ready(function() {
       
      $("#sidebar-menu a").each(function(){
           var itemurl= $(this).attr("href").substr($(this).attr("href").lastIndexOf("/")+1);
-          if( itemurl  == pgurl && itemurl != '' )
-          $(this).parent('li').addClass("active");
-          $("#sidebar-menu ul:has(li.active)").addClass('collapse in');
-          $("#sidebar-menu li:has(ul.in)").addClass('active');
+          if( itemurl  == pgurl && itemurl != '' ){
+            $(this).parent('li').addClass("active");
+            $("#sidebar-menu ul:has(li.active)").addClass('collapse in');
+            $("#sidebar-menu li:has(ul.in)").addClass('active');
+          } else {
+            if ( itemurl  == pgurl && itemurl == ''  || pgurl == 'index.php'){
+              $("#sidebar-menu li.home").addClass('active');
+            }
+          }
 
 });
 
@@ -128,10 +133,19 @@ $(document).ready(function(){
     });
 
     if($('#vpn').length){
-      console.log('ok');
       if(document.getElementById('vpn').checked ) {
           $("#hidden").show();
       }
+     $('#vpn').change(function () {
+           if ($(this).prop('checked')) {
+                // $('input').prop('checked', true);
+                $('input#sendinstruction').prop('disabled', false);
+           } else {
+               $('input#sendinstruction').prop('checked', false);
+               $('input#sendinstruction').prop('disabled', true);
+           }
+     });
+     $('#vpn').trigger('change');
     }
 
 

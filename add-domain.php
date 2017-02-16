@@ -189,8 +189,8 @@ require_once('sidebar.php');
   </div>
   <div class="subtitle-block">
   <h3 class="subtitle"> <?php printf(_(" Activar un dominio en este panel creará la configuración necesaria para:"));?></h3>
-    <p><?php printf(_("<ul> <li> Crear cuentas de correo electrónico</li> <li> Alojar contenido visble visitando el dominio con un navegador </li><li> Crear certificcado SSL para navegaci'on segura ( https) </li> </ul>
-    Recuerda que para un correcto funcionamiento de tus dominios en el servidor es necesario que configures correctamente los DNS desde el panel de configuración de tu proveedor de dominio. <a href='/" . BASE_PATH ."/domain-instruccions.php'>+ info</a> "));?> </p>
+    <p><?php printf(_("<ul> <li> Crear cuentas de correo electrónico</li> <li> Alojar contenido visble visitando el dominio con un navegador </li><li> Crear certificado SSL para navegación segura (https) </li> </ul>
+    Recuerda que para un correcto funcionamiento de tus dominios en el servidor es necesario que configures correctamente los DNS desde el panel de configuración de tu proveedor de dominio (<a href='/" . BASE_PATH ."/domain-instruccions.php'>+ info</a>). "));?> </p>
   </div>
 <section class="section">
 <div id="admin-content" class="row sameheight-container">
@@ -200,7 +200,7 @@ require_once('sidebar.php');
   <div class="card card-block">
     <form role="form" autocomplete="off" action="" method="POST" class="form-signin standard jquery-check">
         <div class="form-group">
-          <label for="domain"><?php printf (_("Nombre de Dominio"))?> </label><p class=""> <?php printf (_("(Inserta un nombre de dominio válido (o un subdominio). Para los dominios activados en este panel podrás crear cuentas de correo electrónico o páginas web)"))?></p>
+          <label for="domain"><?php printf (_("Nombre de Dominio"))?> </label><p class=""> <?php printf (_("Inserta un nombre de dominio válido (o un subdominio). Para los dominios activados en este panel podrás crear cuentas de correo electrónico o páginas web."))?></p>
           <input class="form-control" id="domain_new" type="text" name="domain_new" required />
         </div>
 
@@ -227,7 +227,7 @@ El Webmaster tendrá permisos para crear, borrar o modificar archivos dentro de 
             echo '<div class="clear"></div>';
             echo '<select id="seluser" name="seluser" class="form-control">';
             //echo '<option value="' . $sudo_username .'">Seleccionar Administrador web</option>';
-            echo '<option value="' . $sudo_username .'">' . $sudo_username .' - SuperusUario</option>';
+            echo '<option value="' . $sudo_username .'">' . $sudo_username .' - SuperUsuario</option>';
             echo '<option value="newuser">Crear nuevo usuario</option>';
             for ($c=0; $c<$allusers["count"]; $c++) {
               $usernames = $allusers[$c]["uid"][0];
@@ -252,8 +252,8 @@ El Webmaster tendrá permisos para crear, borrar o modificar archivos dentro de 
             </div>
             <div class="form-group">
               <label for="usermail">' . sprintf(_("Correo electrónico")) .'* </label>
-              <p class="">Puedes insertar un correo electrónico externo o elegir una entre las cuentas creadas en el servidor</p>
-                <input class="form-control col-sm-4 usermail" id="usermail" type="mail" name="usermail" />';
+              <p class="">Puedes introducir un correo electrónico externo o elegir una entre las cuentas creadas en el servidor</p>
+                <input class="form-control col-sm-4 usermail" id="usermail" type="mail" name="usermail" /> ';
             $resultmail = $Ldap->search($ldapconn,LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
             $mailcount = $resultmail["count"];
             if($mailcount>0) {

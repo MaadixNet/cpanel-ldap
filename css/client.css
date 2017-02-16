@@ -16,7 +16,7 @@ form.standard select {
 }
 .logo img {width:100%;max-width:50px;}
 .service-img img{max-width:150px;}
-.loading{ background-image: url("../images/spinner.gif");padding: 0 7px;}
+.loading{ background-image: url("../images/spinner.gif");padding: 0 7px;background-repeat:no-repeat;background-position-y:3px}
 /*Table style*/
 
 
@@ -28,6 +28,7 @@ form.standard select {
     table {
     width: 100%;
     border-collapse: collapse;
+    margin-top:15px;
     }
     /* Zebra striping */
     tr:nth-of-type(odd) {
@@ -53,7 +54,7 @@ td .alert {border-radius:12px; padding:3px;}
 td.center{text-align:center;}
 i.checkok {color: #086673;background-color: #dff0d8;}
 i.checkko {color : #a30942;background-color: #f2dede;}
-.col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {float:left;}
+/*.col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {float:left;}
 .col-sm-2 {width: 20%;}
 .col-sm-3 {width: 25%;}
 .col-sm-4 {width: 33.3333%;}
@@ -61,7 +62,8 @@ i.checkko {color : #a30942;background-color: #f2dede;}
 .col-sm-10 {width: 80%;}
 .col-sm-9 {width: 75%;}
 .col-sm-12 {width: 100%;}
-
+*/
+.col-sm-4.form-control {width: 33.3333%;float:left;}
 #sidebarleft {border-right: 1px solid #ddd;}
 p.little {font-size:10px;}
 .menul li i {
@@ -294,10 +296,11 @@ background-size: 35px auto;
         table#vpn td:nth-of-type(5):before { content: "Estado"; }
 
         table#users td:nth-of-type(1):before { content: "Usuario"; }
-        table#users td:nth-of-type(2):before { content: "SFTP"; }
-        table#users td:nth-of-type(3):before { content: "VPN"; }
-        table#users td:nth-of-type(4):before { content: "Editar"; }
-        table#users td:nth-of-type(5):before { content: "Eliminar";}
+        table#users td:nth-of-type(2):before { content: "Webmaster"; }
+        table#users td:nth-of-type(3):before { content: "SFTP"; }
+        table#users td:nth-of-type(4):before { content: "VPN"; }
+        table#users td:nth-of-type(5):before { content: "Editar"; }
+        table#users td:nth-of-type(6):before { content: "Eliminar";}
 
         table#domains td:nth-of-type(1):before { content: "Dominio"; }
         table#domains td:nth-of-type(2):before { content: "Cuentas email"; }

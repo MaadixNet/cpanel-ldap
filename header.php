@@ -33,7 +33,7 @@ $permissions= (isset($_SESSION["login"]["level"]))?$_SESSION["login"]["level"]:"
 ?>
    
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en"  ng-app="linuxDash">
 
     <head>
         <meta charset="utf-8">
@@ -45,19 +45,7 @@ $permissions= (isset($_SESSION["login"]["level"]))?$_SESSION["login"]["level"]:"
         <!-- Place favicon.ico in the root directory -->
         <link rel="stylesheet" href="css/vendor.css">
         <!-- Theme initialization -->
-        <script>
-            var themeSettings = (localStorage.getItem('themeSettings')) ? JSON.parse(localStorage.getItem('themeSettings')) :
-            {};
-            var themeName = themeSettings.themeName || '';
-            if (themeName)
-            {
-                document.write('<link rel="stylesheet" id="theme-style" href="css/app-' + themeName + '.css">');
-            }
-            else
-            {
-                document.write('<link rel="stylesheet" id="theme-style" href="css/app-red.css">');
-            }
-        </script>
+        <script src="js/styles.js"></script>
         <link rel="stylesheet" href="css/client.css">
     </head>
 

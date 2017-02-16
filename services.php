@@ -39,7 +39,6 @@ require_once('sidebar.php');
 <article class="content cards-page">
             <div class="title-block">
                 <h3 class="title"> <?php printf(_("Aplicaciones Instaladas"));?> </h3>
-                <p class="title-description"> Cards can contain almost any kind of element inside </p>
             </div>
                  <section class="section">
                         <div class="row ">
@@ -66,7 +65,16 @@ require_once('sidebar.php');
                                         <div class="tab-content tabs-bordered">
                                             <div class="tab-pane fade in active" id="home-<?php echo $c;?>">
                                                 <h4></h4>
-                                                <p><div class='img service-img'><img src="<?php echo $service_data['image'];?> " /></div></p>
+                                                <div class="row">
+                                                  <div class="col-md-6">
+                                                    <p><div class='img service-img'><img src="<?php echo $service_data['image'];?> " /></div></p>
+                                                  </div>
+                                                  <div class="col-md-6">
+                                                  <?php if(isset($service_data['link_text'])){ ?>
+                                                   <a href="<?php echo $service_data['link_url'];?>" class='btn btn-small btn-primary'><?php echo $service_data['link_text'];?></a>
+                                                  <?php } ?>
+                                                  </div>
+                                                </div>
                                             </div>
                                             <div class="tab-pane fade" id="desc-<?php echo $c;?>">
                                                 <h4><?php echo $service_data['software'];?></h4>

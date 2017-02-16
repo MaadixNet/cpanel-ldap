@@ -161,10 +161,10 @@ $firstuid_availabe=system($commuid);*/?>
                 </div>
                 <hr>
                 <div class="form-group">
-                <h4><?php printf(_("Acceso Sftp"));?></h4>
+                <h4><?php printf(_("Acceso SFTP"));?></h4>
                   <div> <label>
                     <input name="sshd" id="sshd" class="checkbox" type="checkbox">
-                    <span><?php printf(_("Activar acceso sftp"));?></span>
+                    <span><?php printf(_("Activar acceso SFTP"));?></span>
                     </label> </div>
                 </div>
 
@@ -181,8 +181,8 @@ $firstuid_availabe=system($commuid);*/?>
 
                   <div id="hidden">
                   <h4><?php printf(_("Instrucciones"));?></h4> 
-                  <p><?php printf(_("Puedes enviar al usuario un email con instrucciones para configurar el cliente VPN"));?></p>
-                  <p><?php printf(_("NOTA: Las instrucciones incluyen todos los datos necesarios menos la contraseña. Por razones de seguridad proporciona al usuario la  contraseña por otro canal"));?></p>
+                  <p><?php printf(_("Envia al usuario un email con los archivos de configuración y las instrucciones para configurar el cliente VPN."));?></p>
+                  <p><?php printf(_("NOTA: Las instrucciones incluyen todos los datos necesarios menos la contraseña. Por razones de seguridad proporciona al usuario la  contraseña por otro canal."));?></p>
                   <div> <label>
                     <input class="checkbox" type="checkbox" name="sendinstruction" id="sendinstruction">
                     <span class="small"><?php printf(_("Enviar instrucciones"));?></span>
@@ -212,6 +212,7 @@ $firstuid_availabe=system($commuid);*/?>
 		<thead>
 		<tr>
                 <th><?php printf (_('Usuario'));?></th>
+                <th><?php printf (_('Webmaster'));?></th>
                 <th><?php printf (_('Acceso sftp'));?></th>
                 <th><?php printf (_('Acceso VPN'));?></th>
                 <th><?php printf (_('Editar'));?></th>
@@ -222,8 +223,18 @@ $firstuid_availabe=system($commuid);*/?>
 
 		<?php 
                 #list sudo user without pssword change option
+                # and check if is webmaster of some domain
+                $binddn= LDAP_BASE;
+                $filter="(&(vd=*)(adminid=".$user."))";
+                $results=$Ldap->search($ldapconn,$binddn,$filter);
+
                 for ($i=0; $i<$resultsudo["count"]; $i++) {
                 $username = $resultsudo[$i]["uid"][0];
+
+                # Get domians of which is webmaster
+                $filter="(&(vd=*)(adminid=".$username."))";
+                $resultsdomain=$Ldap->search($ldapconn,$binddn,$filter);
+
                 $services=$resultsudo[$i]["authorizedservice"];
                 $issftp=(in_array('sshd',$services)&& (!empty ($services)))?'<i class="fa fa-check-circle-o icon checkok"></i>':'<i class="fa fa-exclamation-triangle icon checkko"></i>';
                 $isvpn=(in_array('openvpn',$services)&& (!empty ($services)))?'<i class="fa fa-check-circle-o icon checkok"></i>':'<i class="fa fa-exclamation-triangle icon checkko"></i>';
@@ -231,6 +242,16 @@ $firstuid_availabe=system($commuid);*/?>
                 echo "<td>";
                 echo $username . sprintf(_(" - SuperUsuario"));
                 echo "</td>";
+                echo "<td class=''>";
+                  
+                if ($resultsdomain["count"] >0 ){
+                        for ($i=0; $i<$resultsdomain["count"]; $i++) {
+                        $domain= $resultsdomain[$i]["vd"][0];
+                        echo "<p>" . $domain . "</p>";
+                        }                      
+                }
+                echo "</td>";
+
                 echo "<td class='center'>";
                 echo $issftp; 
                 echo "</td>";
@@ -252,6 +273,9 @@ $firstuid_availabe=system($commuid);*/?>
                 for ($i=0; $i<$result["count"]; $i++) {
 		$oldpsw=$result[$i]['userpassword'][0];
 		$username = $result[$i]["uid"][0];
+                $filter="(&(vd=*)(adminid=".$username."))";
+                $resultsdomain=$Ldap->search($ldapconn,$binddn,$filter);
+
                 $services=(isset($result[$i]["authorizedservice"]))?$result[$i]["authorizedservice"]:array();
                 $issftp=(in_array('sshd',$services) && (is_array($services)))?'<i class="fa fa-check-circle-o icon checkok"></i>':'<i class="fa fa-exclamation-triangle icon checkko"></i>';
                 $isvpn=(in_array('openvpn',$services)&& (is_array($services)))?'<i class="fa fa-check-circle-o icon checkok"></i>':'<i class="fa fa-exclamation-triangle icon checkko"></i>';
@@ -259,6 +283,15 @@ $firstuid_availabe=system($commuid);*/?>
 		echo "<td>";
 		echo $username;
 		echo "</td>";
+                echo "<td>";
+                if ($resultsdomain["count"] >0 ){
+                        for ($i=0; $i<$resultsdomain["count"]; $i++) {
+                        $domain= $resultsdomain[$i]["vd"][0];
+                        echo "<p>" . $domain . "</p>";
+                        }          
+                }
+                echo "</td>";
+
                 echo "<td class='center'>";
                 echo $issftp;
                 echo "</td>";
