@@ -26,7 +26,7 @@ require_once('header.php');?>
   <section class="section">
         <!-- Templates Get Rendered Here -->
         <div class="hero">
-            <h4 class="title">Linux Dash</h4>
+        <h4 class="title"><?php printf(_("Detalles del Servidor"));?></h4>
             <nav-bar></nav-bar>
         </div>
 
@@ -46,7 +46,6 @@ require_once('header.php');?>
 <!--admin-content-->
 <?php require_once('footer.php');?>
         <!-- Javascript-->
-                  <!-- Placed at the end of the document so the pages load faster -->
         <script src="js/linuxDash.js" type="text/javascript"></script>
         <script src="js/modules.js" type="text/javascript"></script>
         <script src="js/smoothie.min.js" type="text/javascript"></script>

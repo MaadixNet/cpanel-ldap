@@ -176,7 +176,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
                   <div id="hidden">
                   <h4><?php printf(_("Instrucciones"));?></h4>
                   <p><?php printf(_("Envia al usuario un email con los archivos de configuración y las instrucciones para configurar el cliente VPN."));?></p>
-                  <p><?php printf(_("NOTA: Las instrucciones incluyen todos los datos necesarios menos la contraseña. Por razones de seguridad proporciona al usuario la  contraseña por otro canal"));?></p>
+                  <p><?php printf(_("NOTA: Las instrucciones incluyen todos los datos necesarios menos la contraseña. Por razones de seguridad proporciona al usuario la  contraseña por otro canal."));?></p>
 
                   <div> <label>
                     <input type="checkbox" name="sendinstruction" id="sendinstruction" class="checkbox small" type="checkbox"  />

@@ -26,19 +26,7 @@ if($user_home->is_logged_in())
         <!-- Place favicon.ico in the root directory -->
         <link rel="stylesheet" href="css/vendor.css">
         <!-- Theme initialization -->
-        <script>
-            var themeSettings = (localStorage.getItem('themeSettings')) ? JSON.parse(localStorage.getItem('themeSettings')) :
-            {};
-            var themeName = themeSettings.themeName || '';
-            if (themeName)
-            {
-                document.write('<link rel="stylesheet" id="theme-style" href="css/app-' + themeName + '.css">');
-            }
-            else
-            {
-                document.write('<link rel="stylesheet" id="theme-style" href="css/app.css">');
-            }
-        </script>
+        <script src="js/styles.js"></script>
     </head>
         <div class="auth">
             <div class="auth-container">
@@ -218,5 +206,3 @@ function getToken($length=32){
   </body>
 </html>
 
-  </body>
-</html>

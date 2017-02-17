@@ -40,7 +40,6 @@
       }).
       otherwise({
 //        redirectTo: '/loading'
-        templateUrl: 'templates/sections/system-status.html'
       });
 
     }

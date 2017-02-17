@@ -74,7 +74,7 @@ $permissions= (isset($_SESSION["login"]["level"]))?$_SESSION["login"]["level"]:"
                             <li class="notifications new">
                             </li>
                             <li class="profile dropdown">
-                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user icon"></i> 
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user icon"></i> 
                                 <span class="name"><?php echo $_SESSION["login"]["username"] ?></span> </a>
                                 <div class="dropdown-menu profile-dropdown-menu" aria-labelledby="dropdownMenu1">
                                     <a class="dropdown-item" href="profile.php"> <i class="fa fa-user icon"></i> Profile </a>

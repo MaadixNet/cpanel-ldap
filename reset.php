@@ -56,27 +56,61 @@ contraseñas no coincide con que has insertado</span>";
     break;
   default:
 }
-require_once('header.php');
 
 ?>
-<div class="container-fluid" id="login">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title> ModularAdmin - Free Dashboard Theme | HTML Version </title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <!-- Place favicon.ico in the root directory -->
+        <link rel="stylesheet" href="css/vendor.css">
+        <!-- Theme initialization -->
+        <script src="js/styles.js"></script>
+    </head>
+
+    <div class="auth">
+        <div class="auth-container">
+            <div class="card">
+                <header class="auth-header">
+                    <h1 class="auth-title">
+                     <?php printf(_("Restablecer contraseña"));?></h1>
+                </header>
+                <div class="auth-content">
+
+
+
+                <div class="container-fluid" id="login">
 
 <?php 
                 echo $msg;
-    		echo '<form action="proc/reset-ps.php" method="POST" class="form-signin jquery-check">
+    		echo '<form role="form" action="proc/reset-ps.php" method="POST" class="form-signin standard jquery-check">
 		<h2 class="form-signin-heading">Introduce los datos</h2>
 		<hr>
-              <label for="user">Nombre de usuario: </label><input id="user" type="text" name="user" required/><p> ' . $msg2 .'</p>
-                <label for="usercode">Código de verificación: </label><input id="usercode" type="text" name="usercode" required/><p> ' . $msg3 .'</p>
-                <label for="pswd1">Nueva contraseña: </label><input id="pswd1" type="password" name="pswd1" required/>
-                <label for="pswd2">Repetir contraseña: </label><input id="pswd2" type="password" name="pswd2" required/><p> ' . $msg1 .'</p><div id="pswresult"></div>
+                <div class="form-group">
+              <label for="user">Nombre de usuario: </label><input class="form-control" id="user" type="text" name="user" required/><p> ' . $msg2 .'</p>
+                </div>
+
+                <div class="form-group">
+                <label for="usercode">Código de verificación: </label><input class="form-control" id="usercode" type="text" name="usercode" required/><p> ' . $msg3 .'</p>
+                </div>
+
+                <div class="form-group">
+                <label for="pswd1">Nueva contraseña: </label><input class="form-control" id="pswd1" type="password" name="pswd1" required/>
+                <label for="pswd2">Repetir contraseña: </label><input class="form-control"  id="pswd2" type="password" name="pswd2" required/><p> ' . $msg1 .'</p><div id="pswresult"></div>
+                </div>
                 <input type="hidden" name="token" value="'.$urltoken.'" />
                 <input type="submit" name="submit" value="Submit" class="btn btn-large btn-primary" />
 
 
     		</form>';
 ?>
+                </div>
+              </div>
+            </div>
+          </div>
 	</div><!--container-->
-	<?php include 'footer.php';?>
-	</body>
+    </body>
 </html>
