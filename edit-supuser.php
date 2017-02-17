@@ -112,6 +112,7 @@ require_once('sidebar.php');
               </div>
 
               <div class ="clearfix"></div>
+              <p></p>
               <div class="form-group">
               <label class="control-label"  for="pswd1"><?php printf(_("Nueva Contraseña"));?></label>
               <div id="pswcheck"></div>
