@@ -51,9 +51,12 @@ if (isset($_POST['updateuser'])){
 
   if (isset($_POST['vpn'])){
       $info['authorizedservice'][0]='sshd';
-      $info['authorizedservice'][1]='openvpn';
+      $info['authorizedservice'][1]='apache';
+      $info['authorizedservice'][2]='openvpn';
   }else {
-    $info['authorizedservice']='sshd';
+      $info['authorizedservice'][0]='sshd';
+      $info['authorizedservice'][1]='apache';
+
   }
   $edit_user=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
   if($edit_user && isset($_POST["sendinstruction"]) && isset($_POST["vpn"]))$Ldap->send_vpn_instructions($user_email,$username);
@@ -107,6 +110,8 @@ require_once('sidebar.php');
                  echo '</select>';
                 };?>
               </div>
+
+              <div class ="clearfix"></div>
               <div class="form-group">
               <label class="control-label"  for="pswd1"><?php printf(_("Nueva Contraseña"));?></label>
               <div id="pswcheck"></div>
