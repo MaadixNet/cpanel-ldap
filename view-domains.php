@@ -211,6 +211,10 @@ require_once('sidebar.php');
     <div class="row">
 
 	<div class="inner" id="maincol">
+
+        <?php 
+    if($result["count"]>0){
+      ?>
         <table id="domains">
         <thead>
         <tr>
@@ -230,26 +234,9 @@ require_once('sidebar.php');
         <tbody>
 
 <?php
-    if($result["count"]>0){
     for ($i=0; $i<$result["count"]; $i++) {
-        $domain= $result[$i]["vd"][0];
-        $resultmail=$Ldap->search($ldapconn,'vd='. $domain . ','. LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');  
-        /*$haschildren= ($resultmail>0) ? '<i class="arrowleft"></i><i class="arrowdown"></i>':'';
-        echo '<li>';    
-        echo '<h4 class="arrow">' . $haschildren . ' ' .$domain .'</h4>';
-            if($resultmail>0) {
-            echo '<ul class="sub-menu">';
-            for ($c=0; $c<$resultmail["count"]; $c++) {
-            echo '<li>' . $resultmail[$c]["mail"][0] . '</li>';
-            }
-            echo '</ul>';
-        }
-        echo '</li>';
-        }
-    echo '</ul>';
-
-*/
-
+              $domain= $result[$i]["vd"][0];
+                      $resultmail=$Ldap->search($ldapconn,'vd='. $domain . ','. LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
 
         echo "<tr>";
         echo "<td>";
@@ -284,12 +271,16 @@ require_once('sidebar.php');
         echo "</tr>";
 
     }
-  }
+  
 ?>
         </tbody>
     </table>
   </div><!--ineer-->
+<?php } else {
 
+          printf(_("<h4>No hay ningún dominio activado.</h4> <h4>Puedes activar cualquier dominio desde la página <a href='add-domain.php'><button type='button' class='btn btn-pill-right btn-primary'>Añadir dominios</button></a></h4>"));
+
+      }?>
 <!-- Modal -->
 <div class="bd-example">
   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
