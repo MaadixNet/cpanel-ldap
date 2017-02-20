@@ -246,52 +246,55 @@ require_once('sidebar.php');
                 </div>
     		<div class="clear"></div>
     		<div id="change">
-                <div class="card card-block">
+                  <div class="card card-block">
 			<?php if($result["count"] == 0){
 				echo '<h3>Para poder crear cuentas de correos tienes que activar antes el dominio correspondiente en la página <a href="add-domain.php">Añadir Dominios</h3>';
 			} else { ?>
                               
    	 			<form autocomplete="off" action="#" method="POST" class="form-signin standard">
+
                                 <div class="form-group">
-                                <label for="username">Email de usuario: </label>
-                                <p></p>
-                                <div class="row">
-                                  <input class="form-control col-sm-4" id="mailnew" type="text" name="mailnew" required />
-				<?php
-				if($result["count"] == 1){
+                                  <label for="username">Email de usuario: </label>
+                                  <p></p>
+                                  <div class="row">
+                                    <input class="form-control col-sm-4" id="mailnew" type="text" name="mailnew" required />
+                                    <?php
+                                    if($result["count"] == 1){
 					echo '<input type="hidden" name="maildomain" value="' .$result[0]["vd"][0] .'" />';
 					echo '<span class="inline">@' . $result[0]["vd"][0] .'</span>';
-				} else {
-                                    echo '<span class="inline">@<select id="seldomain" name="maildomain" style="display:inline" required>';
-                                    echo '<option value="">Seleccionar dominio</option>';
-                                    for ($c=0; $c<$result["count"]; $c++) {
-                                        $selected=($queryvar==$result[$c]["vd"][0])?"selected":"";
-                                        # If a domain is recorded in Ldap but MX record is
-                                        # not correct , show it but as  disabled
-                                        # and not selected
+                                    } else {
+                                        echo '<span class="inline">@<select id="seldomain" name="maildomain" style="display:inline" required>';
+                                        echo '<option value="">Seleccionar dominio</option>';
+                                        for ($c=0; $c<$result["count"]; $c++) {
+                                          $selected=($queryvar==$result[$c]["vd"][0])?"selected":"";
+                                          # If a domain is recorded in Ldap but MX record is
+                                          # not correct , show it but as  disabled
+                                          # and not selected
 
-                                        $domain_dns_status=check_domain_dns($result[$c]["vd"][0]);
-                                        $domain_MX=$domain_dns_status["result"];
-                                        if ($domain_MX===2){
+                                          $domain_dns_status=check_domain_dns($result[$c]["vd"][0]);
+                                          $domain_MX=$domain_dns_status["result"];
+                                          if ($domain_MX===2){
                                             $selected='';
                                             $disabled='disabled';
-                                        }
+                                          }
                                           echo '<option ' . $selected . ' ' . $disabled . '  value="' . $result[$c]["vd"][0] .'">' . $result[$c]["vd"][0] . '</option>';
-                                    }
-                                    echo '</select></span>';
-                                };?>
-                                </div>
+                                        }
+                                        echo '</select></span>';
+                                    };?>
+                                  </div><!--row-->
+                                </div><!--form-group-->
 
-                                 <div class="form-group">   
-                                    <label for="password"><?php printf(_("Contraseña"));?> </label><input class="form-control" d="password" type="password" name="password" required />
-                                  </div>
 
-                                <div class="form-group">
-                                <label for="givenname"><?php printf(_("Nombre"));?> </label><input class="form-control" id="givenname" type="text" name="givenname" required />
+                               <div class="form-group">   
+                                  <label for="password"><?php printf(_("Contraseña"));?> </label><input class="form-control" d="password" type="password" name="password" required />
                                 </div>
 
                                 <div class="form-group">
-                                <label for="surname"><?php printf(_("Apellidos"));?></label><input id="surname" type="text" name="surname" class="form-control" required />
+                                  <label for="givenname"><?php printf(_("Nombre"));?> </label><input class="form-control" id="givenname" type="text" name="givenname" required />
+                                </div>
+
+                                <div class="form-group">
+                                  <label for="surname"><?php printf(_("Apellidos"));?></label><input id="surname" type="text" name="surname" class="form-control" required />
                                 </div>
                                 <br>
                                 <input type="submit" name="adduser" value="Guardar" class="btn btn-small btn-primary" />
@@ -300,8 +303,8 @@ require_once('sidebar.php');
                         <?php 
 			} //end if permissions > 2
 		} //end if domain not =  0?>
+                  </div><!--card-block-->
                 </div><!--change-->
-                </div>
 
 			<?php
 			if ($permissions == 4 ){

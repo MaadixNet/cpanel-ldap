@@ -13,7 +13,7 @@
         templateUrl: 'templates/app/loading.html',
         controller: function appLoadController ($scope, $location, $rootScope) {
 
-          var loadUrl = localStorage.getItem('currentTab') || 'system-status';
+          var loadUrl = localStorage.getItem('currentTab') || 'basic-info';
 
           var loadLinuxDash = function () {
             $location.path(loadUrl);
@@ -138,7 +138,7 @@
           } else {
             // rootScope event not propogating from here.
             // instead, we manually route to url
-            $location.path('/system-status');
+            $location.path('/basic-info');
           }
 
         });
@@ -200,7 +200,7 @@
     server.checkIfWebsocketsAreSupported();
 
     var currentRoute = $location.path();
-    var currentTab = (currentRoute === '/loading')? 'system-status': currentRoute;
+    var currentTab = (currentRoute === '/loading')? 'basic-info': currentRoute;
     localStorage.setItem('currentTab', currentTab);
 
     $location.path('/loading');
@@ -216,8 +216,8 @@
       templateUrl: 'templates/app/navbar.html',
       link: function(scope) {
         scope.items = [
-          'system-status',
           'basic-info',
+          'system-status',
           'accounts'
         ];
 
@@ -613,14 +613,14 @@
         });
 
         var seriesOptions = [{
-          strokeStyle: 'rgba(255, 0, 0, 1)',
-          lineWidth: 2
+          strokeStyle: 'rgba(251, 73, 77, 1)',
+          lineWidth: 3
         }, {
-          strokeStyle: 'rgba(0, 255, 0, 1)',
-          lineWidth: 2
+          strokeStyle: 'rgba(75, 207, 153, 1)',
+          lineWidth: 3
         }, {
-          strokeStyle: 'rgba(0, 0, 255, 1)',
-          lineWidth: 2
+          strokeStyle: 'rgba(65,150,168, 1)',
+          lineWidth: 3
         }, {
           strokeStyle: 'rgba(255, 255, 0, 1)',
           lineWidth: 1

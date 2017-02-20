@@ -68,10 +68,7 @@ if (isset($_POST['updateuser'])){
    $filteruser="(&(objectClass=person)(objectClass=metaInfo)(gidnumber=27))";
    $result=$Ldap->search($ldapconn,$ldaptree, $filteruser);
  }
-/*echo '<pre>';
-print_r($result);
-echo '</pre>';
- */
+
 $username=$result[0]['uid'][0];
 $usermail = (isset($result[0]['mail'][0]))?$result[0]['mail'][0]:'';
 require_once('sidebar.php');

@@ -170,7 +170,7 @@ white_list = ""';
       } else {
           $errorttpe    = (ldap_errno($ldapconn)==68)?"El dominio " . $domain_new . " ya existe": $errorttpe;
           $message .=  "
-    <div class='alert alert-error'>
+    <div class='alert alert-danger'>
     <button class='close' data-dismiss='alert'>&times;</button>
     <strong>Ha habido un error. " . $errorttpe ." </strong> 
     </div>
@@ -205,13 +205,15 @@ require_once('sidebar.php');
         </div>
 
         <div class="form-group">
-          <label for="webmaster"><?php printf (_("Webmaster (Administrador sito web)"));?> </label><p class="">Por cada dominio que actives en este panel se creará una carpeta en /var/www/html/<em>example.com/</em> en la que puedes subir tu aplicación web, accesible desde un navegador.<p>
+          <label for="webmaster"><?php printf (_("Webmaster (Administrador sito web)"));?> </label>
+
+          <p class=""><?php printf (_("Por cada dominio que actives en este panel se creará una carpeta en /var/www/html/<em>example.com/</em> en la que puedes subir tu aplicación web, accesible desde un navegador.<p>
 <p>
 El Webmaster tendrá permisos para crear, borrar o modificar archivos dentro de la carpeta /var/www/html/example.com/, donde podrá crear la aplicación web. Este usuario tendrá acceso por SFTP o SSH a esta carpeta y a su home, pero no podrá acceder ni ver el resto archivos y carpetas en tu servidor.</p>
 
 <p>Si no asignas ningún usuario como Webmaster, se establecerá por defecto como Webmaster el SuperUsuario del sistema.</p>
 
-<p>Recomendamos encarecidamente que crees un usuario Webmaster, sobretodo si quieres otorgar a alguien el acceso para que trabaje sobre la web, aplicación o contenidos de la carpeta /var/www/html/example.com/, y que nunca compartas el acceso como SuperUsuario, cuyos privilegios son ilimitados en el sistema. </p>
+<p>Recomendamos encarecidamente que crees un usuario Webmaster, sobretodo si quieres otorgar a alguien el acceso para que trabaje sobre la web, aplicación o contenidos de la carpeta /var/www/html/example.com/, y que nunca compartas el acceso como SuperUsuario, cuyos privilegios son ilimitados en el sistema."));?> </p>
            <?php 
             $ldaptree    = LDAP_PEOPLE;
             $filter="(&(objectClass=person)(uid=*)(authorizedService=sshd)(!(gidnumber=27)))";

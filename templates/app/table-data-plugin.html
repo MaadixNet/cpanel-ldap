@@ -17,11 +17,12 @@
                 </tr>
 				<tr>
 					<th ng-repeat="header in tableHeaders track by $index">
-						<a href="" ng-click="setSortColumn(header)">{{ header }}</a>
+						<a href="" ng-click="setSortColumn(header)">{{ header }}
 						<span class="column-sort-caret">
 							{{ (header === sortByColumn && !sortReverse) ? '&#9650;': ''; }}
 							{{ (header === sortByColumn && sortReverse) ? '&#9660;': ''; }}
 						</span>
+                                                </a>
 					</th>
 				</tr>
 			</thead>
