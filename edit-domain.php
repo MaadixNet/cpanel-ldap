@@ -58,7 +58,7 @@ if(isset($_POST["update-domain"]) && (!empty($domain) ))
 
   # Only change password if inputs fields are not empty and matches
   if ((!empty($psw1)) && (!empty($psw2)) && ($psw2==$psw1) ) {
-    $newpass=ldap_password_hash($psw2);
+    $newpass=ldap_password_hash($psw2, 'ssha');
     $modifypswdn='cn=postmaster,vd='.$domain.','.LDAP_BASE;
     $info['userpassword'][0] =ldap_password_hash($psw2,'ssha');
     $psw_changed=$Ldap->modifyRecord($ldapconn, $modifypswdn, $info );

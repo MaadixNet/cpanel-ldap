@@ -175,7 +175,7 @@ class LDAP{
             $login = explode ('@',$login_username);
 
             // Postmaster
-            if ( $login[0] == PHAMM_DOMAIN_ADMIN_NAME )
+            if ( $login[0] == 'postmaster')
             {
                 $proposed["dn"] = 'cn='.$login[0].',vd='.$login[1].','.LDAP_BASE;
                 $proposed["level"] = 4;
