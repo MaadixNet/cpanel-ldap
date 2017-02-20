@@ -39,7 +39,7 @@
                                     <ul>
                                      <li><a href="/<?php echo BASE_PATH;?>/mails.php"><?php printf(_("Cuentas mail"));?></a></li>
                                      <?php if( !empty($serv_installed) &&  array_search('rainloop', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
-                                      <li><a href="https://<?php echo $_SERVER['HTTP_HOST'];?>/rainloop" target="_blank"><?php printf(_("Webmail"));?></a></li>
+                                      <li><a href="/rainloop" target="_blank"><?php printf(_("Webmail"));?></a></li>
                                      <?php } ?>
 
                                     </ul>
@@ -52,15 +52,15 @@
                               <?php if( !empty($serv_installed) && array_search('owncloud', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
 
                                 <li>
-                                  <a target="_blank" href="https://<?php echo $_SERVER['HTTP_HOST'];?>/owncloud"><i class="fa fa-cloud"></i> <?php printf(_("Owncloud"));?></a>
+                                  <a target="_blank" href="/owncloud"><i class="fa fa-cloud"></i> <?php printf(_("Owncloud"));?></a>
                                 </li>
                               <?php }?>
                              <?php if( !empty($serv_installed) && array_search('phpmyadmin', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
                               <li>
-                                <a href="#" data-toggle="dropdown" class="dropdown-toggle">Mysql <i class="fa arrow"></i> </a>
+                                <a href=""> <i class="fa fa-list-alt"></i> Mysql <i class="fa arrow"></i> </a>
                                 <ul>
                                   <li><a href="/<?php echo BASE_PATH;?>/mysql.php"><?php printf(_("Instrucciones"));?></a></li>
-                                  <li><a target="_blank" href="https://<?php echo $_SERVER['HTTP_HOST'];?>/phpmyadmin"><?php printf(_("Phpmyadmin"));?></a></li>
+                                  <li><a target="_blank" href="/phpmyadmin"><?php printf(_("Phpmyadmin"));?></a></li>
                                 </ul>
                               </li>
                               <?php }?>
