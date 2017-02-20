@@ -95,7 +95,7 @@ function get_service_data($service){
   case 'owncloud':
     $image = "images/services/owncloud.png";
     $title = sprintf(_("Servidor de alojamiento y sincronización de archivos"));
-    $link_url = $_SERVER['HTTP_HOST'] . '/owncloud';
+    $link_url = '/owncloud';
     $link_text = sprintf(_("Ir a la Aplicación "));
     $software = sprintf(_("Owncloud"));
     $description = sprintf(_("Trabaja en documentos, presentaciones, hojas de cálculo, bases de datos... siempre a mano y listos para compartir. Edita y comenta documentos colaborativamente. Impórtalos y expórtalos de otras plataformas. Trabaja en ellos en cualquier momento y desde cualquier dispositivo incluso cuando estás sin conexión. Importa automàticamente tus contactos desde Gmail, Outlook, thunderbird, Yahoo u otros formatos de archivos. Organiza tu trabajo en línea decidiendo el nivel de acceso que quieres darle a cada usuario que autorices.

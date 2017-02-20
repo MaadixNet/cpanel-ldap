@@ -71,7 +71,7 @@ require_once('sidebar.php');
                                                   </div>
                                                   <div class="col-md-6">
                                                   <?php if(isset($service_data['link_text'])){ ?>
-                                                   <a href="<?php echo $service_data['link_url'];?>" type="button" class='btn btn-small btn-primary'><?php echo $service_data['link_text'];?></a>
+                                                   <a href="<?php echo $service_data['link_url'];?>"><button type="button" class='btn btn-small btn-primary'><?php echo $service_data['link_text'];?></button></a>
                                                   <?php } ?>
                                                   </div>
                                                 </div>
