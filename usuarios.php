@@ -144,10 +144,13 @@ $firstuid_availabe=system($commuid);*/?>
 
                 <div class="form-group">
                   <label class="control-label"  for="usermail"><?php printf(_("Correo electrónico"));?> *</label>
-                  <p class=""><?php printf(_("Puedes insertar un correo electrónico externo o elegir una entre las cuentas creadas en el servidor"));?></p>
+                  <?php $resultmail = $Ldap->search($ldapconn,LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');                  $mailcount = $resultmail["count"];
+                  if($mailcount>0) {?>
+                    <p class=""><?php printf(_("Puedes insertar un correo electrónico externo o elegir una entre las cuentas creadas en el servidor"));?></p>
+                  <?php } ?>
+
                   <input id="usermail" class="usermail form-control col-sm-4"  type="mail" name="usermail" required />  
-                  <?php $resultmail = $Ldap->search($ldapconn,LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
-                  $mailcount = $resultmail["count"];
+                  <?php
                   if($mailcount>0) {
                         echo '<select id="selmail">';
                         echo '<option value="">Seleccionar cuenta existente</option>';
@@ -159,6 +162,7 @@ $firstuid_availabe=system($commuid);*/?>
                 
                   <div id="emailresult"></div>
                 </div>
+                <br>
                 <hr>
                 <div class="form-group">
                 <h4><?php printf(_("Acceso SFTP"));?></h4>

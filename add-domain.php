@@ -268,6 +268,7 @@ El Webmaster tendrá permisos para crear, borrar o modificar archivos dentro de 
             }?>
             
             <div id="emailresult"></div>
+            <div class="clearfix"></div>
             <hr>
             <div class="form-group">
             <label for="pswd1"><?php printf(_("Contraseña"));?> *</label>
