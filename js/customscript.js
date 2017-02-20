@@ -72,7 +72,7 @@ $(document).ready(function() {
             $("#sidebar-menu ul:has(li.active)").addClass('collapse in');
             $("#sidebar-menu li:has(ul.in)").addClass('active');
           } else {
-            if ( itemurl  == pgurl && itemurl == ''  || pgurl == 'index.php'){
+            if ( itemurl  == pgurl && itemurl == ''  || pgurl == 'index.php' || pgurl=='basic-info' || pgurl=='loading' || pgurl=='accounts' ){
               $("#sidebar-menu li.home").addClass('active');
             }
           }
