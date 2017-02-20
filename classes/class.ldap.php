@@ -181,6 +181,9 @@ class LDAP{
                 $proposed["level"] = 4;
                 $proposed["domain"] = $login[1];
                 $proposed["login_username"] = $login_username;
+                //can set this to active as default as no postmaster v user will exist
+                //Until admin creates one
+                $_SESSION["login"]["status"] = 'active';
             }
 
             // User
@@ -190,6 +193,7 @@ class LDAP{
                 $proposed["level"] = 2;
                 $proposed["domain"] = $login[1];
                 $proposed["login_username"] = $login_username;
+                $_SESSION["login"]["status"] = 'active';
             }
         }
 

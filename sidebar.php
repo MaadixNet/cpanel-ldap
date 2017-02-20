@@ -33,7 +33,7 @@
                                 </ul>
                                 </li>
                                 <?php }?>
-                                <?php if(!empty($serv_installed) && array_search('mail', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+                                <?php if((!empty($serv_installed) && array_search('mail', array_column(array_column($serv_installed, 'ou'),0)) !== false) || $permissions >2 ){?>
                                 <li>
                                 <a href=""> <i class="fa fa-envelope-o"></i> <?php printf (_("Email"));?><i class="fa arrow"></i> </a>
                                     <ul>
