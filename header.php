@@ -60,13 +60,13 @@ $permissions= (isset($_SESSION["login"]["level"]))?$_SESSION["login"]["level"]:"
                     </div>
                     <div class="header-block header-block-buttons">
                     <?php if( !empty($serv_installed) && array_search('owncloud', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
-                    <a href="https://<?php echo $_SERVER['HTTP_HOST'];?>/owncloud" class="btn btn-sm header-btn"> <i class="fa fa-cloud"></i> <span>Owncloud</span> </a>
+                    <a href="https://<?php echo $_SERVER['HTTP_HOST'];?>/owncloud" class="btn btn-sm header-btn" target="_blank"> <i class="fa fa-cloud"></i> <span>Owncloud</span> </a>
                     <?php}
                      if( !empty($serv_installed) && array_search('rainloop', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>                       
-                     <a href="https://<?php echo $_SERVER['HTTP_HOST'];?>/rainloop" class="btn btn-sm header-btn"> <i class="fa fa-envelope"></i> <span>Webmail</span> </a>
+                     <a href="https://<?php echo $_SERVER['HTTP_HOST'];?>/rainloop" class="btn btn-sm header-btn" target="_blank"> <i class="fa fa-envelope"></i> <span>Webmail</span> </a>
                     <?php }
                     if( !empty($serv_installed) && array_search('phpmyadmin', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
-                        <a href="https://<?php echo $_SERVER['HTTP_HOST'];?>/phpmyadmin.php" class="btn btn-sm header-btn"> <i class="fa fa-tasks"></i> <span>PhpMyAdmin</span> </a>
+                        <a href="https://<?php echo $_SERVER['HTTP_HOST'];?>/phpmyadmin" target="_blank" class="btn btn-sm header-btn"> <i class="fa fa-tasks"></i> <span>PhpMyAdmin</span> </a>
                     <?php } ?>
                     </div>
                     <div class="header-block header-block-nav">
