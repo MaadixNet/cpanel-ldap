@@ -44184,7 +44184,8 @@ var Util = function ($) {
       return selector;
     },
     reflow: function reflow(element) {
-      new Function('bs', 'return bs')(element.offsetHeight);
+      // Function('bs', 'return bs')(element.offsetHeight);
+      return element.offsetHeight;
     },
     triggerTransitionEnd: function triggerTransitionEnd(element) {
       $(element).trigger(transition.end);
