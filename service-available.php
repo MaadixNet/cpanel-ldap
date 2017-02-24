@@ -78,8 +78,16 @@ $obj = json_decode($json, true);
                                         <!-- Tab panes -->
                                         <div class="tab-content tabs-bordered">
                                             <div class="tab-pane fade in active" id="home-<?php echo $c;?>">
-                                                <h4></h4>
-                                                <p><div class='img service-img'><img src="<?php echo $service_data['img'];?> " /></div></p>
+                                            <h4><?php echo $service_data['name'];?></h4>
+                                                <div class="row">
+                                                  <div class="col-md-6">
+                                                    <p><div class='img service-img'><img src="<?php echo $service_data['img'];?> " /></div></p>
+                                                  </div>
+                                                  <div class="col-md-6">
+                                                   <a href="" target=""><button type="button" class='btn btn-small btn-primary'><?php printf(_("Instalar"));?></button></a>
+                                                  </div>
+                                                </div>
+
                                             </div>
                                             <div class="tab-pane fade" id="desc-<?php echo $c;?>">
                                                 <h4><?php echo $service_data['name'];?></h4>

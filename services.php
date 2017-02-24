@@ -70,9 +70,7 @@ require_once('sidebar.php');
                                                     <p><div class='img service-img'><img src="<?php echo $service_data['image'];?> " /></div></p>
                                                   </div>
                                                   <div class="col-md-6">
-                                                  <?php if(isset($service_data['link_text'])){ ?>
                                                    <a href="<?php echo $service_data['link_url'];?>" target="<?php echo $service_data['target'];?>"><button type="button" class='btn btn-small btn-primary'><?php echo $service_data['link_text'];?></button></a>
-                                                  <?php } ?>
                                                   </div>
                                                 </div>
                                             </div>

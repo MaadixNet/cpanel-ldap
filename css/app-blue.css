@@ -247,12 +247,12 @@ body {
   margin-bottom: 5px; }
   .btn.btn-primary {
     color: #ffffff;
-    background-color: #52BCD3;
-    border-color: #52BCD3; }
+    background-color: #2D4162;
+    border-color: #2D4162; }
     .btn.btn-primary:hover {
       color: #ffffff;
-      background-color: #31a7c1;
-      border-color: #2fa0b9; }
+      background-color: #687996;
+      border-color: #687996; }
     .btn.btn-primary:focus, .btn.btn-primary.focus {
       color: #ffffff;
       background-color: #31a7c1;
@@ -918,7 +918,7 @@ label,
     color: #c8d0da; }
   .radio:checked + span:before,
   .checkbox:checked + span:before {
-    color: #52BCD3; }
+    color: #687996; }
   .radio:disabled + span:before,
   .checkbox:disabled + span:before {
     opacity: 0.5;
@@ -1449,20 +1449,20 @@ span a {
     display: none; }
 
 .nav.nav-tabs-bordered {
-  border-color: #52BCD3; }
+  border-color: #2D4162; }
   .nav.nav-tabs-bordered + .tab-content {
     border-style: solid;
     border-width: 0 1px 1px 1px;
-    border-color: #52BCD3;
+    border-color: #2D4162;
     padding: 10px 20px 0; }
   .nav.nav-tabs-bordered .nav-item .nav-link {
     text-decoration: none; }
     .nav.nav-tabs-bordered .nav-item .nav-link:hover {
       color: #ffffff;
-      background-color: #52BCD3;
-      border: 1px solid #52BCD3; }
+      background-color: #687996;
+      border: 1px solid #687996; }
     .nav.nav-tabs-bordered .nav-item .nav-link.active {
-      border-color: #52BCD3;
+      border-color: #2D4162;
       border-bottom-color: transparent; }
       .nav.nav-tabs-bordered .nav-item .nav-link.active:hover {
         background-color: #ffffff;
@@ -2343,7 +2343,7 @@ pre {
   border-radius: 0; }
 
 .modal .modal-header {
-  background-color: #52BCD3;
+  background-color: #687996;
   color: #ffffff; }
 
 .modal .modal-footer .btn {
@@ -2406,7 +2406,7 @@ pre {
       padding-right: 10px; }
     .sidebar .nav > li.active > a,
     .sidebar .nav > li.active > a:hover {
-      background-color: #52BCD3 !important;
+      background-color: #687996!important;
       color: #ffffff !important; }
     .sidebar .nav > li.open > a {
       background-color: #333e48; }
