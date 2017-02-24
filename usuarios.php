@@ -230,47 +230,6 @@ $firstuid_availabe=system($commuid);*/?>
                 # and check if is webmaster of some domain
                 $binddn= LDAP_BASE;
 
-                for ($i=0; $i<$resultsudo["count"]; $i++) {
-                $sudousername = $resultsudo[$i]["uid"][0];
-
-                # Get domians of which is webmaster
-                $filteradmin="(&(vd=*)(adminid=".$sudousername."))";
-                $resultsdomain=$Ldap->search($ldapconn,$binddn,$filteradmin);
-
-                $services=$resultsudo[$i]["authorizedservice"];
-                $issftp=(in_array('sshd',$services)&& (!empty ($services)))?'<i class="fa fa-check-circle-o icon checkok"></i>':'<i class="fa fa-exclamation-triangle icon checkko"></i>';
-                $isvpn=(in_array('openvpn',$services)&& (!empty ($services)))?'<i class="fa fa-check-circle-o icon checkok"></i>':'<i class="fa fa-exclamation-triangle icon checkko"></i>';
-                echo "<tr>";
-                echo "<td>";
-                echo $sudousername . sprintf(_(" - SuperUsuario"));
-                echo "</td>";
-                echo "<td class=''>";
-                  
-                if ($resultsdomain["count"] >0 ){
-                        for ($c=0; $c<$resultsdomain["count"]; $c++) {
-                        $domain= $resultsdomain[$c]["vd"][0];
-                        echo "<p>" . $domain . "</p>";
-                        }                      
-                }
-                echo "</td>";
-
-                echo "<td class='center'>";
-                echo $issftp; 
-                echo "</td>";
-
-                echo "<td class='center'>";
-                echo $isvpn;
-                echo "</td>";
-                echo "<td>";
-                echo "<a href='edit-supuser.php?user=". $sudousername ."'><button class='btn btn-small'><i class='fa fa-cogs' aria-hidden='true'></i> Editar</button></a>";
-
-                echo "</td>";
-                echo "<td>";
-                echo "No disponible";
-                echo "</td>";
-                echo "</tr>";
-
-            }
                 #List sftpusers with edit options
                 for ($i=0; $i<$result["count"]; $i++) {
 		$oldpsw=$result[$i]['userpassword'][0];

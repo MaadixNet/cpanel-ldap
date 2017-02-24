@@ -127,7 +127,12 @@ require_once('sidebar.php');
                 $maildrop=(isset($result[0]["maildrop"][0]))?$result[0]["maildrop"][0]:'';
                 echo '<div class="title-block">';
                 echo '<h3>' . sprintf (_("Editar cuenta de correo %s") , $email) .  '</h3>';
-                echo '<span class="sparkline bar" data-type="bar"></span></div>';
+                echo '<span class="sparkline bar" data-type="bar"></span>
+                      <h3 class="subtitle">' 
+                      . sprintf(_("Los titulares de una cuenta de correo electrónico pueden resetear su contraseña 
+                      entrando en el panel de control utilizando como nombre de usuario su dirección email")). 
+                      
+                  '</h3></div>';
                 ?>
              <div class="col-sm-6">
                 <div class="card card card-block">

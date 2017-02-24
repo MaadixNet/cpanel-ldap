@@ -46,7 +46,14 @@
                                 </li>
                                 <?php } ?>
                                 <?php if ($permissions >= 10) {?>
-                                  <li><a href="/<?php echo BASE_PATH;?>/usuarios.php"><i class="fa fa-users"></i> <?php printf(_("Usuarios"));?></a></li>
+                                <li>
+                                  <a href=""><i class="fa fa-users"></i> <?php printf(_("Usuarios"));?> <i class="fa arrow"></i> </a>
+                                  <ul>
+                                    <li><a href="/<?php echo BASE_PATH;?>/usuarios.php"><?php printf(_("Usuarios"));?></a></li>
+                                    <li><a href="/<?php echo BASE_PATH;?>/edit-supuser.php"><?php printf(_("SuperUsuario"));?></a></li>
+                                    <li><a href="/<?php echo BASE_PATH;?>/view-postmasters.php"><?php printf(_("Postmasters"));?></a></li>
+                                  </ul>
+                                </li> 
                                   <li><a href="/<?php echo BASE_PATH;?>/notificaciones.php"><i class="fa fa-mail-forward"></i><?php printf(_("Notificaciones"));?></a></li>
                                 <?php } ?>
                               <?php if( !empty($serv_installed) && array_search('owncloud', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>

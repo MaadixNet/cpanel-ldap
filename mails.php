@@ -251,7 +251,7 @@ require_once('sidebar.php');
 				echo '<h3>Para poder crear cuentas de correos tienes que activar antes el dominio correspondiente en la página <a href="add-domain.php">Añadir Dominios</h3>';
 			} else { ?>
                               
-   	 			<form autocomplete="off" action="#" method="POST" class="form-signin standard">
+   	 			<form autocomplete="off" action="" method="POST" class="form-signin standard">
 
                                 <div class="form-group">
                                   <label for="username">Email de usuario: </label>

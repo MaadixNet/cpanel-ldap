@@ -207,11 +207,10 @@ require_once('sidebar.php');
         <div class="form-group">
           <label for="webmaster"><?php printf (_("Webmaster (Administrador sito web)"));?> </label>
 
-          <p class=""><?php printf (_("Por cada dominio que actives en este panel se creará una carpeta en /var/www/html/<em>example.com/</em> en la que puedes subir tu aplicación web, accesible desde un navegador.<p>
+          <p class=""><?php printf (_("Por cada dominio que actives en este panel se creará una carpeta con su mismo nombre en /var/www/html/ en la que puedes subir tu aplicación web.<p>
 <p>
-El Webmaster tendrá permisos para crear, borrar o modificar archivos dentro de la carpeta /var/www/html/example.com/, donde podrá crear la aplicación web. Este usuario tendrá acceso por SFTP o SSH a esta carpeta y a su home, pero no podrá acceder ni ver el resto archivos y carpetas en tu servidor.</p>
+El Webmaster tendrá permisos para crear, borrar o modificar archivos dentro de la carpeta /var/www/html/<em>example.com</em>/, donde podrá crear la aplicación web. Este usuario solo tendrá acceso a las carpetas de los dominios por los que ha sido nombrado webmaster y a su carpeta personal. En ningún caso podrá acceder ni ver el resto de archivos y carpetas en el servidor.</p>
 
-<p>Si no asignas ningún usuario como Webmaster, se establecerá por defecto como Webmaster el SuperUsuario del sistema.</p>
 
 <p>Recomendamos encarecidamente que crees un usuario Webmaster, sobretodo si quieres otorgar a alguien el acceso para que trabaje sobre la web, aplicación o contenidos de la carpeta /var/www/html/example.com/, y que nunca compartas el acceso como SuperUsuario, cuyos privilegios son ilimitados en el sistema."));?> </p>
            <?php 
@@ -227,14 +226,15 @@ El Webmaster tendrá permisos para crear, borrar o modificar archivos dentro de 
             echo '<div class="form-group">';
             echo '<label for="seluser">' . sprintf (_("Asignar administrador web")) . '</label>';
             echo '<div class="clear"></div>';
-            echo '<select id="seluser" name="seluser" class="form-control">';
+            echo '<select id="seluser" name="seluser" class="form-control" required>';
             //echo '<option value="' . $sudo_username .'">Seleccionar Administrador web</option>';
-            echo '<option value="' . $sudo_username .'">' . $sudo_username .' - SuperUsuario</option>';
+            echo '<option value="" disabled selected="selected">' . sprintf(_("Asignar Webmaster")) .'</option>';
             echo '<option value="newuser">Crear nuevo usuario</option>';
             for ($c=0; $c<$allusers["count"]; $c++) {
               $usernames = $allusers[$c]["uid"][0];
               echo '<option value="' . $allusers[$c]["uid"][0] .'">' . $allusers[$c]["uid"][0] . '</option>';
             }
+            echo '<option value="' . $sudo_username .'">' . $sudo_username .' - SuperUsuario</option>';
             echo '</select>';
             echo '</div>';
             echo '<br>';
