@@ -38,6 +38,7 @@ if ($ldapconn){
 }
 //Add new domain
 if(isset($_POST['adddomain'])){
+    $fqdn=trim(shell_exec('hostname -f'));
     $webmaster=$_POST['seluser'];
     if($webmaster=='newuser'){
       //$webmaster=$_POST['new_username'];
@@ -106,7 +107,7 @@ if(isset($_POST['adddomain'])){
     $entrypm["cn"] = "Postmaster";
     $entrypm["sn"] = "Postmaster";
     $entrypm["mail"] = "postmaster@".$domain_new;
-    $entrypm["userPassword"]  =ldap_password_hash($password,'md5crypt');
+    $entrypm["userPassword"]  =ldap_password_hash($password,'ssha');
     $entrypm["maildrop"] = "postmaster";
     $entrypm["accountActive"]     = "TRUE";
     $entrypm["creationDate"]      = date('Ymd');
@@ -124,6 +125,8 @@ if(isset($_POST['adddomain'])){
     // iCheck Domain syntax
     if (!$syntax){
       $errorttpe="El dominio " . $domain_new . " no es válido";
+    } elseif ($domain_new==$fqdn){
+      $errorttpe="El dominio " . $domain_new . " no se puede añadir, ya que es el nombre de tu servidor y ya está creado";
     } else {
       //if syntax is ok add records     
       $addDomain=$Ldap->addRecord($ldapconn, 'vd='.$domain_new.','.LDAP_BASE, $entry);
