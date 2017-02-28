@@ -257,7 +257,7 @@ require_once('sidebar.php');
                                   <label for="username">Email de usuario: </label>
                                   <p></p>
                                   <div class="row">
-                                    <input class="form-control col-sm-4" id="mailnew" type="text" name="mailnew" required />
+                                    <input class="form-control col-sm-4" id="mailnew" type="text" name="mailnew" required readonly />
                                     <?php
                                     if($result["count"] == 1){
 					echo '<input type="hidden" name="maildomain" value="' .$result[0]["vd"][0] .'" />';
@@ -286,7 +286,8 @@ require_once('sidebar.php');
 
 
                                <div class="form-group">   
-                                  <label for="password"><?php printf(_("Contraseña"));?> </label><input class="form-control" d="password" type="password" name="password" required />
+                                  <label for="password"><?php printf(_("Contraseña"));?> </label><div id="pswcheck"></div>
+                                  <input class="form-control" id="password" type="password" name="password" required readonly />
                                 </div>
 
                                 <div class="form-group">

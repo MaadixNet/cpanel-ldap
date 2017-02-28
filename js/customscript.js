@@ -89,7 +89,7 @@ $(document).ready(function() {
    * is working
    */
 
-    $('#pswd1').removeAttr('readonly');
+    $('#pswd1, #password, #mailnew').removeAttr('readonly');
 
 
   var li=$("h5 a.active").closest("li");
@@ -276,7 +276,7 @@ $('#userModal').on('show.bs.modal', function (event) {
 
      });
 
-    $("#pswd1").blur(function()
+    $("#pswd1, #password").blur(function()
     {
         var pass1 = $(this).val();
         if(!pass1.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z\W]{8,}$/) && pass1.length > 0){
