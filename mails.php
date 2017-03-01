@@ -8,10 +8,16 @@ $current_page=basename(__FILE__);
 $Ldap->check_login_or_redirect($current_page);
 
 $message='';
+$wrong_mx_message = '<div class="card card-block"><p>Los DNS del dominio %s no están configurados para que el correo electrónico sea entregado a este servidor . </br>
+ Puedes igualmente crear la cuneta que empezará a recibir correo en este servidor cuando los DNS estién configrados correctamente. Revisa la configuración actual y consulta cual es la correcta en esta página: <a href="editdns.php?domain=%s">DNS para el dominio %s</a></p></div>';
 require_once('header.php');
 //connect and BInd
+$fqdn=shell_exec('hostname -f');
 $psw=$Ldap->decrypt_psw();
 $ldapconn=$Ldap->connect();
+
+
+
 if ($ldapconn){
 	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,  $psw); 
 	#TODO: Check user level to show and allow differents permissions
@@ -45,21 +51,6 @@ if ($ldapconn){
 	break;
 	endswitch;
  
-//Modifiy Passord
-	if(isset($_POST['chpsw'])){
-		$domain=$_POST['domainid'];
-		$mailaccount = $_POST['mailaccount'];
-		$modifydn='mail=' . $mailaccount . ',vd='.$domain.','.LDAP_BASE;
-		//$info['userpassword'][0]="{MD5}".base64_encode(pack("H*",md5($_POST['changepsw'])));
-		$info['userpassword'][0]=ldap_password_hash($_POST['changepsw'], 'ssha');
-		//if($permissions==10) {
-		#TODO: Allow lower level users to change his own password
-		#User will need to be logged out in order to be able to bind again
-		$mod_result=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
-                $message=$mod_result["message"];
-	}
-
-	//Add mail accounts
 	if (isset($_POST['adduser'])){
 		$mail_new = $_POST['mailnew'];
 		$syntax = check_syntax('account',$mail_new);
@@ -111,6 +102,23 @@ if ($ldapconn){
 		<button class="close" data-dismiss="alert">×</button>
 		<strong>Usario añadido correctamente</strong>
                 </div>';
+
+                /* This is for general mail page
+                * Witout GET. After adding an email account
+                * check MX record and tell user if the email
+                * will work or not on this server
+                * Only check if no dmain var is found in URL
+                * 
+                */
+        
+                if (empty($_GET['domain'])){
+
+                  $domain_dns=check_domain_dns($mail_domain);
+                  $dns_result=$domain_dns["result"];
+                  $message = $domain_dns["message"];
+                  $message .= sprintf(_($wrong_mx_message),$mail_domain,$mail_domain,$mail_domain);
+                }
+                
                 $fqdn=shell_exec('hostname -f');
                 $body='Bienvenido a tu nuevo buzón.' . "\r\n";
                 $body .='Por favor, no contestes a este mensaje.';
@@ -119,7 +127,7 @@ if ($ldapconn){
                 $subject='Bienvenido';
                 $cabeceras  = 'MIME-Version: 1.0' . "\r\n";
                 $cabeceras .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-                $cabeceras .= 'From: no-replay@' . $fqdn . "\r\n"; 
+                $cabeceras .= 'From: no-reply@' . $fqdn . "\r\n"; 
                 mail($to,$subject,$body,$cabeceras); 
 		} else {
 		$errorttpe  = (ldap_errno($ldapconn)==68)?"La cuenta " . $mail_account . " ya existe": $errorttpe;
@@ -153,52 +161,63 @@ if ($ldapconn){
 			}	
 		}
 
-  if ($ldapbind) {
-      $result=$Ldap->search($ldapconn,$binddn, $filter);
-  }
+          if ($ldapbind) {
+              $result=$Ldap->search($ldapconn,$binddn, $filter);
+          }
 }
+
 require_once('sidebar.php');
-?>
-<article class="content forms-page">
-  <section class="section">
-<?php 
+
   # Check if the domain has correct MX Recodrs for this server
   #
   $queryvar=(isset($_GET['domain']))?$_GET['domain'] :'';
 
-  $this_domain='(vd='. $queryvar . ' )';
-  $domain_exist_in_ldap= $Ldap->search($ldapconn,LDAP_BASE, $this_domain);
+  //$this_domain='(vd='. $queryvar . ' )';
+ // $domain_exist_in_ldap= $Ldap->search($ldapconn,LDAP_BASE, $this_domain);
 
-  $domain_dns=(!empty($queryvar))?check_domain_dns($queryvar):'';
-  $dns_result=$domain_dns["result"];
 
-  # Check if rainloop is installed
-  $has_webmail = $Ldap->check_installed_service('rainloop');
+
+  # Check if domain has correct dns.
+  # If not let user add the email account anyway, so 
+  # no mail will be lost in case of domain migration
+  #
+
+        $domain_dns=(!empty($queryvar))?check_domain_dns($queryvar):'';
+        $dns_result=$domain_dns["result"];
+        if ($dns_result >1){
+
+          $message = sprintf(_($wrong_mx_message),$queryvar,$queryvar,$queryvar);
+        }
+
+
 
   #
   # If MX records for this domain are not correct for this server
-  # inform user that it's not possible to create or manage accounts
-  # but is still possible to use webmail interface to read and write emails
+  # inform user 
+  # 
   #
 
-  if ($dns_result===2 && (!empty($queryvar)) && $has_webmail && $domain_exist_in_ldap["count"]>0){
-    printf(_("<pre><p>Los DNS del dominio %s no están configurados para que el correo electrónico sea administrado por este servidor. Esto significa que no puedes crear cuentas de email desde este panel. Revisa su configuración en:<a href=' https://client-area.maadix.net/cpanel-ldap/editdns.php?domain=%s'>Configuración de DNS activa para el dominio %s</a>.
-      </br>
-      Sin embargo, si tienes alguna cuenta de correo electrónico existente para este dominio puedes consultarla desde la aplicación <a href='rainloop.php'>Webmail</a>.</p></pre>
-      "), $queryvar);
-  } else { ?>
+  ?>
+<article class="content forms-page">
+  <section class="section">
+    <div class="row">
+      <div class="col-sm-12">
+        <?php echo $message;?>
+      </div>
+    </div>
+  </section>
+  <section class="section">
     <div class="row">
       <div class="col-sm-12">
 
+       <?php   
+       if($permissions > 2){
+       # This is only for postmaster or admin. Normal user will only be able to see his own email account
+       $queryvar=(isset($_GET['domain']))?$_GET['domain'] :'';
+       $querymess=($queryvar)?'para el dominio ' . $queryvar:'';?>
 
-                 <?php   echo $message;
-                         if($permissions > 2){
-                         # This is only for postmaster or admin. Normal user will only be able to see his own email account
-                         $queryvar=(isset($_GET['domain']))?$_GET['domain'] :'';
-                         $querymess=($queryvar)?'para el dominio <br>' . $queryvar:'';?>
 
-
-		<?php if ($permissions ==10) {//Show domains list on left sidebar only to admin ?> 
+        <?php if ($permissions ==10) {//Show domains list on left sidebar only to admin ?> 
         <div class="col-sm-3">
           <div class="title-block">
             <h3 class="title"> <?php printf(_("Dominios Activados"));?></h3>
@@ -271,13 +290,7 @@ require_once('sidebar.php');
                                           # not correct , show it but as  disabled
                                           # and not selected
 
-                                          $domain_dns_status=check_domain_dns($result[$c]["vd"][0]);
-                                          $domain_MX=$domain_dns_status["result"];
-                                          if ($domain_MX===2){
-                                            $selected='';
-                                            $disabled='disabled';
-                                          }
-                                          echo '<option ' . $selected . ' ' . $disabled . '  value="' . $result[$c]["vd"][0] .'">' . $result[$c]["vd"][0] . '</option>';
+                                          echo '<option ' . $selected . '  value="' . $result[$c]["vd"][0] .'">' . $result[$c]["vd"][0] . '</option>';
                                         }
                                         echo '</select></span>';
                                     };?>
@@ -382,7 +395,7 @@ require_once('sidebar.php');
   </div><!--exampleModal-->
 </div><!--bd-example-->
 
-<?php } ?>
+<?php  ?>
           </div> <!--class="col-sm-12"-->
 	</div><!--row-->
 <?php
