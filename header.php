@@ -41,8 +41,9 @@ $permissions= (isset($_SESSION["login"]["level"]))?$_SESSION["login"]["level"]:"
         <title> Cpanel </title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <link rel="apple-touch-icon" href="favicon.png">
         <!-- Place favicon.ico in the root directory -->
+         <link rel="shortcut icon" href="favicon.ico">
         <link rel="stylesheet" href="css/vendor.css">
         <!-- Theme initialization -->
         <script src="js/styles.js"></script>
