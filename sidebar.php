@@ -158,3 +158,13 @@
                     </footer>
                 </aside>
 <div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div id=loading class="bd-example">
+  <div class="modal modal-transparent" id="loadModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <img id="loading-image" src="images/loading-spinner.gif" alt="Loading..." />
+
+      </div><!--modal-content-->
+    </div><!--modal-dialog-->
+  </div><!--exampleModal-->
+</div><!--bd-example-->

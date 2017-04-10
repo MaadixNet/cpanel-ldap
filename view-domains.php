@@ -245,18 +245,18 @@ require_once('sidebar.php');
         echo "<td>";
         echo "<a href='/". BASE_PATH ."/mails.php?domain=" . $domain ."'>Administrar cuentas de correo</a> ";
         echo "</td>";
-        echo "<td>";
+        $webmaster = trim($result[$i]["adminid"][0]);
+        echo "<td data-domain='" . $domain . "' data-webmaster='" . $webmaster . "' class='webmasterstatus'>";
         //echo $result[$i]["adminid"][0];
         $current_admin=trim(shell_exec("find /var/www/html/$domain -maxdepth 0 -printf '%u\n'"));
-        $webmaster = trim($result[$i]["adminid"][0]);
         $ownersip=($current_admin==$webmaster?$statok:$loading);
-        echo $webmaster . '&nbsp;&nbsp; ' . $ownersip;
+        echo $webmaster . '&nbsp;&nbsp; ' . $ownersip . ' <span id="ownershipstatus"></span>';
         echo "<td class='center'>";
         echo "<a href='editdns.php?domain=" . $domain ."'>Ver</a>";
         echo "</td>";
-        echo "<td class='center'>";
+        echo "<td class='center domainstatus' data-domain='" . $domain . "'>";
         $status=(file_exists('/etc/apache2/ldap-enabled/' . $domain .'.conf'))?$statok:$loading;
-        echo $status;
+        echo $status . '<span id="domainstatus"></span>';
         echo "</td>";
         if($_SESSION["login"]["level"] == '10') {
             echo "<td>";
@@ -305,4 +305,3 @@ require_once('sidebar.php');
 <?php 
   ldap_close($ldapconn);
   require_once('footer.php');?>
-

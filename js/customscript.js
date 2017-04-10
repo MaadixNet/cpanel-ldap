@@ -62,6 +62,12 @@
 
 $(document).ready(function() {
 
+     $(window).load(function() {
+          $('#loading').hide();
+      });
+
+
+
      var pgurl = window.location.href.substr(window.location.href
 .lastIndexOf("/")+1);
       
@@ -89,7 +95,7 @@ $(document).ready(function() {
    * is working
    */
 
-    $('#pswd1, #password, #mailnew').removeAttr('readonly');
+    $('#pswd1, #password, #mailnew, #oldpsw').removeAttr('readonly');
 
 
   var li=$("h5 a.active").closest("li");

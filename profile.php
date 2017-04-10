@@ -67,7 +67,7 @@ require_once('sidebar.php');?>
 
                       <div class="form-group">
                       <label for="oldpsw"><?php printf(_("Contraseña actual"));?></label>
-                      <input class="form-control" id='oldpsw' type='password' name='oldpsw' required /><?php echo $msg1 ;?>
+                      <input class="form-control" id='oldpsw' type='password' name='oldpsw' required readonly><?php echo $msg1 ;?>
                       </div>
 
                       <div class="form-group">
@@ -89,7 +89,7 @@ require_once('sidebar.php');?>
                       <div id="formresult"></div>
                     <hr>
 
-                <input type='submit' class="btn btn-small btn-primary" name='activate' value='Cambiar contraseña' class='btn btn-small btn-primary' />
+                <input type='submit' class="btn btn-small btn-primary" name='activate' value='Guardar cambios' class='btn btn-small btn-primary' />
                 </form>
               </div>
       </div>

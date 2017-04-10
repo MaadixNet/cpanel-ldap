@@ -51,6 +51,7 @@ $permissions= (isset($_SESSION["login"]["level"]))?$_SESSION["login"]["level"]:"
     </head>
 
     <body>
+
         <div class="main-wrapper">
             <div class="app" id="app">
                 <header class="header">
@@ -87,4 +88,3 @@ $permissions= (isset($_SESSION["login"]["level"]))?$_SESSION["login"]["level"]:"
                         </ul>
                     </div>
                 </header>
-
