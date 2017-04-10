@@ -495,7 +495,7 @@ function print_mail_client_settings($email,$domain){
       echo '<h4>' . sprintf (_("Correo entrante")) . '</h4>';
       echo '<ul>';
 
-      echo '<li>' . sprintf (_("Servidor: %s"), $domain) . '</li>';
+      echo '<li>' . sprintf (_("Servidor: %s"), $fqdn) . '</li>';
       echo '<li>' . sprintf (_("Puerto: 993" )) . '</li>';
       echo '<li>' . sprintf (_("Seguridad: SSL/TLS" )) . '</li>';
       echo '<li>' . sprintf (_("Nombre de usuario: %s"),$email) . '</li>';
@@ -519,9 +519,9 @@ function print_mail_client_settings($email,$domain){
       echo '<h4>' . sprintf (_("Correo entrante")) . '</h4>';
       echo '<ul>';
 
-      echo '<li>' . sprintf (_("Servidor: %s"), $domain) . '</li>';
-      echo '<li>' . sprintf (_("Puerto: 110" )) . '</li>';
-      echo '<li>' . sprintf (_("Seguridad: STARTTLS" )) . '</li>';
+      echo '<li>' . sprintf (_("Servidor: %s"), $fqdn) . '</li>';
+      echo '<li>' . sprintf (_("Puerto: 995" )) . '</li>';
+      echo '<li>' . sprintf (_("Seguridad: SSL/TLS" )) . '</li>';
       echo '<li>' . sprintf (_("Nombre de usuario: %s"),$email) . '</li>';
       echo '<li>' . sprintf (_("Contraseña: Normal ")) . '</li>';
       echo '</ul>';
