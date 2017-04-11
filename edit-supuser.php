@@ -46,18 +46,20 @@ if (isset($_POST['updateuser'])){
   ## Check authorizesServices
   #
   # ssh is alway active
-  # just check vpn 
+  # just check vpn && apache
   #
-
-  if (isset($_POST['vpn'])){
-      $info['authorizedservice'][0]='sshd';
-      $info['authorizedservice'][1]='apache';
-      $info['authorizedservice'][2]='openvpn';
-  }else {
-      $info['authorizedservice'][0]='sshd';
-      $info['authorizedservice'][1]='apache';
-
+  $info['authorizedservice'][0]='sshd';
+  $c=1;
+  if (isset($_POST['apache'])){
+      $info['authorizedservice'][$c]='apache';
+      $c++;
   }
+  if (isset($_POST['vpn'])){
+      $info['authorizedservice'][$c]='openvpn';
+      $c++;
+  }
+
+
   $edit_user=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
   if($edit_user && isset($_POST["sendinstruction"]) && isset($_POST["vpn"]))$Ldap->send_vpn_instructions($user_email,$username);
   $message=$edit_user["message"];
@@ -101,7 +103,7 @@ require_once('sidebar.php');
               <div class="form-group">
               <label class="control-label" for="usermail"><?php printf(_("Correo electrónico"));?></label> 
               <div class="clearfix"></div> 
-              <input id="usermail" class="usermail form-control col-sm-4" type="mail" name="usermail" value="<?php echo $usermail;?>" required />  
+              <input id="usermail" class="usermail form-control col-sm-4" type="mail" name="usermail" value="<?php echo $usermail;?>" />  
                 <?php $resultmail = $Ldap->search($ldapconn,LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
                 $mailcount = $resultmail["count"];
                 if($mailcount>0) {
@@ -132,6 +134,7 @@ require_once('sidebar.php');
                 
                 $services=(isset($result[0]['authorizedservice']))?$result[0]['authorizedservice']:array();
                 $vpn=(in_array("openvpn",$services))?'checked="checked"':'';
+                $apache=(in_array("apache",$services))?'checked="checked"':'';
                 ?>
 
                 <div class="clear"></div>
@@ -159,6 +162,17 @@ require_once('sidebar.php');
 
                   </div>
                 <?php } ?>
+
+                <?php if ($Ldap->check_installed_service('phpmyadmin')){?>
+                  <h4><?php printf(_("Acceso aplicación PhpMyAdmin"));?></h4>
+                  <div> <label>
+                    <input class="checkbox" type="checkbox" type="checkbox" name="apache" id="apache" <?php echo $apache;?> />
+                    <span><?php printf(_("Activar acceso aplicación protegida PhpMyAdmin"));?></span>
+                  </label> </div>
+
+                <?php } ?>
+
+
 
                 <div class="clear"></div>
                 <hr>
