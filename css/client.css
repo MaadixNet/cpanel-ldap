@@ -70,6 +70,15 @@ td .alert {border-radius:12px; padding:3px;}
 td.center{text-align:center;}
 i.checkok {color: #086673;background-color: #dff0d8;}
 i.checkko {color : #a30942;background-color: #f2dede;}
+span.isservice{
+  border: 1px solid #3a4651;
+  padding: 3px;
+  margin: 0 2px;
+}
+.hasaccess {color: #2a9615;}
+.noaccess {color: #FF6161;
+opacity: 0.6;} 
+.clear {clear:both;}
 /*.col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {float:left;}
 .col-sm-2 {width: 20%;}
 .col-sm-3 {width: 25%;}
@@ -130,6 +139,14 @@ span.counter {
     padding: 2px 6px;
 }
 #sidebarleft a {text-decoration:none;}
+.sidebar .nav > li > ul > li > a i.arrow::before {
+      content: "\f105" !important;
+    }
+
+.sidebar .nav > li > ul > li.open > a i.arrow {
+          transform: rotate(90deg);
+        }
+.sidebar .nav > li > ul >li a i{ margin-right: 15px;}
 /*FORMS*/
 /*
 input[type=checkbox] {
@@ -314,9 +331,8 @@ background-size: 35px auto;
         table#users td:nth-of-type(1):before { content: "Usuario"; }
         table#users td:nth-of-type(2):before { content: "Webmaster"; }
         table#users td:nth-of-type(3):before { content: "SFTP"; }
-        table#users td:nth-of-type(4):before { content: "VPN"; }
-        table#users td:nth-of-type(5):before { content: "Editar"; }
-        table#users td:nth-of-type(6):before { content: "Eliminar";}
+        table#users td:nth-of-type(4):before { content: "Editar"; }
+        table#users td:nth-of-type(5):before { content: "Eliminar";}
 
         table#domains td:nth-of-type(1):before { content: "Dominio"; }
         table#domains td:nth-of-type(2):before { content: "Cuentas email"; }

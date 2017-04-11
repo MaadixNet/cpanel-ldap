@@ -14,15 +14,45 @@
                                 <a href="/<?php echo BASE_PATH;?>/"> <i class="fa fa-home"></i> <?php printf(_("Detalles"));?></a>
                                 </li>
                                 <li>
-                                <a href=""> <i class="fa fa-th-large"></i><?php printf(_("Aplicaciones"));?><i class="fa arrow"></i> </a>
+                                <a href=""> <i class="fa fa-th-large"></i><?php printf(_("Mis Aplicaciones"));?><i class="fa arrow"></i> </a>
                                     <ul>
                                     <li> <a href="/<?php echo BASE_PATH;?>/services.php">
-                                          <?php printf(_("Instaladas"));?>
+                                          <?php printf(_("Ver todas"));?>
                                                         </a> </li>
-                                    <li> <a href="/<?php echo BASE_PATH;?>/service-available.php">
-                                          <?php printf(_("Disponibles"));?>
-                                                        </a> </li>
+                              <?php if( !empty($serv_installed) && array_search('owncloud', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+
+                                <li>
+                                  <a target="_blank" href="/owncloud"><i class="fa fa-cloud"></i> <?php printf(_("Owncloud"));?></a>
+                                </li>
+                              <?php }?>
+                             <?php if( !empty($serv_installed) && array_search('phpmyadmin', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+                              <li>
+                                <a href=""> <i class="fa fa-list-alt"></i> Mysql <i class="fa arrow"></i> </a>
+                                <ul>
+                                  <li><a href="https://docs.maadix.net/mysql/" target="_blank"><?php printf(_("Instrucciones"));?></a></li>
+                                  <li><a target="_blank" href="/phpmyadmin"><?php printf(_("Phpmyadmin"));?></a></li>
+                                </ul>
+                              </li>
+                              <?php }?>
+                             <?php if( !empty($serv_installed) && array_search('etherpad', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+                              <li>
+                                <a href=""> <i class="fa fa-list-alt"></i> Etherpad <i class="fa arrow"></i> </a>
+                                <ul>
+                                  <li><a href="https://docs.maadix.net/etherpad/" target="_blank"><?php printf(_("Instrucciones"));?></a></li>
+                                  <li><a target="_blank" href="/etherpad/admin/"><?php printf(_("Etherpad admin"));?></a></li>
+                                  <li><a target="_blank" href="/etherpad/"><?php printf(_("Etherpad app"));?></a></li>
+                                </ul>
+                              </li>
+                              <?php }?>
+                              <?php if( !empty($serv_installed) && array_search('rainloop', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+
+                                <li>
+                                  <a target="_blank" href="/rainloop"><i class="fa fa-cloud"></i> <?php printf(_("Webmail"));?></a>
+                                </li>
+                              <?php }?> 
+
                                     </ul>
+                                <li><a href="/<?php echo BASE_PATH;?>/service-available.php"> <i class="fa fa-dashboard"></i> <?php printf(_("Instalar Aplicaiones"));?></a>
                                 </li>
                                 <li>
                                 <a href=""> <i class="fa fa-globe"></i><?php printf (_("Dominios"));?> <i class="fa arrow"></i> </a>
@@ -56,29 +86,13 @@
                                 </li> 
                                   <li><a href="/<?php echo BASE_PATH;?>/notificaciones.php"><i class="fa fa-mail-forward"></i><?php printf(_("Notificaciones"));?></a></li>
                                 <?php } ?>
-                              <?php if( !empty($serv_installed) && array_search('owncloud', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
-
-                                <li>
-                                  <a target="_blank" href="/owncloud"><i class="fa fa-cloud"></i> <?php printf(_("Owncloud"));?></a>
-                                </li>
-                              <?php }?>
-                             <?php if( !empty($serv_installed) && array_search('phpmyadmin', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
-                              <li>
-                                <a href=""> <i class="fa fa-list-alt"></i> Mysql <i class="fa arrow"></i> </a>
-                                <ul>
-                                  <li><a href="/<?php echo BASE_PATH;?>/mysql.php"><?php printf(_("Instrucciones"));?></a></li>
-                                  <li><a target="_blank" href="/phpmyadmin"><?php printf(_("Phpmyadmin"));?></a></li>
-                                </ul>
-                              </li>
-                              <?php }?>
 
                                 <li>
                                     <a href=""> <i class="fa fa-book"></i><?php printf(_("Documentación"));?><i class="fa arrow"></i> </a>
                                     <ul>
+                                      <li><a href="https://docs.maadix.net/" target="_blank"><?php printf(_("Panel de control"));?></a></li>
+
                                       <li><a href="https://owncloud.org/" target="_blank"><?php printf(_("Owncloud"));?></a></li>
-                                      <li><a href="http://docs.maadix.net/dominios/" target="_blank"><?php printf(_("Dominios"));?></a></li>
-                                      <li><a href="http://docs.maadix.net/email" target="_blank"><?php printf(_("Email"));?></a></li>
-                                      <li><a href="http://docs.maadix.net/vpn/" target="_blank"><?php printf(_("VPN"));?></a></li>
 
                                     </ul>
                                 </li>

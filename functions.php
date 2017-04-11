@@ -180,7 +180,7 @@ function get_service_data($service){
     $target = '_blank';
     $link_text = sprintf(_("Ir a la Aplicación "));
     $software = sprintf(_("Etherpad Lite"));
-    $description=sprintf(_("Editor web basado en la colaboración en tiempo real, lo que permite a varios autores editar simultáneamente un documento de texto, y ver todos los participantes en las ediciones en tiempo real, con la capacidad de mostrar el texto de cada autor en diferente color. También hay una ventana de chat en la barra lateral para permitir la comunicación directa.<href='http://etherpad.org/' target=_'blank'>http://etherpad.org/</a>"));
+    $description=sprintf(_("Editor web basado en la colaboración en tiempo real. Permite a varios autores editar simultáneamente un documento de texto, ver todos los participantes en las ediciones en tiempo real, mostrando el texto de cada autor en diferente color. También hay una ventana de chat en la barra lateral para permitir la comunicación directa. La instalación incluye una extensión que permite crear grupos y documentos privados.")); 
     break;
 
   case 'mailman':

@@ -57,9 +57,13 @@ if(isset($_POST['adduser'])){
           $entry['homedirectory']='/home/sftpusers/' . $newuser;
           $entry['authorizedservice'][$c]='sshd';
           $c++;
+        }
+        if (isset($_POST['apache'])){
           $entry['authorizedservice'][$c]='apache';
+          //$entry['homedirectory']='none';
           $c++;
         }
+
         if (isset($_POST['vpn'])){
           $entry['authorizedservice'][$c]='openvpn';
           //$entry['homedirectory']='none';
@@ -162,8 +166,21 @@ $firstuid_availabe=system($commuid);*/?>
                 
                   <div id="emailresult"></div>
                 </div>
-                <br>
+                 <div class="clear"></div>
+                <br><br>
                 <hr>
+              <div class="form-group">
+              <label class="control-label" for="pswd1"><?php printf(_("Contraseña"));?> *</label>
+              <div id="pswcheck"></div>
+              <input id="pswd1" type="password" name="pswd1" class="form-control" required readonly />
+              </div>
+
+              <div class="form-group">
+              <label class="control-label" for="pswd2"><?php printf(_("Confirma contraseña"));?> *</label><input class="form-control" id="pswd2" type="password" name="pswd2" required />
+              <div id="pswresult"></div>
+              </div>
+              <hr>
+
                 <div class="form-group">
                 <h4><?php printf(_("Acceso SFTP"));?></h4>
                   <div> <label>
@@ -171,6 +188,18 @@ $firstuid_availabe=system($commuid);*/?>
                     <span><?php printf(_("Activar acceso SFTP"));?></span>
                     </label> </div>
                 </div>
+                <hr>
+                <?php if ($Ldap->check_installed_service('phpmyadmin')){?>
+                  <div class="form-group">
+                  <h4><?php printf(_("Acceso aplicación Phpmyadmin"));?></h4>
+                  <div> <label>
+
+                    <input name="apache" id="apache" class="checkbox" type="checkbox">
+                    <span><?php printf(_("Activar acceso"));?></span>
+                    </label> </div>
+                  </div>
+
+                <?php } ?>
 
                 <hr>
                 <?php if ($Ldap->check_installed_service('openvpn')){?>
@@ -194,18 +223,8 @@ $firstuid_availabe=system($commuid);*/?>
                   </div>
                 <?php } ?>
 
-               <div class="clear"></div> 
-              <hr>
-              <div class="form-group">
-              <label class="control-label" for="pswd1"><?php printf(_("Contraseña"));?> *</label>
-              <div id="pswcheck"></div>
-              <input id="pswd1" type="password" name="pswd1" class="form-control" required readonly />
-              </div>
 
-              <div class="form-group">
-              <label class="control-label" for="pswd2"><?php printf(_("Confirma contraseña"));?> *</label><input class="form-control" id="pswd2" type="password" name="pswd2" required />
-              <div id="pswresult"></div>
-              </div>
+               <div class="clear"></div> 
               <hr>
 
 		<input type="submit" name="adduser" value="Guardar" class="btn btn-small btn-primary" />
@@ -217,8 +236,7 @@ $firstuid_availabe=system($commuid);*/?>
 		<tr>
                 <th><?php printf (_('Usuario'));?></th>
                 <th><?php printf (_('Webmaster'));?></th>
-                <th><?php printf (_('Acceso sftp'));?></th>
-                <th><?php printf (_('Acceso VPN'));?></th>
+                <th><?php printf (_('Accesos'));?></th>
                 <th><?php printf (_('Editar'));?></th>
                 <th><?php printf (_('Borrar'))?></th>
 		</tr>
@@ -229,7 +247,6 @@ $firstuid_availabe=system($commuid);*/?>
                 #list sudo user without pssword change option
                 # and check if is webmaster of some domain
                 $binddn= LDAP_BASE;
-
                 #List sftpusers with edit options
                 for ($i=0; $i<$result["count"]; $i++) {
 		$oldpsw=$result[$i]['userpassword'][0];
@@ -238,8 +255,10 @@ $firstuid_availabe=system($commuid);*/?>
                 $resultsdomain=$Ldap->search($ldapconn,$binddn,$filter);
 
                 $services=(isset($result[$i]["authorizedservice"]))?$result[$i]["authorizedservice"]:array();
-                $issftp=(in_array('sshd',$services) && (is_array($services)))?'<i class="fa fa-check-circle-o icon checkok"></i>':'<i class="fa fa-exclamation-triangle icon checkko"></i>';
-                $isvpn=(in_array('openvpn',$services)&& (is_array($services)))?'<i class="fa fa-check-circle-o icon checkok"></i>':'<i class="fa fa-exclamation-triangle icon checkko"></i>';
+                $issftp=(in_array('sshd',$services) && (is_array($services)))?'<span class="isservice hasaccess">SFTP</span> ':'<span class="isservice noaccess"><del>SFTP</del></span> ';
+                $isapache=(in_array('apache',$services)&& (is_array($services)))?'<span class="isservice hasaccess">PhpMyAdmin</span> ':'<span class="isservice noaccess"><del>PhpMyAdmin</del></span> ';
+                $isvpn=(in_array('openvpn',$services)&& (is_array($services)))?'<span class="isservice hasaccess">VPN</span> ':'<span class="isservice noaccess"><del>VPN</del></span> ';
+                echo '</pre>';
 		echo "<tr>";
 		echo "<td>";
 		echo $username;
@@ -254,11 +273,9 @@ $firstuid_availabe=system($commuid);*/?>
                 echo "</td>";
 
                 echo "<td class='center'>";
-                echo $issftp;
+                echo $issftp . $isapache .  $isvpn;
                 echo "</td>";
 
-                echo "<td class='center'>";
-                echo $isvpn;
                 echo "</td>";
                 echo "<td>";
                 echo "<a href='edit-user.php?user=". $username ."'><button class='btn btn-small'><i class='fa fa-cogs' aria-hidden='true'></i> ". sprintf(_('Editar')) ."</button></a>";

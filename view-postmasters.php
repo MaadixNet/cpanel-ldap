@@ -84,7 +84,7 @@ require_once('sidebar.php');
         <div class="title-block">
            <h3 class="title"> <?php printf(_("Usuarios postmaster"));?><span class="sparkline bar" data-type="bar"></span> </h3>
           <hr>
-           <h3 class="subtitle"> <?php printf(_("<p>Los usuarios postmaster pueden entrar en el panel de control utilizando su nombre de usuario y contraseña para administrar las cuentas de correo asociadas a su dominio.<br></p>
+           <h3 class="subtitle"> <?php printf(_("<p>Los usuarios postmaster pueden entrar en el panel de control utilizando su nombre de usuario y contraseña para administrar las cuentas de correo asociadas a su dominio. Cada dominio creado tiene asoicado un usuario postmaster.<br></p>
 <p>Tienen un único permiso:</p>
 <ul>
 <li>Cear, borrar y editar cualquier cuenta email mientras pertenzca a su propio dominio</li>
@@ -141,7 +141,7 @@ require_once('sidebar.php');
   </div><!--ineer-->
 <?php } else {
 
-          printf(_("<h4>No hay ningún dominio activado.</h4> <h4>Puedes activar cualquier dominio desde la página <a href='add-domain.php'><button type='button' class='btn btn-pill-right btn-primary'>Añadir dominios</button></a></h4>"));
+          printf(_("<h4>No hay ningún usuario postamaster todavía. Los usuarios postamaster se generan al activar un dominio.</h4> <h4>Puedes activar los dominios desde la página <a href='add-domain.php'><button type='button' class='btn btn-pill-right btn-primary'>Añadir dominios</button></a></h4>"));
 
       }?>
 </div><!--admin-content-->

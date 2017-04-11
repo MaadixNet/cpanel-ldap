@@ -79,13 +79,19 @@ require_once('sidebar.php');
   <h1 class=""> <?php printf(_("Editar Usuario %s - SuperUsuario"), $username);?></h1>
   </div>
     <div class="subtitle-block">
-  <h3 class="subtitle"> <?php printf(_("Este es el usuario por defecto del sistema y tiene total acceso al servidor. No lo puedes borrar ni puedes administrar su acceso SFTP, que siempre está garantizado."));?></h3>
+  <h3 class=""> <?php printf(_("Este es el usuario root del sistema y tiene total acceso al servidor con ilimitados poderes. No lo puedes borrar ni puedes eliminar su acceso SFTP/SSH, que siempre está garantizado."));?></h3>
+  <h5 class=""> <?php printf(_("Para saber más visita esta página <a href='https://docs.maadix.net/users/#superusuario' target='_blank'>DOCS : Superusuario</a>"));?></h5>
     </div>
   <section class="section">
   <div id="admin-content" cass="row">
   <hr>
           <div class="card card-block">
 		<form role="form" autocomplete="off" action="" method="POST" class="form-signin standard jquery-check">
+                <div class="form-group">
+                <label class="control-label" for="loginname">Nombre de usuario no editable (Para autentificación SFTP/SSH)</label>
+                <pre><?php echo $username;?></pre>
+                </div>
+                
                 <div class="form-group">
                 <label class="control-label" for="commonname"><?php echo  sprintf(_("Nombre"));?></label><input id="commonname" name="commonname" type="text" maxlength="64"  class="form-control" value="<?php echo $result[0]['cn'][0];?>" />                  
                 </div>

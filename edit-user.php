@@ -59,8 +59,6 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
       $info['homedirectory']='/home/sftpusers/' . $selecteduser;
       $info['authorizedservice'][$c]='sshd';
       $c++;
-      $info['authorizedservice'][$c]='apache';
-      $c++;
       if ($users_in["count"] == 0){
         //This user was not in the web gorup so Add  user to  web group as he has sftp 
             $group['memberuid'] = $selecteduser;
@@ -80,12 +78,18 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
       }
     
   }
+  if (isset($_POST['apache'])){
+      $info['authorizedservice'][$c]='apache';
+        $c++;
+
+  }
+
   if (isset($_POST['vpn'])){
       $info['authorizedservice'][$c]='openvpn';
       $c++;
 
   }
-  if(!(isset($_POST['sshd'])) && !(isset($_POST['vpn']))) {
+  if(!(isset($_POST['sshd'])) && !(isset($_POST['vpn'])) && !(isset($_POST['apache']))) {
     $info['authorizedservice']='none';
   }
 
@@ -131,7 +135,8 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
                  echo '</select>';
                 };?>
               </div>
-
+                <br>
+               <div class="clear"></div>
               <div class="form-group">
                 <label for="pswd1"><?php printf(_("Nueva Contraseña"));?></label>
                 <div id="pswcheck"></div>
@@ -151,6 +156,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
                 $services=(isset($result[0]['authorizedservice']))?$result[0]['authorizedservice']:array();
                 $sshd=(in_array("sshd",$services))?'checked="checked"':'';
                 $vpn=(in_array("openvpn",$services))?'checked="checked"':'';
+                $apache=(in_array("apache",$services))?'checked="checked"':'';
                 ?>
 
                 <div class="clear"></div>
@@ -165,11 +171,22 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
                   echo '<p>'. sprintf(_("Directorio Personal")) . '</p>';
                   echo '<pre>' . $result[0]['homedirectory'][0] . '</pre>';
                 }?>
+                <hr>
+                <?php if ($Ldap->check_installed_service('phpmyadmin')){?>
+                  <h4><?php printf(_("Acceso Aplicación PhpMyAdmin"));?></h4>
+                  <div> <label>
+                    <input type="checkbox" name="apache" id="iapache" class="checkbox" type="checkbox" <?php echo $apache;?> />
+                     <span><?php printf(_("Activar acceso carpeta protegida PhpMyAdmin"));?></span>
+                   </label> </div>
+
+                <?php } ?>
+
+
 
                 <?php if ($Ldap->check_installed_service('openvpn')){?>
                   <h4><?php printf(_("Cuenta VPN"));?></h4>
                   <div> <label>
-                    <input type="checkbox" name="vpn" id="vpn" class="checkbox" type="checkbox" <?php echo $vpn;?> />
+                    <input type="checkbox" name="vpn" id="vpn" class="checkbox togglehidden" type="checkbox" <?php echo $vpn;?> />
                      <span><?php printf(_("Activar cuenta VPN"));?></span>
                   </label> </div>
 
