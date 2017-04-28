@@ -108,6 +108,16 @@ function print_form(){
     		</form>';
 }
 
+function updating(){
+    		echo '<div class="updating">
+  		        <h2 class="form-signin-heading">' . sprintf(_("Actualizando sistema..")) . '</h2>
+		        <hr>
+                        <div class="form-group">
+        	          <span>' . sprintf(_("Esta operación tardará unos minutos, en cuanto el sistema esté actualizado aparecerá el formulario para hacer login")) . '</span>
+                        </div>
+    		      </div>';
+}
+
 ?>
 <!doctype html>
 <html class="no-js" lang="en">
@@ -137,6 +147,7 @@ function print_form(){
 
 echo $message;
 print_form();
+updating();
 ?>
 
 
@@ -147,9 +158,8 @@ print_form();
       <script src="js/vendor.js"></script>
       <script src="js/app.js"></script>
       <script src="js/customscript.js"></script>
+      <script src="js/status.js"></script>
+
     </body>
 
-</html>
-
-	</body>
 </html>

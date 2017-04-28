@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 session_start();
 require_once 'classes/class.ldap.php';
@@ -18,51 +18,87 @@ if ($permissions==2){
     $Ldap->redirect('404.php');
 }
 
-//Gett all installed services
-if ($ldapbind) { 
-  $serv_installed= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled))');
-}
-// var_dump($serv_enabled);
-    
+// Get current release info
+$release_info = getreleaseinfo($Ldap,$ldapconn,$ldapbind, release);
 
-// Get current language and swith url
-/*if ($_SESSION["language"]=="en_GB"){ 
-  $url = 'https://maadix.net/en/services-available.php';
-} else {
-  $url = 'https://maadix.net/services-available.php';  
+// Get available groups in the release
+$obj = $release_info['groups'];
+
+/****************** Perform install after submitting form **********/
+
+if(isset($_POST['install']) && isset($_POST['release'])){
+
+  $release = $_POST['release'];
+  $groups = $_POST['groups'];
+
+  //Modify new groups to ldap with status 'install'
+  foreach ($groups as $group){
+    if ($Ldap->search($ldapconn, 'ou='.$group.',ou=groups,dc=example,dc=tld', '(objectclass=*)')){
+      //Modify status of existing group
+      $info = array();
+      $modifydn='ou='.$group.',ou=groups,dc=example,dc=tld';
+      $info['status']= 'install';
+      $updategroup=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
+    }else{
+      //Add new group to ldap
+      $entry = array();
+      $entry["objectclass"][0] = "organizationalUnit";
+      $entry["objectclass"][1] = "metaInfo";
+      $entry["ou"] = $group;
+      $entry["status"] = "install";
+      $entry["type"] = "available";
+      $entrydn='ou=' . $group .',ou=groups,dc=example,dc=tld';
+      $addGroup=$Ldap->addRecord($ldapconn,$entrydn,$entry);
+    }
+  }
+
+  //Update ou=cpanel object with lock status
+  $modifydn='ou=cpanel,dc=example,dc=tld';
+  $info = array();
+  $info['status']= 'locked';
+  $updaterelease=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
+
+  //Clear this sessions
+  session_destroy();
+
+  //Redirect to home
+  header('Location: /cpanel');
+
 }
- */
-$url = "https://maadix.net/service.json";
-//echo file_get_contents($url);
+
+/****************** End perform update after submitting form *******/
+
+//sidebar
 require_once('sidebar.php');
-$json = file_get_contents($url);
-$obj = json_decode($json, true);
-?>
 
-
-            <?php
-            //echo "<h2>" . sprintf(_("Servicios disponibles")) . "</h2>";
-            //echo $obj->Apps->Mysql->title;
-            echo '<pre>';
-            //print_r($obj);
-            echo '</pre>';
-            echo $obj[0]["name"];
-?>
-
-<article class="content cards-page">
+if (empty($release_info)) { ?>
+    <article class="content cards-page">
             <div class="title-block">
-                <h3 class="title"> <?php printf(_("Aplicaciones Disponibles"));?> </h3>
-                <p class="title-description"> <?php printf(_("La instalación automática de las aplicaciones no está todavía disponible. Si quieres añadir una o más de estas aplicaciones ponte en contacto con el team de Maadix en: contact@maadix.net"));?> </p>
+                <h3 class="title"> <?php printf(_("Se ha producido un error inesperado"));?> </h3>
+                <br />
+                <p class="title-description"> <?php printf(_("Inténtelo de nuevo pasados unos minutos."));?> </p>
+                <p class="title-description"> <?php printf(_("Disculpa las molestias"));?> </p>
+            </div>
+    </article>
+
+<?php }else{ ?>
+
+  <article class="content cards-page">
+
+            <div class="title-block">
+                <h4 class="title"> <?php printf(_("Aplicaciones Disponibles para Instalar"));?> </h4>
+                <p class="title-description"> <?php printf(_("Marque las aplicaciones que desea instalar."));?> </p>
             </div>
                  <section class="section">
                         <div class="row ">
-                       <?php $c = 0;?> 
+                       <?php $c = 0;?>
                        <?php foreach ($obj as $service_data ) {
                           if ( $c % 3 == 0 ){; ?>
                            <div class="clearfix visible-xs"></div>
-                          <?php }
+                          <?php
+                                            }
                           ?>
-                            <?php if( !empty($serv_installed) && array_search($service_data['id'], array_column(array_column($serv_installed, 'ou'),0)) == false){?>
+                            <?php if( !empty($serv_installed) && array_search($service_data['id'], array_column(array_column($serv_installed, 'ou'),0)) === false){ ?>
                             <div class="col-xl-4">
                                 <div class="card ">
                                     <div class="card-block">
@@ -81,10 +117,18 @@ $obj = json_decode($json, true);
                                             <h4><?php echo $service_data['name'];?></h4>
                                                 <div class="row">
                                                   <div class="col-md-6">
-                                                    <p><div class='img service-img'><img src="<?php echo $service_data['img'];?> " /></div></p>
+                                                    <p><div class='img service-img'><img src="images/services/<?php echo $service_data['img'];?> " /></div></p>
                                                   </div>
                                                   <div class="col-md-6">
-                                                   <a href="" target=""><button type="button" class='btn btn-small btn-primary'><?php printf(_("Instalar"));?></button></a>
+                                                     <label><?php printf(_("Instalar"));?></label>
+                                                     <input type="checkbox" name="groups" value="<?php echo $service_data['id']; ?>" />
+                                                     <?php
+                                                       $ii=0;
+                                                       foreach ($service_data['dependencies'] as $dependency){ ?>
+                                                         <input class="dependency" type="hidden" name="dependencies[<?php echo $service_data['id']; ?>][<?php echo $ii; ?>]" value="<?php echo $service_data['dependencies'][$ii]; ?>" />
+                                                     <?php
+                                                         $ii=$ii+1;
+                                                       } ?>
                                                   </div>
                                                 </div>
 
@@ -106,11 +150,35 @@ $obj = json_decode($json, true);
                         </div>
                     </section>
 
+            <div class="title-block">
+               <?php
+                 echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#installModal" data-release ="' . $release_info['release'] . '">' . sprintf (_('Instalar')) . '</button>';
+               ?>
+            </div>
+
 </article>
 
+<div class="bd-example">
+  <div class="modal fade" id="installModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+           <h4 class="modal-title" id="userModalLabel"></h4>
+        </div>
+        <div class="modal-body" id="modal-body">
+        </div>
+      </div><!--modal-content-->
+    </div><!--modal-dialog-->
+  </div><!--exampleModal-->
+</div><!--bd-example-->
+
+<?php } //end if empty $release_info ?>
 
 <?php
-  ldap_close($ldapconn);   
+  ldap_close($ldapconn);
   require_once('footer.php');?>
 
 

@@ -268,6 +268,89 @@ $('#userModal').on('show.bs.modal', function (event) {
                 });
 })
 
+$('#updateModal').on('show.bs.modal', function (event) {
+  //groups
+  var groups = [];
+  $("input:checkbox[name=groups]:checked").each(function(){
+    groups.push($(this).val());
+  });
+
+  //dependencies
+  var inputs = $('.dependency').get();
+  var dependencies  = { };
+  for (i=0; i<inputs.length; i++){
+    m = inputs[i].name.match(/\[(.*?)\]\[(\d+)\]/);
+    if(!dependencies[m[1]]){
+       dependencies[m[1]] = { };
+    }
+    dependencies[m[1]][m[2]]= inputs[i].value;
+  }
+
+  //release
+  var button = $(event.relatedTarget); // Button that triggered the modal
+  var release = button.data('release');
+
+  //modal
+  var modal = $(this);
+  if (release=='pending'){
+    modal.find('.modal-title').text( "Aplicar Cambios" );
+  } else {
+    modal.find('.modal-title').text( release );
+  }
+  var body=modal.find('.modal-body');
+            $.ajax({
+
+                type : 'POST',
+                url  : 'proc/confirm-update.php',
+                data : {release: release, groups: groups, dependencies: dependencies},
+                success : function(data)
+                          {
+                            body.html(data);
+                          }
+                });
+
+})
+
+$('#installModal').on('show.bs.modal', function (event) {
+  //groups
+  var groups = [];
+  $("input:checkbox[name=groups]:checked").each(function(){
+    groups.push($(this).val());
+  });
+
+  //dependencies
+  var inputs = $('.dependency').get();
+  var dependencies  = { };
+  for (i=0; i<inputs.length; i++){
+    m = inputs[i].name.match(/\[(.*?)\]\[(\d+)\]/);
+    if(!dependencies[m[1]]){
+       dependencies[m[1]] = { };
+    }
+    dependencies[m[1]][m[2]]= inputs[i].value;
+  }
+
+  //release
+  var button = $(event.relatedTarget); // Button that triggered the modal
+  var release = button.data('release');
+
+  //modal
+  var modal = $(this);
+  modal.find('.modal-title').text( 'Instalar Aplicaciones' );
+  var body=modal.find('.modal-body');
+            $.ajax({
+
+                type : 'POST',
+                url  : 'proc/confirm-install.php',
+                data : {release: release, groups: groups, dependencies: dependencies},
+                success : function(data)
+                          {
+                            body.html(data);
+                          }
+                });
+
+})
+
+
 /* Check password strenght*/
     $("#pswd2").blur(function()
     {
