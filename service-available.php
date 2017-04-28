@@ -24,6 +24,7 @@ $release_info = getreleaseinfo($Ldap,$ldapconn,$ldapbind, release);
 // Get available groups in the release
 $obj = $release_info['groups'];
 
+
 /****************** Perform install after submitting form **********/
 
 if(isset($_POST['install']) && isset($_POST['release'])){
@@ -68,6 +69,11 @@ if(isset($_POST['install']) && isset($_POST['release'])){
 
 /****************** End perform update after submitting form *******/
 
+// Check if there is any group to install
+foreach ($obj as $service_data){
+ if (array_search($service_data['id'], array_column(array_column($serv_installed, 'ou'),0)) === false) $available=1;
+}
+
 //sidebar
 require_once('sidebar.php');
 
@@ -84,6 +90,13 @@ if (empty($release_info)) { ?>
 <?php }else{ ?>
 
   <article class="content cards-page">
+          <?php if ($available != 1){ ?>
+
+            <div class="title-block">
+                <h4 class="title"> <?php printf(_("No hay aplicaciones para instalar"));?> </h4>
+            </div>
+
+          <?php } else { ?>
 
             <div class="title-block">
                 <h4 class="title"> <?php printf(_("Aplicaciones Disponibles para Instalar"));?> </h4>
@@ -155,6 +168,8 @@ if (empty($release_info)) { ?>
                  echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#installModal" data-release ="' . $release_info['release'] . '">' . sprintf (_('Instalar')) . '</button>';
                ?>
             </div>
+
+          <?php } ?>
 
 </article>
 
