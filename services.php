@@ -29,14 +29,38 @@ if ($ldapbind) {
   $serv_enabled= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled))');
 }
 
-/*echo '<pre>';
-var_dump($serv_enabled);
+// Get current release info
+$release_info = getreleaseinfo($Ldap,$ldapconn,$ldapbind, release);
+
+// Get available groups in the release
+$obj = $release_info['groups'];
+
+// Build groups info for loop
+$group_info = [];
+foreach ($obj as $gr){
+  $group_info[$gr[id]][id]=$gr[id];
+  $group_info[$gr[id]][description]=$gr[description];
+  $group_info[$gr[id]][name]=$gr[name];
+  $group_info[$gr[id]][img]=$gr[img];
+  $group_info[$gr[id]][title]=$gr[title];
+  $group_info[$gr[id]][link_url]=$gr[link_url];
+  $group_info[$gr[id]][target]=$gr[target];
+  $group_info[$gr[id]][link_text]=$gr[link_text];
+}
+
+/*
+echo '<pre>';
+print_r ($group_info);
 echo '</pre>';
- */
+*/
+
+// Sidebar
 require_once('sidebar.php');
 
-?>
-<article class="content cards-page">
+// If API is available
+if (isset ($obj)){
+  ?>
+  <article class="content cards-page">
             <div class="title-block">
                 <h3 class="title"> <?php printf(_("Aplicaciones Instaladas"));?> </h3>
             </div>
@@ -44,7 +68,6 @@ require_once('sidebar.php');
                         <div class="row ">
                        <?php for ($c=0; $c<$serv_enabled["count"]; $c++) {
                           $service=$serv_enabled[$c]["ou"][0];
-                          $service_data=get_service_data($service);
                           if ( $c % 3 == 0 ){; ?>
                            <div class="clearfix visible-xs"></div>
                           <?php }
@@ -54,7 +77,7 @@ require_once('sidebar.php');
                                     <div class="card-block">
                                         <!-- Nav tabs -->
                                         <div class="card-title-block">
-                                            <h3 class="title"><?php echo  $service_data['title'];?></h3>
+                                            <h3 class="title"><?php echo  $group_info[$service][title];?></h3>
                                         </div>
                                         <ul class="nav nav-tabs nav-tabs-bordered">
                                             <li class="nav-item"> <a href="#home-<?php echo $c;?>" class="nav-link active" data-target="#home-<?php echo $c;?>" data-toggle="tab" aria-controls="home-<?php echo $c;?>" role="tab">App</a> </li>
@@ -67,16 +90,18 @@ require_once('sidebar.php');
                                                 <h4></h4>
                                                 <div class="row">
                                                   <div class="col-md-6">
-                                                    <p><div class='img service-img'><img src="<?php echo $service_data['image'];?> " /></div></p>
+                                                    <p><div class='img service-img'><img src="/cpanel/images/services/<?php echo $group_info[$service]['img'];?> " /></div></p>
                                                   </div>
                                                   <div class="col-md-6">
-                                                   <a href="<?php echo $service_data['link_url'];?>" target="<?php echo $service_data['target'];?>"><button type="button" class='btn btn-small btn-primary'><?php echo $service_data['link_text'];?></button></a>
+                                                   <?php if (isset($group_info[$service]['link_url'])){ ?>
+                                                   <a href="<?php echo $group_info[$service]['link_url'];?>" target="<?php echo $group_info[$service]['target'];?>"><button type="button" class='btn btn-small btn-primary'><?php echo $group_info[$service]['link_text'];?></button></a>
+                                                   <?php } ?>
                                                   </div>
                                                 </div>
                                             </div>
                                             <div class="tab-pane fade" id="desc-<?php echo $c;?>">
-                                                <h4><?php echo $service_data['software'];?></h4>
-                                                <p><?php echo $service_data['description'];?></p>
+                                                <h4><?php echo $group_info[$service]['name'];?></h4>
+                                                <p><?php echo $group_info[$service]['description'];?></p>
                                             </div>
                                         </div>
                                     </div>
@@ -92,9 +117,19 @@ require_once('sidebar.php');
 
 
 
-</article>
-<?php
-  ldap_close($ldapconn);   
+  </article>
+  <?php } else { ?>
+    <article class="content cards-page">
+            <div class="title-block">
+                <h3 class="title"> <?php printf(_("Se ha producido un error inesperado"));?> </h3>
+                <br />
+                <p class="title-description"> <?php printf(_("Inténtelo de nuevo pasados unos minutos."));?> </p>
+                <p class="title-description"> <?php printf(_("Disculpa las molestias"));?> </p>
+            </div>
+    </article>
+  <?php
+  }
+  ldap_close($ldapconn);
   require_once('footer.php');?>
 
 

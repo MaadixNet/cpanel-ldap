@@ -1,4 +1,22 @@
 <?php require_once 'site-config.php';
+//If cpanel is locked close session
+$ds=ldap_connect("localhost");
+if ($ds) {
+   $r=ldap_bind($ds); // anonymous bind
+   $sr=ldap_search($ds, "ou=cpanel,dc=example,dc=tld", "ou=cpanel");
+   $info = ldap_get_entries($ds, $sr);
+   ldap_close($ds);
+   if ($info[0]['status'][0]=='testlocked') {
+     session_destroy();
+     header('Location: /cpanel');
+   }
+}else {
+  session_destroy();
+  header('Location: /cpanel');
+}
+
+
+
 require_once 'classes/class.locale.php';
 require_once 'classes/class.ldap.php';
 
@@ -31,7 +49,6 @@ if($Ldap->is_logged_in()){
 $permissions= (isset($_SESSION["login"]["level"]))?$_SESSION["login"]["level"]:"";
 //:w!$serv_installed = $Ldap->check_installed_service();
 ?>
-   
 <!doctype html>
 <html class="no-js" lang="en"  ng-app="linuxDash">
 

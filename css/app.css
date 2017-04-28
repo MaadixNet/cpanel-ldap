@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,800,700,600);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,800,700,600);
 /*************************************************************
 *						App Variables
 **************************************************************/
@@ -1706,6 +1706,7 @@ span a {
 
 pre {
   padding: 0;
+  padding-top: 70px;
   border: none;
   background: none; }
 
@@ -2859,3 +2860,8 @@ pre {
   @media (max-width: 767px) {
     .header .header-block-nav .profile-dropdown-menu {
       margin-top: 8px; } }
+
+/* check-updates */
+.update-groups{
+  text-transform: capitalize;
+}
