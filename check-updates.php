@@ -18,15 +18,15 @@ if ($permissions==2){
     $Ldap->redirect('404.php');
 }
 
-//sidebar
-require_once('sidebar.php');
-
 // Check puppet status
 $status = getpuppetstatus($Ldap,$ldapconn,$ldapbind);
 
 switch ($status) :
   case "error" :
+    //sidebar
+    require_once('sidebar.php');
     ?>
+
     <article class="content cards-page">
             <div class="title-block">
                 <h3 class="title"> <?php printf(_("La tarea de Mantenimiento o Actualización ha producido un error."));?> </h3>
@@ -62,7 +62,12 @@ switch ($status) :
     }
 
     /****************** End perform update after submitting form *******/
+
+    //sidebar
+    require_once('sidebar.php');
+
     ?>
+
       <article class="content cards-page">
             <div class="title-block">
                 <h3 class="title"> <?php printf(_("Una tarea de Mantenimiento o Actualización está pendiente."));?> </h3>
@@ -127,6 +132,9 @@ switch ($status) :
 
     /****************** End perform update after submitting form *******/
 
+
+    //sidebar
+    require_once('sidebar.php');
 
     if (empty($updates)) { ?>
       <article class="content cards-page">
