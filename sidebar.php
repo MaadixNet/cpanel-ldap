@@ -52,7 +52,9 @@
                               <?php }?> 
 
                                     </ul>
-                                <li><a href="/<?php echo BASE_PATH;?>/service-available.php"> <i class="fa fa-dashboard"></i> <?php printf(_("Instalar Aplicaiones"));?></a>
+                                <li><a href="/<?php echo BASE_PATH;?>/service-available.php"> <i class="fa fa-dashboard"></i> <?php printf(_("Instalar Aplicaciones"));?></a>
+                                </li>
+                                <li><a href="/<?php echo BASE_PATH;?>/check-updates.php"> <i class="fa fa-refresh"></i> <?php printf(_("Actualizaciones"));?></a>
                                 </li>
                                 <li>
                                 <a href=""> <i class="fa fa-globe"></i><?php printf (_("Dominios"));?> <i class="fa arrow"></i> </a>
