@@ -18,6 +18,25 @@ if ($permissions==2){
     $Ldap->redirect('404.php');
 }
 
+// Check puppet status
+$status = getpuppetstatus($Ldap,$ldapconn,$ldapbind);
+if ($status == 'error' || $status == 'pending'){
+  //sidebar
+  require_once('sidebar.php');
+  ?>
+    <article class="content cards-page">
+            <div class="title-block">
+                <h3 class="title"> <?php printf(_("Hay una tarea de mantenimiento pendiente"));?> </h3>
+                <br />
+                <p class="title-description"> <?php printf(_("En estos momentos no se pueden instalar nuevas aplicaciones."));?> </p>
+            </div>
+    </article>
+  <?php
+  ldap_close($ldapconn);
+  require_once('footer.php');
+  exit;
+}
+
 // Get current release info
 $release_info = getreleaseinfo($Ldap,$ldapconn,$ldapbind, release);
 
