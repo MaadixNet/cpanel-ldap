@@ -12,6 +12,24 @@ peopletree="ou=sshd,ou=People,"$suffix
 delete="0"
 checkfile="/tmp/checkfile.txt"
 
+# Initial delay to wait puppetcron to start
+sleep 10
+
+# Search lock status
+url="ldapi://"
+basedn="dc=example,dc=tld"
+cpaneldn="ou=cpanel"
+lockattribute="status"
+status=`ldapsearch -Q -Y EXTERNAL -H "$url" -b "$basedn" "$cpaneldn" | awk -F ": " '$1 == "'"$lockattribute"'" {print $2}'`
+echo "$status"
+
+# If cpanel is locked or running, exit
+if [ "$status" = 'locked' ] || [ "$status" = 'running' ]
+  then
+    echo "Cpanel has status locked or running, exit cron"
+    exit 0
+fi
+
 #get ldap admin username and email. it's used by Pets' Encrypt
 # Get the ldap admin name
 ldapadmin=$(ldapsearch -H ldapi:// -Y EXTERNAL -b "$suffix" "(&(objectClass=extensibleObject)(cn=*))" cn | grep -o -P "(?<=cn: ).*")
