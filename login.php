@@ -94,7 +94,7 @@ if(isset($_POST['user']) && isset($_POST['password'])){
     }
 }
 function print_form(){
-    		echo '<form action="" method="POST" class="form-signin">
+    		echo '<form action="" method="POST" class="form-signin" style="display:none">
 		<h2 class="form-signin-heading">Entrar</h2>
 		<hr>
                 <div class="form-group">
@@ -109,7 +109,7 @@ function print_form(){
 }
 
 function updating(){
-    		echo '<div class="updating">
+    		echo '<div class="updating" style="display:none">
   		        <h2 class="form-signin-heading">' . sprintf(_("Actualizando sistema..")) . '</h2>
 		        <hr>
                         <div class="form-group">
