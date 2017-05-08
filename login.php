@@ -94,7 +94,7 @@ if(isset($_POST['user']) && isset($_POST['password'])){
     }
 }
 function print_form(){
-    		echo '<form action="" method="POST" class="form-signin">
+    		echo '<form action="" method="POST" class="form-signin hidden-form">
 		<h2 class="form-signin-heading">Entrar</h2>
 		<hr>
                 <div class="form-group">
@@ -109,7 +109,7 @@ function print_form(){
 }
 
 function updating(){
-    		echo '<div class="updating">
+    		echo '<div class="updating hidden-form">
   		        <h2 class="form-signin-heading">' . sprintf(_("Actualizando sistema..")) . '</h2>
 		        <hr>
                         <div class="form-group">
@@ -131,6 +131,7 @@ function updating(){
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
         <!-- Place favicon.ico in the root directory -->
         <link rel="stylesheet" href="css/vendor.css">
+        <link rel="stylesheet" href="css/login.css">
         <!-- Theme initialization -->
         <script src="js/styles.js"></script>    
     </head>
