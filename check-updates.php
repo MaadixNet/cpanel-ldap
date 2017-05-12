@@ -21,10 +21,14 @@ if ($permissions==2){
 // Check puppet status
 $status = getpuppetstatus($Ldap,$ldapconn,$ldapbind);
 
+if ($status != "pending") {
+  require_once('sidebar.php');
+}
+
 switch ($status) :
   case "error" :
     //sidebar
-    require_once('sidebar.php');
+    //require_once('sidebar.php');
     ?>
 
     <article class="content cards-page">
@@ -64,7 +68,7 @@ switch ($status) :
     /****************** End perform update after submitting form *******/
 
     //sidebar
-    require_once('sidebar.php');
+    //require_once('sidebar.php');
 
     ?>
 
@@ -134,7 +138,7 @@ switch ($status) :
 
 
     //sidebar
-    require_once('sidebar.php');
+    //require_once('sidebar.php');
 
     if (empty($updates)) { ?>
       <article class="content cards-page">
@@ -255,7 +259,7 @@ switch ($status) :
     ?>
     <article class="content cards-page">
             <div class="title-block">
-                <h3 class="title"> <?php printf(_("Se ha producido un error inesperado."));?> </h3>
+                <h3 class="title"> <?php printf(_("Np hay actualizaciones disponibles en este momento."));?> </h3>
                 <br />
                 <p class="title-description"> <?php printf(_("Inténtelo de nuevo pasados unos minutos."));?> </p>
                 <p class="title-description"> <?php printf(_("Disculpa las molestias"));?> </p>

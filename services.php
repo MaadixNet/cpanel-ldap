@@ -121,9 +121,9 @@ if (isset ($obj)){
   <?php } else { ?>
     <article class="content cards-page">
             <div class="title-block">
-                <h3 class="title"> <?php printf(_("Se ha producido un error inesperado"));?> </h3>
+                <h3 class="title"> <?php printf(_("En este momento no hay descripciones disponibles para las apllicaciones instaladas"));?> </h3>
                 <br />
-                <p class="title-description"> <?php printf(_("Inténtelo de nuevo pasados unos minutos."));?> </p>
+                <p class="title-description"> <?php printf(_("Inténtalo de nuevo pasados unos minutos."));?> </p>
                 <p class="title-description"> <?php printf(_("Disculpa las molestias"));?> </p>
             </div>
     </article>

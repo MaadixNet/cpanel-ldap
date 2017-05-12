@@ -18,8 +18,11 @@ if ($permissions==2){
     $Ldap->redirect('404.php');
 }
 
+//require_once('sidebar.php');
+
 // Check puppet status
 $status = getpuppetstatus($Ldap,$ldapconn,$ldapbind);
+
 if ($status == 'error' || $status == 'pending'){
   //sidebar
   require_once('sidebar.php');
@@ -53,10 +56,10 @@ if(isset($_POST['install']) && isset($_POST['release'])){
 
   //Modify new groups to ldap with status 'install'
   foreach ($groups as $group){
-    if ($Ldap->search($ldapconn, 'ou='.$group.',ou=groups,dc=example,dc=tld', '(objectclass=*)')){
+    if ($Ldap->search($ldapconn, 'ou=' . $group . ',' . LDAP_SERVICES, '(objectclass=*)')){
       //Modify status of existing group
       $info = array();
-      $modifydn='ou='.$group.',ou=groups,dc=example,dc=tld';
+      $modifydn='ou=' . $group . ',' . LDAP_SERVICES;
       $info['status']= 'install';
       $updategroup=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
     }else{
@@ -67,13 +70,13 @@ if(isset($_POST['install']) && isset($_POST['release'])){
       $entry["ou"] = $group;
       $entry["status"] = "install";
       $entry["type"] = "available";
-      $entrydn='ou=' . $group .',ou=groups,dc=example,dc=tld';
+      $entrydn='ou=' . $group .',' . LDAP_SERVICES;
       $addGroup=$Ldap->addRecord($ldapconn,$entrydn,$entry);
     }
   }
 
   //Update ou=cpanel object with lock status
-  $modifydn='ou=cpanel,dc=example,dc=tld';
+  $modifydn='ou=cpanel,' . SUFFIX ;
   $info = array();
   $info['status']= 'locked';
   $updaterelease=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
@@ -90,7 +93,7 @@ if(isset($_POST['install']) && isset($_POST['release'])){
 
 // Check if there is any group to install
 foreach ($obj as $service_data){
- if (array_search($service_data['id'], array_column(array_column($serv_installed, 'ou'),0)) === false) $available=1;
+  if (array_search($service_data['id'], array_column(array_column($serv_installed, 'ou'),0)) === false) $available=1;
 }
 
 //sidebar
@@ -99,10 +102,9 @@ require_once('sidebar.php');
 if (empty($release_info)) { ?>
     <article class="content cards-page">
             <div class="title-block">
-                <h3 class="title"> <?php printf(_("Se ha producido un error inesperado"));?> </h3>
+                <h3 class="title"> <?php printf(_("No hay ninguna actualización disponile en este momento"));?> </h3>
                 <br />
-                <p class="title-description"> <?php printf(_("Inténtelo de nuevo pasados unos minutos."));?> </p>
-                <p class="title-description"> <?php printf(_("Disculpa las molestias"));?> </p>
+                <p class="title-description"> <?php printf(_("Inténtalo de nuevo pasados unos minutos."));?> </p>
             </div>
     </article>
 
