@@ -210,4 +210,4 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
         </div>
 </div><!--admin-content-->
 <?php ldap_close($ldapconn);
-require_once('footer.php');?>
+require_once('footer.php');

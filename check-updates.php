@@ -52,7 +52,7 @@ switch ($status) :
       $groups = $_POST['groups'];
 
       //Update ou=cpanel object to lock cpanel
-      $modifydn='ou=cpanel,dc=example,dc=tld';
+      $modifydn='ou=cpanel,' . SUFFIX;
       $info = array();
       $info['status']= 'locked';
       $updaterelease=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
@@ -100,10 +100,10 @@ switch ($status) :
 
       //Add new groups to ldap with status 'install'
       foreach ($groups as $group){
-        if ($Ldap->search($ldapconn, 'ou='.$group.',ou=groups,dc=example,dc=tld', '(objectclass=*)')){
+        if ($Ldap->search($ldapconn, 'ou='.$group.',ou=groups,' . SUFFIX, '(objectclass=*)')){
           //Modify status of existing group
           $info = array();
-          $modifydn='ou='.$group.',ou=groups,dc=example,dc=tld';
+          $modifydn='ou='.$group.',ou=groups,' . SUFFIX;
           $info['status']= 'install';
           $updategroup=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
         }else{
@@ -114,13 +114,13 @@ switch ($status) :
           $entry["ou"] = $group;
           $entry["status"] = "install";
           $entry["type"] = "available";
-          $entrydn='ou=' . $group .',ou=groups,dc=example,dc=tld';
+          $entrydn='ou=' . $group .',ou=groups,' . SUFFIX;
           $addGroup=$Ldap->addRecord($ldapconn,$entrydn,$entry);
         }
       }
 
       //Update ou=cpanel object with new release name and lock cpanel
-      $modifydn='ou=cpanel,dc=example,dc=tld';
+      $modifydn='ou=cpanel,' . SUFFIX;
       $info = array();
       $info['type']= $release;
       $info['status']= 'locked';
@@ -290,6 +290,3 @@ switch ($status) :
 <?php
   ldap_close($ldapconn);
   require_once('footer.php');
-?>
-
-

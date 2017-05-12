@@ -48,7 +48,7 @@ if ($result=='ok'){
 }
 
 if(isset($_POST['user']) && isset($_POST['password'])){
-    $username = trim($_POST['user']);
+    $username = strip_tags(trim($_POST['user']));
     $password = $_POST['password'];
 
 	

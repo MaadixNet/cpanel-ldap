@@ -14,4 +14,4 @@ echo '<p>'. sprintf(_("Recibirás un mail de confirmación en cuanto le contrase
 echo '<p>'. sprintf(_("Este proceso puede tardar hasta 10 minutos.")). '</p>';
 ?>
 </div><!--admin-content-->
-<?php require_once('footer.php');?>
+<?php require_once('footer.php');

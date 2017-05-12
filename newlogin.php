@@ -14,4 +14,3 @@ if($user->is_logged_in()!="")
 	$user->redirect('login.php?chpsw=ok');
 
 }
-?>

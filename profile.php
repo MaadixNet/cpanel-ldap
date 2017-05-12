@@ -99,5 +99,4 @@ require_once('sidebar.php');?>
 
 <?php 
 ldap_close($ldapconn);
-require_once('footer.php');?>
-
+require_once('footer.php');

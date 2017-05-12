@@ -641,10 +641,10 @@ function getpuppetstatus($Ldap,$ldapconn,$ldapbind){
 
   //Get credentials and BASE API url
   if ($ldapbind) {
-    $credentials = $Ldap->search($ldapconn, 'ou=api,dc=example,dc=tld',  '(objectclass=*)');
-    $api_userid = $credentials[0][uid][0];
-    $api_usertoken = $credentials[0][userpassword][0];
-    $api_url = $credentials[0][host][0];
+    $credentials = $Ldap->search($ldapconn, 'ou=api,' . SUFFIX,  '(objectclass=*)');
+    $api_userid = $credentials[0]['uid'][0];
+    $api_usertoken = $credentials[0]['userpassword'][0];
+    $api_url = $credentials[0]['host'][0];
   }
 
   //VM name
@@ -683,4 +683,3 @@ function getpuppetstatus($Ldap,$ldapconn,$ldapbind){
 
   return $status_info["puppetstatus"];
 }
-

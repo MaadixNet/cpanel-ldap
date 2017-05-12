@@ -215,6 +215,4 @@ if (empty($release_info)) { ?>
 
 <?php
   ldap_close($ldapconn);
-  require_once('footer.php');?>
-
-
+  require_once('footer.php');

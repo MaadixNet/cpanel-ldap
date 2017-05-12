@@ -13,4 +13,3 @@ if($user->is_logged_in()!="" || (isset($_SESSION["login"]["dn"]) &&  $_SESSION["
 	$user->logout();	
 	$user->redirect('index.php');
 }
-?>

@@ -30,7 +30,7 @@ if ($ldapbind) {
 }
 
 // Get current release info
-$release_info = getreleaseinfo($Ldap,$ldapconn,$ldapbind, release);
+$release_info = getreleaseinfo($Ldap,$ldapconn,$ldapbind, 'release');
 
 // Get available groups in the release
 $obj = $release_info['groups'];
@@ -38,14 +38,14 @@ $obj = $release_info['groups'];
 // Build groups info for loop
 $group_info = [];
 foreach ($obj as $gr){
-  $group_info[$gr[id]][id]=$gr[id];
-  $group_info[$gr[id]][description]=$gr[description];
-  $group_info[$gr[id]][name]=$gr[name];
-  $group_info[$gr[id]][img]=$gr[img];
-  $group_info[$gr[id]][title]=$gr[title];
-  $group_info[$gr[id]][link_url]=$gr[link_url];
-  $group_info[$gr[id]][target]=$gr[target];
-  $group_info[$gr[id]][link_text]=$gr[link_text];
+  $group_info[$gr['id']]['id']=$gr['id'];
+  $group_info[$gr['id']]['description']=$gr['description'];
+  $group_info[$gr['id']]['name']=$gr['name'];
+  $group_info[$gr['id']]['img']=(isset($gr['img']))?$gr['img']:'';
+  $group_info[$gr['id']]['title']=(isset($gr['title']))?$gr['title']:$gr['title'];
+  $group_info[$gr['id']]['link_url']=(isset($gr['link_url']))?$gr['link_url']:'';
+  $group_info[$gr['id']]['target']=(isset($gr['target']))?$gr['target']:'';
+  $group_info[$gr['id']]['link_text']=(isset($gr['link_text']))?$gr['link_text']:'';
 }
 
 /*
@@ -59,6 +59,10 @@ require_once('sidebar.php');
 
 // If API is available
 if (isset ($obj)){
+/*  echo '<pre>';
+  print_r($release_info );
+echo '</pre>';
+ */
   ?>
   <article class="content cards-page">
             <div class="title-block">
@@ -77,7 +81,7 @@ if (isset ($obj)){
                                     <div class="card-block">
                                         <!-- Nav tabs -->
                                         <div class="card-title-block">
-                                            <h3 class="title"><?php echo  $group_info[$service][title];?></h3>
+                                            <h3 class="title"><?php echo  $group_info[$service]['title'];?></h3>
                                         </div>
                                         <ul class="nav nav-tabs nav-tabs-bordered">
                                             <li class="nav-item"> <a href="#home-<?php echo $c;?>" class="nav-link active" data-target="#home-<?php echo $c;?>" data-toggle="tab" aria-controls="home-<?php echo $c;?>" role="tab">App</a> </li>
@@ -130,6 +134,4 @@ if (isset ($obj)){
   <?php
   }
   ldap_close($ldapconn);
-  require_once('footer.php');?>
-
-
+  require_once('footer.php');

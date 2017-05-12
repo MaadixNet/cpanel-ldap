@@ -314,4 +314,3 @@ $firstuid_availabe=system($commuid);*/?>
 <?php ldap_close($ldapconn);
 require_once('footer.php');?>
 </script>
-

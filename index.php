@@ -49,4 +49,3 @@ require_once('header.php');?>
         <script src="js/linuxDash.js" type="text/javascript"></script>
         <script src="js/modules.js" type="text/javascript"></script>
         <script src="js/smoothie.min.js" type="text/javascript"></script>
-
