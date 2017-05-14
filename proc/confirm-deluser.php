@@ -8,7 +8,7 @@
  *
  */
 $user=$_POST['user'];
-$superuser=$_POST['superuser'];
+//$superuser=$_POST['superuser'];
 session_start();
 require_once  __DIR__.'/../classes/class.ldap.php';
 require_once __DIR__.'/../site-config.php';
@@ -22,7 +22,14 @@ $psw=$Ldap->decrypt_psw();
 if ($ldapconn){
     $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$psw); 
 }
+//Get superuser name to create path to sftpuser home
+//
+$peopletree = LDAP_PEOPLE;
+$filtersudo="(&(objectClass=person)(uid=*)(gidnumber=27))";
+$resultsudo=$Ldap->search($ldapconn,$peopletree, $filtersudo);
+$superuser = $resultsudo[0]["uid"][0];
 
+//Check if sftp user is web admin
 $binddn= LDAP_BASE;
 $filter="(&(vd=*)(adminid=".$user."))";
 $results=$Ldap->search($ldapconn,$binddn,$filter);
