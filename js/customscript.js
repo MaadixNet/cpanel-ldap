@@ -368,7 +368,7 @@ $('#installModal').on('show.bs.modal', function (event) {
     $("#pswd1, #password").blur(function()
     {
         var pass1 = $(this).val();
-        if(!pass1.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z\W]{8,}$/) && pass1.length > 0){
+        if(!pass1.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z\w\W]{8,}$/) && pass1.length > 0){
               $("#pswcheck").html('<span class="error"><i class="fa fa-exclamation-triangle icon checkko alert-danger"></i> <em>La contraseña debe ser de mínimo 8 cáracteres y debe contener almenos una cifra, una letra mayúscula y una minúscula</em>');        
         }else {
             $("#pswcheck").html('');
