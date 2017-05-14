@@ -3,13 +3,11 @@
 	last-updated="lastGet"
 	on-refresh="getData()">
 
-	<loader ng-hide="diskSpaceData"></loader>
 
 	<table ng-show="diskSpaceData">
 		<thead>
 			<tr>
 				<th>Name</th>
-				<th></th>
 				<th>Stats</th>
 				<th>Used</th>
 				<th>Mount Path</th>
@@ -18,13 +16,6 @@
 		<tbody>
 			<tr  ng-repeat="partition in diskSpaceData">
 				<td>{{partition['file_system']}}</td>
-				<td>
-					<progress-bar-plugin
-					    width="70px"
-					    value="{{ getKB(partition['used']) }}"
-					    max="{{ getKB(partition['size']) }}">
-					</progress-bar-plugin>
-				</td>
 				<td>
 					{{ partition['used'] }} / {{ partition['size'] }}
 				</td>
