@@ -13,7 +13,8 @@ if ($ds) {
   session_destroy();
   header('Location: /cpanel');
 }
-
+//unset $info var for latest taemplates use
+unset($info);
 
 
 require_once 'classes/class.locale.php';
