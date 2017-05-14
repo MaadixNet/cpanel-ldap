@@ -21,7 +21,8 @@ $psw=$Ldap->decrypt_psw();
 if ($ldapconn){
     $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw);
 }
-
+//set $info as empty
+$info='';
 $message='';
 $ldaptree    = LDAP_PEOPLE;
 $selecteduser=(isset($_GET['user']))?$_GET['user']:'';
@@ -122,7 +123,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
 
               <div class="form-group">
                 <label for="usermail"><?php printf(_("Correo electrónico"));?></label> 
-                <p>Puedes insertar un correo electrónico externo o elegir uno entre las cuentas creadas en el servidor</p>
+                <p><?php printf(_("Puedes insertar un correo electrónico externo o elegir uno entre las cuentas creadas en el servidor"));?></p>
                 <input id="usermail" class="form-control col-sm-4 usermail" type="mail" name="usermail" value="<?php echo $result[0]['mail'][0];?>" required />  
                 <?php $resultmail = $Ldap->search($ldapconn,LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
                 $mailcount = $resultmail["count"];
@@ -210,4 +211,4 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
         </div>
 </div><!--admin-content-->
 <?php ldap_close($ldapconn);
-require_once('footer.php');
+require_once('footer.php');?>

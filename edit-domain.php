@@ -52,7 +52,8 @@ if(isset($_POST['deldomain'])){
 if(isset($_POST["update-domain"]) && (!empty($domain) ))
 
 {
-  $psw1=$_POST['pswd1'];
+  
+/*  $psw1=$_POST['pswd1'];
   $psw2=$_POST['pswd2'];
 
 
@@ -64,7 +65,7 @@ if(isset($_POST["update-domain"]) && (!empty($domain) ))
     $psw_changed=$Ldap->modifyRecord($ldapconn, $modifypswdn, $info );
     $message=$psw_changed["message"];
   }
-
+   */
   $newwebmaster=trim($_POST["seladmin"]);  
   $old_webmaster=trim($_POST["old-webmaster"]);
 
@@ -75,7 +76,7 @@ if(isset($_POST["update-domain"]) && (!empty($domain) ))
     $message=$webmaster_changed["message"];
   }
 
-  if (($newwebmaster == $old_webmaster) && (empty($psw1)) && (empty($psw2)) ){
+  if ($newwebmaster == $old_webmaster){
       $message= "
       <div class='alert alert-info'>
       <button class='close' data-dismiss='alert'>&times;</button>
@@ -106,16 +107,7 @@ require_once('sidebar.php');
        <h3 class="title"> <?php printf(_("Editar dominio %s"),$domain);?><span class="sparkline bar" data-type="bar"></span> </h3>
     </div> 
     <div class="card card-block">
-    <form role="form"  autocomplete="off" id="up-domain" class="jquery-check standard form-signin" method="POST" action="">
-    <div class="form-group">
-      <label class="control-label" for="pswd1"><?php printf(_("Nueva contraseña"));?></label>
-      <div id="pswcheck"></div>
-      <input class="form-control boxed" autocomplete="off" readonly id="pswd1" type="password" name="pswd1" value="" size="4" />
-    </div>
-    <div class="form-group">
-      <label class="control-label" or="pswd2"><?php printf(_("Repetir nueva contraseña"));?></label>
-      <input class="form-control boxed" id='pswd2' type='password' name='pswd2' value='' /><div id="pswresult"></div>
-    </div>
+    <form role="form"  autocomplete="off" id="up-domain" class="form-signin standard" method="POST" action="">
     <div class="form-group">
     <label class="control-label" for="webmaster"><?php printf(_("Webmaster (Administrador sito web)"));?></label> 
     <?php $curwebmaster=$result[0]["adminid"][0];?>

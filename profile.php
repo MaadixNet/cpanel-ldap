@@ -6,7 +6,7 @@ $Ldap = new LDAP();
 $current_page=basename(__FILE__);
 $Ldap->check_login_or_redirect($current_page);
 
-$message=$msg1=$msg2="";
+$message=$msg1=$msg2=$"";
 $ldapconn=$Ldap->connect();
 if ($ldapconn){
   $psw=$Ldap->decrypt_psw();

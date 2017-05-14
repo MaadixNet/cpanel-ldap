@@ -13,16 +13,15 @@ $permissions=$_SESSION["login"]["level"];
 require_once('header.php');?>
 
 <?php
-
-//Set variables for ldap connection
+///Set variables for ldap connection
 $ldapconn=$Ldap->connect();
 $psw=$Ldap->decrypt_psw();
 
 if ($ldapconn){
     $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw);
 }
-
-$message='';
+//Clean vars
+$message=$info='';
 $ldaptree    = LDAP_PEOPLE;
 
 if (isset($_POST['updateuser'])){

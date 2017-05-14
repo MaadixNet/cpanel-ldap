@@ -283,7 +283,7 @@ $firstuid_availabe=system($commuid);*/?>
                 echo "<td>";
                 $deletestring=sprintf(_('¿Quieres borrar la cuenta para el usuario %s? Esto eliminará su acceso al servidor'),$username);
 //                echo "<form action='' method='POST' class='form-table'><input type='hidden' name='userid' value='". $username ."' /> <input type='submit' name='deluser' value='". sprintf(_('Borrar')) ."' class='btn btn-small btn-primary' onclick=\"return confirm('" . $deletestring ."');\" /></form>";
-                echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#userModal" data-superuser ="' . $sudousername . '" data-user="' . $username .  '">' . sprintf (_('Eliminar')) . '</button>';
+                echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#userModal" data-user="' . $username .  '">' . sprintf (_('Eliminar')) . '</button>';
                 echo "</td>";
 
 		echo "</tr>";
