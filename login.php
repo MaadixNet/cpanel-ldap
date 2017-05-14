@@ -156,8 +156,8 @@ updating();
                 </div>
             </div>
         </div>
-      <script src="js/vendor.js"></script>
-      <script src="js/app.js"></script>
+      <script src="js/vendor.min.js"></script>
+      <script src="js/app.min.js"></script>
       <script src="js/customscript.js"></script>
       <script src="js/status.js"></script>
 
