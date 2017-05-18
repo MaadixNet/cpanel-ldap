@@ -42,16 +42,17 @@ if (count($dependencies)>0){
   }
   echo '</ul>';
 }
+echo '<br />';
+echo '<br />';
+printf(_("El proceso de instalación durará unos minutos durante los cuales el Panel de Control quedará inactivo. Todos los usuarios que tengan una sesión activa serán forzados a salir y redireccionados a la página en la que se mostrará el estado de la operación. Cuando el proceso de instalación termine se activará el formulario para volver a acceder."));
+echo '<br />';
+echo '<br />';
+
 if ($release=="pending"){
-  printf(_("Confirma que quiere aplicar los cambios pendientes?"));
+    printf(_("Confirma que quiere aplicar los cambios pendientes?"));
 } else {
-  printf(_("Confirma que quiere actualizar a la nueva versión %s?"), $release);
+    printf(_("Confirma que quiere actualizar a la nueva versión %s?"), $release);
 }
-echo '<br />';
-echo '<br />';
-printf(_("Al aceptar, su sesión en el cpanel se cerrará y no podrá hacer login hasta que el proceso de instalación finalice."));
-echo '<br />';
-echo '<br />';
 
 
 echo "<div class='modal-footer'>

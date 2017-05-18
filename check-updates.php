@@ -20,11 +20,9 @@ if ($permissions==2){
 
 // Check puppet status
 $status = getpuppetstatus($Ldap,$ldapconn,$ldapbind);
-
-if ($status != "pending") {
+if ($status != "pending" && !isset($_POST['update']) && !isset($_POST['release'])) {
   require_once('sidebar.php');
 }
-
 switch ($status) :
   case "error" :
     //sidebar
@@ -86,7 +84,7 @@ switch ($status) :
   case "ready" :
 
     // Check for updates
-    $updates = getreleaseinfo($Ldap,$ldapconn,$ldapbind, updates);
+    $updates = getreleaseinfo($Ldap,$ldapconn,$ldapbind, 'updates');
 
     // Get available groups in the new release
     $obj = $updates['groups'];

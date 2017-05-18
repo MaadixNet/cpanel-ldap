@@ -41,7 +41,6 @@ if($user_home->is_logged_in())
 $code=md5(uniqid(rand(), true));
 $token=getToken($length=32);
 
-
 //Special connection Only read mode to rertieve cn and mail
 $host = "ldapi:///";
 $base = SUFFIX;
@@ -69,8 +68,9 @@ $adminmail = $info[0]["email"][0];
 
 
 if(isset($_POST['user']) && isset($_POST['usermail'])){
-    $username = (trim($_POST['user']));
-    $to = $_POST['usermail'];
+    $saniitised_input = sanitizeData($_POST);
+    $username = $saniitised_input['user'][0]['value'];
+    $to = $saniitised_input['usermail'][0]['value'];
     //Provisional : we stores admin username and email in site-config.php
     //Then we will probably create a mysql database	
     if ($username != $adminname || $to != $adminmail){
@@ -123,7 +123,8 @@ if(isset($_POST['user']) && isset($_POST['usermail'])){
         else
         
         {
-          echo "<div class='alert alert-success'><h4>" . sprintf (_("Se ha enviado un email a la cuenta de correo %s . Por favor, revisa tu bandeja ded entrada y sigue las instruccones que encontrarás en el mensaje"), $to)." </div>";
+          $error='';
+          $messagesent= "<div class='alert alert-success'><h4>" . sprintf (_("Se ha enviado un email a la cuenta de correo %s . Por favor, revisa tu bandeja ded entrada y sigue las instruccones que encontrarás en el mensaje"), $to)." </div>";
         } 
     } else {
       
@@ -134,8 +135,12 @@ if(isset($_POST['user']) && isset($_POST['usermail'])){
         "</div>";
     }
 }	
-  print_rec_form($error);
 
+  if(isset($messagesent)) {
+    echo $messagesent;
+  } else {
+  print_rec_form($error);
+  }
 
 function print_rec_form($error){
                 if (isset($error)) echo $error;

@@ -41,11 +41,9 @@ if ($status == 'error' || $status == 'pending'){
 }
 
 // Get current release info
-$release_info = getreleaseinfo($Ldap,$ldapconn,$ldapbind, release);
-
+$release_info = getreleaseinfo($Ldap,$ldapconn,$ldapbind, 'release');
 // Get available groups in the release
 $obj = $release_info['groups'];
-
 
 /****************** Perform install after submitting form **********/
 
@@ -157,11 +155,13 @@ if (empty($release_info)) { ?>
                                                      <label><?php printf(_("Instalar"));?></label>
                                                      <input type="checkbox" name="groups" value="<?php echo $service_data['id']; ?>" />
                                                      <?php
-                                                       $ii=0;
-                                                       foreach ($service_data['dependencies'] as $dependency){ ?>
-                                                         <input class="dependency" type="hidden" name="dependencies[<?php echo $service_data['id']; ?>][<?php echo $ii; ?>]" value="<?php echo $service_data['dependencies'][$ii]; ?>" />
-                                                     <?php
-                                                         $ii=$ii+1;
+                                                      $ii=0;
+                                                      if(array_key_exists('dependencies', $service_data)) {
+                                                         foreach ($service_data['dependencies'] as $dependency){ ?>
+                                                           <input class="dependency" type="hidden" name="dependencies[<?php echo $service_data['id']; ?>][<?php echo $ii; ?>]" value="<?php echo $service_data['dependencies'][$ii]; ?>" />
+                                                         <?php
+                                                           $ii=$ii+1;
+                                                         }
                                                        } ?>
                                                   </div>
                                                 </div>

@@ -54,6 +54,8 @@ class LDAP{
     }
 
     function search($ldapconn,$searchdn, $filter){
+          //escape filter
+          //$filter = ldap_escape($filter, null, LDAP_ESCAPE_FILTER);
           $sr = ldap_search($ldapconn, $searchdn, $filter );
  
           if ($sr) {
@@ -162,7 +164,14 @@ class LDAP{
 	#############################
 	
 	function login($login_username,$login_password){
+       /* if(!check_syntax ('account',$login_username, $length="2")) {
+          //Avoid binding abnormal
+           $this->redirect('login.php');
 
+
+        }
+      */
+        $login_username = filter_var($login_username, FILTER_SANITIZE_STRING);
         // @todo $proposed will be real DN and level
         if (strpos($login_username, '=') && strpos($login_username, ','))
         {

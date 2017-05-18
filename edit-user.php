@@ -31,19 +31,23 @@ $users_in = $Ldap->search($ldapconn, $users_group_tree ,"(&(memberuid=$selectedu
 #$all_users_in = $Ldap->search($ldapconn, $users_group_tree ,"(&(memberuid=*))");
 if (isset($_POST['updateuser']) && (!empty($selecteduser))){
   $modifydn='uid='.$selecteduser. ',' . $ldaptree;
-  $psw1=trim($_POST['pswd1']);
-  $psw2=trim($_POST['pswd2']);
-  $user_email=$_POST['usermail']; 
+  $psw1=$_POST['pswd1'];
+  $psw2=$_POST['pswd2'];
   # Only update pswd if fields are filled and matches
 
   if ((!empty($psw1)) && (!empty($psw2)) && ($psw2==$psw1) ) {
-    $newpass=ldap_password_hash($psw2);
+    //First ebcrynt password so no plain text is used
+    $newpass=ldap_password_hash($psw2, "ssha");
+    $_POST['pswd1'] = $newpass;
+    $_POST['pswd2'] = $newpass;
     $info['userpassword'][0]=$newpass;
     $info['shadowlastchange'][0] = floor(time()/86400);
   }
-
-  $info['cn']=$_POST['commonname'];
-  $info['sn']=$_POST['surname'];
+  //Sanitize user inputs
+  $sanitised_data= sanitizeData($_POST);
+  $user_email=$sanitised_data['usermail'][0]['value'];
+  $info['cn']=$sanitised_data['commonname'][0]['value'];
+  $info['sn']=$sanitised_data['surname'][0]['value'];
   $info['mail']=$user_email;
 
   ## Check authorizesServices
@@ -96,7 +100,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
 
   $edit_user=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
   if($edit_user && isset($_POST["sendinstruction"]) && isset($_POST["vpn"]))$Ldap->send_vpn_instructions($user_email,$selecteduser);
-  $message=$edit_user["message"];
+  $message.=$edit_user["message"];
 }
 
 # Get current user data from ldap
@@ -124,6 +128,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
               <div class="form-group">
                 <label for="usermail"><?php printf(_("Correo electrónico"));?></label> 
                 <p><?php printf(_("Puedes insertar un correo electrónico externo o elegir uno entre las cuentas creadas en el servidor"));?></p>
+                <div id="emailresult"><?php if(isset($sanitised_data['usermail'][0]['message'])) echo '<span class="alert-danger">' . $sanitised_data['usermail'][0]['message'] . '</span>';?></div>
                 <input id="usermail" class="form-control col-sm-4 usermail" type="mail" name="usermail" value="<?php echo $result[0]['mail'][0];?>" required />  
                 <?php $resultmail = $Ldap->search($ldapconn,LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
                 $mailcount = $resultmail["count"];

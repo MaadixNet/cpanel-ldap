@@ -21,17 +21,16 @@ if ($ldapconn){
     $binddn=LDAP_BASE;
     $filter="(vd=*)";
   break;
-        case "4" :
-        $binddn=LDAP_BASE;
+    case "4" :
+    $binddn=LDAP_BASE;
     $who=$_SESSION["phamm"]["domain"];
     $filter="(vd=" . $who .")";
-    
-  break;
+    break;
   case "2":
     $who= $_SESSION['login']["username"];
     $binddn="vd=".$_SESSION["phamm"]["domain"].",".LDAP_BASE;           
     $filter="(mail=" . $who .")";
-  break;
+    break;
   default:
   break;
   endswitch;
@@ -98,6 +97,7 @@ if(isset($_POST['adddomain'])){
     $entry["vd"]                = $domain_new;
     $entry["lastChange"]        = time();
     $entry["adminid"]           = $webmaster;
+
     // Merge static values with domain values
     $entry = array_merge($entry,$values["domain"]);
   ######Create cn=Postmaster ###########3

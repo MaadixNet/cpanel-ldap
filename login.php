@@ -113,7 +113,7 @@ function updating(){
   		        <h2 class="form-signin-heading">' . sprintf(_("Actualizando sistema..")) . '</h2>
 		        <hr>
                         <div class="form-group">
-        	          <span>' . sprintf(_("Esta operación tardará unos minutos, en cuanto el sistema esté actualizado aparecerá el formulario para hacer login")) . '</span>
+        	          <span>' . sprintf(_("Esta operación tardará unos minutos. En cuanto el sistema esté actualizado aparecerá el formulario para volver a acceder al Panel de Control.")) . '</span>
                         </div>
     		      </div>';
 }

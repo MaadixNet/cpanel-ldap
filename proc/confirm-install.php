@@ -6,15 +6,17 @@
  * Returns a window for confirmation
  *
  */
-
+$dependencies=array();
 $release=$_POST['release'];
 $groups=$_POST['groups'];
-$dependencies_all=$_POST['dependencies'];
+$dependencies_all=(array_key_exists('dependencies', $_POST))?$_POST['dependencies']:false;
 //force adding dependencies
-foreach ($groups as $group){
-  if (isset($dependencies_all[$group])){
-    foreach ($dependencies_all[$group] as $dep){
+if ($dependencies_all){
+  foreach ($groups as $group){
+    if (isset($dependencies_all[$group])){
+      foreach ($dependencies_all[$group] as $dep){
       if (!in_array($dep, $groups)) $dependencies[]=$dep;
+      }
     }
   }
 }
@@ -42,12 +44,12 @@ if (count($groups)>0){
     }
     echo '</ul>';
   }
-  printf(_("Confirma que quiere instalar las nuevas aplicaciones?"));
+  printf(_("El proceso de instalación durará unos minutos durante los cuales el Panel de Control quedará inactivo. Todos los usuarios que tengan una sesión activa serán forzados a salir y redireccionados a la página en la que se mostrará el estado de la operación. Cuando el proceso de instalación termine se activará el formulario para volver a acceder."));
   echo '<br />';
   echo '<br />';
-  printf(_("Al aceptar, su sesión en el cpanel se cerrará y no podrá hacer login hasta que el proceso de instalación finalice."));
-  echo '<br />';
-  echo '<br />';
+  printf(_("Confirma que quiere instalar las nuevas aplicaciones ahora?"));
+    echo '<br />';
+    echo '<br />';
 
   echo "<div class='modal-footer'>
         <form action='' method='POST'>
@@ -56,13 +58,15 @@ if (count($groups)>0){
   foreach ($groups as $group) {
     echo "    <input type='hidden' name='groups[]' value='". $group ."' />";
   }
-  foreach ($dependencies as $group) {
-    echo "    <input type='hidden' name='groups[]' value='". $group ."' />";
+  if (count($dependencies)>0){
+    foreach ($dependencies as $group) {
+      echo "    <input type='hidden' name='groups[]' value='". $group ."' />";
+    }
   }
-  echo "    <button type='submit' name='install' class='btn btn-small btn-primary'>". sprintf(_('Instalar')) ."</button>
-          <button type='button' class='btn btn-secondary' data-dismiss='modal'>" . sprintf (_("Cancelar")) . "</button>
-        </form>
-      </div>";
+    echo "    <button type='submit' name='install' class='btn btn-small btn-primary'>". sprintf(_('Instalar')) ."</button>
+              <button type='button' class='btn btn-secondary' data-dismiss='modal'>" . sprintf (_("Cancelar")) . "</button>
+              </form>
+        </div>";
 } else {
 
   printf(_("No se ha seleccionado nada para instalar."));
@@ -75,5 +79,3 @@ if (count($groups)>0){
         </form>
       </div>";
 }
-
-ldap_close($ldapconn);

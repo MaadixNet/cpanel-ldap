@@ -61,7 +61,7 @@ if (isset($_POST["activate"])){
           $modifydn=$_SESSION["login"]["dn"];
           $hashedpsw=ldap_password_hash($pass2,'ssha');
           $info['userpassword'][0]=$hashedpsw;
-          $newemail=$_POST["usermail"];
+          $newemail=strip_tags(trim($_POST["usermail"]));
           $info['email'][0]=$newemail;
           $info['status'][0] = 'active';
           # Sudo user

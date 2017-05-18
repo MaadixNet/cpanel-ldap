@@ -31,21 +31,37 @@ $groupinfo = posix_getgrnam("sftpusers");
 $grid=$groupinfo["gid"];
 //Only show sftpusers
 $filtersftp="(&(objectClass=person)(uid=*)(!(gidnumber=27)))";
-$filtersudo="(&(objectClass=person)(uid=*)(gidnumber=27))";
+//$filtersudo="(&(objectClass=person)(uid=*)(gidnumber=27))";
 
 $groupinfo = posix_getgrnam("web");
 $webgrid=$groupinfo["gid"];
 $users_group_tree = "cn=web,ou=groups,ou=People," . SUFFIX;
 $users_in = $Ldap->search($ldapconn, $users_group_tree ,'(&(objectClass=*))');
+
 //Add new User
 if(isset($_POST['adduser'])){
         $entry=array();
-        $newuser=trim($_POST['username']);
-        $first_name=(isset($_POST['firstname']))?$_POST['firstname']:$newuser;
-        $second_name=(isset($_POST['surname']))?$_POST['surname']:$newuser;
-        $user_email=trim($_POST['usermail']);
-        $password=$_POST['pswd2'];
-        
+        $psw1 = $_POST['pswd1'];
+        $psw2 = $_POST['pswd2'];
+        if ((!empty($psw1)) && (!empty($psw2)) && ($psw2==$psw1) ) {
+          $newpass=ldap_password_hash($psw2, "ssha");
+          $_POST['pswd1'] = $newpass;
+          $_POST['pswd2'] = $newpass;
+          $entry['userpassword'][0]=$newpass;
+          //$entry['shadowlastchange'][0] = floor(time()/86400);
+        } else {
+          $message .= sprintf(_("password mismatch"));
+          exit;
+        }
+
+        $sanitised_data= sanitizeData($_POST);
+        $newuser=$sanitised_data['username'][0]['value'];
+        //Catch if there is some error in username input. If so do not add user
+        $message .= $sanitised_data['username'][0]['message'];
+        $first_name = $sanitised_data['firstname'][0]['value'];
+        $second_name = $sanitised_data['surname'][0]['value'];
+        $user_email = $sanitised_data['usermail'][0]['value'];
+
         // SEt these variables to none in case in only vpn account
         $entry['loginshell']='none';
         $entry['homedirectory']='none';
@@ -73,10 +89,12 @@ if(isset($_POST['adduser'])){
           $entry['cn']=(!empty($first_name))?$first_name:$newuser;
           $entry['sn']=(!empty($second_name))?$second_name:$newuser;
           $entry['mail']=$user_email;
-          $entry['userpassword']=ldap_password_hash($password,'ssha');
+          if (!$message){
+            //Only add user if no error found. Errors are stored in $message var
           $add_user=$Ldap->add_user($newuser,$entry);
           // if user has been succesfully created and has ssh add to web group
           // he will be able to write in /var/www/html, bur as he is chrooted he will only see his webistes
+          }
           if ($add_user && isset($_POST['sshd'])){
             $group['memberUid'] = $newuser;                                   
 
@@ -84,18 +102,8 @@ if(isset($_POST['adduser'])){
           }        
         
           if (isset($_POST["sendinstruction"]) && $add_user)$Ldap->send_vpn_instructions($user_email,$newuser); 
-          $message=$add_user['message'];
+          $message .=$add_user['message'];
 }
-
-//Modifiy Passord
-if(isset($_POST['chpsw'])){
-   	$modifydn='uid='. $_POST['userid']. ',' . $ldaptree;
- 	$info['userpassword'][0]=ldap_password_hash($_POST['changepsw'],'md5crypt');
-        $info['shadowlastchange'][0] = floor(time()/86400);
-	$chpass=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
-        $message=$chpass['message'];
-}
-
 //delete user
 if(isset($_POST['deluser'])){
     $selecteduser = $_POST['userid'];
@@ -111,11 +119,11 @@ if(isset($_POST['deluser'])){
     $message=$del_user['message'];
 }
 
+
 if ($ldapbind) {
 
   //Get all sftpusers
   $result=$Ldap->search($ldapconn,$ldaptree, $filtersftp);
-  $resultsudo=$Ldap->search($ldapconn,$ldaptree, $filtersudo);
 }
 ?>
 <div id="admin-content" class="content">
@@ -249,7 +257,6 @@ $firstuid_availabe=system($commuid);*/?>
                 $binddn= LDAP_BASE;
                 #List sftpusers with edit options
                 for ($i=0; $i<$result["count"]; $i++) {
-		$oldpsw=$result[$i]['userpassword'][0];
 		$username = $result[$i]["uid"][0];
                 $filter="(&(vd=*)(adminid=".$username."))";
                 $resultsdomain=$Ldap->search($ldapconn,$binddn,$filter);

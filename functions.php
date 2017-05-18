@@ -334,6 +334,60 @@ function check_syntax ($type,$arg,$length="0")
         return true;
     }
 }
+
+/** Get all inputs fields in form and apply 
+*  Correct sanitze type
+* 
+**/
+
+
+function sanitizeData($input){
+  $data= array();
+  foreach ($input as $k => $v){
+    $val = trim($v);
+    $sanitized_field = applySanitize($k, $val);
+    $data[$k][] = $sanitized_field;
+  }
+  return $data;
+}
+
+function applySanitize($key, $val) {
+  $message='';
+  switch($key) {
+    case "username":
+    case "user":
+        if(!check_syntax ('account',$val, $length="2") || !$val) {
+        $message = sprintf(_("%s Nombre de usuario no válido"), $val);
+        $value = '';
+      } else {
+        $value = filter_var($val, FILTER_SANITIZE_STRING);
+        $value = filter_var($value ,FILTER_SANITIZE_SPECIAL_CHARS);
+      }
+    case "surname":
+    case "commonname":
+    case "firstname":
+      $value = filter_var($val, FILTER_SANITIZE_STRING);
+      $value = filter_var($value ,FILTER_SANITIZE_SPECIAL_CHARS);
+      break;
+    case "usermail":
+      $value = filter_var($val, FILTER_SANITIZE_EMAIL);
+      if (filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
+          $message = sprintf(_("%s is not a valid email address"), $value);
+      }      
+      break;
+    default:
+      $value=$val;
+      break;
+  }
+  //return $value;
+        //echo $message;
+        return array('value' => $value,
+                    'message' => $message
+                            );
+
+}
+
+
 function print_mail_client_settings($email,$domain){
       $fqdn=$fqdn=trim(shell_exec('hostname -f'));
       echo '<div class="card sameheight-item">
@@ -512,7 +566,7 @@ function OneTimePadCreate ($length=100) {
  */
 
 function sqsetcookie($sName, $sValue='deleted', $iExpire=0, $sPath="", $sDomain="",
-                     $bSecure=false, $bHttpOnly=true, $bReplace=false) {
+                     $bSecure=true, $bHttpOnly=true, $bReplace=false) {
  
     // some environments can get overwhelmed by an excessive
     // setting of the same cookie over and over (e.g., many
@@ -567,15 +621,15 @@ function getreleaseinfo($Ldap,$ldapconn,$ldapbind,$route){
   //Get current release
   if ($ldapbind) {
     $release_info= $Ldap->search($ldapconn, 'ou=cpanel,dc=example,dc=tld',  '(objectclass=*)');
-    $release = $release_info[0][type][0];
+    $release = $release_info[0]['type'][0];
   }
 
   //Get credentials and BASE API url
   if ($ldapbind) {
     $credentials = $Ldap->search($ldapconn, 'ou=api,dc=example,dc=tld',  '(objectclass=*)');
-    $api_userid = $credentials[0][uid][0];
-    $api_usertoken = $credentials[0][userpassword][0];
-    $api_url = $credentials[0][host][0];
+    $api_userid = $credentials[0]['uid'][0];
+    $api_usertoken = $credentials[0]['userpassword'][0];
+    $api_url = $credentials[0]['host'][0];
   }
 
   //API url
