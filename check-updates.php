@@ -219,8 +219,10 @@ switch ($status) :
                                                     <p><div class='img service-img'><img src="images/services/<?php echo $service_data['img'];?> " /></div></p>
                                                   </div>
                                                   <div class="col-md-6">
-                                                     <label><?php printf(_("Instalar"));?></label>
-                                                     <input type="checkbox" name="groups" value="<?php echo $service_data['id']; ?>" />
+                                                     <div><label>
+                                                     <input type="checkbox" class="checkbox" name="groups" value="<?php echo $service_data['id']; ?>" />
+                                                    <span><?php printf(_("Seleccionar"));?></span>
+                                                    </label></div>
                                                      <?php
                                                        $ii=0;
                                                        foreach ($service_data['dependencies'] as $dependency){ ?>

@@ -119,8 +119,10 @@ if (empty($release_info)) { ?>
 
             <div class="title-block">
                 <h4 class="title"> <?php printf(_("Aplicaciones Disponibles para Instalar"));?> </h4>
+                <br>
+                <h5 class=""> <?php printf(_("Selecciona las aplicaciones que quieras instalar y haz click en el botón 'Instalar' que encontrarás al fondo de esta página para empezar el proceso de instalación"));?> </h5>
+
             </div>
-            <h4 class=""> <?php printf(_("Selecciona las aplicaciones que quieras instalar y haz click en el botón 'Instalar' que encontrarás al fondo de esta página para empezar el proceso de instalación"));?> </h4>
                  <section class="section">
                         <div class="row ">
                        <?php $c = 0;?>
@@ -152,8 +154,9 @@ if (empty($release_info)) { ?>
                                                     <p><div class='img service-img'><img src="images/services/<?php echo $service_data['img'];?> " /></div></p>
                                                   </div>
                                                   <div class="col-md-6">
-                                                     <label><?php printf(_("Instalar"));?></label>
-                                                     <input type="checkbox" name="groups" value="<?php echo $service_data['id']; ?>" />
+                                                     <div><label>
+                                                     <input type="checkbox" class="checkbox" name="groups" value="<?php echo $service_data['id']; ?>" />
+                                                    <span><?php printf(_("Seleccionar"));?></span></label></div>
                                                      <?php
                                                       $ii=0;
                                                       if(array_key_exists('dependencies', $service_data)) {
