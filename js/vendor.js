@@ -18438,7 +18438,6 @@ if ( $.ajaxPrefilter ) {
     });
 
     initStyles = function() {
-        addCSS(defaultStyles);
     };
 
     $(initStyles);

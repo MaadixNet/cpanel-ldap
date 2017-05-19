@@ -147,42 +147,6 @@ span.counter {
           transform: rotate(90deg);
         }
 .sidebar .nav > li > ul >li a i{ margin-right: 15px;}
-/*FORMS*/
-/*
-input[type=checkbox] {
-    display:none;
-  }
-input[type=checkbox] + label
- {   
-       width: 23px;
-       height: 21px;
-      background: transparent url(../images/checkbox.png ) no-repeat 0 50%;
- }   
-  
-input[type=checkbox] + label.small
- {   
-    background-size: 35px auto;
-    background-repeat: no-repeat;
-    width: 12px;
- }   
-
- input[type=checkbox]:checked + label
-  {   
- background: transparent url(../images/checkbox.png ) no-repeat 80% 50%;
-  }   
-
- input[type=checkbox]:checked + label.small
-  {
-  background: transparent url(../images/checkbox.png ) no-repeat 80% 50%;
-background-size: 35px auto;
-  }
-
-input[type=checkbox] + label.left
- {
-  float: left;
-  margin-right: 7px;
- }  
-*/
 /* disk usage bar */
 
 .disk {
@@ -204,20 +168,19 @@ input[type=checkbox] + label.left
     .jumbotron .mobile {
         margin-left: -164px;
     }
-}
 @media(max-width:979px){
 
-#sidebarleft {
-    border-right: 1px solid #ddd;
-    padding: 0.8em;
-    word-wrap: break-word;
-}
-#sidebarleft ul {margin:0;}
-#admin-content {
-    padding: 0;
-    width: 100%;
-	margin-top:25px;
-}
+    #sidebarleft {
+        border-right: 1px solid #ddd;
+        padding: 0.8em;
+        word-wrap: break-word;
+    }
+    #sidebarleft ul {margin:0;}
+    #admin-content {
+        padding: 0;
+        width: 100%;
+            margin-top:25px;
+    }
 
     .navbar-collapse {
         float: right;
@@ -229,7 +192,7 @@ input[type=checkbox] + label.left
     .navbar > .container .navbar-brand,
     .navbar > .container-fluid .navbar-brand {
         font-size: 28px;
-background-size: 35px auto;
+        background-size: 35px auto;
         float: left;
         margin: 15px 0;
         width: auto;
@@ -265,12 +228,6 @@ background-size: 35px auto;
     }
 
 }
-@media (max-width: 980px) {
-		}
-@media (max-width: 767px) {
-}
-
-
 
 	@media
 	only screen and (max-width: 760px),

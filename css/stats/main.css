@@ -52,7 +52,7 @@
 .hero nav-bar ul li a {
   display: inline;
 }
-}
+
 @media (min-width: 1080px) {
   #plugins {
     float: none;
@@ -307,7 +307,7 @@ tr.table-data-filter-container {display:none;}
 .table-data-plugin .column-sort-caret {
   font-size: 10px;
   color: #31b680;
-  float: right;}
+  float: right;
 }
 /*
  * Popover
