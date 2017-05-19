@@ -33,7 +33,7 @@ if (count($groups)>0){
   echo '</ul>';
 }
 if (count($dependencies)>0){
-  printf(_("Además se instalarán las siguientes dependencias:"));
+  printf(_("Las siguientes dependencias son necesarias para las aplicaciones seleccionadas y serán instaladas automáticamente:"));
   echo '<br />';
   echo '<br />';
   echo '<ul>';
@@ -44,14 +44,14 @@ if (count($dependencies)>0){
 }
 echo '<br />';
 echo '<br />';
-printf(_("El proceso de instalación durará unos minutos durante los cuales el Panel de Control quedará inactivo. Todos los usuarios que tengan una sesión activa serán forzados a salir y redireccionados a la página en la que se mostrará el estado de la operación. Cuando el proceso de instalación termine se activará el formulario para volver a acceder."));
+printf(_("El proceso de instalación durará unos minutos durante los cuales el Panel de Control quedará inactivo. Todos los usuarios que tengan una sesión activa serán forzados a salir y redireccionados a una página en la que se mostrará el estado de la operación. Cuando el proceso de instalación termine se activará el formulario para volver a acceder."));
 echo '<br />';
 echo '<br />';
 
 if ($release=="pending"){
-    printf(_("Confirma que quiere aplicar los cambios pendientes?"));
+    printf(_("Confirmas que quiere aplicar los cambios pendientes ahora?"));
 } else {
-    printf(_("Confirma que quiere actualizar a la nueva versión %s?"), $release);
+    printf(_("Confirmas que quiere actualizar a la nueva versión %s ahora?"), $release);
 }
 
 
