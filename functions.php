@@ -344,9 +344,15 @@ function check_syntax ($type,$arg,$length="0")
 function sanitizeData($input){
   $data= array();
   foreach ($input as $k => $v){
-    $val = trim($v);
+    if(is_array($v)){
+      //TODO 
+      //if is an array get all values 
+      //It's happening when creating domain
+    } else {
+      $val = trim($v);
     $sanitized_field = applySanitize($k, $val);
     $data[$k][] = $sanitized_field;
+    }
   }
   return $data;
 }
@@ -356,6 +362,7 @@ function applySanitize($key, $val) {
   switch($key) {
     case "username":
     case "user":
+    case "seluser":
         if(!check_syntax ('account',$val, $length="2") || !$val) {
         $message = sprintf(_("%s Nombre de usuario no válido"), $val);
         $value = '';

@@ -119,8 +119,8 @@ if (empty($release_info)) { ?>
 
             <div class="title-block">
                 <h4 class="title"> <?php printf(_("Aplicaciones Disponibles para Instalar"));?> </h4>
-                <p class="title-description"> <?php printf(_("Marque las aplicaciones que desea instalar."));?> </p>
             </div>
+            <h4 class=""> <?php printf(_("Selecciona las aplicaciones que quieras instalar y haz click en el botón 'Instalar' que encontrarás al fondo de esta página para empezar el proceso de instalación"));?> </h4>
                  <section class="section">
                         <div class="row ">
                        <?php $c = 0;?>

@@ -7,7 +7,7 @@ $current_page=basename(__FILE__);
 $Ldap->check_login_or_redirect($current_page);
 
 //connect and BInd
-$errorttpe="";
+$errorttpe=$error="";
 $message=$dns_result="";
 $statok='<i class="fa fa-check-circle-o icon checkok"></i>';
 $loading='<span class="loading"></span>';
@@ -37,8 +37,17 @@ if ($ldapconn){
 }
 //Add new domain
 if(isset($_POST['adddomain'])){
+    $password=$_POST['pswd1'];
+    $password2=$_POST['pswd2'];
+    if ($password && $password === $password2){
+      $_POST['pswd1'] = $_POST['pswd2'] = $password = ldap_password_hash($password,'ssha');
+    } else {
+      $error = true;
+    } 
+    $sanitsed_data= sanitizeData($_POST);
     $fqdn=trim(shell_exec('hostname -f'));
-    $webmaster=$_POST['seluser'];
+    $sanitsed_data= sanitizeData($_POST);
+    $webmaster=$sanitsed_data['seluser'][0]['value'];
     if($webmaster=='newuser'){
       //$webmaster=$_POST['new_username'];
             /*$password = $_POST['webmaster_password'];
@@ -48,11 +57,10 @@ if(isset($_POST['adddomain'])){
         $groupinfo = posix_getgrnam("sftpusers");
         $grid=$groupinfo["gid"];
         $entryus=array();
-        $newuser=trim($_POST['username']);
-        $first_name=(isset($_POST['firstname']))?$_POST['firstname']:$newuser;
-        $second_name=(isset($_POST['surname']))?$_POST['surname']:$newuser;
-        $user_email=trim($_POST['usermail']);
-        $password=$_POST['pswd2'];
+        $newuser=$sanitsed_data['username'][0]['value'];
+        $first_name=(isset($sanitsed_data['firstname'][0]['value']))?$sanitsed_data['firstname'][0]['value']:$newuser;
+        $second_name=(isset($sanitsed_data['surname'][0]['value']))?$sanitsed_data['surname'][0]['value']:$newuser;
+        $user_email=$sanitsed_data['usermail'][0]['value'];
           $entryus['gidnumber']=(int)$grid;
           $entryus['loginshell']='/bin/bash';
           $entryus['homedirectory']='/home/sftpusers/' . $newuser;
@@ -65,7 +73,7 @@ if(isset($_POST['adddomain'])){
           $entryus['cn']=(!empty($first_name))?$first_name:$newuser;
           $entryus['sn']=(!empty($second_name))?$second_name:$newuser;
           $entryus['mail']=$user_email;
-          $entryus['userpassword']=ldap_password_hash($password,'ssha');
+          $entryus['userpassword']=$password;
           $add_user=$Ldap->add_user($newuser,$entryus);
           if($add_user['result'] == 1){
             // If we could create the new user assign it as adminid

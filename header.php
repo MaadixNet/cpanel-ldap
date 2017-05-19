@@ -5,7 +5,7 @@ if ($ds) {
    $sr=ldap_search($ds, "ou=cpanel," . SUFFIX, "ou=cpanel");
    $info = ldap_get_entries($ds, $sr);
    ldap_close($ds);
-   if ($info[0]['status'][0]=='testlocked') {
+   if ($info[0]['status'][0]=='running' || $info[0]['status'][0]=='locked') { 
      session_destroy();
      header('Location: /cpanel');
    }

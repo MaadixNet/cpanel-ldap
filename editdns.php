@@ -105,17 +105,18 @@ require_once('sidebar.php');
 		<p>En tu caso el número asociado a tu dominio no corresponde a tu máquina</p>
 
 		<p>Hay diferentes tipos de contenidos que un servidor puede mostrar. Entre ellos los más comunes son páginas webs y correo.
-		Para que estos servicios funcionen correctamente y desde cualquier ubicación utilizando nombres en lugar que números,, hay 	que comunicar en cual máquina están alojados los sdrvicios. Esta comunicación se lleva a cabo configurando correctamente los registros DNS para un determinado dominio. </p>
+		Para que estos servicios funcionen correctamente y desde cualquier ubicación utilizando nombres en lugar que números, hay que comunicar públicamente en cual máquina están alojados los sdrvicios. Esta comunicación se lleva a cabo configurando correctamente los registros DNS. </p>
 		<h4 id="ACorrect">Registro de tipo "A" para contenido web</h4>
-		<p>Para que puedas acceder a tus aplicaciones desde el navegador, usando tu propio dominio</br>
-			https://' . $domain . '/'. BASE_PATH . '</br>
-			tendrás que cambiar la configuración del mismo.</br>
-			
+		<p>Para que puedas acceder a tus aplicaciones desde el navegador usando tu propio dominio tendrás que cambiar la configuración de sus DNS en el panel de configuración que te proporciona tu proveedor de dominio.</br>
+                Esto te permitirá crear una página web en este servidor que se mostrarla al visitar <em>https://' . $domain . '</em> desde cualquier navegador.</br> Además podrás utilizar el dominio para acceder a los servicios que tengas instalados, en lugar de hacerlo a través de ' . $fqdn .'.</br> Por ejemplo podrás acceder al Panel de Control utilizando la siguiente dirección</br></br>
+                
+                <pre>https://' . $domain . '/cpanel</pre>
+
 			Para ello sigue los siguientes pasos:
 			<ul>
 				<li>entra en el panel de administración que te proprciona tu provedor de dominio.</li>
 				<li>Localiza una pestaña que indique algo como <em>DNS/editar registros dns</em></li>
-				<li>Edita el registro de tipo A cambiando la actual IP ' . $domain_ip .' por ' . $server_ipaddr . '</li>
+				<li>Edita el registro de tipo A cambiando la actual IP ' . $resultA[0]['ip'] .' por ' . $server_ipaddr . '</li>
 				<li>Guarda los cambios</li>
 				<li>Este cambio puede tardar entre 0 i 72 horas en ser operativo, dependiendo de la configuración de tu provedor de dominio. Sé paciente</li>
 			</ul>

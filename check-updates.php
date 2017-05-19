@@ -20,7 +20,7 @@ if ($permissions==2){
 
 // Check puppet status
 $status = getpuppetstatus($Ldap,$ldapconn,$ldapbind);
-if ($status != "pending" && !isset($_POST['update']) && !isset($_POST['release'])) {
+if (!isset($_POST['update']) && !isset($_POST['release'])) {
   require_once('sidebar.php');
 }
 switch ($status) :
