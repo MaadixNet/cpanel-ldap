@@ -97,7 +97,7 @@ echo '</pre>';
                                                     <p><div class='img service-img'><img src="/cpanel/images/services/<?php echo $group_info[$service]['img'];?> " /></div></p>
                                                   </div>
                                                   <div class="col-md-6">
-                                                   <?php if (isset($group_info[$service]['link_url'])){ ?>
+                                                   <?php if (!empty($group_info[$service]['link_url'])){ ?>
                                                    <a href="<?php echo $group_info[$service]['link_url'];?>" target="<?php echo $group_info[$service]['target'];?>"><button type="button" class='btn btn-small btn-primary'><?php echo $group_info[$service]['link_text'];?></button></a>
                                                    <?php } ?>
                                                   </div>
