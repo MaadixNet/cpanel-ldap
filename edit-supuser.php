@@ -25,21 +25,25 @@ $message=$info='';
 $ldaptree    = LDAP_PEOPLE;
 
 if (isset($_POST['updateuser'])){
-  $username=trim($_POST["username"]);
-  $modifydn='uid='.$username. ',' . $ldaptree;
-  $psw1=trim($_POST['pswd1']);
-  $psw2=trim($_POST['pswd2']);
-  $user_email=$_POST['usermail'];
-  # Only update pswd if fields are filled and matches
-
-  if ((!empty($psw1)) && (!empty($psw2)) && ($psw2==$psw1) ) {
+  $psw1=$_POST['pswd1'];
+  $psw2=$_POST['pswd2'];
+  
+  if ($psw1 && $psw1==$psw2){
     $newpass=ldap_password_hash($psw2,'ssha');
+    $_POST['pswd1']=$_POST['pswd2']=$newpass;
     $info['userpassword'][0]=$newpass;
     $info['shadowlastchange'][0] = floor(time()/86400);
-  }
+  } 
 
-  $info['cn']=$_POST['commonname'];
-  $info['sn']=$_POST['surname'];
+  $sanitised_data= sanitizeData($_POST);
+  $username = $sanitised_data['username'][0]['value'];
+  $modifydn='uid='.$username. ',' . $ldaptree;
+  $user_email = $sanitised_data['usermail'][0]['value'];
+  # Only update pswd if fields are filled and matches
+
+
+  $info['cn']=$sanitised_data['commonname'][0]['value'];
+  $info['sn']=$sanitised_data['surname'][0]['value'];
   $info['mail']=$user_email;
 
   ## Check authorizesServices
@@ -58,10 +62,9 @@ if (isset($_POST['updateuser'])){
       $c++;
   }
 
-
-  $edit_user=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
-  if($edit_user && isset($_POST["sendinstruction"]) && isset($_POST["vpn"]))$Ldap->send_vpn_instructions($user_email,$username);
-  $message=$edit_user["message"];
+    $edit_user=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
+    $message=$edit_user["message"];
+    if($edit_user && isset($_POST["sendinstruction"]) && isset($_POST["vpn"]))$Ldap->send_vpn_instructions($user_email,$username);
 }
 
 # Get current user data from ldap
@@ -74,7 +77,6 @@ $username=$result[0]['uid'][0];
 $usermail = (isset($result[0]['mail'][0]))?$result[0]['mail'][0]:'';
 require_once('sidebar.php');
 ?>
-<?php echo $message;?>
 <article class="content forms-page">
   <div class="title-block">
   <h1 class=""> <?php printf(_("Editar Usuario %s - SuperUsuario"), $username);?></h1>
@@ -86,6 +88,7 @@ require_once('sidebar.php');
   <section class="section">
   <div id="admin-content" cass="row">
   <hr>
+  <?php echo $message;?>
           <div class="card card-block">
 		<form role="form" autocomplete="off" action="" method="POST" class="form-signin standard jquery-check">
                 <div class="form-group">
