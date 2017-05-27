@@ -117,7 +117,7 @@ if(isset($_POST['adddomain'])){
     $entrypm["mail"] = "postmaster@".$domain_new;
     $entrypm["userPassword"]  =ldap_password_hash($password,'ssha');
     $entrypm["maildrop"] = "postmaster";
-    $entrypm["accountActive"]     = "TRUE";
+    $entrypm["accountActive"]     = (isset($_POST["mailactive"]))?"TRUE":"FALSE";
     $entrypm["creationDate"]      = date('Ymd');
     $entrypm["lastChange"]        = time();
     // Create abuse alias
@@ -211,9 +211,23 @@ require_once('sidebar.php');
   <div class="card card-block">
     <form role="form" autocomplete="off" action="" method="POST" class="form-signin standard jquery-check">
         <div class="form-group">
-          <label for="domain"><?php printf (_("Nombre de Dominio"))?> </label><p class=""> <?php printf (_("Inserta un nombre de dominio válido (o un subdominio). Para los dominios activados en este panel podrás crear cuentas de correo electrónico o páginas web."))?></p>
+          <label for="domain"><?php printf (_("Nombre de Dominio"))?> </label><p class=""> <?php printf (_("Inserta un nombre de dominio válido (o un subdominio). Para los dominios activados podrás crear aplicaciones web que serán disponibles desde cualquier navegador vistando <em>https://tudominio.com</em>. El certificado SSL que activa el protocolo seguro https se activará automáticamente si la  configuración de DNS es la correcta . <a href='https://docs.maadix.net/dominios/'>Saber más</a> "))?></p>
           <input class="form-control" id="domain_new" type="text" name="domain_new" required />
         </div>
+
+        <?php
+              $mailtitle = sprintf(_("Activar servidor de correo para este dominio"));
+              $mailmessage = sprintf(_("Activa esta casilla si quieres que el correo electrónico para este dominio sea gestionado por este servidor. Si el correo está gestionado por otro servidor , por ejemplo el mismo proveedor de dominio, deja esta casilla desactivada. Podrás cambiar esta opción en cualquier momento desde la página de edición del dominio"), $fqdn);
+              $checkbox =  sprintf(_("Activar"));
+        ?>
+        <label><?php echo $mailtitle;?></label>
+        <p><?php echo $mailmessage;?></p>
+        <div> <label>
+     
+        <input name="mailactive" id="mailactive" class="checkbox" type="checkbox" >
+        <span><?php echo $checkbox ;?></span>
+        </label> </div>
+
 
         <div class="form-group">
           <label for="webmaster"><?php printf (_("Webmaster (Administrador sito web)"));?> </label>

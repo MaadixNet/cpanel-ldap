@@ -7,9 +7,8 @@ $Ldap= new LDAP();
 $current_page=basename(__FILE__);
 $Ldap->check_login_or_redirect($current_page);
 
-$message='';
-$wrong_mx_message = '<div class="card card-block"><p>Los DNS del dominio %s no están configurados para que el correo electrónico sea entregado a este servidor . </br>
- Puedes igualmente crear la cuneta que empezará a recibir correo en este servidor cuando los DNS estién configrados correctamente. Revisa la configuración actual y consulta cual es la correcta en esta página: <a href="editdns.php?domain=%s">DNS para el dominio %s</a></p></div>';
+$message=$inactivemsg='';
+
 require_once('header.php');
 //connect and BInd
 $fqdn=shell_exec('hostname -f');
@@ -111,14 +110,14 @@ if ($ldapconn){
                 * 
                 */
         
-                if (empty($_GET['domain'])){
+              /*  if (empty($_GET['domain'])){
 
                   $domain_dns=check_domain_dns($mail_domain);
                   $dns_result=$domain_dns["result"];
                   $message = $domain_dns["message"];
-                  $message .= sprintf(_($wrong_mx_message),$mail_domain,$mail_domain,$mail_domain);
-                }
-                
+                  $message = sprintf(_($wrong_mx_message),$mail_domain,$mail_domain,$mail_domain);
+              }
+              */  
                 $fqdn=shell_exec('hostname -f');
                 $body='Bienvenido a tu nuevo buzón.' . "\r\n";
                 $body .='Por favor, no contestes a este mensaje.';
@@ -170,28 +169,54 @@ require_once('sidebar.php');
 
   # Check if the domain has correct MX Recodrs for this server
   #
-  $queryvar=(isset($_GET['domain']))?$_GET['domain'] :'';
+    /* If $mail_domain is set means that a new mail has benn addeed
+    /* If not check if GET has value
+    /*
+    */
 
-  //$this_domain='(vd='. $queryvar . ' )';
- // $domain_exist_in_ldap= $Ldap->search($ldapconn,LDAP_BASE, $this_domain);
+  If (!isset($mail_domain)) {
+      $mail_domain=(isset($_GET['domain']))?$_GET['domain'] :'';
+  }
 
-
-
-  # Check if domain has correct dns.
-  # If not let user add the email account anyway, so 
-  # no mail will be lost in case of domain migration
-  #
-
-        $domain_dns=(!empty($queryvar))?check_domain_dns($queryvar):'';
-        $dns_result=$domain_dns["result"];
-        if ($dns_result >1){
-
-          $message = sprintf(_($wrong_mx_message),$queryvar,$queryvar,$queryvar);
-        }
+  if (!empty($mail_domain)) {
+    $this_domain='(vd='. $mail_domain . ' )';
+    $domain_exist_in_ldap= $Ldap->search($ldapconn,LDAP_BASE, $this_domain);
+    $status = $domain_exist_in_ldap[0]['accountactive'][0];
 
 
+    /* Domains needs to has an active status n order to send and receive amails,
+    */
 
-  #
+      If ($status == 'FALSE'){
+      $inactivemsg = sprintf(_('<h5>Servidor de Correo</h5>'));
+      $inactivemsg .= sprintf(_('<p>El Servidor de correo no está activado para este dominio y no podrá enviar y recibir mails. <a href="edit-domain.php?domain=%s">Activalo en esta página</a></p>'), $mail_domain);
+      }
+
+    # Check if domain has correct dns.
+    # If not let user add the email account anyway, so 
+    # no mail will be lost in case of domain migration
+    #
+
+
+    $domain_dns=check_domain_dns($mail_domain);
+    $dns_result=$domain_dns["result"];
+    if ($dns_result >1){
+
+      $wrong_mx_message = sprintf(_('<h5>DNS</h5>'));
+      $wrong_mx_message .= sprintf(_('<p>Los DNS del dominio %s no están configurados para que el correo electrónico sea entregado a este servidor . </br> Puedes igualmente crear la cuneta que empezará a recibir correo en este servidor cuando los DNS estién configrados correctamente. Revisa la configuración actual y consulta cual es la correcta en esta página: <a href="editdns.php?domain=%s">DNS para el dominio %s</a></p>'), $mail_domain,$mail_domain,$mail_domain);
+
+    }
+
+
+   if (!empty($wrong_mx_message) || !empty($inactivemsg)){
+      $message = '<div class="card card-block"><h4>Configuración</h4><hr>' . 
+               $inactivemsg . 
+               $wrong_mx_message . 
+              '</div>';
+    }
+
+}
+ #
   # If MX records for this domain are not correct for this server
   # inform user 
   # 
