@@ -68,21 +68,15 @@ if(isset($_POST["update-domain"]) && (!empty($domain) ))
    */
   $newwebmaster=trim($_POST["seladmin"]);  
   $old_webmaster=trim($_POST["old-webmaster"]);
+  // Bollean not working for accontactive value. Only string is working. This is odd
+  $mailstatus = (isset($_POST["mailactive"]))?'TRUE':'FALSE';
+  $entry["adminid"]= $newwebmaster;
+  $entry["accountactive"]= $mailstatus;
 
-  if ($newwebmaster != $old_webmaster){
-    $entry["adminid"]=$newwebmaster;
     $modifydomaindn='vd='. $domain. ',' . LDAP_BASE;     
     $webmaster_changed=$Ldap->modifyRecord($ldapconn,$modifydomaindn,$entry);
     $message=$webmaster_changed["message"];
-  }
 
-  if ($newwebmaster == $old_webmaster){
-      $message= "
-      <div class='alert alert-info'>
-      <button class='close' data-dismiss='alert'>&times;</button>
-      <strong>" . sprintf(_('No se ha aplicado ningún cambio. Los datos insertados son los mismos que la configuración anterior')) . "</strong> 
-        </div>";
-  }
 }
 //Query domains in database
 if ($ldapbind) {
@@ -93,10 +87,12 @@ if ($ldapbind) {
     $allsftpusers=$Ldap->search($ldapconn,$ldaptree, $filtersftp);
 
 }
-/*echo '<pre>';
+
+/*
+echo '<pre>';
 print_r($result);
 echo '</pre>';
- */
+*/
 require_once('sidebar.php');
 ?>
 <article>
@@ -107,22 +103,50 @@ require_once('sidebar.php');
        <h3 class="title"> <?php printf(_("Editar dominio %s"),$domain);?><span class="sparkline bar" data-type="bar"></span> </h3>
     </div> 
     <div class="card card-block">
-    <form role="form"  autocomplete="off" id="up-domain" class="form-signin standard" method="POST" action="">
-    <div class="form-group">
-    <label class="control-label" for="webmaster"><?php printf(_("Webmaster (Administrador sito web)"));?></label> 
-    <?php $curwebmaster=$result[0]["adminid"][0];?>
-    <select id='seladmin' name='seladmin'>";
-        <?php for ($c=0; $c<$allsftpusers["count"]; $c++) {
-          $username = $allsftpusers[$c]["uid"][0];
-          $grid=  $allsftpusers[$c]["gidnumber"][0];
-          $issudo = ($grid == '27')? sprintf(_(" - superusuario")):"";
-          # Show all sftpusers in a drop down list and set current webmaste as selected
-          $selected = ($username == $curwebmaster) ? "selected='selected'":'';
-          echo "<option " . $selected . " value='" . $username . "'>" . $username . $issudo . "</option>";
-        }
-        echo "</select>";?>
-    <input type="hidden" name="old-webmaster" value="<?php echo $curwebmaster;?>" />
-    </div>
+      <form role="form"  autocomplete="off" id="up-domain" class="form-signin standard" method="POST" action="">
+        <div class="form-group">
+        <h5><?php printf(_("Cambiar Webmaster"));?></h5>
+        <p><?php printf(_("Establece cual usuario tendrá permiso para editar los archivos del dominio %s"), $domain);?></p>
+
+          <label class="control-label" for="webmaster"><?php printf(_("Webmaster (Administrador sito web)"));?></label> 
+          <?php $curwebmaster=$result[0]["adminid"][0];?>
+          <select id='seladmin' name='seladmin'>";
+            <?php for ($c=0; $c<$allsftpusers["count"]; $c++) {
+              $username = $allsftpusers[$c]["uid"][0];
+              $grid=  $allsftpusers[$c]["gidnumber"][0];
+              $issudo = ($grid == '27')? sprintf(_(" - superusuario")):"";
+              # Show all sftpusers in a drop down list and set current webmaste as selected
+              $selected = ($username == $curwebmaster) ? "selected='selected'":'';
+              echo "<option " . $selected . " value='" . $username . "'>" . $username . $issudo . "</option>";
+              }
+          echo "</select>";?>
+        </div>
+        <div class="form-group">
+        <?php $activemailstatus= $result[0]["accountactive"][0];
+            if ($activemailstatus == 'TRUE'){
+              $mailtitle = sprintf(_("Desactivar servidor de correo para este dominio"));
+              $mailchecked = "checked='checked'";
+              $mailmessage = sprintf(_("Desactiva esta casilla si quieres que el correo electrónico para este dominio sea gestionado por otro servidor externo. Recuerda que el registro MX de los  DNS tendrá que apuntar al nombre del servidor externo"));
+              $checkbox =  sprintf(_("Desactivar"));
+             } else {
+              $fqdn=trim(shell_exec('hostname -f'));
+              $mailtitle = sprintf(_("Activar servidor de correo para este dominio"));
+              $mailchecked = "";
+              $mailmessage = sprintf(_("Activa esta casilla si quieres que el correo electrónico para este dominio sea gestionado por este servidor. Recuerda que el registro MX de los DNS tendrá que ser %s. Puedes averiguar cual es la configuración de DNS actual <a href='editdns.php?domain=" . $domain ."'>haciendo click aquí</a>."), $fqdn);
+              $checkbox =  sprintf(_("Activar"));
+            } 
+          
+          
+          ?> 
+        <h5><?php echo $mailtitle;?></h5>
+        <p><?php echo $mailmessage;?></p>
+        <div> <label>
+    
+        <input name="mailactive" id="mailactive" class="checkbox" type="checkbox"  <?php echo $mailchecked;?>>
+        <span><?php echo $checkbox ;?></span>
+        </label> </div>
+        <input type="hidden" name="old-webmaster" value="<?php echo $curwebmaster;?>" />
+      </div>
     <hr>
     <input type='submit' name='update-domain' value='Guardar' class='btn btn-small btn-primary' />
     </form>
