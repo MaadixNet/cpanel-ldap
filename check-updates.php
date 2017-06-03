@@ -150,7 +150,7 @@ switch ($status) :
       <article class="content cards-page">
             <div class="title-block">
                 <h3 class="title"> <?php printf(_("Actualización disponible"));?> </h3>
-                <p class="title-description"> <?php printf(_("Hay una nueva actualización de sistema disponible."));?> </p>
+                <p class="title-description"> <?php printf(_("Hay una nueva versión de sistema disponible."));?> </p>
             </div>
                  <section class="section">
                      <div class="row ">
@@ -159,19 +159,16 @@ switch ($status) :
                                     <div class="card-block">
                                         <!-- Nav tabs -->
                                         <div class="card-title-block">
-                                            <h3 class="title"><?php echo  $updates['release'];?></h3>
-                                        </div>
-                                        <ul class="nav nav-tabs nav-tabs-bordered">
-                                            <li class="nav-item"> <a href="#release-0" class="nav-link active" data-target="#release-0" data-toggle="tab" aria-controls="release-0" role="tab">Info</a> </li>
-                                        </ul>
-                                        <!-- Tab panes -->
-                                        <div class="tab-content tabs-bordered">
-                                            <div class="tab-pane fade in active" id="release-0">
-                                                <p><?php echo $updates['description'];?></p>
-                                                <?php
-                                                  echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" data-release ="' . $updates['release'] . '">' . sprintf (_('Actualizar')) . '</button>';
-                                                ?>
-                                            </div>
+                                        <h3 class="title"><?php printf(_("Existe una nueva versión del panel de control. Desde esta página puedes actualizaar el sistema a la última versión y a la vez instalar nuevas aplicaciones en una única operación."));?></h3>
+                                        <br>
+                                        <h3 class="title"><?php printf(_("Detalles"));?></h3>
+                                            <br>
+                                            <ul>
+                                              <li><?php printf(_("Nombre de la versión: %s"),$updates['release']);?></li>
+                                              <li><?php printf(_("Descripción: %s"), $updates['description']);?></li>
+                                            </ul>
+                                            <br>
+                                        <h3 class="title"><?php printf(_(" Selecciona las aplicaciones que quieras instalar y haz click en el botón 'Actualizar' que encontrarás al fondo de esta página para empezar el proceso de actualización." ));?></h3>
                                         </div>
                                     </div>
                                     <!-- /.card-block -->
@@ -184,8 +181,7 @@ switch ($status) :
 
             <div class="title-block">
                 <h4 class="title"> <?php printf(_("Aplicaciones Disponibles en la Actualización"));?> </h4>
-                <p class="title-description"> <?php printf(_("Marque las aplicaciones que desea instalar durante la actualización."));?> </p>
-                <p class="title-description"> <?php printf(_("Las aplicaciones que dejes sin instalar, podrás instalarlas más adelante desde el apartado 'Instalar Aplicaciones'"));?> </p>
+                <p class="title-description"> <?php printf(_("Una vez efectuada la actualizaciíon toda las aplicaciones estarán disponibles en el apartado 'Instalar Aplicaciones'"));?> </p>
             </div>
                  <section class="section">
                         <div class="row ">
@@ -250,7 +246,9 @@ switch ($status) :
                           };?>
                         </div>
                     </section>
-
+                 <?php
+                  echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" data-release ="' . $updates['release'] . '">' . sprintf (_('Actualizar')) . '</button>';
+                 ?> 
       </article>
 
     <?php } //end if empty $updates

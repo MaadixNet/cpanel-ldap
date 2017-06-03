@@ -4,7 +4,7 @@
                     <div class="sidebar-container">
                         <div class="sidebar-header">
                             <div class="brand">
-                                <div class="logo"> <img src="images/logo_claro_med.png" tilte="Cpanel Home" alt="Cpanel" /> </div> Cpanel</div>
+                                <div class="logo"> <img src="images/logo_claro_med.png" tilte="MaadiX Home" alt="MaadiX Panel" /> </div> MaadiX</div>
                             </div>
                       <?php if( ($_SESSION["login"]["status"] == "active") && $permissions >2 ){?>
                         <nav class="menu">
@@ -54,7 +54,7 @@
                                     </ul>
                                 <li><a href="/<?php echo BASE_PATH;?>/service-available.php"> <i class="fa fa-dashboard"></i> <?php printf(_("Instalar Aplicaciones"));?></a>
                                 </li>
-                                <li><a href="/<?php echo BASE_PATH;?>/check-updates.php"> <i class="fa fa-refresh"></i> <?php printf(_("Actualizaciones"));?></a>
+                                <li><a href="/<?php echo BASE_PATH;?>/check-updates.php"> <i class="fa fa-refresh"></i> <?php printf(_("Actualizar Versión"));?></a>
                                 </li>
                                 <li>
                                 <a href=""> <i class="fa fa-globe"></i><?php printf (_("Dominios"));?> <i class="fa arrow"></i> </a>
