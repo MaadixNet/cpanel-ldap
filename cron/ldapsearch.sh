@@ -5,6 +5,13 @@
 #
 PATH=/sbin:/bin:/usr/bin
 
+# If another ldapsearch.sh cron is running exit
+for pid in $(pidof -x ldapsearch.sh); do
+    if [ $pid != $$ ]; then
+        echo "[$(date)] : ldapsearch.sh : Process is already running with PID $pid"
+        exit 1
+    fi
+done
 # Set ldap variables
 suffix="dc=example,dc=tld"
 ldapbase="o=hosting,"$suffix
