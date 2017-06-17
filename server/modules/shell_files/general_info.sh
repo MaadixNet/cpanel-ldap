@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 function displaytime {
   local T=$1
@@ -19,10 +19,13 @@ os=`echo $lsbRelease $uname`
 hostname=$(/bin/hostname)
 uptime_seconds=$(/bin/cat /proc/uptime | awk '{print $1}')
 server_time=$(date)
-
+server_ip=$(/bin/ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
+fqdn=$(hostname -f)
 echo { \
     \"OS\": \"$os\", \
     \"Hostname\": \"$hostname\", \
+    \"IP Address\": \"$server_ip\", \
+    \"fqdn \(fully quaified domain\)\": \"$fqdn\", \
     \"Uptime\": \" $(displaytime ${uptime_seconds%.*}) \", \
     \"Server Time\": \"$server_time\" \
   }
