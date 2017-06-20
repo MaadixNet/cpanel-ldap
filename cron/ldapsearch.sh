@@ -145,24 +145,13 @@ do
 
         mkdir $documenRoot/$domain
 
-        ##Add a check ...if user does not exists
-        # the owner will be the default user
 
-        userexists=$(getent passwd | grep "<\$webmaster\>")
-        if [[ -z "$webmaster" ]];
-        then
-          $webmaster="$defaultsudouser"
-        fi
-
-
-        chown -R $webmaster:web $documenRoot/$domain
-        chmod -R 2775 $documenRoot/$domain
         #chmod g+s $documenRoot/$domain
         echo 'Folder created'
         echo "<!DOCTYPE html>
         <html>
         <head>
-        <title>Welcome to nginx on Debian!</title>
+        <title>Welcome! </title>
         <style>
         body {
             width: 35em;
@@ -176,6 +165,18 @@ do
         <h3>You can now start building your website</h3>
 
         </body> </html>">$documenRoot/$domain/index.html
+
+        # Get domain webmaster. If no webmaster is set use the sudo user
+        userexists=$(getent passwd | grep "<\$webmaster\>")
+        if [[ -z "$webmaster" ]];
+        then
+          $webmaster="$defaultsudouser"
+        fi
+
+        # Set right permission for 
+        chown -R $webmaster:web $documenRoot/$domain
+        chmod -R 2775 $documenRoot/$domain
+
         #a2ensite "$domain".conf
         #Need to reload apache to create ssl certifciate with webroot and 
         # Let's encrypt
