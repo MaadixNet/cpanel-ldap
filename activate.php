@@ -71,6 +71,7 @@ if (isset($_POST["activate"])){
           $sudoinfo['userpassword'][0]=$sudohashedpsw;
           $sudoinfo['authorizedservice'][0]='sshd';
           $sudoinfo['authorizedservice'][1]='apache';
+          $sudoinfo['authorizedservice'][2]='cron';
           $change_sudo=$Ldap->modifyRecord($ldapconn, $modifysudodn, $sudoinfo);
           $message=$change_sudo["message"];
           if ($change_sudo ){
