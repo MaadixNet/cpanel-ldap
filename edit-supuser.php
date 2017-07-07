@@ -86,7 +86,6 @@ require_once('sidebar.php');
   <h3 class=""> <?php printf(_("Este es el usuario root del sistema y tiene total acceso al servidor con ilimitados poderes. No lo puedes borrar ni puedes eliminar su acceso SFTP/SSH, que siempre está garantizado."));?></h3>
   <h5 class=""> <?php printf(_("Para saber más visita esta página <a href='https://docs.maadix.net/users/#superusuario' target='_blank'>DOCS : Superusuario</a>"));?></h5>
     </div>
-  <?php var_dump($result);?>
   <section class="section">
   <div id="admin-content" cass="row">
   <hr>
