@@ -21,9 +21,13 @@ require_once('sidebar.php');
         printf(_("Dependiendo de la configuración de sus DNS podrás utilizar uno o todos los servicios disponibles en el servidor."));
       echo '</p><hr>';
 
-      echo '<h4 class="pink">';
+      echo '<h4 class="center">';
         printf(_("Página Web"));
       echo '</h4>';
+     
+      echo '<h6 class="pink">';
+        printf(_("Registro ded tipo A"));
+      echo '</h6>'; 
         echo '<p>';
           printf (_("Para que una página web sea disponibile visitando tu dominio desde un navegador, es neceario que el valor del registro A de los dns del dominio sea el mismo que la IP de este servidor."));
         echo '</p>';
@@ -33,19 +37,50 @@ require_once('sidebar.php');
           Periódicamente el sistema preguntará si existe esta coincidencia, y en cuanto reciba respuesta afirmativa creará la configuración necesaria y podrás visitar tu aplicación web a través del dominio.
           "));
           echo '</p>';
-          echo '<hr><h4 class="pink">';
+          echo '<hr><h4 class="center">';
             printf(_("Servidor de Correo"));
           echo '</h4>';
-          echo '<p>';
-            printf (_("Si quieres que el correo electrónico sea gestionado por tu servidor y no por otro servicio externo, es necesario que el valor del registro MX de los DNS de tu domminio  sea el mismo que el el nombre de dominio asociado a ese equipo."));
-          echo '</p>';
-           $fqdn=trim(shell_exec('hostname -f'));
-          echo '<pre><b>Nombre de dominio de este equipo:</b> ' . $fqdn . '</pre>';
 
           echo '<p>';
-          printf (_("Hasta que no haya coincidencia entre los dos valores, el servicio de correo electrónico no podrá ser gestionado por este equipo. Los mensaje serán enviados al servidor que aparece en el registro MX del dominio.")); 
+          printf(_("La configuración de DNS para el servicio de email es más compleja que la anterior e implica la activación de más de un registro para un buen funcionamiento. Algunos de estos registros son opcionales, pero su ausencia podría provocar que tus emails fueran tratados como spam. Los registros que tendrás que configurar son 3:"));
+          echo '<ul>';
+          echo '<li>MX</li>';
+          echo '<li>SPF</li>';
+          echo '<li>DKIM</li>';
+          echo '</ul>';
+
+          echo '<h6 class="pink">';
+            printf(_("Registro de tipo MX"));
+          echo '</h6>'; 
+          echo '<p>';
+            printf (_("Este registro es estrictamente indispensable para que el electrónico sea gestionado por tu servidor y no por otro servicio externo. El valor del registro MX de los DNS de tu domminio  tendrá que ser el mismo que el el nombre de dominio asociado a ese equipo."));
           echo '</p>';
-          echo '<hr><h4 class="pink">';
+           $fqdn=trim(shell_exec('hostname -f'));
+          echo '<pre><b>MX </b> ' . $fqdn . '</pre>';
+
+
+          echo '<h6 class="pink">';
+            printf(_("Registro SPF (Sender Policy Framework)"));
+          echo '</h6>';
+          echo '<p>';
+            printf(_("El SPF es un registro de tipo TXT que especifica qué servidores pueden enviar correo electrónico en nombre de tu dominio. Los proveedores de servicios de correo electrónico a menudo requieren registros de SPF (Sender Policy Framework) válidos. Un registro SPF ausente o incorrecto puede provocar que tu correo electrónico sea enviado a la carpeta de correo no deseado. Algunos operadores pueden incluso bloquear tus correos por completo. Para evitar estos problemas tendrás que añadir el siguiente registro de tipo TXT a cada dominio que quieras utilizar para crear cuentas de correo electrónico (además del registro MX):"));
+          echo '</p>';
+          echo '<pre>TXT    "v=spf1 mx ip4:' . $_SERVER["SERVER_ADDR"] .' a:' . $fqdn .  ' ~all" ';
+
+          echo '</pre>';
+          echo '<h6 class="pink">';
+            printf(_("Registro DKIM (DomainKeys Identified Mail)"));
+          echo '</h6>';
+          echo '<p>';
+            printf(_("El objetivo de DKIM es asegurar de que un mensaje enviado por example.com es realmente de example.com. Para ello DKIM agrega automáticamente una firma digital a cada mensaje. Esta firma se basa en una clave privada conocida únicamente por el servidor que envía el correo. El servidor receptor puede utilizar la clave pública (incluida en el registro dkim de los DNS) para decodificar la firma y asegurarse de que el mensaje no ha sido alterado. Aunque el propósito inicial era la seguridad, muchos ISP, incluyendo Gmail, Yahoo y otros, usan la información de DKIM para validar la calidad y la autenticidad del mensaje. Si la firma DKIM falla, hay una probabilidad muy alta de que el mensaje sea enviado a la carpeta de spam.<br />
+Vista la complejidad de su configuración es mejor asegurarse de que se ha insertado correctamente su valor en los DNS ya que, al igual que los registros SPF, es mejor no tener ningún registro DKIM que tener uno incorrecto.<br />
+Para comprobar si el registro DKIM que has creado para los DNS de tu dominio es correcto puedes usar la siguiente página, introduciendo el nombre de tu dominio y seleccionando DKIM Lookup desde el desplegable: <a href='https://mxtoolbox.com/SuperTool.aspx' target='_blank'>https://mxtoolbox.com/SuperTool.aspx</a> "));
+          echo '</p>';
+          echo '<pre>TXT    "v=spf1 mx ip4:' . $_SERVER["SERVER_ADDR"] .' a:' . $fqdn .  ' ~all" ';
+
+          echo '</pre>';
+
+          echo '<hr><h4 class="center">';
               printf(_("Webmail (Correo web)"));
               echo '</h4>';
               echo '<p>';

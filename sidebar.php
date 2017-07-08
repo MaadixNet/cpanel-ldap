@@ -47,7 +47,7 @@
                               <?php if( !empty($serv_installed) && array_search('rainloop', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
 
                                 <li>
-                                  <a target="_blank" href="/rainloop"><i class="fa fa-cloud"></i> <?php printf(_("Webmail"));?></a>
+                                  <a target="_blank" href="/rainloop"><i class="fa fa-envelope-o"></i> <?php printf(_("Webmail"));?></a>
                                 </li>
                               <?php }?> 
 

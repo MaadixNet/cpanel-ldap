@@ -2,7 +2,7 @@
 session_start();
 require_once 'classes/class.ldap.php';
 $Ldap= new LDAP();
-
+$fqdn=trim(shell_exec('hostname -f'));
 $current_page=basename(__FILE__);
 $Ldap->check_login_or_redirect($current_page);
 
@@ -45,7 +45,6 @@ if(isset($_POST['adddomain'])){
       $error = true;
     } 
     $sanitsed_data= sanitizeData($_POST);
-    $fqdn=trim(shell_exec('hostname -f'));
     $sanitsed_data= sanitizeData($_POST);
     $webmaster=$sanitsed_data['seluser'][0]['value'];
     if($webmaster=='newuser'){
@@ -142,6 +141,19 @@ if(isset($_POST['adddomain'])){
       $addAbuse=$Ldap->addRecord($ldapconn,'mail=abuse@'.$domain_new.',vd='.$domain_new.','.LDAP_BASE,$entry_abuse); 
     }
     if ($addDomain && $addAbuse && $addDomainpm) {
+      //if a domain has been successfully addeed Check if object opendkim  exists. if not create it
+      $dkimexist = $Ldap->search($ldapconn,'ou=opendkim,ou=cpanel,' . SUFFIX ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
+      if(!$dkimexist){
+            //create ou=opendkim if not exist
+            $Ldap->addDkimObject($ldapconn);
+        }
+      //then put status as locked to create the dkim keys for the new domain
+    
+      $modifystatus ='ou=opendkim,ou=cpanel,' . SUFFIX ;
+      $info = array();
+      $info['status']= 'locked';
+      $updatedkimstatus=$Ldap->modifyRecord($ldapconn, $modifystatus, $info );  
+      
        $message .= "
     <div class='alert alert-success'>
     <button class='close' data-dismiss='alert'>&times;</button>
@@ -192,7 +204,10 @@ white_list = ""';
 require_once('header.php');
 require_once('sidebar.php');
 ?>
-
+<?php //then delete
+$dkimexist = $Ldap->search($ldapconn,'ou=opendkim,ou=cpanel,' . SUFFIX ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
+var_dump($dkimexist);
+?>
 <article class="content forms-page">
   <div class="title-block">
     <h3 class="title"> <?php printf(_("Añadir Dominio"));?> </h3>

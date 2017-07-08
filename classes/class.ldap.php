@@ -52,7 +52,18 @@ class LDAP{
           ldap_add($ldapconn, $adddn, $info);
         }
     }
-
+    function addDkimObject ($ldapconn){
+        //Only admin can add vpn accounts. Check level
+        if($_SESSION["login"]["level"] == '10'){
+          $password=$this->decrypt_psw();
+          $ldapbind=$this->bind($ldapconn, BINDDN ,$password);
+          $adddn='ou=opendkim,ou=cpanel' . SUFFIX;
+          $info['objectclass'][0]='organizationalUnit';
+          $info['objectclass'][1]='top';
+          $info['objectclass'][2]='metaInfo';
+          ldap_add($ldapconn, $adddn, $info);
+        }
+    }
     function search($ldapconn,$searchdn, $filter){
           //escape filter
           //$filter = ldap_escape($filter, null, LDAP_ESCAPE_FILTER);

@@ -34,7 +34,7 @@ switch ($status) :
                 <h3 class="title"> <?php printf(_("La tarea de Mantenimiento o Actualización ha producido un error."));?> </h3>
                 <br />
                 <p class="title-description"> <?php printf(_("El equipo técnico ha sido notificado y está ahora trabajando en la solución."));?> </p>
-                <p class="title-description"> <?php printf(_("En breves se pondrá en contacto contigo."));?> </p>
+                <p class="title-description"> <?php printf(_("En breve se pondrá en contacto contigo."));?> </p>
                 <p class="title-description"> <?php printf(_("Disculpa las molestias"));?> </p>
             </div>
     </article>

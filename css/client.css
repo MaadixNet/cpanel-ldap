@@ -11,8 +11,12 @@
 }
 #loadModal .modal-content {border: 0px;}
 
-
-
+pre {padding-top: 10px;}
+h6 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.center {text-align: center;}
 #change, #hidden ,#new_user{
     display: none;
 }
@@ -33,6 +37,7 @@ form.standard select {
 .service-img img{max-width:100%;}
 .loading{ background-image: url("../images/spinner.gif");padding: 0 7px;background-repeat:no-repeat;background-position-y:3px}
 .tab-content a button.btn{white-space:normal;}
+
 /*Table style*/
 
 
