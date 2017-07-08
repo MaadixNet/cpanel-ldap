@@ -188,7 +188,7 @@ $(document).ready(function() {
       } else {
         console.log('invisible');
           $('input#username').prop('required', false);
-          $('input#dwiusermail').prop('required', false);
+          $('input#usermail').prop('required', false);
           $('input#pswd1').prop('required', false);
           $('input#pswd2').prop('required', false);
       }

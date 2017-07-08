@@ -183,14 +183,15 @@ do
         # in production remove --staging
         #/etc/init.d/apache2 reload && certbot certonly --agree-tos --staging --non-interactive --text --rsa-key-size 4096 --email $mail --webroot-path $documenRoot/$domain --domains "$domain, www.$domain" && \                 
         # En modo producció : https://acme-v01.api.letsencrypt.org/directory
-          # En modo prueba : https://acme-staging.api.letsencrypt.org/directory 
+        # En modo prueba : https://acme-staging.api.letsencrypt.org/directory 
+
         cerbotdomain="$domain"
         wwwdomainip="$(dig +short "www.$domain")"
         if [ "$wwwdomainip" == $myip ];then
           cerbotdomain+=" -d www."$domain""
         fi
 
-          /etc/init.d/apache2 reload && letsencrypt --server https://acme-v01.api.letsencrypt.org/directory \
+          /etc/init.d/apache2 reload && letsencrypt --server https://acme-v01.api.letsencrypt.org/directory  \
             -d $cerbotdomain --agree-tos --email $mail --webroot --webroot-path $documenRoot/$domain --non-interactive --text --rsa-key-size 4096  certonly &&  \
         echo "<VirtualHost *:80>
         ServerName "$domain"
@@ -331,6 +332,31 @@ do
             echo $basevhost 'is NOT present in ldap so we can delete it'
             echo "dominio "$basevhost" eliminado"
             rm $vhroot/"$basevhost" && has_new_domains=true
+            # Clean letsencrypt certificates
+            # We need to remove renewal and also live and archive, so if a user creates the same domain
+            # after removing it all the let's encrypt certs will be generated again from scratch
+            letsencryptfolders='/etc/letsencrypt'
+            live="$letsencryptfolders/live/$folderdomain"
+            archive="$letsencryptfolders/archive/$folderdomain"
+            renew="$letsencryptfolders/renewal/$basevhost"
+            echo $live '\n'
+            echo $archive '\n'
+            echo $renew '\n'
+
+            if [[ -d $live ]];
+            then 
+              rm -r $live
+            fi
+
+            if [[ -d $archive ]];
+            then 
+              rm -r $archive
+            fi
+
+            if [[ -f $renew ]];
+            then
+              rm $renew
+            fi
 
             # We won't delete the web folder in /var/www/htnl, so we set the ownwer as the default sudo user again
             chown -R $defaultsudouser:www-data $documenRoot/$folderdomain

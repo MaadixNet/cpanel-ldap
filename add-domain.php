@@ -204,12 +204,15 @@ white_list = ""';
 require_once('header.php');
 require_once('sidebar.php');
 ?>
-<?php //then delete
-$dkimexist = $Ldap->search($ldapconn,'ou=opendkim,ou=cpanel,' . SUFFIX ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
-var_dump($dkimexist);
-?>
 <article class="content forms-page">
   <div class="title-block">
+<?php //then delete
+echo '<pre>';
+$dkim = $Ldap->search($ldapconn,'ou=opendkim,ou=cpanel,' . SUFFIX ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
+var_dump($dkim);
+echo '</pre>';
+?>
+
     <h3 class="title"> <?php printf(_("Añadir Dominio"));?> </h3>
       <p class="title-description"> <?php printf(_("Activa dominios o subdominios para este servidor."));?></p>
   </div>

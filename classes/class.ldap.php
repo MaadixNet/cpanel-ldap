@@ -57,7 +57,7 @@ class LDAP{
         if($_SESSION["login"]["level"] == '10'){
           $password=$this->decrypt_psw();
           $ldapbind=$this->bind($ldapconn, BINDDN ,$password);
-          $adddn='ou=opendkim,ou=cpanel' . SUFFIX;
+          $adddn='ou=opendkim,ou=cpanel,' . SUFFIX;
           $info['objectclass'][0]='organizationalUnit';
           $info['objectclass'][1]='top';
           $info['objectclass'][2]='metaInfo';
