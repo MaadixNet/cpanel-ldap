@@ -7,12 +7,24 @@ $current_page=basename(__FILE__);
 $Ldap->check_login_or_redirect($current_page);
 
 require_once('header.php');
-//connect and BInd
+
+/* Set some variable to show in table, for domain statuses
+ *
+*/
 $errorttpe="";
 $message="";
+// show the vhostb domain status
 $statok='<i class="fa fa-check-circle-o icon checkok"></i>';
 $loading='<span class="loading"></span>';
 
+/*Show the mail server status. It will be active if email is managed by
+ * This server. Inactive to deliver email to qan external server
+ *
+*/
+
+$mail_active= "<span class='isservice hasaccess'>" . sprintf(_("Activado")) . "</span>";
+$mail_inactive= "<span class='isservice noaccess'>" . sprintf(_("Desactivado")) . "</span>";
+//connect and BInd
 $ldapconn=$Ldap->connect();
 $psw=$Ldap->decrypt_psw();
 if ($ldapconn){
@@ -219,10 +231,11 @@ require_once('sidebar.php');
         <thead>
         <tr>
             <th>Dominio</th>
+            <th>Servidor Correo</th>
             <th>Cuentas email </th>
+            <th>Servidor web</th>
             <th>Administrador web</th>
             <th>DNS</th>
-            <th>Activado</th>
             <?php if($_SESSION["login"]["level"] == '10') {
 
               echo '<th>' .sprintf (_('Editar')) . '</th>';
@@ -236,14 +249,22 @@ require_once('sidebar.php');
 <?php
     for ($i=0; $i<$result["count"]; $i++) {
               $domain= $result[$i]["vd"][0];
-                      $resultmail=$Ldap->search($ldapconn,'vd='. $domain . ','. LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
+              $resultmail=$Ldap->search($ldapconn,'vd='. $domain . ','. LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
 
         echo "<tr>";
         echo "<td>";
         echo $domain;
         echo "</td>";
+        echo "<td class='center'>";
+        $mail_server = ($result[$i]["accountactive"][0] == "TRUE")?$mail_active:$mail_inactive;
+        echo $mail_server;
+        echo "</td>";
         echo "<td>";
-        echo "<a href='/". BASE_PATH ."/mails.php?domain=" . $domain ."'>Administrar cuentas de correo</a> ";
+        echo "<a href='/". BASE_PATH ."/mails.php?domain=" . $domain ."'>Administrar email</a> ";
+        echo "</td>";
+        echo "<td class='center domainstatus' data-domain='" . $domain . "'>";
+        $status=(file_exists('/etc/apache2/ldap-enabled/' . $domain .'.conf'))?$statok:$loading;
+        echo $status . '<span id="domainstatus"></span>';
         echo "</td>";
         $webmaster = trim($result[$i]["adminid"][0]);
         echo "<td data-domain='" . $domain . "' data-webmaster='" . $webmaster . "' class='webmasterstatus'>";
@@ -252,11 +273,7 @@ require_once('sidebar.php');
         $ownersip=($current_admin==$webmaster?$statok:$loading);
         echo $webmaster . '&nbsp;&nbsp; ' . $ownersip . ' <span id="ownershipstatus"></span>';
         echo "<td class='center'>";
-        echo "<a href='editdns.php?domain=" . $domain ."'>Ver</a>";
-        echo "</td>";
-        echo "<td class='center domainstatus' data-domain='" . $domain . "'>";
-        $status=(file_exists('/etc/apache2/ldap-enabled/' . $domain .'.conf'))?$statok:$loading;
-        echo $status . '<span id="domainstatus"></span>';
+        echo "<a title='Ver la configuración de los DNS para " . $domain ."' href='editdns.php?domain=" . $domain ."'>Ver</a>";
         echo "</td>";
         if($_SESSION["login"]["level"] == '10') {
             echo "<td>";

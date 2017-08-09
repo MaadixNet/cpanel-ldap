@@ -104,6 +104,7 @@ if(isset($_POST['adddomain'])){
     $entry["vd"]                = $domain_new;
     $entry["lastChange"]        = time();
     $entry["adminid"]           = $webmaster;
+    $entry["accountActive"]     = (isset($_POST["mailactive"]))?"TRUE":"FALSE";
 
     // Merge static values with domain values
     $entry = array_merge($entry,$values["domain"]);
@@ -207,14 +208,11 @@ require_once('sidebar.php');
 <article class="content forms-page">
   <div class="title-block">
 <?php //then delete
-echo '<pre>';
 $dkim = $Ldap->search($ldapconn,'ou=opendkim,ou=cpanel,' . SUFFIX ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
-var_dump($dkim);
-echo '</pre>';
 ?>
 
     <h3 class="title"> <?php printf(_("Añadir Dominio"));?> </h3>
-      <p class="title-description"> <?php printf(_("Activa dominios o subdominios para este servidor."));?></p>
+      <p class="title-description"> <?php printf(_("Activa dominios o subdominios en este servidor."));?></p>
   </div>
   <div class="subtitle-block">
   <h3 class="subtitle"> <?php printf(_(" Activar un dominio en este panel creará la configuración necesaria para:"));?></h3>
@@ -329,10 +327,9 @@ El Webmaster tendrá permisos para crear, borrar o modificar archivos dentro de 
             </div>
 
             <div class="clear"></div>
-            <input type="hidden" name="values[domain][maxmail]" value="100">
+            <input type="hidden" name="values[domain][maxmail]" value="0">
             <input type="hidden" name="values[domain][maxalias]" value="100">
-            <input type="hidden" name="values[domain][maxquota]" value="100">
-            <input type="hidden" name="values[domain][accountactive]" value="TRUE">
+            <input type="hidden" name="values[domain][maxquota]" value="0">
             <input type="hidden" name="values[domain][editav]" value="TRUE">
             <input type="hidden" name="values[domain][delete]" value="FALSE">
             <input type="hidden" name="values[mail][editaccounts]" value="TRUE">

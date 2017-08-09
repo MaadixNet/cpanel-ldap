@@ -38,6 +38,8 @@ form.standard select {
 .loading{ background-image: url("../images/spinner.gif");padding: 0 7px;background-repeat:no-repeat;background-position-y:3px}
 .tab-content a button.btn{white-space:normal;}
 
+hr {margin-top: 1.5rem;
+  margin-bottom: 1.5rem;}
 /*Table style*/
 
 
@@ -50,6 +52,7 @@ form.standard select {
     width: 100%;
     border-collapse: collapse;
     margin-top:15px;
+    margin-bottom: 15px;
     }
     /* Zebra striping */
     tr:nth-of-type(odd) {
@@ -170,9 +173,13 @@ span.counter {
 }
 
 
-    .jumbotron .mobile {
-        margin-left: -164px;
-    }
+.jumbotron .mobile {
+    margin-left: -164px;
+}
+
+/* Force th for dkim records (very loooooong string) */
+
+.longRecord {max-width:200px; word-wrap: break-word;}
 @media(max-width:979px){
 
     #sidebarleft {
@@ -285,24 +292,25 @@ span.counter {
         table#email td:nth-of-type(4):before { content: "Eliminar"; }
 
         table#dns td:nth-of-type(1):before { content: "Tipo Registro"; }
-        table#dns td:nth-of-type(2):before { content: "Servicio"; }
-        table#dns td:nth-of-type(3):before { content: "Configuració Actual"; }
-        table#dns td:nth-of-type(4):before { content: "Configuración Redquerida"; }
-        table#vpn td:nth-of-type(5):before { content: "Estado"; }
+        table#dns td:nth-of-type(2):before { content: "Nombre"; }
+        table#dns td:nth-of-type(3):before { content: "Valor Actual"; }
+        table#dns td:nth-of-type(4):before { content: "Valor Redquerida"; }
+        table#dns td:nth-of-type(5):before { content: "Estado"; }
 
         table#users td:nth-of-type(1):before { content: "Usuario"; }
         table#users td:nth-of-type(2):before { content: "Webmaster"; }
-        table#users td:nth-of-type(3):before { content: "SFTP"; }
+        table#users td:nth-of-type(3):before { content: "Accesos"; }
         table#users td:nth-of-type(4):before { content: "Editar"; }
         table#users td:nth-of-type(5):before { content: "Eliminar";}
 
         table#domains td:nth-of-type(1):before { content: "Dominio"; }
-        table#domains td:nth-of-type(2):before { content: "Cuentas email"; }
-        table#domains td:nth-of-type(3):before { content: "Administrador web"; }
-        table#domains td:nth-of-type(4):before { content: "DNS";} 
-        table#domains td:nth-of-type(5):before { content: "Activado";}
-        table#domains td:nth-of-type(6):before { content: "Editar"; }
-        table#domains td:nth-of-type(7):before { content: "Eliminar";}
+        table#domains td:nth-of-type(2):before { content: "Servidor de Correo"; }
+        table#domains td:nth-of-type(3):before { content: "Cuentas Email"; }
+        table#domains td:nth-of-type(4):before { content: "Servidor Web";} 
+        table#domains td:nth-of-type(5):before { content: "Administrador web";}
+        table#domains td:nth-of-type(6):before { content: "DNS";}
+        table#domains td:nth-of-type(7):before { content: "Editar"; }
+        table#domains td:nth-of-type(8):before { content: "Eliminar";}
 
         table td.center {text-align:left;}
 

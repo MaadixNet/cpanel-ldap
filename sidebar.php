@@ -50,6 +50,16 @@
                                   <a target="_blank" href="/rainloop"><i class="fa fa-envelope-o"></i> <?php printf(_("Webmail"));?></a>
                                 </li>
                               <?php }?> 
+                             <?php if( !empty($serv_installed) && array_search('mailman', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+                              <li>
+                                <a href=""> <i class="fa fa-mail-reply-all"></i> Mailman<i class="fa arrow"></i> </a>
+                                <ul>
+                                  <li><a href="https://docs.maadix.net/mailman/" target="_blank"><?php printf(_("Instrucciones"));?></a></li>
+                                  <li><a  href="/<?php echo BASE_PATH;?>/mailman-domains.php"><?php printf(_("Dominios de lista"));?></a></li>
+                                  <li><a target="_blank" href="/mailman"><?php printf(_("Ir a la aplicación"));?></a></li>
+                                </ul>
+                              </li>
+                              <?php }?> 
 
                                     </ul>
                                 <li><a href="/<?php echo BASE_PATH;?>/service-available.php"> <i class="fa fa-dashboard"></i> <?php printf(_("Instalar Aplicaciones"));?></a>

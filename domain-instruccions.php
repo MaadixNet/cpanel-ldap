@@ -53,11 +53,35 @@ require_once('sidebar.php');
             printf(_("Registro de tipo MX"));
           echo '</h6>'; 
           echo '<p>';
-            printf (_("Este registro es estrictamente indispensable para que el electrónico sea gestionado por tu servidor y no por otro servicio externo. El valor del registro MX de los DNS de tu domminio  tendrá que ser el mismo que el el nombre de dominio asociado a ese equipo."));
-          echo '</p>';
-           $fqdn=trim(shell_exec('hostname -f'));
-          echo '<pre><b>MX </b> ' . $fqdn . '</pre>';
+            $fqdn=trim(shell_exec('hostname -f'));
+            printf (_("Este registro es estrictamente indispensable. Para que el electrónico sea gestionado por tu servidor y no por otro servicio externo el valor del registro MX de los DNS de tu domminio o subdominio tendrá que ser el mismo que el el nombre de ese equipo: %s . Algunos proveedores de dominio pueden necesitar que añadas un punto despues del valor"), $fqdn);
 
+printf(_("<h6>Ejemplos de registros MX para dominio example.com y subdominio sub.example.com</h6>"));
+
+        echo '<table><thead><tr>';
+        echo '<th>Type</th>';
+        echo '<th>Name</th>';
+        echo '<th>Value</th>';
+        echo '<th>Priority</th>';
+        echo '</tr></thead><tbody>';
+        echo '<tr>';
+        echo '<td>MX</td>';
+        echo '<td>@</td>';
+        echo '<td>' . $fqdn. '</td>';
+        echo '<td>10</td>';
+        echo '</tr>';
+        echo '<tr>';
+        echo '<td>MX</td>';
+        echo '<td>sub</td>';
+        echo '<td>' . $fqdn. '</td>';
+        echo '<td>10</td>';
+        echo '</tr>';
+        echo '</tbody></table>';
+        echo '<br />';
+ printf(_("<h6>Ejemplos de registros MX  para dominio example.com y subdominio sub.example.com en texto (para aquellos proveedores que no proporcionan formulario)</h6>"));
+
+          echo '<pre>@ 10800 IN MX 10 ' . $fqdn . '<br />';
+          echo 'sub 10800 IN MX 10 ' . $fqdn . '</pre>';
 
           echo '<h6 class="pink">';
             printf(_("Registro SPF (Sender Policy Framework)"));
@@ -74,24 +98,91 @@ require_once('sidebar.php');
           echo '<p>';
             printf(_("El objetivo de DKIM es asegurar de que un mensaje enviado por example.com es realmente de example.com. Para ello DKIM agrega automáticamente una firma digital a cada mensaje. Esta firma se basa en una clave privada conocida únicamente por el servidor que envía el correo. El servidor receptor puede utilizar la clave pública (incluida en el registro dkim de los DNS) para decodificar la firma y asegurarse de que el mensaje no ha sido alterado. Aunque el propósito inicial era la seguridad, muchos ISP, incluyendo Gmail, Yahoo y otros, usan la información de DKIM para validar la calidad y la autenticidad del mensaje. Si la firma DKIM falla, hay una probabilidad muy alta de que el mensaje sea enviado a la carpeta de spam.<br />
 Vista la complejidad de su configuración es mejor asegurarse de que se ha insertado correctamente su valor en los DNS ya que, al igual que los registros SPF, es mejor no tener ningún registro DKIM que tener uno incorrecto.<br />
-Para comprobar si el registro DKIM que has creado para los DNS de tu dominio es correcto puedes usar la siguiente página, introduciendo el nombre de tu dominio y seleccionando DKIM Lookup desde el desplegable: <a href='https://mxtoolbox.com/SuperTool.aspx' target='_blank'>https://mxtoolbox.com/SuperTool.aspx</a> "));
-          echo '</p>';
-          echo '<pre>TXT    "v=spf1 mx ip4:' . $_SERVER["SERVER_ADDR"] .' a:' . $fqdn .  ' ~all" ';
+Para comprobar si el registro DKIM que has creado para los DNS de tu dominio es correcto puedes usar la siguiente página, introduciendo el nombre de tu dominio + :default y seleccionando DKIM Lookup desde el desplegable: <a href='https://mxtoolbox.com/SuperTool.aspx' target='_blank'>https://mxtoolbox.com/SuperTool.aspx</a>. Si tu dominio fuera example.com, deberías insertar example.com:default."));
+printf(_("Lamentablemente este tipo de registro tiene una sintaxis diferente dependiendo del proveedor con el que tengas contratado el dominio. Aquí hay algunos ejemplos de sintaxis válidas para dkim. Tendrás que probar hasta encontrar la correcta para tu proveedor, o bien contactar con ellos para que te guien. El valor de la cadena de carácteres p=...  es la clave publica y cambia para cada dominio. Encontrarás la cadena correcta en la sección de DNS correspondiente a tu dominio o subdominio de este panel de control."));
 
-          echo '</pre>';
+printf(_("<h6>Ejemplos de registros DKIM para dominio example.com (Nota la presencia o no de la comillas en en la campo Value. En algunos casos es necesaria y en otros no)</h6>"));
 
-          echo '<hr><h4 class="center">';
-              printf(_("Webmail (Correo web)"));
-              echo '</h4>';
-              echo '<p>';
-              printf (_("Con este término se entiende un interfaz web por el que puedes acceder a tu correo electrónico para consultar o enviar mails.<br>
-              Tienes la posibilidad de utilizar el interfaz webmail de este equipo para consultar cualquier cuenta existenete a la que tengas acceso, aunque sea operada por otro servidor. Así por ejemplo podrías consultar tu cuenta de gmail, o de cualquier otro dominio que tengas activado con otro provedor. Para ello tienes primero que añadir el dominio a través de la página '<a href='add-domain.php'>Añadir dominio</a>' (por ejemplo gmail.com) y luego visitar el interfaz webmail identificándote con la cuenta de correo de electrónico y su contraseña (por ejemplo example@gmail.com). "));
-              echo '</p>';
-              echo '<p>';
-              printf (_("En este caso el sistema de entrega de los mensajes estáría gestionado por gmail, y por supuesto no habría coincidencia con los registros MX ya que el dominio gmail.com estará configurado para funcionar con sus propios servidores.<br> 
-                Así que desde el cpanel no pdrías crear nuevas cuentas de correo electronico para este dominio. No puedes dar de alta nuevas cuentas de gmail desde este equipo, pero sí puedes descargarte y consultar todos lo mensajes.<br>
-      Este mismo principio funciona para otras cuentas bajo otros dominios."));
-              echo '</p>';
+        echo '<table><thead><tr>';
+        echo '<th>Type</th>';
+        echo '<th>Name</th>';
+        echo '<th>Value</th>';
+        echo '</tr></thead><tbody>';
+        echo '<tr>';
+        echo '<td>TXT</td>';
+        echo '<td>default._domainkey</td>';
+        echo '<td>"v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZTroWVFpkfXklFulqg8pdg/cWS+ORgoi1x97l5NyqlqL7R1qazoIVQ63TYUS8yjxU87z4FAr/zb/+p2ayk+wVqXA7twWLuHPhEHdiBQM5cEbaPX/Q3fMYULTPkmuVLA/aAcNUr3xagyNfpOzUmUAvJfOfozaSik9/ZmHRFFvzdwIDAQAB"</td>';
+
+        echo '</tr>';
+        echo '<tr>';
+        echo '<td>TXT</td>';
+        echo '<td>default._domainkey</td>';
+        echo '<td>v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZTroWVFpkfXklFulqg8pdg/cWS+ORgoi1x97l5NyqlqL7R1qazoIVQ63TYUS8yjxU87z4FAr/zb/+p2ayk+wVqXA7twWLuHPhEHdiBQM5cEbaPX/Q3fMYULTPkmuVLA/aAcNUr3xagyNfpOzUmUAvJfOfozaSik9/ZmHRFFvzdwIDAQAB</td>';
+        echo '</tr>';
+
+        echo '<tr>';
+        echo '<td>TXT</td>';
+        echo '<td>default._domainkey.example.com</td>';
+        echo '<td>"v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZTroWVFpkfXklFulqg8pdg/cWS+ORgoi1x97l5NyqlqL7R1qazoIVQ63TYUS8yjxU87z4FAr/zb/+p2ayk+wVqXA7twWLuHPhEHdiBQM5cEbaPX/Q3fMYULTPkmuVLA/aAcNUr3xagyNfpOzUmUAvJfOfozaSik9/ZmHRFFvzdwIDAQAB"</td>';
+        
+        echo '</tr>';
+        echo '<tr>';
+        echo '<td>TXT</td>';
+        echo '<td>default._domainkey.example.com</td>';
+        echo '<td>v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZTroWVFpkfXklFulqg8pdg/cWS+ORgoi1x97l5NyqlqL7R1qazoIVQ63TYUS8yjxU87z4FAr/zb/+p2ayk+wVqXA7twWLuHPhEHdiBQM5cEbaPX/Q3fMYULTPkmuVLA/aAcNUr3xagyNfpOzUmUAvJfOfozaSik9/ZmHRFFvzdwIDAQAB</td>';
+        
+        echo '</tr>';
+
+        echo '</tbody></table>';
+        echo '<br>';
+        printf(_("<h6>Ejemplos de registros DKIM para dominio example.com en texto (para aquellos proveedores que no proporcionan formulario)</h6>"));
+        echo '<pre>';    
+        echo 'default._domainkey 10800 IN TXT    "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZTroWVFpkfXklFulqg8pdg/cWS+ORgoi1x97l5NyqlqL7R1qazoIVQ63TYUS8yjxU87z4FAr/zb/+p2ayk+wVqXA7twWLuHPhEHdiBQM5cEbaPX/Q3fMYULTPkmuVLA/aAcNUr3xagyNfpOzUmUAvJfOfozaSik9/ZmHRFFvzdwIDAQAB"<br>';
+        echo 'default._domainkey.example.com. 10800 IN TXT    "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZTroWVFpkfXklFulqg8pdg/cWS+ORgoi1x97l5NyqlqL7R1qazoIVQ63TYUS8yjxU87z4FAr/zb/+p2ayk+wVqXA7twWLuHPhEHdiBQM5cEbaPX/Q3fMYULTPkmuVLA/aAcNUr3xagyNfpOzUmUAvJfOfozaSik9/ZmHRFFvzdwIDAQAB"<br>';
+
+        echo '</pre>';
+
+printf(_("<h6>Ejemplos de registros DKIM para subdominio sub.example.com (Nota la presencia o no de la comillas en en la campo Value. En algunos casos es necesaria y en otros no)</h6>"));
+
+        echo '<table><thead><tr>';
+        echo '<th>Type</th>';
+        echo '<th>Name</th>';
+        echo '<th>Value</th>';
+        echo '</tr></thead><tbody>';
+        echo '<tr>';
+        echo '<td>TXT</td>';
+        echo '<td>default._domainkey.sub</td>';
+        echo '<td>"v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZTroWVFpkfXklFulqg8pdg/cWS+ORgoi1x97l5NyqlqL7R1qazoIVQ63TYUS8yjxU87z4FAr/zb/+p2ayk+wVqXA7twWLuHPhEHdiBQM5cEbaPX/Q3fMYULTPkmuVLA/aAcNUr3xagyNfpOzUmUAvJfOfozaSik9/ZmHRFFvzdwIDAQAB"</td>';
+
+        echo '</tr>';
+        echo '<tr>';
+        echo '<td>TXT</td>';
+        echo '<td>default._domainkey.sub</td>';
+        echo '<td>v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZTroWVFpkfXklFulqg8pdg/cWS+ORgoi1x97l5NyqlqL7R1qazoIVQ63TYUS8yjxU87z4FAr/zb/+p2ayk+wVqXA7twWLuHPhEHdiBQM5cEbaPX/Q3fMYULTPkmuVLA/aAcNUr3xagyNfpOzUmUAvJfOfozaSik9/ZmHRFFvzdwIDAQAB</td>';
+        echo '</tr>';
+
+        echo '<tr>';
+        echo '<td>TXT</td>';
+        echo '<td>default._domainkey.sub.example.com</td>';
+        echo '<td>"v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZTroWVFpkfXklFulqg8pdg/cWS+ORgoi1x97l5NyqlqL7R1qazoIVQ63TYUS8yjxU87z4FAr/zb/+p2ayk+wVqXA7twWLuHPhEHdiBQM5cEbaPX/Q3fMYULTPkmuVLA/aAcNUr3xagyNfpOzUmUAvJfOfozaSik9/ZmHRFFvzdwIDAQAB"</td>';
+
+        echo '</tr>';
+        echo '<tr>';
+        echo '<td>TXT</td>';
+        echo '<td>default._domainkey.sub.example.com</td>';
+        echo '<td>v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZTroWVFpkfXklFulqg8pdg/cWS+ORgoi1x97l5NyqlqL7R1qazoIVQ63TYUS8yjxU87z4FAr/zb/+p2ayk+wVqXA7twWLuHPhEHdiBQM5cEbaPX/Q3fMYULTPkmuVLA/aAcNUr3xagyNfpOzUmUAvJfOfozaSik9/ZmHRFFvzdwIDAQAB</td>';
+
+        echo '</tr>';
+
+        echo '</tbody></table>';
+        echo '<br>';
+        printf(_("<h6>Ejemplos de registros DKIM para dominio example.com en texto (para aquellos proveedores que no proporcionan formulario)</h6>"));
+        echo '<pre>';
+        echo 'default._domainkey.sub 10800 IN TXT    "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZTroWVFpkfXklFulqg8pdg/cWS+ORgoi1x97l5NyqlqL7R1qazoIVQ63TYUS8yjxU87z4FAr/zb/+p2ayk+wVqXA7twWLuHPhEHdiBQM5cEbaPX/Q3fMYULTPkmuVLA/aAcNUr3xagyNfpOzUmUAvJfOfozaSik9/ZmHRFFvzdwIDAQAB"<br>';
+        echo 'default._domainkey.sub.example.com. 10800 IN TXT    "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZTroWVFpkfXklFulqg8pdg/cWS+ORgoi1x97l5NyqlqL7R1qazoIVQ63TYUS8yjxU87z4FAr/zb/+p2ayk+wVqXA7twWLuHPhEHdiBQM5cEbaPX/Q3fMYULTPkmuVLA/aAcNUr3xagyNfpOzUmUAvJfOfozaSik9/ZmHRFFvzdwIDAQAB"<br>';
+
+        echo '</pre>';
+
       ?>
     </div><!--row-->
   </section>
