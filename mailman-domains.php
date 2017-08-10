@@ -72,7 +72,7 @@ $mailman_domains = pg_fetch_all($result);
 	<div class="inner" id="maincol">
 
         <?php 
-    if(!$mailman_domains){
+    if($mailman_domains){
       ?>
         <table id="domains">
         <thead>
