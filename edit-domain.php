@@ -87,13 +87,12 @@ if ($ldapbind) {
     $allsftpusers=$Ldap->search($ldapconn,$ldaptree, $filtersftp);
 
 }
-
 /*
 echo '<pre>';
 print_r($result);
 echo '</pre>';
-*/
 require_once('sidebar.php');
+ */
 ?>
 <article>
   <section>
@@ -127,13 +126,13 @@ require_once('sidebar.php');
               $mailtitle = sprintf(_("Desactivar servidor de correo para este dominio"));
               $mailchecked = "checked='checked'";
               $mailmessage = sprintf(_("Desactiva esta casilla si quieres que el correo electrónico para este dominio sea gestionado por otro servidor externo. Recuerda que el registro MX de los  DNS tendrá que apuntar al nombre del servidor externo"));
-              $checkbox =  sprintf(_("Desactivar"));
+              $checkbox =  sprintf(_("Activado"));
              } else {
               $fqdn=trim(shell_exec('hostname -f'));
               $mailtitle = sprintf(_("Activar servidor de correo para este dominio"));
               $mailchecked = "";
               $mailmessage = sprintf(_("Activa esta casilla si quieres que el correo electrónico para este dominio sea gestionado por este servidor. Recuerda que el registro MX de los DNS tendrá que ser %s. Puedes averiguar cual es la configuración de DNS actual <a href='editdns.php?domain=" . $domain ."'>haciendo click aquí</a>."), $fqdn);
-              $checkbox =  sprintf(_("Activar"));
+              $checkbox =  sprintf(_("Desactivado"));
             } 
           
           
