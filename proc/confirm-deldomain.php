@@ -32,12 +32,14 @@ $queryvar='vd='. $domain .',';
 $resultmail=$Ldap->search($ldapconn,$queryvar . LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
 
   if($resultmail["count"]>0) {
-    echo '<p>' . sprintf(_("El dominio %s tiene las siguientes cuentas de correo electrónico activadas y serán borradas si eliminas el dominio"),$domain) .'  
+    echo '<p>' . sprintf(_("El dominio %s tiene las siguientes cuentas de correo electrónico activadas y serán inaccesibles si eliminas el dominio."),$domain) .'  
         </p><p><ul>';
       for ($c=0; $c<$resultmail["count"]; $c++) {
           echo '<ol>'. $resultmail[$c]["mail"][0] .'</ol>'; 
       }
     echo '</ul></p>';
+
+      echo '<p>' . sprintf(_("Los mensajes para estas cuentas de correo no se borrarán del servidor y volverán a aparecer en sus carpetas si en un futuro la vuelves a crear. Si quieres vaciar permanentemente el buzón hazlo usando la aplicación webmail o un cliente de correo que tengas configurado con IMAP, antes de eliminar el dominio."));
     }
 $admin_id=$result[0]['adminid'][0];
 $sudouser=$Ldap->get_sudo_user();
