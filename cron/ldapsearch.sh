@@ -144,28 +144,31 @@ do
         </VirtualHost>" > $vhroot/"$domain"-nossl-.conf
 
         mkdir $documenRoot/$domain
-
-
-        #chmod g+s $documenRoot/$domain
         echo 'Folder created'
-        echo "<!DOCTYPE html>
-        <html>
-        <head>
-        <title>Welcome! </title>
-        <style>
-        body {
+
+        # Crete the index.html file for the root domain only if it
+        # does not exists. Do not override previous user content
+
+        if [ ! -f $documenRoot/"$domain"/index.html ];
+        then
+          echo "<!DOCTYPE html>
+          <html>
+          <head>
+          <title>Welcome! </title>
+          <style>
+          body {
             width: 35em;
             margin: 0 auto;
             font-family: Tahoma, Verdana, Arial, sans-serif;
-            }
-        </style>
-        </head>
-        <body>
-        <h1>Welcome to "$domain"</h1>
-        <h3>You can now start building your website</h3>
+          }
+          </style>
+          </head>
+          <body>
+          <h1>Welcome to "$domain"</h1>
+          <h3>You can now start building your website</h3>
 
-        </body> </html>">$documenRoot/$domain/index.html
-
+          </body> </html>">$documenRoot/$domain/index.html
+        fi
         # Get domain webmaster. If no webmaster is set use the sudo user
         userexists=$(getent passwd | grep "<\$webmaster\>")
         if [[ -z "$webmaster" ]];
