@@ -164,14 +164,14 @@ require_once('sidebar.php');
                           <h4><?php printf(_("Reenvío automático"));?></h4>
                           <div> <label>
                           <input class="checkbox" type="checkbox" name="forward" id="forward" <?php echo $checked;?>>
-                          <span><?php printf(_("Activar/desactivar reenvío automático a otra cuenta" ));?></span>
+                          <span><?php printf(_("Activar o desactivar reenvío automático a otra cuenta" ));?></span>
                           </label> </div>
                         </div>
       
                         <div id="hidden">
                           <div class="form-group">
                             <label for="maildrop"><?php printf(_("Cuenta de destino para reenvío automático"));?></label>
-                            <p><?php printf(_("Puedes reenviar los correos electrónicos entrantes a una o más cuentas de correo alternativas. Si quieres renviar a múltiples cuentas separa cada una con coma (user1@exmple.com,user2@exmplae.com). Si quieres seguir recibiendo una copia de los mails entrantes en tu cuenta actual %s tendrás que incluirla en el listado "),$email);?></p>
+                            <p><?php printf(_("Puedes reenviar los correos electrónicos entrantes a una o más cuentas de correo alternativas. Si quieres que se reenvíen a múltiples cuentas, separa cada una de ellas con coma (user1@exmple.com,user2@example.com). Si quieres seguir recibiendo una copia de los correos entrantes en tu cuenta actual %s tendrás que incluirla en el listado "),$email);?></p>
                             <input class="form-control boxed" id="maildrop" class="usermail" type="mail" name="maildrop" value="<?php echo $maildrop;?>"  />
                             <div id="emailresult"></div>
                           </div>

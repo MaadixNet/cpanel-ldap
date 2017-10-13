@@ -79,7 +79,7 @@
                                 <li>
                                 <a href=""> <i class="fa fa-envelope-o"></i> <?php printf (_("Email"));?><i class="fa arrow"></i> </a>
                                     <ul>
-                                     <li><a href="/<?php echo BASE_PATH;?>/mails.php"><?php printf(_("Cuentas mail"));?></a></li>
+                                     <li><a href="/<?php echo BASE_PATH;?>/mails.php"><?php printf(_("Cuentas de correo"));?></a></li>
                                      <?php if( !empty($serv_installed) &&  array_search('rainloop', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
                                       <li><a href="/rainloop" target="_blank"><?php printf(_("Webmail"));?></a></li>
                                      <?php } ?>
