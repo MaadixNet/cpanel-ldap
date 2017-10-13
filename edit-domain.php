@@ -91,8 +91,8 @@ if ($ldapbind) {
 echo '<pre>';
 print_r($result);
 echo '</pre>';
-require_once('sidebar.php');
  */
+require_once('sidebar.php');
 ?>
 <article>
   <section>

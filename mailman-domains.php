@@ -17,32 +17,15 @@ $loading='<span class="loading"></span>';
 
 $ldapconn=$Ldap->connect();
 $psw=$Ldap->decrypt_psw();
-if ($ldapconn){
+$permissions= $_SESSION["login"]["level"];
+if ($ldapconn && $permissions==10){
 	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$psw); 
-	$permissions= $_SESSION["login"]["level"];
-	switch ($permissions) :
-	case "10" :
-		$binddn=LDAP_BASE;
-		$filter="(vd=*)";
-	break;
-        case "4" :
-                $binddn=LDAP_BASE;
-		$who=$_SESSION["phamm"]["domain"];
-		$filter="(vd=" . $who .")";
-		
-	break;
-	case "2":
-		$who= $_SESSION['login']["username"];
-		$binddn="vd=".$_SESSION["phamm"]["domain"].",".LDAP_BASE;		
-		$filter="(mail=" . $who .")";
-	break;
-
-	default:
-	break;
-	endswitch;
-
-
-
+        $ldaptree=LDAP_BASE;
+        $filter="(&(vd=*)(accountActive=TRUE))";
+        $attributes_vd=array("vd");
+        // Get all domains with email activated
+        $sr =ldap_search($ldapconn,$ldaptree, $filter,$attributes_vd);
+        $activeMailDomains = ldap_get_entries($ldapconn, $sr);
       }
 
 
@@ -64,6 +47,7 @@ if (!$result) {
 $mailman_domains = pg_fetch_all($result);
  */
 //print_r($mailman_domains); 
+
 ?>
 <div id="admin-content" class="content">
     <?php if($message) echo $message;?>
@@ -71,8 +55,14 @@ $mailman_domains = pg_fetch_all($result);
 
 	<div class="inner" id="maincol">
 
-        <?php 
+    <?php 
     if($mailman_domains){
+      /* If there are some domains in mailman database
+       * check that same domain has not been activated 
+       * to be used as email domain. Using same domain
+       * for lists and for normail email can be a problem.
+       */
+      // get a fullist of domain from ldap whit the email activated
       ?>
         <table id="domains">
         <thead>
@@ -86,8 +76,15 @@ $mailman_domains = pg_fetch_all($result);
         <tbody>
 
 <?php
-    foreach ($mailman_domains as $domain) {
 
+    foreach ($mailman_domains as $domain) {
+       if( !empty($activeMailDomains) && array_search($domain["mail_host"], array_column(array_column($activeMailDomains, 'vd'),0)) !== false){
+
+        $domain_status=  sprintf(_("Si usas este dominio para listas de correo puedes experimentar problemas. Ya se está utilizando para correo electrónico. Por favor utiliza otro o deshabilita el servidor de corro para este dominio"));
+
+      } else {
+        $domain_status=$statok;
+      }
         echo "<tr>";
         echo "<td>";
         echo $domain["mail_host"];
@@ -99,7 +96,7 @@ $mailman_domains = pg_fetch_all($result);
         echo "<a href='editdns.php?domain=" . $domain["mail_host"] ."'>Ver</a>";
         echo "</td>";
         echo "<td class='center domainstatus' data-domain='" . $domain["mail_host"] . "'>";
-        echo "checquear compatibilidad con ldap";
+        echo $domain_status;
         echo "</td>";
         echo "</tr>";
 
