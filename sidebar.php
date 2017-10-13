@@ -4,7 +4,7 @@
                     <div class="sidebar-container">
                         <div class="sidebar-header">
                             <div class="brand">
-                                <div class="logo"> <img src="images/logo_claro_med.png" tilte="MaadiX Home" alt="MaadiX Panel" /> </div> MaadiX</div>
+                                <div class="logo"> <img src="images/logo_claro_med.png" tilte="MaadiX Home" alt="MaadiX Panel" /> </div> MAADIX</div>
                             </div>
                       <?php if( ($_SESSION["login"]["status"] == "active") && $permissions >2 ){?>
                         <nav class="menu">
