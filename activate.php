@@ -127,7 +127,7 @@ require_once('sidebar.php');?>
 
 <article class="content typography-page">
   <div class="title-block">
-    <h3 class="title"> <?php printf(_("Activar Cpanel"));?></h3>
+    <h3 class="title"> <?php printf(_("Activar panel de control"));?></h3>
   </div>
   <section class="section">
       <div class="card card-info">
@@ -139,11 +139,11 @@ require_once('sidebar.php');?>
       <div class="card-block">
         <?php printf(_("<h5><strong class='pink'>NOTA IMPORTANTE:</strong> Tu servidor ha sido creado con dos usuarios que tienen altos privilegios en el sistema para poder administrar datos y procesos. Estos usuarios son:</h5>"));?>
         <hr>
-        <?php printf(_("<h5 calss='text-left'><mark>%s</mark> <small class='pink'>Es el usuario con el que te acabas de indentificar y que tiene acceso al Cpanel. El Cpanel es el interfaz gráfico para gestionar tareas y otros usuarios del sistema.</small></h5>"),$rootusername);
-        printf(_("<h5><mark>%s</mark> <small class='pink'>Este usuario no tiene acceso a través del Cpanel. Solo tiene acceso por ssh o sftp. Sin embargo este usuario tiene más privilegios que el anterior, ya que tiene acceso ilimitado al sistema. Este es tu usario root (SuperUsuario).</small></h5>"), $sudousername);?>
+        <?php printf(_("<h5 calss='text-left'><mark>%s</mark> <small class='pink'>Es el usuario con el que te acabas de indentificar y que tiene acceso al panel de control. El panel de control es el interfaz gráfico para gestionar tareas y otros usuarios del sistema.</small></h5>"),$rootusername);
+        printf(_("<h5><mark>%s</mark> <small class='pink'>Este usuario no tiene acceso a través del panel de control. Solo tiene acceso por ssh o sftp. Sin embargo este usuario tiene más privilegios que el anterior, ya que tiene acceso ilimitado al sistema. Este es tu usario root (SuperUsuario).</small></h5>"), $sudousername);?>
         <hr>
-        <?php printf(_("<h5>Cambia las contraseñas de ambos usuarios, para que solamente tú las conozcas. Apunta en un lugar seguro tanto el nombre de usuario como la nueva contraseña para ambos. Una vez completado este proceso tendrás que volver a entrar al Cpanel  con las nuevas credenciales para el usuario <mark>%s</mark></h5>"), $rootusername);?>
-        <p><?php printf(_(" Esta página solo se muestra la primera vez que accedes al Cpanel. Si quieres volver a cambiar algun parámetro de tu cuenta, lo podrás hacer en cualquier momento desde la página de 'Perfil' "));?></p>
+        <?php printf(_("<h5>Cambia las contraseñas de ambos usuarios, para que solamente tú las conozcas. Apunta en un lugar seguro tanto el nombre de usuario como la nueva contraseña para ambos. Una vez completado este proceso tendrás que volver a entrar al panel de control con las nuevas credenciales para el usuario <mark>%s</mark></h5>"), $rootusername);?>
+        <p><?php printf(_(" Esta página solo se muestra la primera vez que accedes al panel de control. Si quieres volver a cambiar algun parámetro de tu cuenta, lo podrás hacer en cualquier momento desde la página de 'Perfil' "));?></p>
         <hr>
       </div><!--card-block-->
     </div><!--card-info-->
@@ -152,7 +152,7 @@ require_once('sidebar.php');?>
   <section class="section">
     <?php echo $message;?>
     <div class="card card-block">
-    <?php printf(_("<h4>Usuario con acceso al Cpanel - <mark>%s</mark></h4>"),$rootusername); ?>
+    <?php printf(_("<h4>Usuario con acceso al panel de control- <mark>%s</mark></h4>"),$rootusername); ?>
 
       <form action=''role=" form"  autocomplete='off' method='POST' class='jquery-check standard form'  id="activate">
         
