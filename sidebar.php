@@ -91,7 +91,7 @@
                                 <li>
                                   <a href=""><i class="fa fa-users"></i> <?php printf(_("Usuarios"));?> <i class="fa arrow"></i> </a>
                                   <ul>
-                                    <li><a href="/<?php echo BASE_PATH;?>/usuarios.php"><?php printf(_("Usuarios"));?></a></li>
+                                    <li><a href="/<?php echo BASE_PATH;?>/usuarios.php"><?php printf(_("Usuarios genéricos"));?></a></li>
                                     <li><a href="/<?php echo BASE_PATH;?>/edit-supuser.php"><?php printf(_("SuperUsuario"));?></a></li>
                                     <li><a href="/<?php echo BASE_PATH;?>/view-postmasters.php"><?php printf(_("Postmasters"));?></a></li>
                                   </ul>
