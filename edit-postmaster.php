@@ -69,7 +69,7 @@ require_once('sidebar.php');
        <div class="card card-block">
             <form role="form"  autocomplete="off" id="up-domain" class="jquery-check standard form-signin" method="POST" action="">
               <div class="form-group">
-                <label class="control-label" for="username"><?php printf(_("Nobmre de usuario"));?></label>
+                <label class="control-label" for="username"><?php printf(_("Nombre de usuario"));?></label>
                 <h5><?php echo  "postmaster@". $domain;?></h5>
               </div>
 
@@ -79,7 +79,7 @@ require_once('sidebar.php');
                 <input class="form-control boxed" autocomplete="off" readonly id="pswd1" type="password" name="pswd1" value="" size="4" />
               </div>
               <div class="form-group">
-                <label class="control-label" or="pswd2"><?php printf(_("Repetir nueva contraseña"));?></label>
+                <label class="control-label" or="pswd2"><?php printf(_("Repetir la nueva contraseña"));?></label>
                 <input class="form-control boxed" id='pswd2' type='password' name='pswd2' value='' /><div id="pswresult"></div>
               </div>
               <hr>
