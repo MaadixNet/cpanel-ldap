@@ -177,12 +177,12 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
                   echo '<p>'. sprintf(_("Directorio Personal")) . '</p>';
                   echo '<pre>' . $result[0]['homedirectory'][0] . '</pre>';
                 }?>
-                <hr>
                 <?php if ($Ldap->check_installed_service('phpmyadmin')){?>
-                  <h4><?php printf(_("Acceso Aplicación PhpMyAdmin"));?></h4>
+                  <hr>
+                  <h4><?php printf(_("Acceso Aplicación phpMyAdmin"));?></h4>
                   <div> <label>
                     <input type="checkbox" name="apache" id="iapache" class="checkbox" type="checkbox" <?php echo $apache;?> />
-                     <span><?php printf(_("Activar acceso carpeta protegida PhpMyAdmin"));?></span>
+                     <span><?php printf(_("Activar acceso carpeta protegida phpMyAdmin"));?></span>
                    </label> </div>
 
                 <?php } ?>
@@ -190,6 +190,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
 
 
                 <?php if ($Ldap->check_installed_service('openvpn')){?>
+                  <hr>
                   <h4><?php printf(_("Cuenta VPN"));?></h4>
                   <div> <label>
                     <input type="checkbox" name="vpn" id="vpn" class="checkbox togglehidden" type="checkbox" <?php echo $vpn;?> />
