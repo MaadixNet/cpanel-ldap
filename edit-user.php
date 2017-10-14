@@ -182,7 +182,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
                   <h4><?php printf(_("Acceso Aplicación phpMyAdmin"));?></h4>
                   <div> <label>
                     <input type="checkbox" name="apache" id="iapache" class="checkbox" type="checkbox" <?php echo $apache;?> />
-                     <span><?php printf(_("Activar acceso carpeta protegida phpMyAdmin"));?></span>
+                     <span><?php printf(_("Activar acceso aplicación protegida phpMyAdmin"));?></span>
                    </label> </div>
 
                 <?php } ?>

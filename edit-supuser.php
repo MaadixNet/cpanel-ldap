@@ -83,8 +83,8 @@ require_once('sidebar.php');
   <h1 class=""> <?php printf(_("Editar Usuario %s - SuperUsuario"), $username);?></h1>
   </div>
     <div class="subtitle-block">
-  <h3 class=""> <?php printf(_("Este es el usuario root del sistema y tiene total acceso al servidor con ilimitados poderes. No lo puedes borrar ni puedes eliminar su acceso SFTP/SSH, que siempre está garantizado."));?></h3>
-  <h5 class=""> <?php printf(_("Para saber más visita esta página <a href='https://docs.maadix.net/users/#superusuario' target='_blank'>DOCS : Superusuario</a>"));?></h5>
+  <h3 class=""> <?php printf(_("Este es el usuario root del sistema y dispone de un acceso total al servidor, con poderes ilimitados. No lo puedes borrar ni eliminar su acceso SFTP/SSH, que está siempre garantizado."));?></h3>
+  <h5 class=""> <?php printf(_("Para saber más, visita la siguiente página de nuestra <a href='https://docs.maadix.net/users/#superusuario' target='_blank'>guía de uso</a>"));?></h5>
     </div>
   <section class="section">
   <div id="admin-content" cass="row">
@@ -93,7 +93,7 @@ require_once('sidebar.php');
           <div class="card card-block">
 		<form role="form" autocomplete="off" action="" method="POST" class="form-signin standard jquery-check">
                 <div class="form-group">
-                <label class="control-label" for="loginname">Nombre de usuario no editable (Para autentificación SFTP/SSH)</label>
+                <label class="control-label" for="loginname">Nombre de usuario no editable (Para autenticación SFTP/SSH)</label>
                 <pre><?php echo $username;?></pre>
                 </div>
                 
@@ -122,12 +122,12 @@ require_once('sidebar.php');
               <div class ="clearfix"></div>
               <p></p>
               <div class="form-group">
-              <label class="control-label"  for="pswd1"><?php printf(_("Nueva Contraseña"));?></label>
+              <label class="control-label"  for="pswd1"><?php printf(_("Nueva contraseña"));?></label>
               <div id="pswcheck"></div>
               <input class="form-control" size='4' id='pswd1' type='password' name='pswd1' readonly />
               </div>
               <div class="form-group">
-              <label class="control-label" or="pswd2"><?php printf(_("Confirma Contraseña"));?></label><input class="form-control" type='password' id='pswd2' name='pswd2' /><div id="pswresult"></div>
+              <label class="control-label" or="pswd2"><?php printf(_("Confirma la contraseña"));?></label><input class="form-control" type='password' id='pswd2' name='pswd2' /><div id="pswresult"></div>
                </div> 
                 <?php 
 
@@ -150,7 +150,7 @@ require_once('sidebar.php');
                   <h4><?php printf(_("Cuenta VPN"));?></h4>
                   <div> <label>
                     <input class="checkbox togglehidden" type="checkbox" type="checkbox" name="vpn" id="vpn" <?php echo $vpn;?> />
-                    <span><?php printf(_("Activar Cuenta VPN"));?></span>
+                    <span><?php printf(_("Activar cuenta VPN"));?></span>
                   </label> </div>
 
                   <div id="hidden">
@@ -180,7 +180,7 @@ require_once('sidebar.php');
                 <div class="clear"></div>
                 <hr>
                 <input type="hidden" name="username" id="username" value="<?php echo $username;?>" />
-		<input type="submit" name="updateuser" value="Guardar Cambios" class="btn btn-small btn-primary" />
+		<input type="submit" name="updateuser" value="Guardar cambios" class="btn btn-small btn-primary" />
 		</form>
       </div><!--class="card card-block sameheight-item"-->
     </div><!--admin-content-->
