@@ -295,7 +295,7 @@ require_once('sidebar.php');
   </div><!--ineer-->
 <?php } else {
 
-          printf(_("<h5>No hay ningún dominio activado.</h4> <h4>Puedes activar cualquier dominio desde la página <a href='add-domain.php'><button type='button' class='btn btn-primary'>Añadir dominios</button></a></h5>"));
+          printf(_("<h5>No hay ningún dominio activado.</h5> <h5>Puedes activar cualquier dominio desde la página <a href='add-domain.php'><button type='button' class='btn btn-primary'>Añadir dominios</button></a></h5>"));
 
       }?>
 <!-- Modal -->
