@@ -105,9 +105,9 @@ require_once('sidebar.php');
       <form role="form"  autocomplete="off" id="up-domain" class="form-signin standard" method="POST" action="">
         <div class="form-group">
         <h5><?php printf(_("Cambiar Webmaster"));?></h5>
-        <p><?php printf(_("Establece cual usuario tendrá permiso para editar los archivos del dominio %s"), $domain);?></p>
+        <p><?php printf(_("Establece qué usuario tendrá permiso para editar los archivos del dominio %s"), $domain);?></p>
 
-          <label class="control-label" for="webmaster"><?php printf(_("Webmaster (Administrador sito web)"));?></label> 
+          <label class="control-label" for="webmaster"><?php printf(_("Webmaster (Administrador del sitio web)"));?></label> 
           <?php $curwebmaster=$result[0]["adminid"][0];?>
           <select id='seladmin' name='seladmin'>";
             <?php for ($c=0; $c<$allsftpusers["count"]; $c++) {
@@ -125,7 +125,7 @@ require_once('sidebar.php');
             if ($activemailstatus == 'TRUE'){
               $mailtitle = sprintf(_("Desactivar servidor de correo para este dominio"));
               $mailchecked = "checked='checked'";
-              $mailmessage = sprintf(_("Desactiva esta casilla si quieres que el correo electrónico para este dominio sea gestionado por otro servidor externo. Recuerda que el registro MX de los  DNS tendrá que apuntar al nombre del servidor externo"));
+              $mailmessage = sprintf(_("Desactiva esta casilla si quieres que el correo electrónico para este dominio sea gestionado por un servidor externo. Recuerda que el registro MX de los  DNS tendrá que apuntar al nombre del servidor externo"));
               $checkbox =  sprintf(_("Activado"));
              } else {
               $fqdn=trim(shell_exec('hostname -f'));

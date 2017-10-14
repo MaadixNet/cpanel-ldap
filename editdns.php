@@ -346,9 +346,9 @@ require_once('sidebar.php');
                 // If spf record is not correct, give more details about how to fix it
 
                  echo '<hr>';    
-                 echo '<h4 id="spfCorrect" class="center">Registros de tipo SPF  para correo electrónico</h4>';
+                 echo '<h4 id="spfCorrect" class="center">Registros de tipo SPF para correo electrónico</h4>';
               if ($spf_stat!=$statok){
-                echo 'SPF (Sender Policy Framework) es un registro de tipo TXT que especifica qué servidores pueden enviar correo electrónico en nombre de tu dominio. Los proveedores de servicios de correo electrónico a menudo requieren registros de SPF  válidos. Un registro SPF ausente o incorrecto puede provocar que tu correo electrónico sea enviado a la carpeta de correo no deseado. Algunos operadores pueden incluso bloquear tus correos por completo. Para evitar estos problemas tendrás que añadir el siguiente registro de tipo TXT a cada dominio que quieras utilizar para crear cuentas de correo electrónico (además del registro MX):';
+                echo 'SPF (Sender Policy Framework) es un registro de tipo TXT que especifica qué servidores pueden enviar correo electrónico en nombre de tu dominio. Los proveedores de servicios de correo electrónico requieren a menudo registros de SPF  válidos. Un registro SPF ausente o incorrecto puede provocar que tu correo electrónico sea enviado a la carpeta de correo no deseado. Algunos operadores podrían incluso bloquear tus correos por completo. Para evitar estos problemas, tendrás que añadir el siguiente registro de tipo TXT a cada dominio que quieras utilizar para crear cuentas de correo electrónico (además del registro MX):';
 
                 echo '<pre>TXT   ' . $correct_spf.' </pre>'; 
 
@@ -384,9 +384,9 @@ require_once('sidebar.php');
              if ($dkim_stat!=$statok){
                 echo '
 El objetivo de DKIM (DomainKeys Identified Mail) es asegurar que un mensaje enviado por example.com sea realmente de example.com.
-Vista la complejidad de su configuración es mejor asegurarse de que se ha insertado correctamente su valor en los DNS ya que, al igual que los registros SPF, es mejor no tener ningún registro DKIM que tener uno incorrecto. 
+Vista la complejidad de su configuracióni, es mejor asegurarse de que se ha insertado correctamente su valor en los DNS ya que, al igual que pasa con los registros SPF, es mejor no tener ningún registro DKIM que tener uno incorrecto. 
 
-<br>Lamentablemente este tipo de registro tiene una sintaxis diferente dependiendo del proveedor con el que tengas contratado el dominio. Estos son los valores dkim  correctos para el dominio ' .$domain ;
+<br>Lamentablemente, este tipo de registro tiene una sintaxis diferente dependiendo del proveedor con el que tengas contratado el dominio. Estos son los valores DKIM  correctos para el dominio ' .$domain ;
 
 
                 echo '
@@ -410,9 +410,9 @@ Vista la complejidad de su configuración es mejor asegurarse de que se ha inser
                 // End dkim Instructions
                 
                 echo '<br>';
-                echo '<p>La sintaxis para el registro dkim varia en función del proveedor con el que tengas contratado el dominio y de si se trata de un dominio de primer nivel o de un subdominio. En esta página hemos recopilado las posibles fórmulas de configuración que podrías encontrar: <a href=\'https://docs.maadix.net/dns/#registro-dkim\' target=\'_blank\'>h:ttps://docs.maadix.net/dns/#registro-dkim<a></p>';
+                echo '<p>La sintaxis para el registro DKIM varia en función del proveedor con el que tengas contratado el dominio y de si se trata de un dominio de primer nivel o de un subdominio. En esta página hemos recopilado todas las posibles fórmulas de configuración que podrías encontrar: <a href=\'https://docs.maadix.net/dns/#registro-dkim\' target=\'_blank\'>h:ttps://docs.maadix.net/dns/#registro-dkim<a></p>';
 
-                echo '<p>En la misma página encontrarás un enlace a una herramienta para averiguar que el registro dkim creado sea correcto</p>';
+                echo '<p>En la misma página encontrarás un enlace a una herramienta para averiguar que el registro DKIM creado sea correcto</p>';
               } else {
                 echo 'La configuración del registro DKIM es correcta';
               } 

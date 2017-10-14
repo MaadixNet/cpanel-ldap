@@ -216,8 +216,8 @@ $dkim = $Ldap->search($ldapconn,'ou=opendkim,ou=cpanel,' . SUFFIX ,'(&(objectCla
   </div>
   <div class="subtitle-block">
   <h3 class="subtitle"> <?php printf(_(" Activar un dominio en este panel creará la configuración necesaria para:"));?></h3>
-    <p><?php printf(_("<ul> <li> Crear cuentas de correo electrónico</li> <li> Alojar contenido visble visitando el dominio con un navegador </li><li> Crear certificado SSL para navegación segura (https) </li> </ul>
-    Recuerda que para un correcto funcionamiento de tus dominios en el servidor es necesario que configures correctamente los DNS desde el panel de configuración de tu proveedor de dominio (<a href='/" . BASE_PATH ."/domain-instruccions.php'>+ info</a>). "));?> </p>
+    <p><?php printf(_("<ul> <li> Crear cuentas de correo electrónico</li> <li> Alojar contenido visble visitando el dominio con un navegador </li><li> Crear un certificado SSL para navegación segura (iHTTPS) </li> </ul>
+    Recuerda que, para un correcto funcionamiento de tus dominios en el servidor, es necesario que configures correctamente los DNS desde el panel de configuración de tu proveedor de dominio. (<a href='/" . BASE_PATH ."/domain-instruccions.php'>Saber más</a>). "));?> </p>
   </div>
 <section class="section">
 <div id="admin-content" class="row sameheight-container">
@@ -227,13 +227,13 @@ $dkim = $Ldap->search($ldapconn,'ou=opendkim,ou=cpanel,' . SUFFIX ,'(&(objectCla
   <div class="card card-block">
     <form role="form" autocomplete="off" action="" method="POST" class="form-signin standard jquery-check">
         <div class="form-group">
-          <label for="domain"><?php printf (_("Nombre de Dominio"))?> </label><p class=""> <?php printf (_("Inserta un nombre de dominio válido (o un subdominio). Para los dominios activados podrás crear aplicaciones web que serán disponibles desde cualquier navegador vistando <em>https://tudominio.com</em>. El certificado SSL que activa el protocolo seguro https se activará automáticamente si la  configuración de DNS es la correcta . <a href='https://docs.maadix.net/dominios/'>Saber más</a> "))?></p>
+          <label for="domain"><?php printf (_("Nombre de Dominio"))?> </label><p class=""> <?php printf (_("Inserta un nombre de dominio válido (o un subdominio). Para los dominios activados podrás crear aplicaciones web que estarán disponibles desde cualquier navegador visitando <em>https://tudominio.com</em>. El certificado SSL que activa el protocolo seguro HTTPS se activará automáticamente si la configuración de DNS es correcta. <a href='https://docs.maadix.net/dominios/'>Saber más</a>."))?></p>
           <input class="form-control" id="domain_new" type="text" name="domain_new" required />
         </div>
 
         <?php
               $mailtitle = sprintf(_("Activar servidor de correo para este dominio"));
-              $mailmessage = sprintf(_("Activa esta casilla si quieres que el correo electrónico para este dominio sea gestionado por este servidor. Si el correo está gestionado por otro servidor , por ejemplo el mismo proveedor de dominio, deja esta casilla desactivada. Podrás cambiar esta opción en cualquier momento desde la página de edición del dominio"), $fqdn);
+              $mailmessage = sprintf(_("Activa la siguiente casilla si quieres que el correo electrónico para este dominio sea gestionado por este servidor. Si el correo está gestionado por otro servidor (por ejemplo el mismo proveedor de dominio), deja esta casilla desactivada. Podrás cambiar esta opción en cualquier momento desde la página de edición del dominio."), $fqdn);
               $checkbox =  sprintf(_("Activar"));
         ?>
         <label><?php echo $mailtitle;?></label>
@@ -246,14 +246,14 @@ $dkim = $Ldap->search($ldapconn,'ou=opendkim,ou=cpanel,' . SUFFIX ,'(&(objectCla
 
 
         <div class="form-group">
-          <label for="webmaster"><?php printf (_("Webmaster (Administrador sito web)"));?> </label>
+          <label for="webmaster"><?php printf (_("Webmaster (Administrador del sitio web)"));?> </label>
 
-          <p class=""><?php printf (_("Por cada dominio que actives en este panel se creará una carpeta con su mismo nombre en /var/www/html/ en la que puedes subir tu aplicación web.<p>
+          <p class=""><?php printf (_("Por cada dominio que actives en este panel, se creará una carpeta con su mismo nombre en /var/www/html/ en la que puedes subir tu aplicación web.<p>
 <p>
-El Webmaster tendrá permisos para crear, borrar o modificar archivos dentro de la carpeta /var/www/html/<em>example.com</em>/, donde podrá crear la aplicación web. Este usuario solo tendrá acceso a las carpetas de los dominios por los que ha sido nombrado webmaster y a su carpeta personal. En ningún caso podrá acceder ni ver el resto de archivos y carpetas en el servidor.</p>
+El webmaster tendrá permisos para crear, borrar o modificar archivos dentro de la carpeta /var/www/html/<em>example.com</em>/, donde podrá crear la aplicación web. Este usuario sólo tendrá acceso a las carpetas de los dominios por los que ha sido nombrado webmaster y a su carpeta personal. En ningún caso podrá acceder ni ver el resto de archivos y carpetas en el servidor.</p>
 
 
-<p>Recomendamos encarecidamente que crees un usuario Webmaster, sobretodo si quieres otorgar a alguien el acceso para que trabaje sobre la web, aplicación o contenidos de la carpeta /var/www/html/example.com/, y que nunca compartas el acceso como SuperUsuario, cuyos privilegios son ilimitados en el sistema."));?> </p>
+<p>Recomendamos encarecidamente crear un usuario webmaster, sobretodo si quieres otorgar a alguien el acceso para que trabaje en la web, aplicación o contenidos de la carpeta /var/www/html/example.com/, y que nunca compartas el acceso de SuperUsuario, cuyos privilegios son ilimitados en el sistema."));?> </p>
            <?php 
             $ldaptree    = LDAP_PEOPLE;
             $filter="(&(objectClass=person)(uid=*)(authorizedService=sshd)(!(gidnumber=27)))";
