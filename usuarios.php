@@ -196,8 +196,8 @@ $firstuid_availabe=system($commuid);*/?>
                     <span><?php printf(_("Activar acceso SFTP"));?></span>
                     </label> </div>
                 </div>
-                <hr>
                 <?php if ($Ldap->check_installed_service('phpmyadmin')){?>
+                  <hr>
                   <div class="form-group">
                   <h4><?php printf(_("Acceso aplicación Phpmyadmin"));?></h4>
                   <div> <label>
@@ -209,8 +209,8 @@ $firstuid_availabe=system($commuid);*/?>
 
                 <?php } ?>
 
-                <hr>
                 <?php if ($Ldap->check_installed_service('openvpn')){?>
+                  <hr>
                   <div class="form-group">
                   <h4><?php printf(_("Cuenta VPN"));?></h4>
                   <div> <label>
@@ -263,8 +263,18 @@ $firstuid_availabe=system($commuid);*/?>
 
                 $services=(isset($result[$i]["authorizedservice"]))?$result[$i]["authorizedservice"]:array();
                 $issftp=(in_array('sshd',$services) && (is_array($services)))?'<span class="isservice hasaccess">SFTP</span> ':'<span class="isservice noaccess"><del>SFTP</del></span> ';
+                if ($Ldap->check_installed_service('phpmyadmin')) {
+                  //if phpmyadmin is not installed, dont show anything
+                  // Else get user permissions
                 $isapache=(in_array('apache',$services)&& (is_array($services)))?'<span class="isservice hasaccess">PhpMyAdmin</span> ':'<span class="isservice noaccess"><del>PhpMyAdmin</del></span> ';
+                } else {
+                  $isapache='';
+                }
+                if ($Ldap->check_installed_service('openvpn')) {
                 $isvpn=(in_array('openvpn',$services)&& (is_array($services)))?'<span class="isservice hasaccess">VPN</span> ':'<span class="isservice noaccess"><del>VPN</del></span> ';
+                } else {
+                  $isvpn='';
+                }
                 echo '</pre>';
 		echo "<tr>";
 		echo "<td>";
