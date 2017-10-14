@@ -199,7 +199,7 @@ $firstuid_availabe=system($commuid);*/?>
                 <?php if ($Ldap->check_installed_service('phpmyadmin')){?>
                   <hr>
                   <div class="form-group">
-                  <h4><?php printf(_("Acceso aplicación Phpmyadmin"));?></h4>
+                  <h4><?php printf(_("Acceso aplicación phpmyadmin"));?></h4>
                   <div> <label>
 
                     <input name="apache" id="apache" class="checkbox" type="checkbox">
@@ -266,7 +266,7 @@ $firstuid_availabe=system($commuid);*/?>
                 if ($Ldap->check_installed_service('phpmyadmin')) {
                   //if phpmyadmin is not installed, dont show anything
                   // Else get user permissions
-                $isapache=(in_array('apache',$services)&& (is_array($services)))?'<span class="isservice hasaccess">PhpMyAdmin</span> ':'<span class="isservice noaccess"><del>PhpMyAdmin</del></span> ';
+                $isapache=(in_array('apache',$services)&& (is_array($services)))?'<span class="isservice hasaccess">phpMyAdmin</span> ':'<span class="isservice noaccess"><del>phpMyAdmin</del></span> ';
                 } else {
                   $isapache='';
                 }
