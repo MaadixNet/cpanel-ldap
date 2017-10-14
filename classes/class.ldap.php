@@ -601,13 +601,13 @@ class LDAP{
           }
 
           $body="
-          Buenos días,<br><br>
-          El administrador de " . $_SERVER['SERVER_NAME'] . " ha activado una cuenta VPN para ti<br>
+          Hola,<br><br>
+          El administrador de " . $_SERVER['SERVER_NAME'] . " ha activado un acceso VPN para tu cuenta de usuario<br>
           <b>Usuario: </b> " . $username ."<br>
-          <b>Contraseña:</b> <em>Solicitala al administrador - por razones de seguridad no se envian contraseñas por correo electrónico</em>
+          <b>Contraseña:</b> <em>Debes solicitarla al administrador - ipor razones de seguridad, no se envían contraseñas por correo electrónico</em>
           <br>
           <br>
-          Por favor, desacrga el archivo adjunto y sigue las instrucciones para tu sistema operativo que encontrarás en: 
+          Por favor, descarga el archivo adjunto y sigue las instrucciones para tu sistema operativo, disponibles en:
           <br><br>
           <a href='http://docs.maadix.net/vpn'>http://docs.maadix.net/vpn/</a>";
 

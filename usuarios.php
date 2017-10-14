@@ -136,7 +136,7 @@ $firstuid_availabe=system($commuid);*/?>
 	<div id="change">
           <div class="card card-block">
               <div class="title-block">
-              <h3 class="title"> <?php printf(_("Crear nuevo usuario"));?></h3>
+              <h3 class="title"> <?php printf(_("Crear un  nuevo usuario"));?></h3>
               </div>
 		<form role="form" autocomplete="off" action="" method="POST" class="form-signin standard jquery-check"  id="adduser-form">
                 <div class="form-group">
@@ -184,13 +184,14 @@ $firstuid_availabe=system($commuid);*/?>
               </div>
 
               <div class="form-group">
-              <label class="control-label" for="pswd2"><?php printf(_("Confirma contraseña"));?> *</label><input class="form-control" id="pswd2" type="password" name="pswd2" required />
+              <label class="control-label" for="pswd2"><?php printf(_("Confirma la contraseña"));?> *</label><input class="form-control" id="pswd2" type="password" name="pswd2" required />
               <div id="pswresult"></div>
               </div>
               <hr>
 
                 <div class="form-group">
                 <h4><?php printf(_("Acceso SFTP"));?></h4>
+                <p><?php printf(_("Requerido para que los usuarios webmaster puedan editar los archivos"));?></p>
                   <div> <label>
                     <input name="sshd" id="sshd" class="checkbox" type="checkbox">
                     <span><?php printf(_("Activar acceso SFTP"));?></span>
@@ -212,7 +213,7 @@ $firstuid_availabe=system($commuid);*/?>
                 <?php if ($Ldap->check_installed_service('openvpn')){?>
                   <hr>
                   <div class="form-group">
-                  <h4><?php printf(_("Cuenta VPN"));?></h4>
+                  <h4><?php printf(_("Activar cuenta VPN"));?></h4>
                   <div> <label>
 
                     <input name="vpn" id="vpn" class="checkbox togglehidden" type="checkbox">
@@ -222,8 +223,8 @@ $firstuid_availabe=system($commuid);*/?>
 
                   <div id="hidden">
                   <h4><?php printf(_("Instrucciones"));?></h4> 
-                  <p><?php printf(_("Envia al usuario un email con los archivos de configuración y las instrucciones para configurar el cliente VPN."));?></p>
-                  <p><?php printf(_("NOTA: Las instrucciones incluyen todos los datos necesarios menos la contraseña. Por razones de seguridad proporciona al usuario la  contraseña por otro canal."));?></p>
+                  <p><?php printf(_("Envía al usuario un correo electrónico con los archivos de configuración y las correspondientes instrucciones con tal de configurar correctamente el cliente VPN."));?></p>
+                  <p><?php printf(_("Advertencia: Las instrucciones incluyen todos los datos necesarios menos la contraseña. Por razones de seguridad, debes proporcionar al usuario la contraseña por otro canal."));?></p>
                   <div> <label>
                     <input class="checkbox" type="checkbox" name="sendinstruction" id="sendinstruction">
                     <span class="small"><?php printf(_("Enviar instrucciones"));?></span>
