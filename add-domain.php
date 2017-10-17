@@ -224,7 +224,7 @@ $dkim = $Ldap->search($ldapconn,'ou=opendkim,ou=cpanel,' . SUFFIX ,'(&(objectCla
     <?php if($message) echo $message;?>
     <?php if($_SESSION["login"]["level"] == '10'){//Only admin can add Domains 
     ?>
-  <div class="card card-block">
+  <div class="card-block">
     <form role="form" autocomplete="off" action="" method="POST" class="form-signin standard jquery-check">
         <div class="form-group">
           <label for="domain"><?php printf (_("Nombre de Dominio"))?> </label><p class=""> <?php printf (_("Inserta un nombre de dominio válido (o un subdominio). Para los dominios activados podrás crear aplicaciones web que estarán disponibles desde cualquier navegador visitando <em>https://tudominio.com</em>. El certificado SSL que activa el protocolo seguro HTTPS se activará automáticamente si la configuración de DNS es correcta. <a href='https://docs.maadix.net/dominios/'>Saber más</a>."))?></p>
