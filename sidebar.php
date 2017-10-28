@@ -4,7 +4,7 @@
                     <div class="sidebar-container">
                         <div class="sidebar-header">
                             <div class="brand">
-                                <div class="logo"> <img src="images/logo_claro_med.png" tilte="MaadiX Home" alt="MaadiX Panel" /> </div> MAADIX</div>
+                                <div class="logo"> <img src="images/logo_maadix_white.png" tilte="MaadiX Home" alt="MaadiX Panel" /> </div> MAADIX</div>
                             </div>
                       <?php if( ($_SESSION["login"]["status"] == "active") && $permissions >2 ){?>
                         <nav class="menu">
@@ -104,7 +104,7 @@
                                     <ul>
                                       <li><a href="https://docs.maadix.net/" target="_blank"><?php printf(_("Panel de control"));?></a></li>
 
-                                      <li><a href="https://owncloud.org/" target="_blank"><?php printf(_("Owncloud"));?></a></li>
+                                      <li><a href="https://doc.owncloud.org/server/latest/ownCloud_User_Manual.pdf" target="_blank"><?php printf(_("Owncloud"));?></a></li>
 
                                     </ul>
                                 </li>
