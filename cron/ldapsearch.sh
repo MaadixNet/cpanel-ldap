@@ -415,20 +415,27 @@ else
   moveto='/home/'"$defaultsudouser"'/sftp-deleted'
 fi
 echo "$moveto"
-for sftphome in "$sftpusershome"/*/;
-do
-  basehome=$(basename $sftphome)
-  if echo ${existingusers[@]} | grep -q -w "$basehome"; then
-    #do nothing
-    echo "$basehome" 'is present in ldap'
-  else
-    if [ ! -z "$basehome" ]; then
-      echo "$sftphome"  es huerfana y la movemos
-      chown -R "$defaultsudouser" "$sftphome"
-      mv "$sftphome" "$moveto"
+
+if [ -z "$(ls -A $sftpusershome)" ]; then
+  echo "Sftusershome dir is empty, do nothing"
+else
+  echo "Sftusershome dir not empty, perform check"
+  for sftphome in "$sftpusershome"/*/;
+  do
+    basehome=$(basename $sftphome)
+    if echo ${existingusers[@]} | grep -q -w "$basehome"; then
+      #do nothing
+      echo "$basehome" 'is present in ldap'
+    else
+      if [ ! -z "$basehome" ]; then
+        echo "$sftphome"  es huerfana y la movemos
+        chown -R "$defaultsudouser" "$sftphome"
+        mv "$sftphome" "$moveto"
+      fi
     fi
-  fi
-done
+  done
+fi
+
 
 
 # Check if new mailman domain is added to trigger puppet local
@@ -447,15 +454,14 @@ EOF
 # if mailman is enabled, check if domains has opendkim certs
 mailmanenabled=`ldapsearch -Q -Y EXTERNAL -H ldapi:/// -b ou=mailman,ou=groups,dc=example,dc=tld -s base "(status=enabled)" | grep ^dn: | wc -l`
 if [ "$mailmanenabled" -gt 0 ]; then
-  for domain in `su postgres -c "psql -d mailman -A -t -c \"select mail_host FROM domain;\""`
-  do
-    #printf "$domain\n"
+  for domain in `su - postgres -c "psql -d mailman -A -t -c \"select mail_host FROM domain;\""`; do
+    printf "$domain\n"
     if [ ! -d "/etc/opendkim/keys/$domain" ]; then
-      #echo "opendkim cert not available"
+      echo "opendkim cert not available"
       #set opendkim object status to locked
       lock_opendkim
     else
-      #echo "opendkim cert available"
+      echo "opendkim cert available"
     fi
   done
 fi
