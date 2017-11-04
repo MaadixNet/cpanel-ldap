@@ -68,21 +68,22 @@ if(!$mailsenderou){
             <div class="inner"i id="maincol">
               <?php
               echo $message; 
-              echo '<p>Tu sistema puede enviar emails de notificaciones a los usuarios. Por ejemplo, si creas una cuenta VPN, puedes enviar instrucciones al usuario para configurar correctamente su conexión.<br>
-              Actualmente, el correo electrónico desde el que se envian los email del sistema es:<br>
+              echo '<p>' . sprintf(_("Tu sistema puede enviar emails de notificaciones a los usuarios. Por ejemplo, si creas una cuenta VPN, puedes enviar instrucciones al usuario para configurar correctamente su conexión.")) . '<br>' .
+              sprintf(_("Actualmente, el correo electrónico desde el que se envian los email del sistema es:")) . '<br>
               <div class="box-placeholder">'. $sender_email .'</div>';
               if($result["count"] == 0){
-                  echo ' Todavia no has activado ninguna cuenta de correo en el servidor. Una vez haya creado almenos una, podrás designarla como remitente para las notificaciones';
+                  printf(_(' Todavia no has activado ninguna cuenta de correo en el servidor. Una vez haya creado almenos una, podrás designarla como remitente para las notificaciones'));
 
               } else {
-                  echo 'Puedes cambiar esta configuración y elegir una entre  las cuentas email activadas en tu sistema, para que sea el remitente de las notificaciones.<br>
-              Para cambiar este valor, elije un correo electrónico disponible en el listado y haz click en Guardar';?>
+                printf(_('Puedes cambiar esta configuración y elegir una entre  las cuentas email activadas en tu sistema, para que sea el remitente de las notificaciones.'));
+                echo '<br>';
+                printf(_('Para cambiar este valor, elije un correo electrónico disponible en el listado y haz click en Guardar'));?>
 
               <form autocomplete="off" action="" method="POST" class="form-signin standard">
               <hr>
               <?php
                 echo '<select id="selmail" name="selmail" required>';
-                echo '<option value="">Seleccionar email</option>';
+                echo '<option value="">' . sprintf(_("Seleccionar email")) .'</option>';
                 for ($c=0; $c<$result["count"]; $c++) {
                     //$selected=($queryvar==$result[$c]["mail"][0])?"selected":"";
                     echo '<option value="' . $result[$c]["mail"][0] .'">' . $result[$c]["mail"][0] . '</option>';
@@ -93,7 +94,7 @@ if(!$mailsenderou){
 
                 <br>
                 <hr>
-              <input type="submit" name="chmail_notif" value="Guardar" class="btn btn-small btn-primary" />
+              <input type="submit" name="chmail_notif" value="<?php printf(_('Guardar'));?>" class="btn btn-small btn-primary" />
             </form>
             <?php 
            //end if domain not =  0?>

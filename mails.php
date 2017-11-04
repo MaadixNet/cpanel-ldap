@@ -57,7 +57,7 @@ if ($ldapconn){
 			$message='
 			<div class="alert alert-error">
 			<button class="close" data-dismiss="alert">×</button>
-			<strong>Nombre no válido para cuenta de correo</strong>
+			<strong>' . sprintf(_("Nombre no válido para cuenta de correo")) .'</strong>
 			</div>';
 			} else {
 
@@ -99,7 +99,7 @@ if ($ldapconn){
 		$message='
 		<div class="alert alert-success">
 		<button class="close" data-dismiss="alert">×</button>
-		<strong>Usario añadido correctamente</strong>
+		<strong>' . sprintf(_("Usario añadido correctamente")) . '</strong>
                 </div>';
 
                 /* This is for general mail page
@@ -133,7 +133,7 @@ if ($ldapconn){
 		$message = '
 		<div class="alert alert-error">
 		<button class="close" data-dismiss="alert">×</button>
-		<strong>Ha ocurrido un error. ' . $errorttpe . '</strong>
+		<strong>' . sprintf(_("Ha ocurrido un error. %s"), $errorttpe) . '</strong>
 		</div>';
 		}
 	}
@@ -149,13 +149,13 @@ if ($ldapconn){
 			$message='
 			<div class="alert alert-success">
 			<button class="close" data-dismiss="alert">×</button>
-			<strong>Cuenta '. $mail_account .' eliminada</strong>
+			<strong>' . sprintf(_("Cuenta %s eliminada"), $mail_account) . '</strong>
 			</div>';
 			} else {
 			$message = '
 			<div class="alert alert-error">
 			<button class="close" data-dismiss="alert">×</button>
-			<strong>Ha ocurrido un error. La cuenta no se ha podido eliminar</strong>
+			<strong>' . sprintf(_("Ha ocurrido un error. La cuenta no se ha podido eliminar")) . '</strong>
 			</div>';
 			}	
 		}

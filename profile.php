@@ -95,7 +95,7 @@ require_once('sidebar.php');?>
                       <div id="formresult"></div>
                     <hr>
 
-                <input type='submit' class="btn btn-small btn-primary" name='activate' value='Guardar cambios' class='btn btn-small btn-primary' />
+                    <input type='submit' class="btn btn-small btn-primary" name='activate' value='<?php printf(_("Guardar cambios"));?>' class='btn btn-small btn-primary' />
                 </form>
               </div>
       </div>

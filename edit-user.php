@@ -134,7 +134,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
                 $mailcount = $resultmail["count"];
                 if($mailcount>0) {
                         echo '<select id="selmail">';
-                        echo '<option value="">Seleccionar cuenta existente</option>';
+                        echo '<option value="">' . sprintf(_("Seleccionar cuenta existente")) .'</option>';
                         for ($c=0; $c<$resultmail["count"]; $c++) {
                                 echo '<option value="' . $resultmail[$c]["mail"][0] .'">' . $resultmail[$c]["mail"][0] . '</option>';
                         }
@@ -212,7 +212,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
                 <div class="clear"></div>
                 <hr>
 
-		<input type="submit" name="updateuser" value="Guardar Cambios" class="btn btn-small btn-primary" />
+                <input type="submit" name="updateuser" value='<?php printf(_("Guardar Cambios"))?>' class="btn btn-small btn-primary" />
 		</form>
         </div>
 </div><!--admin-content-->
