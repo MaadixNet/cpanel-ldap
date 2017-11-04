@@ -65,6 +65,11 @@ if ($ldapconn){
                 $forward=(isset($_POST["forward"]))?"TRUE":"FALSE";
                 $entry["forwardactive"]=$forward;
                 $entry["maildrop"]=($forward=="TRUE")?$_POST["maildrop"]:"";
+                $vacation= (isset($_POST["vacationactive"]))?"TRUE":"FALSE";
+                $entry["vacationactive"]=$vacation;
+                $entry["mailautoreply"] = $email.'.autoreply';
+                $entry["vacationinfo"]= (isset($_POST["vacationinfo"]))?$_POST["vacationinfo"]:'Automatic Response. Out of office';
+
 		$entry["sn"] = $_POST["surname"];
 		$entry["givenname"] = $_POST["givenname"];
                 $entry["cn"] = $_POST["givenname"] .'&nbsp;'. $_POST["surname"];
@@ -103,9 +108,6 @@ if ($ldapconn){
         */
 	if ($ldapbind) {
             $result=$Ldap->search($ldapconn,$binddn, $filter);
-            /*echo '<pre>';
-            var_dump ($result);
-            echo '</pre>';*/
         }
 require_once('header.php');
 require_once('sidebar.php');
@@ -116,6 +118,11 @@ require_once('sidebar.php');
         <div class="col-sm-12">
             <div class="inner" id="maincol">
                 <?php
+/*
+            echo '<pre>';
+            var_dump ($result);
+            echo '</pre>';
+*/
                 echo $message; 
                 $forward = $result[0]["forwardactive"][0];
                 //if Forward is activated set the checkbox as checked
@@ -125,6 +132,9 @@ require_once('sidebar.php');
                 $checked = ($forward=="TRUE")?'checked="checked"':'';
                 //$required = ($forward=="TRUE")?'required':'';
                 $maildrop=(isset($result[0]["maildrop"][0]))?$result[0]["maildrop"][0]:'';
+                $vacation = (isset($result[0]["vacationactive"][0]))? $result[0]["vacationactive"][0]:'';
+                $vacationmessage = (isset($result[0]["vacationinfo"][0]))?$result[0]["vacationinfo"][0]:'';
+                $vacation_checked = ($vacation=="TRUE")?'checked="checked"':'';
                 echo '<div class="title-block">';
                 echo '<h3>' . sprintf (_("Editar cuenta de correo %s") , $email) .  '</h3>';
                 echo '<span class="sparkline bar" data-type="bar"></span>
@@ -160,6 +170,7 @@ Los titulares de una cuenta de correo electrónico pueden resetear su contraseñ
                           <input class="form-control boxed" id="surname" type="text" name="surname" value="<?php echo $result[0]["sn"][0];?>" required />
                         </div>
 
+
                         <div class="form-group"> 
                           <h4><?php printf(_("Reenvío automático"));?></h4>
                           <div> <label>
@@ -167,12 +178,29 @@ Los titulares de una cuenta de correo electrónico pueden resetear su contraseñ
                           <span><?php printf(_("Activar o desactivar el reenvío automático a otra cuenta" ));?></span>
                           </label> </div>
                         </div>
+
       
                         <div id="hidden">
                           <div class="form-group">
                             <label for="maildrop"><?php printf(_("Cuenta de destino para el reenvío automático"));?></label>
                             <p><?php printf(_("Puedes reenviar los correos electrónicos entrantes a una o más cuentas de correo alternativas. Si los quieres que se reenvíen a múltiples cuentas, separa cada una de ellas con una coma (usuario1@example.com,usuario2@example.com). Recuerda que si quieres seguir recibiendo una copia de los correos entrantes en tu cuenta actual %s, también tendrás que incluirla en el listado."),$email);?></p>
                             <input class="form-control boxed" id="maildrop" class="usermail" type="mail" name="maildrop" value="<?php echo $maildrop;?>"  />
+                            <div id="emailresult"></div>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <h4><?php printf(_("Respuesta automática"));?></h4>
+                          <div> <label>
+                          <input class="checkbox" type="checkbox" name="vacationactive" id="vacationactive" <?php echo $vacation_checked;?>>
+                          <span><?php printf(_("Activar o desactivar la respuesta  automática" ));?></span>
+                          </label> </div>
+                        </div>
+                        <div id="hiddenreply">
+                          <div class="form-group">
+                            <label for="vacationinfo"><?php printf(_("Mensaje de respuesta automática"));?></label>
+                            <p><?php printf(_("Inserta el texto para el mensaje de respuesta automática."),$email);?></p>
+                            <textarea class="form-control boxed" id="vacationinfo" class="usermail" type="textarea"  name="vacationinfo" value="<?php echo $vacationmessage;?>" rows="6" cols="50"><?php echo $vacationmessage; ?></textarea>
                             <div id="emailresult"></div>
                           </div>
                         </div>
