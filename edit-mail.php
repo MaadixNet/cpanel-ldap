@@ -69,6 +69,7 @@ if ($ldapconn){
                 $entry["vacationactive"]=$vacation;
                 $entry["mailautoreply"] = $email.'.autoreply';
                 $entry["vacationinfo"]= (isset($_POST["vacationinfo"]))?$_POST["vacationinfo"]:'Automatic Response. Out of office';
+                $entry["otherTransport"]= 'gnarwl:'.$domain;
 
 		$entry["sn"] = $_POST["surname"];
 		$entry["givenname"] = $_POST["givenname"];
