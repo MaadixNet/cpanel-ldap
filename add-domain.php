@@ -81,7 +81,7 @@ if(isset($_POST['adddomain'])){
             $usererro="";
           } else {
             $wemaster=$Ldap->get_sudo_user();
-            $usererror = sprintf (_("El usuario %s no se ha podido crear.Se ha establecido el usuario por defecto %s como administrador del dominio"),$newuser,$wemaster);
+            $usererror = sprintf (_("El usuario %s no se ha podido crear. Se ha establecido el usuario por defecto %s como administrador del dominio"),$newuser,$wemaster);
           }
 
           if (isset($_POST["sendinstruction"]) && $add_user)$Ldap->send_vpn_instructions($user_email,$newuser);
@@ -212,20 +212,20 @@ require_once('sidebar.php');
     ?>
 
     <h3 class="title"> <?php printf(_("Añadir Dominio"));?> </h3>
-    <p class="title-description"> <?php printf(_("Activa dominios o subdominios en este servidor."));?></p>
+    <p class="title-description"> <?php printf(_("Activa dominios o subdominios en este servidor"));?></p>
   </div>
   <div class="subtitle-block">
-  <h3 class="subtitle"> <?php printf(_(" Activar un dominio en este panel creará la configuración necesaria para:"));?></h3>
+  <h3 class="subtitle"> <?php printf(_("Activar un dominio en este panel creará la configuración necesaria para:"));?></h3>
   <p>
     <ul>
       </li>
         <?php printf(_("Crear cuentas de correo electrónico"));?>
       </li>
       <li> 
-        <?php printf(_("Alojar contenido visble visitando el dominio con un navegador"));?>
+        <?php printf(_("Alojar contenido visible visitando el dominio con un navegador"));?>
       </li>
       <li>
-        <?php printf(_("Crear un certificado SSL para navegación segura (iHTTPS)"));?>
+        <?php printf(_("Crear un certificado SSL para navegación segura (HTTPS)"));?>
      </li> 
     </ul>
 
@@ -233,7 +233,7 @@ require_once('sidebar.php');
     
     $domain_instr_op_link="<a href='/" . BASE_PATH ."/domain-instruccions.php'>"; 
     $close_link= '</a>';
-    printf(_("Recuerda que, para un correcto funcionamiento de tus dominios en el servidor, es necesario que configures correctamente los DNS desde el panel de configuración de tu proveedor de dominio. "));
+    printf(_("Recuerda que, para un correcto funcionamiento de tus dominios en el servidor, es necesario que configures correctamente los DNS desde el panel de configuración de tu proveedor de dominio."));
    printf(("%sSaber más%s."), $domain_instr_op_link,$close_link);?>
    </p>
   </div>
@@ -249,7 +249,7 @@ require_once('sidebar.php');
           <p class="">
             <?php 
             $doc_op_link="<a href='https://docs.maadix.net/dominios/'>";  
-            printf (_("Inserta un nombre de dominio válido (o un subdominio). Para los dominios activados podrás crear aplicaciones web que estarán disponibles desde cualquier navegador visitando <em>https://tudominio.com</em>. El certificado SSL que activa el protocolo seguro HTTPS se activará automáticamente si la configuración de DNS es correcta. "));
+            printf (_("Inserta un nombre de dominio válido (o un subdominio). Para los dominios activados podrás crear aplicaciones web que estarán disponibles desde cualquier navegador visitando <em>https://tudominio.com</em>. El certificado SSL que activa el protocolo seguro HTTPS se activará automáticamente si la configuración de DNS es correcta."));
           printf (_("%sSaber más%s"),$doc_op_link,$close_link );?>
           </p>
           <input class="form-control" id="domain_new" type="text" name="domain_new" required />
@@ -257,7 +257,7 @@ require_once('sidebar.php');
 
         <?php
               $mailtitle = sprintf(_("Activar servidor de correo para este dominio"));
-              $mailmessage = sprintf(_("Activa la siguiente casilla si quieres que el correo electrónico para este dominio sea gestionado por este servidor. Si el correo está gestionado por otro servidor (por ejemplo el mismo proveedor de dominio), deja esta casilla desactivada. Podrás cambiar esta opción en cualquier momento desde la página de edición del dominio."), $fqdn);
+              $mailmessage = sprintf(_("Activa la siguiente casilla si quieres que el correo electrónico para este dominio sea gestionado por este servidor. Si el correo está gestionado por otro servidor (por ejemplo, el mismo proveedor de dominio), deja esta casilla desactivada. Podrás cambiar esta opción en cualquier momento desde la página de edición del dominio."), $fqdn);
               $checkbox =  sprintf(_("Activar"));
         ?>
         <label><?php echo $mailtitle;?></label>
@@ -280,7 +280,7 @@ require_once('sidebar.php');
           </p>
 
           <p>
-            <?php printf (_("Recomendamos encarecidamente crear un usuario webmaster, sobretodo si quieres otorgar a alguien el acceso para que trabaje en la web, aplicación o contenidos de la carpeta /var/www/html/example.com/, y que nunca compartas el acceso de SuperUsuario, cuyos privilegios son ilimitados en el sistema."));?> 
+            <?php printf (_("Recomendamos encarecidamente crear un usuario webmaster, sobretodo si quieres otorgar a alguien el acceso para que trabaje en la web, aplicación o contenidos de la carpeta /var/www/html/example.com/, y que nunca compartas el acceso de Superusuario, cuyos privilegios son ilimitados en el sistema."));?> 
           </p>
            <?php 
             $ldaptree    = LDAP_PEOPLE;
@@ -303,7 +303,7 @@ require_once('sidebar.php');
               $usernames = $allusers[$c]["uid"][0];
               echo '<option value="' . $allusers[$c]["uid"][0] .'">' . $allusers[$c]["uid"][0] . '</option>';
             }
-            echo '<option value="' . $sudo_username .'">' . $sudo_username .' - ' . sprintf(_("SuperUsuario")) . '</option>';
+            echo '<option value="' . $sudo_username .'">' . $sudo_username .' - ' . sprintf(_("Superusuario")) . '</option>';
             echo '</select>';
             echo '</div>';
             echo '<br>';
@@ -345,7 +345,7 @@ require_once('sidebar.php');
             <input class="form-control" id="pswd1" type="password" name="pswd1" autocomplete="off" readonly />
             </div>
             <div class="form-group">
-            <label for="pswd2"><?php printf(_("Confirma contraseña"));?> *</label>
+            <label for="pswd2"><?php printf(_("Confirma la contraseña"));?> *</label>
             <input class="form-control" id="pswd2" type="password" name="pswd2"  />
             <div id="pswresult"></div>
             </div>
