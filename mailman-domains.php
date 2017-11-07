@@ -111,11 +111,11 @@ $mailman_domains = pg_fetch_all($result);
       printf(_("No hay ningún dominio activado para listas de correo."));
       echo '</h4>';
       echo '<h4>';
-      printf(_("Puedes activar dominios desde la aplicación Mailman "));
+      printf(_("Puedes activar dominios desde la aplicación Mailman"));
       echo '<a target=\"_blank\" href=\"/mailman\"><button type="button" class="btn btn-pill-right btn-primary">' . sprintf(_("Añadir dominios para listas de correo")) . '</button></a>';
       echo '</h4>';
       echo '<h5>';
-      printf(_("En caso de dudas puedes consultar las instrucciones en esta página: "));
+      printf(_("En caso de dudas puedes consultar las instrucciones en esta página:"));
       echo '<a href=\"https://docs.maadix.net/mailman/\" target=\"_blank\">https://docs.maadix.net/mailman/</a></h5>';
 
       }?>
