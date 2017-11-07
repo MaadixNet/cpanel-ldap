@@ -181,6 +181,7 @@ require_once('sidebar.php');
                           } //end foreach mx as value
                           /*start  spf Records*/
                               $c=0;
+                              $spf_present=0;
                               if (!$resultTXT){
                                 echo "<tr>";
                                 echo "<td>TXT</td>";
@@ -188,7 +189,7 @@ require_once('sidebar.php');
                                 echo "<td>";
                                 echo "</td>";
                                 echo "<td>";
-                                echo $correct_spf;
+                                echo "\"" . $correct_spf . "\"";
                                 echo "</td>";
                                 echo "<td class='center'>";
                                 echo $staterr. " <a href='#spfCorrect'>Cómo Corregir?</a>";
@@ -197,25 +198,27 @@ require_once('sidebar.php');
                                 echo "</tr>";
                               } else {
                               foreach($resultTXT as $txtvalue){
-                                echo "<tr>";
-                                echo "<td>TXT</td>";
-                                echo "<td>" . $value['host'] . "</td>";
-                                echo "<td>";
+                                // Get the txt record string
                                 $spf_record = ($resultTXT[$c]['entries'][0])?$resultTXT[$c]['entries'][0]:'No hay registro';
-                                echo '"'. $spf_record .'"';
-                                echo "</td>";
-                                echo "<td>";
-                                $correctSPF=($c<1)?'"' . $correct_spf . '"':'';
-
-                                echo $correctSPF;
-                                echo "</td>";
-                                $spf_stat=($spf_record == $correct_spf )?$statok:$staterr . " <a href='#spfCorrect'>Cómo Corregir?</a>";
-                                if ($c>0)$spf_stat= sprintf(_("Eliminar. Un solo registro SPF será necesario para una correcta configuración"));
-                                echo '<td class="center">' . $spf_stat . '</td>';
-                                echo "</tr>";
-                                $c++;
+                                //Only check spf records
+                                if (strpos($spf_record, 'v=spf') !== false) {
+                                  echo "<tr>";
+                                  echo "<td>TXT</td>";
+                                  echo "<td>" . $value['host'] . "</td>";
+                                  echo "<td>";
+                                  echo '"'. $spf_record .'"';
+                                  echo "</td>";
+                                  echo "<td>";
+                                  echo "\"" . $correct_spf . "\"";
+                                  echo "</td>";
+                                  $spf_stat=($spf_record == $correct_spf )?$statok:$staterr. " <a href='#spfCorrect'>Cómo Corregir?</a>";
+                                  echo '<td class="center">' . $spf_stat . '</td>';
+                                  echo "</tr>";
+                                  $c++;
+                                } // end if spf is present in string
                               } //end foreach spf txt reocrds
                             } // end if txt found
+
                           /* Start dkim records*/
                                 echo "<tr>";
                                 echo "<td>TXT</td>";
