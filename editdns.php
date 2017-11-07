@@ -190,7 +190,7 @@ require_once('sidebar.php');
                                   echo '"'. $spf_record .'"';
                                   echo "</td>";
                                   echo "<td>";
-                                  echo $correct_spf;
+                                  echo '"'. $correct_spf . '"'.;
                                   echo "</td>";
                                   $spf_stat=($spf_record == $correct_spf )?$statok:$staterr. " <a href='#spfCorrect'>Cómo Corregir?</a>";
                                   echo '<td class="center">' . $spf_stat . '</td>';
