@@ -59,7 +59,7 @@ if(!$mailsenderou){
 }?>
 <article class="content forms-page">
     <div class="title-block">
-      <h3 class="title"> <?php printf(_("Configurar Notificaciones"));?></h3>
+      <h3 class="title"> <?php printf(_("Configurar notificaciones"));?></h3>
     </div>
     <section class="section">
         <div class="row">
@@ -68,22 +68,22 @@ if(!$mailsenderou){
             <div class="inner"i id="maincol">
               <?php
               echo $message; 
-              echo '<p>' . sprintf(_("Tu sistema puede enviar emails de notificaciones a los usuarios. Por ejemplo, si creas una cuenta VPN, puedes enviar instrucciones al usuario para configurar correctamente su conexión.")) . '<br>' .
-              sprintf(_("Actualmente, el correo electrónico desde el que se envian los email del sistema es:")) . '<br>
+              echo '<p>' . sprintf(_("Tu sistema puede enviar correos de notificaciones a los usuarios. Por ejemplo, si creas una cuenta VPN, puedes enviar las instrucciones al usuario para configurar correctamente su conexión.")) . '<br>' .
+              sprintf(_("Actualmente, el correo electrónico desde el que se envían los correos del sistema es:")) . '<br>
               <div class="box-placeholder">'. $sender_email .'</div>';
               if($result["count"] == 0){
-                  printf(_(' Todavia no has activado ninguna cuenta de correo en el servidor. Una vez haya creado almenos una, podrás designarla como remitente para las notificaciones'));
+                  printf(_('Todavía no has activado ninguna cuenta de correo en el servidor. Cuando hayas creado al menos una, podrás designarla como remitente para las notificaciones'));
 
               } else {
-                printf(_('Puedes cambiar esta configuración y elegir una entre  las cuentas email activadas en tu sistema, para que sea el remitente de las notificaciones.'));
+                printf(_('Puedes cambiar esta configuración y elegir una de las cuentas de correo activadas en tu sistema para que sea el remitente de las notificaciones.'));
                 echo '<br>';
-                printf(_('Para cambiar este valor, elije un correo electrónico disponible en el listado y haz click en Guardar'));?>
+                printf(_('Para cambiar este valor, elige un correo electrónico disponible en el listado y haz clic en Guardar'));?>
 
               <form autocomplete="off" action="" method="POST" class="form-signin standard">
               <hr>
               <?php
                 echo '<select id="selmail" name="selmail" required>';
-                echo '<option value="">' . sprintf(_("Seleccionar email")) .'</option>';
+                echo '<option value="">' . sprintf(_("Seleccionar correo")) .'</option>';
                 for ($c=0; $c<$result["count"]; $c++) {
                     //$selected=($queryvar==$result[$c]["mail"][0])?"selected":"";
                     echo '<option value="' . $result[$c]["mail"][0] .'">' . $result[$c]["mail"][0] . '</option>';
