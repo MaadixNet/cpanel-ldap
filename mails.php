@@ -57,7 +57,7 @@ if ($ldapconn){
 			$message='
 			<div class="alert alert-error">
 			<button class="close" data-dismiss="alert">×</button>
-			<strong>Nombre no válido para cuenta de correo</strong>
+			<strong>' . sprintf(_("Nombre no válido para la cuenta de correo")) .'</strong>
 			</div>';
 			} else {
 
@@ -99,7 +99,7 @@ if ($ldapconn){
 		$message='
 		<div class="alert alert-success">
 		<button class="close" data-dismiss="alert">×</button>
-		<strong>Usario añadido correctamente</strong>
+		<strong>' . sprintf(_("Usario añadido correctamente")) . '</strong>
                 </div>';
 
                 /* This is for general mail page
@@ -133,7 +133,7 @@ if ($ldapconn){
 		$message = '
 		<div class="alert alert-error">
 		<button class="close" data-dismiss="alert">×</button>
-		<strong>Ha ocurrido un error. ' . $errorttpe . '</strong>
+		<strong>' . sprintf(_("Ha ocurrido un error. %s"), $errorttpe) . '</strong>
 		</div>';
 		}
 	}
@@ -149,13 +149,13 @@ if ($ldapconn){
 			$message='
 			<div class="alert alert-success">
 			<button class="close" data-dismiss="alert">×</button>
-			<strong>Cuenta '. $mail_account .' eliminada</strong>
+			<strong>' . sprintf(_("Cuenta %s eliminada"), $mail_account) . '</strong>
 			</div>';
 			} else {
 			$message = '
 			<div class="alert alert-error">
 			<button class="close" data-dismiss="alert">×</button>
-			<strong>Ha ocurrido un error. La cuenta no se ha podido eliminar</strong>
+			<strong>' . sprintf(_("Ha ocurrido un error. La cuenta no se ha podido eliminar")) . '</strong>
 			</div>';
 			}	
 		}
@@ -188,8 +188,8 @@ require_once('sidebar.php');
     */
 
       If ($status == 'FALSE'){
-      $inactivemsg = sprintf(_('<h5>Servidor de Correo</h5>'));
-      $inactivemsg .= sprintf(_('<p>El Servidor de correo no está activado para este dominio y no podrá enviar y recibir mails. <a href="edit-domain.php?domain=%s">Activalo en esta página</a></p>'), $mail_domain);
+      $inactivemsg = sprintf(_('<h5>Servidor de correo</h5>'));
+      $inactivemsg .= sprintf(_('<p>El servidor de correo no está activado para este dominio y no podrá enviar ni recibir correos electrónicos. <a href="edit-domain.php?domain=%s">Actívalo en esta página</a></p>'), $mail_domain);
       }
 
     # Check if domain has correct dns.
@@ -203,7 +203,7 @@ require_once('sidebar.php');
     if ($dns_result >1){
 
       $wrong_mx_message = sprintf(_('<h5>DNS</h5>'));
-      $wrong_mx_message .= sprintf(_('<p>Los DNS del dominio %s no están configurados para que el correo electrónico sea entregado a este servidor . </br> Puedes igualmente crear la cuneta que empezará a recibir correo en este servidor cuando los DNS estién configrados correctamente. Revisa la configuración actual y consulta cual es la correcta en esta página: <a href="editdns.php?domain=%s">DNS para el dominio %s</a></p>'), $mail_domain,$mail_domain,$mail_domain);
+      $wrong_mx_message .= sprintf(_('<p>Los DNS del dominio %s no están configurados para que el correo electrónico sea entregado a este servidor. </br> Puedes crear igualmente la cuenta que empezará a recibir correo en este servidor cuando los DNS estén configurados correctamente. Revisa la configuración actual y consulta cual es la correcta en esta página: <a href="editdns.php?domain=%s">DNS para el dominio %s</a></p>'), $mail_domain,$mail_domain,$mail_domain);
 
     }
 
@@ -245,7 +245,7 @@ require_once('sidebar.php');
         <?php if ($permissions ==10) {//Show domains list on left sidebar only to admin ?> 
         <div class="col-sm-3">
           <div class="title-block">
-            <h3 class="title"> <?php printf(_("Dominios Activados"));?></h3>
+            <h3 class="title"> <?php printf(_("Dominios activados"));?></h3>
           </div>
             <div id="sidebarleft" class="inner">
 

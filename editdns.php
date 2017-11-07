@@ -1,13 +1,10 @@
 <?php 
-
 session_start();
 require_once 'classes/class.ldap.php';
 $Ldap= new LDAP();
-
 $current_page=basename(__FILE__);
 $Ldap->check_login_or_redirect($current_page);
 $domain=(isset($_GET["domain"]))?$_GET["domain"]:'';
-
 // get current domain attributes value
 $ldapconn=$Ldap->connect();
 $psw=$Ldap->decrypt_psw();
@@ -15,22 +12,16 @@ $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw);
 $binddn=LDAP_BASE;
 $filter="(vd=" . $domain . ")";
 $result=$Ldap->search($ldapconn,$binddn, $filter);
-
 // Check if current domain has the email service activated
 $ismailActive = $result[0]["accountactive"][0];
 require_once('header.php');
 $errorttpe="";
-
 $message="";
-
-
 /* Set variables */
 $errors = 0; // If there are no errors in current DNS Records don't show alerts
-
 /* Get local values on this server */
 $server_ipaddr=$_SERVER["SERVER_ADDR"];
 $fqdn=trim(shell_exec('hostname -f'));
-
 /* Get all current DNS values for selected domain through dig*/
 $resultA=dns_get_record ( $domain,  DNS_A );
 $resultMX=dns_get_record ( $domain,  DNS_MX );
@@ -38,19 +29,15 @@ $resultNS = dns_get_record($domain,  DNS_NS );
 $resultTXT = dns_get_record($domain,  DNS_TXT );
 $command= "dig default._domainkey." . $domain ." TXT | grep -o -P \"(?<=TXT).*\"";
 $resultDKIM = shell_exec($command);
-
 $resultDKIM = str_replace('\\', '', $resultDKIM);
 $domain_ip=($resultA[0]['ip'])?($resultA[0]['ip']):'No hay registro';
 $statok='<i class="fa fa-check-circle-o icon checkok"></i>';
 $staterr='<i class="fa fa-exclamation-triangle icon checkko"></i>';
 $allMX[]='';
-
 /* Save correct DNS  Values into variables for check tasks and user hints*/
-
 $correct_mx=$fqdn;
 $correct_spf= "v=spf1 mx ip4:" . $server_ipaddr ." a:" . $fqdn . " ~all";
 $domain_dkim_file = file_get_contents("/etc/opendkim/keys/$domain/default.txt"); 
-
 if ($domain_dkim_file) {
   //Just get the public key value
   preg_match_all('/\"p\=(.*)\" \)/',$domain_dkim_file,$the_result_array);
@@ -73,13 +60,12 @@ require_once('sidebar.php');
     <?php if($message) echo $message;?>
     <div class="row">
 
-	<div class="inner" id="maincol">
+  <div class="inner" id="maincol">
 <?php
         foreach($resultMX as $value){
           array_push($allMX,$value['target']);
         }
  
-
         echo '<h2 class="center">';
         printf(_("Servidor Web"));
         echo '</h2>';
@@ -116,8 +102,6 @@ require_once('sidebar.php');
           echo '</td>';
           echo '</tr>';
           $i++;
-
-
         }
         $i=0;
         foreach ( $resultA as $ip) {
@@ -136,9 +120,7 @@ require_once('sidebar.php');
         }
         echo '</tbody></table>';
         echo '<br />';
-
         /* Email configuration */
-
         echo '<h2 class="center">';
           printf(_("Servidor de Correo "));
         echo '</h2>';
@@ -150,34 +132,34 @@ require_once('sidebar.php');
           printf(_("El servidor de correo no está activado para el dominio %s. En el caso quisieras activarlo la siguiente tabla te muestra los valores DNS correctos"),$domain); 
           echo "</span>";
         }
-	echo '
-	<table id="dns">
-		<thead>
-		<tr>
-			<th>' . sprintf(_("Tipo")) . '</th>
+  echo '
+  <table id="dns">
+    <thead>
+    <tr>
+      <th>' . sprintf(_("Tipo")) . '</th>
                         <th>' . sprintf(_("Nombre")) . '</th>
-			<th class="longRecord">' . sprintf(_("Valor Actual")) . '</th>
-			<th class="longRecord">' . sprintf(_("Valor Requerido")) . '</th>
-			<th>Estado</th>
-		</tr>
-		</thead>
-		<tbody>';
-			$i=1;
-			foreach($resultMX as $value){
-				echo "<tr>";
-				echo "<td>MX</td>";
+      <th class="longRecord">' . sprintf(_("Valor Actual")) . '</th>
+      <th class="longRecord">' . sprintf(_("Valor Requerido")) . '</th>
+      <th>Estado</th>
+    </tr>
+    </thead>
+    <tbody>';
+      $i=1;
+      foreach($resultMX as $value){
+        echo "<tr>";
+        echo "<td>MX</td>";
                                 echo "<td>" . $value['host'] . "</td>";
-				echo "<td>";
-				echo $value['target'];
-				echo "</td>";
-				echo "<td>";
-				echo $correct_mx;
-				echo "</td>";
-				$mx_stat=(($value['target']== $correct_mx) || ($value['target']== $fqdn ))?$statok:$staterr . " <a href='#mxCorrect'>" . sprintf(_("Cómo Corregir?")) . "</a>";
-				if ($i>1)$mx_stat= sprintf(_("Eliminar. Un solo registro MX será necesario para una correcta configuración"));
-				echo '<td class="center">' . $mx_stat . '</td>';
-				$i++;
-				echo "</tr>";
+        echo "<td>";
+        echo $value['target'];
+        echo "</td>";
+        echo "<td>";
+        echo $correct_mx;
+        echo "</td>";
+        $mx_stat=(($value['target']== $correct_mx) || ($value['target']== $fqdn ))?$statok:$staterr . " <a href='#mxCorrect'>" . sprintf(_("Cómo Corregir?")) . "</a>";
+        if ($i>1)$mx_stat= sprintf(_("Eliminar. Un solo registro MX será necesario para una correcta configuración"));
+        echo '<td class="center">' . $mx_stat . '</td>';
+        $i++;
+        echo "</tr>";
                           } //end foreach mx as value
                           /*start  spf Records*/
                               $c=0;
@@ -194,7 +176,6 @@ require_once('sidebar.php');
                                 echo "<td class='center'>";
                                 echo $staterr. " <a href='#spfCorrect'>Cómo Corregir?</a>";
                                 echo "</td>";
-
                                 echo "</tr>";
                               } else {
                               foreach($resultTXT as $txtvalue){
@@ -232,20 +213,18 @@ require_once('sidebar.php');
                                 $dkim_stat=($nospace_public_dkim == $nospace_correct_dkim)?$statok:$staterr . " <a href='#dkimCorrect'>" . sprintf(_("Cómo Corregir?")) ."</a>";
                                 echo '<td class="center">' . $dkim_stat . '</td>';
                                 echo "</tr>";
-
                           echo '
                           </tbody>
                           </table>
                           </br>';
-
-		echo '<h4 class="center">' . sprintf(_("Dirección IP")) . '</h4>';
+    echo '<h4 class="center">' . sprintf(_("Dirección IP")) . '</h4>';
                 if ($resultA){
                   echo '<h5>' . sprintf(_("Esta es la IP actualmente configurada para el dominio %s"),$domain). '</h5>';
                   echo '<pre>' . $resultA[0]['ip'] . '</pre>';
                 } else {
                   echo '<h5>' . sprintf(_("El dominio %s no está registrado o no está creado."),$domain) .  '</h5>';
                 }
-		if ($server_ipaddr==$domain_ip){
+    if ($server_ipaddr==$domain_ip){
                   echo "<p>";
                   printf(_("La configuración es correcta para que puedas acceder a tus aplicaciones desde el navegador, usando el dominio %s"),$domain);
                   echo "</p><br />";
@@ -254,10 +233,9 @@ require_once('sidebar.php');
                   printf(_("Cuando registramos un dominio hay un apartado en su configuración llamado DNS.
                   Los DNS son los que pemiten transfomar nombres de dominio entendibles por humanos, en números que corresponden a las diferentes máquinas conectadas y accesibles públicamente en internet."));
                   echo "</p><p>";
-		
+    
                   printf(_("En tu caso el número asociado a tu dominio no corresponde a tu máquina"));
                   echo "</p><p>";
-
                   printf(_("Hay diferentes tipos de contenidos que un servidor puede mostrar. Entre ellos los más comunes son páginas webs y correo.
                   Para que estos servicios funcionen correctamente y desde cualquier ubicación utilizando nombres en lugar que números, hay que comunicar públicamente en cual máquina están alojados los sdrvicios. Esta comunicación se lleva a cabo configurando correctamente los registros DNS."));
                   echo "</p>        
@@ -287,11 +265,10 @@ require_once('sidebar.php');
                   printf(_("Este cambio puede tardar entre 0 i 72 horas en ser operativo, dependiendo de la configuración de tu provedor de dominio. Sé paciente"));
                   echo "</li>
                   </ul>
-
-		";
-		}
-	        echo '<hr>';	
-		echo '<h4 id="mxCorrect" class="center">' . sprintf(_("Registros de tipo 'MX' para correo electrónico")) . '</h4>';
+    ";
+    }
+          echo '<hr>';  
+    echo '<h4 id="mxCorrect" class="center">' . sprintf(_("Registros de tipo 'MX' para correo electrónico")) . '</h4>';
                 if($ismailActive=="FALSE" && $result) {
                   $edit_link= '<a href=/' . BASE_PATH .'/edit-domain.php?domain=' . $domain .'>' . sprintf(_("Editar %S") , $domain) .'</a>';
                   echo "<span class='alert-warning'>";
@@ -299,10 +276,9 @@ require_once('sidebar.php');
                   echo '</span>.<br>';
                   printf(_("Hasta que no lo actives, el servicio de correo electrónico no funcionará en este servidor."));
                 }
-
-		if(in_array($correct_mx , $allMX)|| in_array($fqdn, $allMX)){
+    if(in_array($correct_mx , $allMX)|| in_array($fqdn, $allMX)){
                     echo '<p>' . sprintf(_("La configuración del registro MX es correcta")) . '</p>';
-		} else {
+    } else {
                     echo '<p>' . sprintf(_("La configuración del registro MX actual no es correcta. Sigue las siguientes instrucciones:")) . ' 
                     </br>
                     <ul>
@@ -325,8 +301,7 @@ require_once('sidebar.php');
                         <th>' . sprintf(_("Valor Requerido")) . '</th>
                         <th>' . sprintf(_("Priordad")) . '</th>
                         </tr></thead><tbody>';
-
-                              $i=1;	
+                              $i=1;     
                               if(!$resultMX)$resultMX[0]["target"]=sprintf(_('no hay registro'));
                               foreach($resultMX as $value){
                                 echo "<tr>";
@@ -359,7 +334,7 @@ require_once('sidebar.php');
                                 echo '
                                 <p>' . sprintf(_("Tu actual configuración tiene más de un registro MX. Elimina todos los restantes. Un solo registro es necesario para poder usar el servidor mail instalado en esta máquina")) . '</p>';
                             }
-                            echo '	
+                            echo '      
                             </li>
                             <li>' . sprintf(_("Guarda los cambios")) . '</li>
                             <li>' . sprintf(_("Este cambio puede tardar entre 0 i 72 horas en ser operativo, dependiendo de la configuración de tu provedor de dominio. Esta fase es conocida como propagación de los DNS."));
@@ -367,16 +342,12 @@ require_once('sidebar.php');
                             printf(_("Para averiguar si los DNS se han propagado ya, puedes volver a vistar esta misma página. Cuando el estado en la primera tablilla se ponga en 'OK' Ya podrás empezar a usar tu nuevo servidor de correo electrónico.")) . '</li>
                             </ul></p>';
                           }
-
                 // If spf record is not correct, give more details about how to fix it
-
                  echo '<hr>';    
                  echo '<h4 id="spfCorrect" class="center">' . sprintf(_("Registros de tipo SPF para correo electrónico")) . '</h4>';
               if ($spf_stat!=$statok){
                 printf(_('SPF (Sender Policy Framework) es un registro de tipo TXT que especifica qué servidores pueden enviar correo electrónico en nombre de tu dominio. Los proveedores de servicios de correo electrónico requieren a menudo registros de SPF  válidos. Un registro SPF ausente o incorrecto puede provocar que tu correo electrónico sea enviado a la carpeta de correo no deseado. Algunos operadores podrían incluso bloquear tus correos por completo. Para evitar estos problemas, tendrás que añadir el siguiente registro de tipo TXT a cada dominio que quieras utilizar para crear cuentas de correo electrónico (además del registro MX):'));
-
                 echo '<pre>TXT   ' . $correct_spf.' </pre>'; 
-
                 echo '
                   <table>
                     <thead>
@@ -399,11 +370,7 @@ require_once('sidebar.php');
               } else {
                 printf(_('La configuración del registro SPF es correcta'));
               }
-
                 echo '<br>';
-
-
-
              echo '<hr>';
              echo '<h4 id="dkimCorrect" class="center">' . sprintf(_("Registros de tipo DKIM para correo electrónico")) . '</h4>';
              if ($dkim_stat!=$statok){
@@ -412,8 +379,6 @@ El objetivo de DKIM (DomainKeys Identified Mail) es asegurar que un mensaje envi
 Vista la complejidad de su configuracióni, es mejor asegurarse de que se ha insertado correctamente su valor en los DNS ya que, al igual que pasa con los registros SPF, es mejor no tener ningún registro DKIM que tener uno incorrecto.')); 
                 echo '<br />';
                 printf(_("Lamentablemente, este tipo de registro tiene una sintaxis diferente dependiendo del proveedor con el que tengas contratado el dominio. Estos son los valores DKIM  correctos para el dominio %s."),$domain);
-
-
                 echo '
                   <table>
                     <thead>
@@ -427,7 +392,6 @@ Vista la complejidad de su configuracióni, es mejor asegurarse de que se ha ins
                 echo '<tr><td>TXT</td>
                       <td>default._domainkey.' . $domain . '</td>
                       <td>"' . $correct_dkim . '"</td></tr>';
-
                 echo '</tr>
                 </thead>
                 <tbody>';
@@ -436,12 +400,10 @@ Vista la complejidad de su configuracióni, es mejor asegurarse de que se ha ins
                 
                 echo '<br>';
                 echo '<p>' . sprintf(_("La sintaxis para el registro DKIM varia en función del proveedor con el que tengas contratado el dominio y de si se trata de un dominio de primer nivel o de un subdominio. En esta página hemos recopilado todas las posibles fórmulas de configuración que podrías encontrar: ")) . '<a href=\'https://docs.maadix.net/dns/#registro-dkim\' target=\'_blank\'>h:ttps://docs.maadix.net/dns/#registro-dkim<a></p>';
-
                 echo '<p>' . sprintf(_("En la misma página encontrarás un enlace a una herramienta para averiguar que el registro DKIM creado sea correcto")) . '</p>';
               } else {
                 printf(_('La configuración del registro DKIM es correcta'));
               } 
-
 /*
                 if($resultNS){
                         echo '<h4>DNS</h4>';
@@ -451,7 +413,7 @@ Vista la complejidad de su configuracióni, es mejor asegurarse de que se ha ins
                 }
  */
         ?>
-	<div class="result"></div>
+  <div class="result"></div>
 
 
        </div><!--ineer-->
@@ -463,5 +425,5 @@ Vista la complejidad de su configuracióni, es mejor asegurarse de que se ha ins
   </section>
 </article>
 <?php 
-	ldap_close($ldapconn);
-	require_once('footer.php');?>
+  ldap_close($ldapconn);
+  require_once('footer.php');?>

@@ -25,31 +25,29 @@ $msg1=$msg2=$msg3=$msg="";
 switch($error){
   case "1":
     $msg1 ="
-    <span class='error'><i class='fa fa-exclamation-triangle icon checkko alert-danger'></i> Las dos  
-contraseñas no coincide con que has insertado</span>";
+    <span class='error'><i class='fa fa-exclamation-triangle icon checkko alert-danger'></i>". sprintf(_('Las contraseñas no coinciden')) . "</span>";
   break;
   case "2":
     $msg2="
-    <span class='error'><i class='fa fa-exclamation-triangle icon checkko alert-danger'></i>Nombre de usuario no válido
-  </span>";
+    <span class='error'><i class='fa fa-exclamation-triangle icon checkko alert-danger'></i>" .sprintf(_('Nombre de usuario no válido')) . "</span>";
     break;
   case "3":
     $msg3="
-  <span class='error'><i class='fa fa-exclamation-triangle icon checkko alert-danger'></i>Código de verificación no válido</span>";
+  <span class='error'><i class='fa fa-exclamation-triangle icon checkko alert-danger'></i>" . sprintf(_('Código de verificación no válido')) . "</span>";
     break;
   case "4":
     $msg="
     <div class='alert alert-error'>
-    <button class='close' data-dismiss='alert'>×</button>
-    Código de verificación caducado 
-    </div>";
+    <button class='close' data-dismiss='alert'>×</button>".
+    sprintf(_('Código de verificación caducado')) . 
+    "</div>";
     break;
   case "5":
     $msg="
     <div class='alert alert-error'>
-    <button class='close' data-dismiss='alert'>×</button>
-    Ha habido un error. No se ha podido restablecer la contraseña. 
-    </div>";
+    <button class='close' data-dismiss='alert'>×</button>" .
+    sprintf(_('Ha habido un error. No se ha podido restablecer la contraseña.')) . 
+    "</div>";
     break;
   case "":
     $msg1=$msg2=$msg3=$msg="";
@@ -87,25 +85,23 @@ contraseñas no coincide con que has insertado</span>";
 <?php 
                 echo $msg;
     		echo '<form role="form" action="proc/reset-ps.php" method="POST" class="form-signin standard jquery-check">
-		<h2 class="form-signin-heading">Introduce los datos</h2>
+		<h2 class="form-signin-heading">' . sprintf(_("Introduce los datos")) . '</h2>
 		<hr>
                 <div class="form-group">
-              <label for="user">Nombre de usuario: </label><input class="form-control" id="user" type="text" name="user" required/><p> ' . $msg2 .'</p>
+              <label for="user">' . sprintf(_("Nombre de usuario")) .': </label><input class="form-control" id="user" type="text" name="user" required/><p> ' . $msg2 .'</p>
                 </div>
 
                 <div class="form-group">
-                <label for="usercode">Código de verificación: </label><input class="form-control" id="usercode" type="text" name="usercode" required/><p> ' . $msg3 .'</p>
+                <label for="usercode">' . sprintf(_("Código de verificación")) .': </label><input class="form-control" id="usercode" type="text" name="usercode" required/><p> ' . $msg3 .'</p>
                 </div>
 
                 <div class="form-group">
-                <label for="pswd1">Nueva contraseña: </label><input class="form-control" id="pswd1" type="password" name="pswd1" required/>
-                <label for="pswd2">Repetir contraseña: </label><input class="form-control"  id="pswd2" type="password" name="pswd2" required/><p> ' . $msg1 .'</p><div id="pswresult"></div>
+                <label for="pswd1">' . sprintf(_("Nueva contraseña")) .': </label><input class="form-control" id="pswd1" type="password" name="pswd1" required/>
+                <label for="pswd2">' . sprintf(_("Repetir contraseña")) .': </label><input class="form-control"  id="pswd2" type="password" name="pswd2" required/><p> ' . $msg1 .'</p><div id="pswresult"></div>
                 </div>
                 <input type="hidden" name="token" value="'.$urltoken.'" />
-                <input type="submit" name="submit" value="Submit" class="btn btn-large btn-primary" />
-
-
-    		</form>';
+                <input type="submit" name="submit" value="' . sprintf(_("Enviar")) . '" class="btn btn-large btn-primary" /></form>
+                ';
 ?>
                 </div>
               </div>

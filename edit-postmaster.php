@@ -83,7 +83,7 @@ require_once('sidebar.php');
                 <input class="form-control boxed" id='pswd2' type='password' name='pswd2' value='' /><div id="pswresult"></div>
               </div>
               <hr>
-              <input type='submit' name='update-domain' value='Guardar' class='btn btn-small btn-primary' />
+              <input type='submit' name='update-domain' value='<?php printf(_("Guardar"))?>' class='btn btn-small btn-primary' />
             </form>
       </div>
     

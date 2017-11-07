@@ -53,7 +53,7 @@ $filter="(&(objectclass=extensibleObject)(!(cn=uidNext)))";
 $justthese = array("email", "cn");
 
 //como usuario anonimo solo tenemos acceso al primer nivel de la base de
-//datos, asi que solo tenemos acceso al dn de admin. y solo tenemos acceso
+//datos, asi que solo tenemos acceso al dn de admin. y 
 //a su atributo cn e email.
 
 $sr=ldap_search($ds, $base, $filter, $justthese);
@@ -103,13 +103,13 @@ if(isset($_POST['user']) && isset($_POST['usermail'])){
         $message = "
         <html>
         <head>
-        <title>Instrucciones para recuperar contraseña del Cpanel</title>
+        <title>" . sprintf(_('Instrucciones para recuperar contraseña')) ."</title>
         </head>
         <body>
-        <p>Alguien ha solicitado la recuperación de la contraseña de administrador para  Panel de Control de " .$_SERVER['HTTP_HOST']. ".</p>
-        <p><b>Código de verificación:</b><br>
+        <p>" . sprintf(_('Alguien ha solicitado la recuperación de la contraseña de administrador para  Panel de Control de %s .'),$_SERVER['HTTP_HOST']) . "</p>
+        <p><b>" . sprintf(_('Código de verificación:')) . "</b><br>
         ". $code ."</p>
-        <p>Copia el código de verificación e insertalo en el campo correspondiente que encontrarás en el siguiente enlace:<br>
+        <p>" . sprintf(_('Copia el código de verificación e insertalo en el campo correspondiente que encontrarás en el siguiente enlace:')) . "<br>
         <a href='http://".$_SERVER['HTTP_HOST']."/cpanel/reset.php?token=" . $token ."'>".$_SERVER['HTTP_HOST']."/cpanel/reset.php?token=" . $token ."</a></p>           
         
         </body>
@@ -117,7 +117,7 @@ if(isset($_POST['user']) && isset($_POST['usermail'])){
         ";
         $sendmail=mail($to, $subject, $message, $headers);
         if (!$sendmail){
-          $error= "<div class='alert alert-error'><button class='close' data-dismiss='alert'>×</button>Error! No se ha podido enviar el mail<div>";
+          $error= "<div class='alert alert-error'><button class='close' data-dismiss='alert'>×</button>" . sprintf(_('Error! No se ha podido enviar el mail')) ."<div>";
         }
 
         else
@@ -145,20 +145,20 @@ if(isset($_POST['user']) && isset($_POST['usermail'])){
 function print_rec_form($error){
                 if (isset($error)) echo $error;
     		echo '<form action="" method="POST" class="form-signin">
-                <h5>Para recuperar la contraseña de acceso al Cpanel necesitas conocer el nombre de usuario y el correo electrónico asociado al mismo. Si has olvidado estos datos, y no los has cambiado, los encontrarás en tu <a href="https://maadix.net/client-area/" target="_blank">Área Cliente</a></h5>
+                <h5>' . sprintf(_("Para recuperar la contraseña de acceso al panel de control necesitas conocer el nombre de usuario y el correo electrónico asociado al mismo.")) .'</a></h5>
 		<hr>
                 <div class="form-group">
-                <label for="user">Usuario: </label>
-                <p class="little">Inserta el nombre de usuario del administrador del Cpanel</p>
+                <label for="user">' . sprintf(_("Usuario")) .': </label>
+                <p class="little">' . sprintf(_("Inserta el nombre de usuario del administrador del Panel de control")) . '</p>
                 <input class="form-control " id="user" type="text" name="user" required />
                 </div>
                 <div class="form-group">
                 <label for="usermail">Email: </label>
-                <p class="little">Inserta la cuenta de correo electrónico asociada al usuario administrador</p>
+                <p class="little">' . sprintf(_("Inserta la cuenta de correo electrónico asociada al usuario administrador")) . '</p>
                 <input class="form-control" id="usermail" class="usermail" type="mail" name="usermail" required />
                 </div>
                 <hr>
-                <input type="submit" name="submit" value="Submit" class="btn btn-large btn-primary" />
+                <input type="submit" name="submit" value="'. sprintf(_("Submit")) .'" class="btn btn-large btn-primary" />
     		</form>';
 }
 function crypto_rand_secure($min, $max) {

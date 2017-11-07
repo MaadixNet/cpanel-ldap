@@ -207,27 +207,51 @@ require_once('sidebar.php');
 ?>
 <article class="content forms-page">
   <div class="title-block">
-<?php //then delete
-$dkim = $Ldap->search($ldapconn,'ou=opendkim,ou=cpanel,' . SUFFIX ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
-?>
+    <?php //then delete
+    $dkim = $Ldap->search($ldapconn,'ou=opendkim,ou=cpanel,' . SUFFIX ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
+    ?>
 
     <h3 class="title"> <?php printf(_("Añadir Dominio"));?> </h3>
-      <p class="title-description"> <?php printf(_("Activa dominios o subdominios en este servidor."));?></p>
+    <p class="title-description"> <?php printf(_("Activa dominios o subdominios en este servidor."));?></p>
   </div>
   <div class="subtitle-block">
   <h3 class="subtitle"> <?php printf(_(" Activar un dominio en este panel creará la configuración necesaria para:"));?></h3>
-    <p><?php printf(_("<ul> <li> Crear cuentas de correo electrónico</li> <li> Alojar contenido visble visitando el dominio con un navegador </li><li> Crear un certificado SSL para navegación segura (iHTTPS) </li> </ul>
-    Recuerda que, para un correcto funcionamiento de tus dominios en el servidor, es necesario que configures correctamente los DNS desde el panel de configuración de tu proveedor de dominio. (<a href='/" . BASE_PATH ."/domain-instruccions.php'>Saber más</a>). "));?> </p>
+  <p>
+    <ul>
+      </li>
+        <?php printf(_("Crear cuentas de correo electrónico"));?>
+      </li>
+      <li> 
+        <?php printf(_("Alojar contenido visble visitando el dominio con un navegador"));?>
+      </li>
+      <li>
+        <?php printf(_("Crear un certificado SSL para navegación segura (iHTTPS)"));?>
+     </li> 
+    </ul>
+
+<?php
+    
+    $domain_instr_op_link="<a href='/" . BASE_PATH ."/domain-instruccions.php'>"; 
+    $close_link= '</a>';
+    printf(_("Recuerda que, para un correcto funcionamiento de tus dominios en el servidor, es necesario que configures correctamente los DNS desde el panel de configuración de tu proveedor de dominio. "));
+   printf(("%sSaber más%s."), $domain_instr_op_link,$close_link);?>
+   </p>
   </div>
-<section class="section">
-<div id="admin-content" class="row sameheight-container">
-    <?php if($message) echo $message;?>
-    <?php if($_SESSION["login"]["level"] == '10'){//Only admin can add Domains 
+  <section class="section">
+    <div id="admin-content" class="row sameheight-container">
+      <?php if($message) echo $message;?>
+      <?php if($_SESSION["login"]["level"] == '10'){//Only admin can add Domains 
     ?>
-  <div class="card-block">
-    <form role="form" autocomplete="off" action="" method="POST" class="form-signin standard jquery-check">
+      <div class="card-block">
+      <form role="form" autocomplete="off" action="" method="POST" class="form-signin standard jquery-check">
         <div class="form-group">
-          <label for="domain"><?php printf (_("Nombre de Dominio"))?> </label><p class=""> <?php printf (_("Inserta un nombre de dominio válido (o un subdominio). Para los dominios activados podrás crear aplicaciones web que estarán disponibles desde cualquier navegador visitando <em>https://tudominio.com</em>. El certificado SSL que activa el protocolo seguro HTTPS se activará automáticamente si la configuración de DNS es correcta. <a href='https://docs.maadix.net/dominios/'>Saber más</a>."))?></p>
+          <label for="domain"><?php printf (_("Nombre de Dominio"))?> </label>
+          <p class="">
+            <?php 
+            $doc_op_link="<a href='https://docs.maadix.net/dominios/'>";  
+            printf (_("Inserta un nombre de dominio válido (o un subdominio). Para los dominios activados podrás crear aplicaciones web que estarán disponibles desde cualquier navegador visitando <em>https://tudominio.com</em>. El certificado SSL que activa el protocolo seguro HTTPS se activará automáticamente si la configuración de DNS es correcta. "));
+          printf (_("%sSaber más%s"),$doc_op_link,$close_link );?>
+          </p>
           <input class="form-control" id="domain_new" type="text" name="domain_new" required />
         </div>
 
@@ -248,12 +272,16 @@ $dkim = $Ldap->search($ldapconn,'ou=opendkim,ou=cpanel,' . SUFFIX ,'(&(objectCla
         <div class="form-group">
           <label for="webmaster"><?php printf (_("Webmaster (Administrador del sitio web)"));?> </label>
 
-          <p class=""><?php printf (_("Por cada dominio que actives en este panel, se creará una carpeta con su mismo nombre en /var/www/html/ en la que puedes subir tu aplicación web.<p>
-<p>
-El webmaster tendrá permisos para crear, borrar o modificar archivos dentro de la carpeta /var/www/html/<em>example.com</em>/, donde podrá crear la aplicación web. Este usuario sólo tendrá acceso a las carpetas de los dominios por los que ha sido nombrado webmaster y a su carpeta personal. En ningún caso podrá acceder ni ver el resto de archivos y carpetas en el servidor.</p>
+          <p>
+            <?php printf (_("Por cada dominio que actives en este panel, se creará una carpeta con su mismo nombre en /var/www/html/ en la que puedes subir tu aplicación web."));?>
+          </p>
+          <p>
+            <?php printf (_("El webmaster tendrá permisos para crear, borrar o modificar archivos dentro de la carpeta /var/www/html/example.com/, donde podrá crear la aplicación web. Este usuario sólo tendrá acceso a las carpetas de los dominios por los que ha sido nombrado webmaster y a su carpeta personal. En ningún caso podrá acceder ni ver el resto de archivos y carpetas en el servidor."));?>
+          </p>
 
-
-<p>Recomendamos encarecidamente crear un usuario webmaster, sobretodo si quieres otorgar a alguien el acceso para que trabaje en la web, aplicación o contenidos de la carpeta /var/www/html/example.com/, y que nunca compartas el acceso de SuperUsuario, cuyos privilegios son ilimitados en el sistema."));?> </p>
+          <p>
+            <?php printf (_("Recomendamos encarecidamente crear un usuario webmaster, sobretodo si quieres otorgar a alguien el acceso para que trabaje en la web, aplicación o contenidos de la carpeta /var/www/html/example.com/, y que nunca compartas el acceso de SuperUsuario, cuyos privilegios son ilimitados en el sistema."));?> 
+          </p>
            <?php 
             $ldaptree    = LDAP_PEOPLE;
             $filter="(&(objectClass=person)(uid=*)(authorizedService=sshd)(!(gidnumber=27)))";
@@ -270,12 +298,12 @@ El webmaster tendrá permisos para crear, borrar o modificar archivos dentro de 
             echo '<select id="seluser" name="seluser" class="form-control" required>';
             //echo '<option value="' . $sudo_username .'">Seleccionar Administrador web</option>';
             echo '<option value="" disabled selected="selected">' . sprintf(_("Asignar Webmaster")) .'</option>';
-            echo '<option value="newuser">Crear nuevo usuario</option>';
+            echo '<option value="newuser">' . sprintf(_("Crear nuevo usuario")) . '</option>';
             for ($c=0; $c<$allusers["count"]; $c++) {
               $usernames = $allusers[$c]["uid"][0];
               echo '<option value="' . $allusers[$c]["uid"][0] .'">' . $allusers[$c]["uid"][0] . '</option>';
             }
-            echo '<option value="' . $sudo_username .'">' . $sudo_username .' - SuperUsuario</option>';
+            echo '<option value="' . $sudo_username .'">' . $sudo_username .' - ' . sprintf(_("SuperUsuario")) . '</option>';
             echo '</select>';
             echo '</div>';
             echo '<br>';

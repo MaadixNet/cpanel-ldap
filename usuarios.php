@@ -131,7 +131,7 @@ if ($ldapbind) {
         <?/*php $commuid="getent passwd | awk -F: '{uid[$3]=1}END{for(x=10000; x<=40000; x++) {if(uid[x] != \"\"){}else{print x; exit;}}}'";
 $firstuid_availabe=system($commuid);*/?>
 	<h1 class="navbar-nav"> <?php printf(_("Usuarios"));?></h1>
-	<span><button class="togglevisibility btn btn-small btn-secondary">Añadir usuario</button>	</span>
+        <span><button class="togglevisibility btn btn-small btn-secondary"><?php printf(_("Añadir usuario"));?></button>	</span>
 	<div class="clear"></div>
 	<div id="change">
           <div class="card card-block">
@@ -165,7 +165,7 @@ $firstuid_availabe=system($commuid);*/?>
                   <?php
                   if($mailcount>0) {
                         echo '<select id="selmail">';
-                        echo '<option value="">Seleccionar cuenta existente</option>';
+                        echo '<option value="">'. sprintf(_("Seleccionar cuenta existente")) . '</option>';
                         for ($c=0; $c<$resultmail["count"]; $c++) {
                                 echo '<option value="' . $resultmail[$c]["mail"][0] .'">' . $resultmail[$c]["mail"][0] . '</option>';
                         }
@@ -200,7 +200,7 @@ $firstuid_availabe=system($commuid);*/?>
                 <?php if ($Ldap->check_installed_service('phpmyadmin')){?>
                   <hr>
                   <div class="form-group">
-                  <h4><?php printf(_("Acceso aplicación phpmyadmin"));?></h4>
+                  <h4><?php printf(_("Acceso aplicación phpMyAdmin"));?></h4>
                   <div> <label>
 
                     <input name="apache" id="apache" class="checkbox" type="checkbox">
@@ -236,7 +236,7 @@ $firstuid_availabe=system($commuid);*/?>
                <div class="clear"></div> 
               <hr>
 
-		<input type="submit" name="adduser" value="Guardar" class="btn btn-small btn-primary" />
+              <input type="submit" name="adduser" value="<?php printf(_('Guardar'))?>" class="btn btn-small btn-primary" />
 		</form>
           </div><!--card-->
 	</div><!--change-->

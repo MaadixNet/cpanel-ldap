@@ -52,84 +52,6 @@ if ($ldapconn){
 	endswitch;
 
 
-
-//Add new domain
-if(isset($_POST['adddomain'])){
-    $webmaster=$_POST['seluser'];
-    if($webmaster=='newuser'){
-      $webmaster=$_POST['new_username'];
-      $password = $_POST['webmaster_password'];
-      $add_user=$Ldap->add_sftp_user($webmaster,$password);
-      $message=$add_user['message'];
-
-    }
-
-
-    $values = $_POST["values"];
-    $domain_new = $_POST["domain_new"];
-    $syntax= check_syntax ('domain',$domain_new);
-    $password = $_POST["password"];
-    $entry["objectclass"][0]    = "top";
-    $entry["objectclass"][1]    = "VirtualDomain";
-
-    $entry["vd"]                = $domain_new;
-    $entry["lastChange"]        = time();
-    $entry["adminid"]           = $webmaster;
-    // Merge static values with domain values
-
-    $entry = array_merge($entry,$values["domain"]);
-
-	######Create cn=Postmaster ###########3
-
-
-    $entrypm = array();
-    $entrypm["objectclass"][0]    = "top";
-    $entrypm["objectclass"][1]    = "VirtualMailAlias";
-    $entrypm["cn"] = "Postmaster";
-    $entrypm["sn"] = "Postmaster";
-    $entrypm["mail"] = "postmaster@".$domain_new;
-    $entrypm["userPassword"]  =ldap_password_hash($password,'md5crypt');
-    $entrypm["maildrop"] = "postmaster";
-    $entrypm["accountActive"]     = "TRUE";
-    $entrypm["creationDate"]      = date('Ymd');
-    $entrypm["lastChange"]        = time();
-    // Create abuse alias
-    $entry_abuse["objectclass"][0]  = "top";
-    $entry_abuse["objectclass"][1]  = "VirtualMailAlias";
-    $entry_abuse["cn"] = "Abuse";
-    $entry_abuse["sn"] = "Abuse";
-    $entry_abuse["mail"] = "abuse@".$domain_new;
-    $entry_abuse["maildrop"] = "postmaster";
-    $entry_abuse["accountActive"] = "TRUE";
-    $entry_abuse["creationDate"] = date('Ymd');
-    $entry_abuse["lastChange"] = time();
-
-    // iCheck Domain syntax
-    if (!$syntax){
-      $errorttpe="El dominio " . $domain_new . " no es válido";
-    } else {
-      //if syntax is ok add records	
-      $addDomain=$Ldap->addRecord($ldapconn, 'vd='.$domain_new.','.LDAP_BASE, $entry);
-      $addDomainpm=$Ldap->addRecord($ldapconn, 'cn=postmaster,vd='.$domain_new.','.LDAP_BASE, $entrypm);
-      $addAbuse=$Ldap->addRecord($ldapconn,'mail=abuse@'.$domain_new.',vd='.$domain_new.','.LDAP_BASE,$entry_abuse); 
-      }
-    if ($addDomain && $addAbuse && $addDomainpm) {
-       $message .= "
-		<div class='alert alert-success'>
-		<button class='close' data-dismiss='alert'>&times;</button>
-		<strong>Dominio " . $domain_new ." añadido correctamente</strong> 
-		</div>
-        ";
-      } else {
-          $errorttpe 	= (ldap_errno($ldapconn)==68)?"El dominio " . $domain_new . " ya existe": $errorttpe;
-          $message .=  "
-		<div class='alert alert-error'>
-		<button class='close' data-dismiss='alert'>&times;</button>
-		<strong>Ha habido un error. " . $errorttpe ." </strong> 
-		</div>
-		";
-      }
-  }
 }
 //delete domain 
 if(isset($_POST['deldomain'])){
@@ -154,57 +76,6 @@ if(isset($_POST['deldomain'])){
 
 }
 
-if (isset($_POST["chadmin"])){
-    $webmaster=$_POST['seladmin'];
-    $domainid = $_POST['domainid'];
-    $entry["adminid"] = $webmaster;    
-    $modifydn="vd=" . $domainid ."," . LDAP_BASE;
-    $chadmin = $Ldap->modifyRecord($ldapconn, $modifydn, $entry );
-    if ($chadmin){
-      $message="
-        <div class='alert alert-success'>
-        <button class='close' data-dismiss='alert'>&times;</button>
-        <strong>" . sprintf(_("Cambio registrado con éxito")) . "</strong>
-        </div>
-        ";
-
-    } else {
-
-        $message=  "
-        <div class='alert alert-error'>
-        <button class='close' data-dismiss='alert'>&times;</button>
-        <strong>" . sprintf(_("Error")) . "</strong> 
-        </div>
-        ";
-    }
-}
-
-//Modifiy Passord
-if(isset($_POST['chpsw'])){
-    //$ldapbind=$Ldap->bind($ldapconn, $_SESSION["login"]["dn"] , $_SESSION["login"]["password"]);
-    //$modifydn='uid='. $_POST['userid']. ',' . $ldaptree;
-	$domain=$_POST['domainid'];
-	$modifydn='cn=postmaster,vd='.$domain.','.LDAP_BASE;
-    #$info['userpassword'][0]="{MD5}".base64_encode(pack("H*",md5($_POST['changepsw'])));
-	$info['userpassword'][0] =ldap_password_hash($_POST['changepsw'],'md5crypt');
-    if($permissions==2) {
-    $Ldap->modifyRecord($ldapconn, $modifydn, $info );
-    } else {
-        $modifs = [
-    [
-        "attrib"  => "userPassword",
-        "modtype" => LDAP_MODIFY_BATCH_REMOVE,
-        "values"  => [$_SESSION["login"]["password"]],
-    ],
-    [
-        "attrib"  => "userPassword",
-        "modtype" => LDAP_MODIFY_BATCH_ADD,
-        "values"  => [$info['userpassword'][0]],
-    ],
-];
-    ldap_modify_batch($ldapconn, $modifydn, $modifs);
-    }
-}
 
 if ($ldapbind) {
     //Query domains in database
@@ -230,12 +101,12 @@ require_once('sidebar.php');
         <table id="domains">
         <thead>
         <tr>
-            <th>Dominio</th>
-            <th>Servidor Correo</th>
-            <th>Cuentas email </th>
-            <th>Servidor web</th>
-            <th>Administrador web</th>
-            <th>DNS</th>
+        <th><?php printf(_("Dominio"));?></th>
+        <th><?php printf(_("Servidor Correo"));?></th>
+        <th><?php printf(_("Cuentas email"));?></th>
+        <th><?php printf(_("Servidor web"));?></th>
+        <th><?php printf(_("Administrador web"));?></th>
+        <th><?php printf(_("DNS"));?></th>
             <?php if($_SESSION["login"]["level"] == '10') {
 
               echo '<th>' .sprintf (_('Editar')) . '</th>';
@@ -248,8 +119,8 @@ require_once('sidebar.php');
 
 <?php
     for ($i=0; $i<$result["count"]; $i++) {
-              $domain= $result[$i]["vd"][0];
-              $resultmail=$Ldap->search($ldapconn,'vd='. $domain . ','. LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
+        $domain= $result[$i]["vd"][0];
+        $resultmail=$Ldap->search($ldapconn,'vd='. $domain . ','. LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
 
         echo "<tr>";
         echo "<td>";
@@ -260,7 +131,7 @@ require_once('sidebar.php');
         echo $mail_server;
         echo "</td>";
         echo "<td>";
-        echo "<a href='/". BASE_PATH ."/mails.php?domain=" . $domain ."'>Administrar email</a> ";
+        echo "<a href='/". BASE_PATH ."/mails.php?domain=" . $domain ."'>" . sprintf(_("Administrar email")) . "</a>";
         echo "</td>";
         echo "<td class='center domainstatus' data-domain='" . $domain . "'>";
         $status=(file_exists('/etc/apache2/ldap-enabled/' . $domain .'.conf'))?$statok:$loading;
@@ -273,7 +144,7 @@ require_once('sidebar.php');
         $ownersip=($current_admin==$webmaster?$statok:$loading);
         echo $webmaster . '&nbsp;&nbsp; ' . $ownersip . ' <span id="ownershipstatus"></span>';
         echo "<td class='center'>";
-        echo "<a title='Ver la configuración de los DNS para " . $domain ."' href='editdns.php?domain=" . $domain ."'>Ver</a>";
+        echo "<a title='Ver la configuración de los DNS para " . $domain ."' href='editdns.php?domain=" . $domain ."'>" . sprintf(_("Ver")) . "</a>";
         echo "</td>";
         if($_SESSION["login"]["level"] == '10') {
             echo "<td>";
@@ -293,10 +164,16 @@ require_once('sidebar.php');
         </tbody>
     </table>
   </div><!--ineer-->
-<?php } else {
+<?php
+    } else {
+        $add_link="<a href='add-domain.php'><button type='button' class='btn btn-primary'>"; 
+        $close_link="</button></a>";
 
-          printf(_("<h5>No hay ningún dominio activado.</h5> <h5>Puedes activar cualquier dominio desde la página <a href='add-domain.php'><button type='button' class='btn btn-primary'>Añadir dominios</button></a></h5>"));
-
+        echo "<h5>";
+        printf(_("No hay ningún dominio activado."));
+        echo "</h5> <h5>";
+        printf(_("Puedes activar cualquier dominio desde la página %sAñadir dominios%s"),$add_link,$close_link);
+        echo "</h5>";
       }?>
 <!-- Modal -->
 <div class="bd-example">

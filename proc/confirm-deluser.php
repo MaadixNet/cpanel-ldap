@@ -52,11 +52,11 @@ if ($number>0) {
 else 
 {
 
-    printf(_("<p>¿Estás seguro de que quieres eliminar el usuario %s?</p>"), $user);
+    echo '<p>' .sprintf(_("¿Estás seguro de que quieres eliminar el usuario %s?"), $user) . '</p>';
 
-    printf(_("<p>El usuario perderá el acceso SFTP al servidor. Los archivos de su directorio personal se moverán al siguiente directorio: <br>
-      <pre>/home/%s/sftp-deleted/%s/</pre>
- Puedes decidir si quieres conservarlos o borrarlos manualmente.</p>"),$superuser,$user);
+    echo '<p>' .sprintf(_("El usuario perderá el acceso SFTP al servidor. Los archivos de su directorio personal se moverán al siguiente directorio:")) .'<br>
+      <pre>/home/' . $superuser .'/sftp-deleted/' . $user .'/</pre>' . 
+    sprintf(_("Puedes decidir si quieres conservarlos o borrarlos manualmente vía sFTP o SSH")) . '</p>';
 
     echo "<div class='modal-footer'>
           <form action='' method='POST'><input type='hidden' name='userid' value='". $user ."' /> <button type='submit' name='deluser' class='btn btn-small btn-primary'>". sprintf(_('Borrar')) ."</button><button type='button' class='btn btn-secondary' data-dismiss='modal'>" . sprintf (_("Cancelar")) . "</button></form></div>";

@@ -306,7 +306,7 @@ class LDAP{
           
             <div class='alert alert-error'>
             <button class='close' data-dismiss='alert'>&times;</button>
-            <strong> El usuario ". $newuser ." ya existe en el sistema. Por favor escoge otro nombre</strong> 
+            <strong>" .sprintf(_('El usuario %s ya existe en el sistema. Por favor escoge otro nombre'),$newuser) ."</strong> 
             </div>
             ";
 
@@ -318,7 +318,7 @@ class LDAP{
           
             <div class='alert alert-error'>
             <button class='close' data-dismiss='alert'>&times;</button>
-            <strong>'" . $newuser ."' no es un nombre de usuario válido. El nombre tiene que tener mínimo dos carácteres y solo puede contener cifras y/o números. Los carácteres especiales y los espacios no están admitidos</strong> 
+            <strong>". sprintf(_("%s no es un nombre de usuario válido. El nombre tiene que tener mínimo dos carácteres y solo puede contener cifras y/o números. Los carácteres especiales y los espacios no están admitidos"),$newuser) . "</strong> 
             </div>
           ";
         } elseif (!check_syntax ('email', $user_email)) {
@@ -327,7 +327,7 @@ class LDAP{
           
             <div class='alert alert-error'>
             <button class='close' data-dismiss='alert'>&times;</button>
-            <strong>'" . $user_email ."' no es un email válido.</strong>
+            <strong>" . sprintf(_("%s no es un email válido."), $user_email) ."</strong>
             </div>
           ";
          
@@ -405,7 +405,7 @@ class LDAP{
           $message=  "
           <div class='alert alert-error'>
           <button class='close' data-dismiss='alert'>&times;</button>
-          <strong>Ha habido un error. " . $errorttpe ." </strong> 
+          <strong>" . sprintf(_('Ha habido un error. %s'), $errorttpe) ." </strong> 
           </div>
           ";
 
@@ -503,7 +503,7 @@ class LDAP{
           $message=  "
           <div class='alert alert-error'>
           <button class='close' data-dismiss='alert'>&times;</button>
-          <strong>Ha habido un error. " . $errorttpe ." </strong> 
+          <strong>" . sprintf(_('Ha habido un error. %s'), $errorttpe) ."</strong> 
           </div>
           ";
 

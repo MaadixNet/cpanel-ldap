@@ -30,7 +30,7 @@
                                 <a href=""> <i class="fa fa-list-alt"></i> Mysql <i class="fa arrow"></i> </a>
                                 <ul>
                                   <li><a href="https://docs.maadix.net/mysql/" target="_blank"><?php printf(_("Instrucciones"));?></a></li>
-                                  <li><a target="_blank" href="/phpmyadmin"><?php printf(_("phpmyadmin"));?></a></li>
+                                  <li><a target="_blank" href="/phpmyadmin"><?php printf(_("phpMyAdmin"));?></a></li>
                                 </ul>
                               </li>
                               <?php }?>

@@ -134,7 +134,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
                 $mailcount = $resultmail["count"];
                 if($mailcount>0) {
                         echo '<select id="selmail">';
-                        echo '<option value="">Seleccionar cuenta existente</option>';
+                        echo '<option value="">' . sprintf(_("Seleccionar cuenta existente")) .'</option>';
                         for ($c=0; $c<$resultmail["count"]; $c++) {
                                 echo '<option value="' . $resultmail[$c]["mail"][0] .'">' . $resultmail[$c]["mail"][0] . '</option>';
                         }
@@ -144,13 +144,13 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
                 <br>
                <div class="clear"></div>
               <div class="form-group">
-                <label for="pswd1"><?php printf(_("Nueva Contraseña"));?></label>
+                <label for="pswd1"><?php printf(_("Nueva contraseña"));?></label>
                 <div id="pswcheck"></div>
                 <input  class="form-control" id='pswd1' type='password' name='pswd1' readonly />
               </div>
 
               <div class="form-group">
-                <label for="pswd2"><?php printf(_("Confirma Contraseña"));?></label><input type='password' class="form-control" id='pswd2' name='pswd2' /><div id="pswresult"></div>
+                <label for="pswd2"><?php printf(_("Confirma la contraseña"));?></label><input type='password' class="form-control" id='pswd2' name='pswd2' /><div id="pswresult"></div>
               </div>
                 
                 <?php 
@@ -199,8 +199,8 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
 
                   <div id="hidden">
                   <h4><?php printf(_("Instrucciones"));?></h4>
-                  <p><?php printf(_("Envia al usuario un email con los archivos de configuración y las instrucciones para configurar el cliente VPN."));?></p>
-                  <p><?php printf(_("NOTA: Las instrucciones incluyen todos los datos necesarios menos la contraseña. Por razones de seguridad proporciona al usuario la  contraseña por otro canal."));?></p>
+                  <p><?php printf(_("Envía al usuario un correo con los archivos de configuración y las instrucciones para configurar el cliente VPN."));?></p>
+                  <p><?php printf(_("Advertencia: Las instrucciones incluyen todos los datos necesarios menos la contraseña, que por razones de seguridad debes proporcionar al usuario por otro canal."));?></p>
 
                   <div> <label>
                     <input type="checkbox" name="sendinstruction" id="sendinstruction" class="checkbox small" type="checkbox"  />
@@ -212,7 +212,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
                 <div class="clear"></div>
                 <hr>
 
-		<input type="submit" name="updateuser" value="Guardar Cambios" class="btn btn-small btn-primary" />
+                <input type="submit" name="updateuser" value='<?php printf(_("Guardar Cambios"))?>' class="btn btn-small btn-primary" />
 		</form>
         </div>
 </div><!--admin-content-->

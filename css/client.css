@@ -17,7 +17,7 @@ h6 {
   font-weight: 600;
 }
 .center {text-align: center;}
-#change, #hidden ,#new_user{
+#change, #hidden, #new_user, #hiddenreply {
     display: none;
 }
 form.standard select {

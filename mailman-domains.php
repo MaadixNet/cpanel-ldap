@@ -80,7 +80,7 @@ $mailman_domains = pg_fetch_all($result);
     foreach ($mailman_domains as $domain) {
        if( !empty($activeMailDomains) && array_search($domain["mail_host"], array_column(array_column($activeMailDomains, 'vd'),0)) !== false){
 
-        $domain_status=  sprintf(_("Si usas este dominio para listas de correo puedes experimentar problemas. Ya se está utilizando para correo electrónico. Por favor utiliza otro o deshabilita el servidor de corro para este dominio"));
+        $domain_status=  sprintf(_("Si usas este dominio para listas de correo puedes experimentar problemas. Ya se está utilizando para correo electrónico. Por favor utiliza otro o deshabilita el servidor de correo para este dominio"));
 
       } else {
         $domain_status=$statok;
@@ -93,7 +93,7 @@ $mailman_domains = pg_fetch_all($result);
         echo $domain["description"];
         echo "</td>";
         echo "<td class='center'>";
-        echo "<a href='editdns.php?domain=" . $domain["mail_host"] ."'>Ver</a>";
+        echo "<a href='editdns.php?domain=" . $domain["mail_host"] ."'>" . sprintf(_('Ver')) . "</a>";
         echo "</td>";
         echo "<td class='center domainstatus' data-domain='" . $domain["mail_host"] . "'>";
         echo $domain_status;
@@ -107,10 +107,16 @@ $mailman_domains = pg_fetch_all($result);
     </table>
   </div><!--ineer-->
 <?php } else {
-
-printf(_("<h4>No hay ningún dominio activado para listas de correo.</h4>
-          <h4>Puedes activar dominios desde la aplicación Mailman <a target=\"_blank\" href=\"/mailman\"><button type='button' class='btn btn-pill-right btn-primary'>Añadir dominios para listas de correo</button></a></h4>"));
-          printf(_("<h5>En caso de dudas puedes consultar las instrucciones en esta página: <a href=\"https://docs.maadix.net/mailman/\" target=\"_blank\">https://docs.maadix.net/mailman/</a></h5>"));
+      echo '<h4>';
+      printf(_("No hay ningún dominio activado para listas de correo."));
+      echo '</h4>';
+      echo '<h4>';
+      printf(_("Puedes activar dominios desde la aplicación Mailman "));
+      echo '<a target=\"_blank\" href=\"/mailman\"><button type="button" class="btn btn-pill-right btn-primary">' . sprintf(_("Añadir dominios para listas de correo")) . '</button></a>';
+      echo '</h4>';
+      echo '<h5>';
+      printf(_("En caso de dudas puedes consultar las instrucciones en esta página: "));
+      echo '<a href=\"https://docs.maadix.net/mailman/\" target=\"_blank\">https://docs.maadix.net/mailman/</a></h5>';
 
       }?>
 <!-- Modal -->

@@ -138,6 +138,27 @@ $(document).ready(function(){
     }
     });
 
+      /* for vacationactive checkbox. If is activeate
+       * show input field for maildrop address
+       * and set it as required field
+       */
+      if($('#vacationactive').length){
+        if(document.getElementById('vacationactive').checked) {
+              $("#hiddenreply").show();
+              $("input#vacationinfo").prop('required',true);
+        }
+      } 
+    $('#vacationactive').change(function () {
+    if(this.checked) {
+        $("#hiddenreply").show();
+        $('input#vacationinfo').prop('required', true);
+    } else {
+        $("#hiddenreply").hide();
+        $('input#vacationinfo').prop('required', false);
+    }
+    });
+
+
     if($('#vpn').length){
       if(document.getElementById('vpn').checked ) {
           $("#hidden").show();
