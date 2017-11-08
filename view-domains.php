@@ -102,8 +102,8 @@ require_once('sidebar.php');
         <thead>
         <tr>
         <th><?php printf(_("Dominio"));?></th>
-        <th><?php printf(_("Servidor Correo"));?></th>
-        <th><?php printf(_("Cuentas email"));?></th>
+        <th><?php printf(_("Servidor de correo"));?></th>
+        <th><?php printf(_("Cuentas de correo"));?></th>
         <th><?php printf(_("Servidor web"));?></th>
         <th><?php printf(_("Administrador web"));?></th>
         <th><?php printf(_("DNS"));?></th>
@@ -131,7 +131,7 @@ require_once('sidebar.php');
         echo $mail_server;
         echo "</td>";
         echo "<td>";
-        echo "<a href='/". BASE_PATH ."/mails.php?domain=" . $domain ."'>" . sprintf(_("Administrar email")) . "</a>";
+        echo "<a href='/". BASE_PATH ."/mails.php?domain=" . $domain ."'>" . sprintf(_("Administrar correo")) . "</a>";
         echo "</td>";
         echo "<td class='center domainstatus' data-domain='" . $domain . "'>";
         $status=(file_exists('/etc/apache2/ldap-enabled/' . $domain .'.conf'))?$statok:$loading;
