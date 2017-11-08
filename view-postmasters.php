@@ -106,7 +106,7 @@ require_once('sidebar.php');
           <thead>
             <tr>
               <th><?php printf(_("Usuario"));?></th>
-              <th><?php printf(_("Cuentas email"));?> </th>
+              <th><?php printf(_("Cuentas de correo"));?> </th>
               <?php if($_SESSION["login"]["level"] == '10') {
 
                 echo '<th>' .sprintf (_('Editar')) . '</th>';
