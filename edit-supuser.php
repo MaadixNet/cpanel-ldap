@@ -80,7 +80,7 @@ require_once('sidebar.php');
 ?>
 <article class="content forms-page">
   <div class="title-block">
-  <h1 class=""> <?php printf(_("Editar Usuario %s - SuperUsuario"), $username);?></h1>
+  <h1 class=""> <?php printf(_("Editar Usuario %s - Superusuario"), $username);?></h1>
   </div>
     <div class="subtitle-block">
   <h3 class=""> <?php printf(_("Este es el usuario root del sistema y dispone de un acceso total al servidor, con poderes ilimitados. No lo puedes borrar ni eliminar su acceso SFTP/SSH, que está siempre garantizado."));?></h3>
@@ -155,8 +155,8 @@ require_once('sidebar.php');
 
                   <div id="hidden">
                   <h4><?php printf(_("Instrucciones"));?></h4>
-                  <p><?php printf(_("Envia al usuario un email con los archivos de configuración y las instrucciones para configurar el cliente VPN."));?></p>
-                  <p><?php printf(_("NOTA: Las instrucciones incluyen todos los datos necesarios menos la contraseña. Por razones de seguridad proporciona al usuario la  contraseña por otro canal"));?></p>
+                  <p><?php printf(_("Envía al usuario un correo electrónico con los archivos de configuración y las instrucciones para configurar el cliente VPN."));?></p>
+                  <p><?php printf(_("Advertencia: Las instrucciones incluyen todos los datos necesarios menos la contraseña, que por razones de seguridad debes proporcionar al usuario  por otro canal"));?></p>
 
                   <div> <label>
                     <input class="checkbox small" type="checkbox" name="sendinstruction" id="sendinstruction" />
@@ -167,10 +167,10 @@ require_once('sidebar.php');
                 <?php } ?>
 
                 <?php if ($Ldap->check_installed_service('phpmyadmin')){?>
-                  <h4><?php printf(_("Acceso aplicación PhpMyAdmin"));?></h4>
+                  <h4><?php printf(_("Acceso aplicación phpMyAdmin"));?></h4>
                   <div> <label>
                     <input class="checkbox" type="checkbox" type="checkbox" name="apache" id="apache" <?php echo $apache;?> />
-                    <span><?php printf(_("Activar acceso aplicación protegida PhpMyAdmin"));?></span>
+                    <span><?php printf(_("Activar acceso aplicación protegida phpMyAdmin"));?></span>
                   </label> </div>
 
                 <?php } ?>
