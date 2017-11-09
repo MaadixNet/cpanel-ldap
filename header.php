@@ -129,12 +129,12 @@ if($Ldap->is_logged_in()){
                             <?php }?>
                             <?php if(!empty($serv_installed) && array_search('mail', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
                             <li class="dropdown">
-                              <a href="#" data-toggle="dropdown" class="dropdown-toggle"><?php printf (_("Email"));?><b class="caret"></b>
+                              <a href="#" data-toggle="dropdown" class="dropdown-toggle"><?php printf (_("Correo"));?><b class="caret"></b>
                               </a>
 
                               <ul class="dropdown-menu" id="menu-mail">
 
-                                 <li><a href="/<?php echo BASE_PATH;?>/mails.php"><?php printf(_("Cuentas mail"));?></a></li>
+                                 <li><a href="/<?php echo BASE_PATH;?>/mails.php"><?php printf(_("Cuentas de correo"));?></a></li>
                                  <?php if( !empty($serv_installed) &&  array_search('rainloop', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
                                   <li><a href="https://<?php echo $_SERVER['HTTP_HOST'];?>/rainloop" target="_blank"><?php printf(_("Webmail"));?></a></li>
                                  <?php } ?>
@@ -154,7 +154,7 @@ if($Ldap->is_logged_in()){
                                 <ul class="dropdown-menu" id="menu1">
                                 <li><a href="https://owncloud.org/" target="_blank"><?php printf(_("Owncloud"));?></a></li>
                                 <li><a href="http://docs.maadix.net/dominios/" target="_blank"><?php printf(_("Dominios"));?></a></li>
-                                <li><a href="http://docs.maadix.net/email" target="_blank"><?php printf(_("Email"));?></a></li>
+                                <li><a href="http://docs.maadix.net/email" target="_blank"><?php printf(_("Correo"));?></a></li>
                                 <li><a href="http://docs.maadix.net/vpn/" target="_blank"><?php printf(_("VPN"));?></a></li>
                                 </ul>
                            </li>
