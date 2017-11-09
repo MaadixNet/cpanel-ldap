@@ -100,7 +100,7 @@ require_once('sidebar.php');
 if (empty($release_info)) { ?>
     <article class="content cards-page">
             <div class="title-block">
-                <h3 class="title"> <?php printf(_("No hay ninguna actualización disponile en este momento"));?> </h3>
+                <h3 class="title"> <?php printf(_("No hay ninguna actualización disponible en este momento"));?> </h3>
                 <br />
                 <p class="title-description"> <?php printf(_("Inténtalo de nuevo pasados unos minutos."));?> </p>
             </div>
@@ -120,7 +120,7 @@ if (empty($release_info)) { ?>
             <div class="title-block">
                 <h4 class="title"> <?php printf(_("Aplicaciones Disponibles para Instalar"));?> </h4>
                 <br>
-                <h5 class=""> <?php printf(_("Selecciona las aplicaciones que quieras instalar y haz click en el botón 'Instalar' que encontrarás al fondo de esta página para empezar el proceso de instalación"));?> </h5>
+                <h5 class=""> <?php printf(_("Selecciona las aplicaciones que quieras instalar y haz clic en el botón 'Instalar' que encontrarás al fondo de esta página para empezar el proceso de instalación"));?> </h5>
 
             </div>
                  <section class="section">
