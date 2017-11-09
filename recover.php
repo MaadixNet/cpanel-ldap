@@ -77,7 +77,7 @@ if(isset($_POST['user']) && isset($_POST['usermail'])){
         $error=
         "<div class='alert alert-error'>
         <button class='close' data-dismiss='alert'>×</button><h4>" .
-        sprintf(_("Credenciales de administrador inválidas")) .  
+        sprintf(_("Credenciales de administrador no válidas")) .  
         "</h4></div>";
 
     } elseif ( $username == $adminname && $to == $adminmail){
@@ -103,13 +103,13 @@ if(isset($_POST['user']) && isset($_POST['usermail'])){
         $message = "
         <html>
         <head>
-        <title>" . sprintf(_('Instrucciones para recuperar contraseña')) ."</title>
+        <title>" . sprintf(_('Instrucciones para recuperar la contraseña')) ."</title>
         </head>
         <body>
-        <p>" . sprintf(_('Alguien ha solicitado la recuperación de la contraseña de administrador para  Panel de Control de %s .'),$_SERVER['HTTP_HOST']) . "</p>
+        <p>" . sprintf(_('Alguien ha solicitado la recuperación de la contraseña de administrador para el  panel de control de %s .'),$_SERVER['HTTP_HOST']) . "</p>
         <p><b>" . sprintf(_('Código de verificación:')) . "</b><br>
         ". $code ."</p>
-        <p>" . sprintf(_('Copia el código de verificación e insertalo en el campo correspondiente que encontrarás en el siguiente enlace:')) . "<br>
+        <p>" . sprintf(_('Copia el código de verificación e insértalo en el campo correspondiente que encontrarás en el siguiente enlace:')) . "<br>
         <a href='http://".$_SERVER['HTTP_HOST']."/cpanel/reset.php?token=" . $token ."'>".$_SERVER['HTTP_HOST']."/cpanel/reset.php?token=" . $token ."</a></p>           
         
         </body>
@@ -117,14 +117,14 @@ if(isset($_POST['user']) && isset($_POST['usermail'])){
         ";
         $sendmail=mail($to, $subject, $message, $headers);
         if (!$sendmail){
-          $error= "<div class='alert alert-error'><button class='close' data-dismiss='alert'>×</button>" . sprintf(_('Error! No se ha podido enviar el mail')) ."<div>";
+          $error= "<div class='alert alert-error'><button class='close' data-dismiss='alert'>×</button>" . sprintf(_('¡Error! No se ha podido enviar el correo')) ."<div>";
         }
 
         else
         
         {
           $error='';
-          $messagesent= "<div class='alert alert-success'><h4>" . sprintf (_("Se ha enviado un email a la cuenta de correo %s . Por favor, revisa tu bandeja ded entrada y sigue las instruccones que encontrarás en el mensaje"), $to)." </div>";
+          $messagesent= "<div class='alert alert-success'><h4>" . sprintf (_("Se ha enviado un correo electrónico a la cuenta de correo %s . Por favor, revisa tu bandeja de entrada y sigue las instrucciones que encontrarás en el mensaje"), $to)." </div>";
         } 
     } else {
       
@@ -149,7 +149,7 @@ function print_rec_form($error){
 		<hr>
                 <div class="form-group">
                 <label for="user">' . sprintf(_("Usuario")) .': </label>
-                <p class="little">' . sprintf(_("Inserta el nombre de usuario del administrador del Panel de control")) . '</p>
+                <p class="little">' . sprintf(_("Inserta el nombre de usuario del administrador del panel de control")) . '</p>
                 <input class="form-control " id="user" type="text" name="user" required />
                 </div>
                 <div class="form-group">
