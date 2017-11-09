@@ -27,7 +27,7 @@ require_once('header.php');
 <?php
 echo '<h3>'. sprintf(_("Datos del servidor")). '</h3>';
 echo '<p><b>IP:</b> ' . $_SERVER['SERVER_ADDR'] . '</p>';
-echo '<p><b>'. sprintf(_("Sistema Operativo")). ':</b> ' . php_uname() . ' ' . PHP_OS . '</p>';;
+echo '<p><b>'. sprintf(_("Sistema operativo")). ':</b> ' . php_uname() . ' ' . PHP_OS . '</p>';;
 $data = shell_exec('uptime');
 $uptime = explode(' up ', $data);
 $uptime = explode(',', $uptime[1]);
