@@ -207,17 +207,17 @@ function check_domain_dns($domain){
   $message='';
  if ($server_ipaddr==$domain_ip && in_array($correct_mx , $allMX)):
           $message = sprintf(_('El sistema está creando la configuración necesaria para que tu nuevo dominio sea accesible en este servidor. Esto te permitirá alojar una aplicación web o crear cuentas de correo para este dominio.<br>
-    Este proceso puede tardar tardar hasta 5 minutos. Comsulta la página de <a class="alert-link" href="view-domains.php">dominios</a> para ver el el estado de la operación'));
+    Este proceso puede tardar hasta 5 minutos. Consulta la página de <a class="alert-link" href="view-domains.php">dominios</a> para ver el estado de la operación'));
           $result=1;
   elseif(!in_array($correct_mx , $allMX) && $server_ipaddr==$domain_ip):
           # Need this in case somebody wish to  create emails account to prepare a migration and avoid service blackout
     $message = sprintf(_('<div class="card card-block"><p>Los DNS del dominio %s no están configurados para que el correo electrónico sea administrado por este servidor. Esto significa que el correo electrónico será entregado al servidor actualmente configurado en los registros MX del dominio.
       </br>
-      Puedes igualmente crear la cuneta que empezará a recibir correo en este servidor cuando los DNS estarán configrados correctamente. Si estás planteando una migración del dominio hacía este servidor. Revisa la configuración actual y consulta cual es la correcta en esta página: <a href="editdns.php?domain=%s">Configuración de DNS activa para el dominio %s</a></p></div>'),$domain, $domain, $domain);
+      Puedes crear igualmente la cuenta que empezará a recibir correo en este servidor cuando los DNS estén configurados correctamente. Si estás planteando una migración del dominio hacía este servidor, revisa la configuración actual y consulta cual es la correcta en esta página: <a href="editdns.php?domain=%s">Configuración de DNS activa para el dominio %s</a></p></div>'),$domain, $domain, $domain);
           $result=2;
    
   else:
-          $message =sprintf(_( 'La configuración de los DNS no es la correcta para que todos los servicios disponibles puedan ser activados. Consulta la página de <a class="alert-link" href="editdns.php?domain=' . $domain . '">configuración de DNS</a> para sbaer más.'));
+          $message =sprintf(_( 'La configuración de los DNS no es la correcta para que todos los servicios disponibles puedan ser activados. Consulta la página de <a class="alert-link" href="editdns.php?domain=' . $domain . '">configuración de DNS</a> para saber más.'));
           $result=3;
   endif;
 
@@ -379,7 +379,7 @@ function applySanitize($key, $val) {
     case "usermail":
       $value = filter_var($val, FILTER_SANITIZE_EMAIL);
       if (filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
-          $message = sprintf(_("%s is not a valid email address"), $value);
+          $message = sprintf(_("%s no es una dirección de correo válida"), $value);
       }      
       break;
     default:
