@@ -89,7 +89,7 @@ if(isset($_POST['user']) && isset($_POST['password'])){
     } else {
      $message= "<div class='alert alert-error'>
             <button class='close' data-dismiss='alert'>&times;</button>".
-            sprintf (_("Usuario o Contraseña no válido.")).
+            sprintf (_("Usuario o contraseña no válidos.")).
             "</div>";
     }
 }
