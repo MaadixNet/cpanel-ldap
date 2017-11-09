@@ -47,14 +47,14 @@ require_once 'sidebar.php';
             <div class="inner" id="maincol">
             <?php
             echo '<h3> Mysql - PhpMyAdmin</h3>';
-            printf(_("En este servidor tienes instalada una interfaz gráfica para poder administrar bases de datos mysql.<br>
-            Se trata de una aplicación externa al Panel de Control y que requiere otra autentificación para acceder a ella.<br><br>
-            Para reforzar la seguridad de tu sistema y tus bases de datos, esta aplicación está protegida con doble contraseña. Solo los usuarios que tengan activado el acceso sftp y el usuario %s (usuario por defecto del sistema) pueden acceder a esta interfaz.<br><br>
-             Para la prinera autentificación, que se muestra con una ventana emergente, tendrás que insertar las credenciales de un usuario válido. Puedes utilizar las credenciales del usuario %s, o bien de un usuario que hayas creado y al que hayas activado el acceso sftp.<br> 
-            Una vez efectuada satisfactoriamente esta autentificación, encontrarás el interfaz de la aplicación PhpMyAdmin, que solicitará un usuario Mysql. Por defecto exite un único usuario Mysql cuyo nombre es root y cuya contraseña has recibido por correo electrónico al activar el servidor.<br><br>
-           Es buena práctica crear un usuario Mysql diferente por cada base de datos y otorgarle permisos solo sobre una y no todas las bases de datos que tengas creadas.<br><br>
-            Tanto las bases de datos como los usuarios mysql y sus contraseñas se pueden crear e administrar desde PhpMyadmin. <br>
-            Por defecto solo el usuario root de Mysql tiene los privilegios necesarios para crear nuevas bases de datos, nuevos usuarios, y otorgar permisos a cada uno de ellos.
+            printf(_("En este servidor tienes instalada una interfaz gráfica para poder administrar bases de datos MySQL.<br>
+            Se trata de una aplicación externa al panel de control y que requiere otra autentificación para acceder a ella.<br><br>
+            Para reforzar la seguridad de tu sistema y tus bases de datos, esta aplicación está protegida con una doble contraseña. Sólo los usuarios que tengan activado el acceso SFTP y el usuario %s (usuario por defecto del sistema) pueden acceder a esta interfaz.<br><br>
+             Para la primera autentificación, que se muestra con una ventana emergente, tendrás que insertar las credenciales de un usuario válido. Puedes utilizar las credenciales del usuario %s, o bien de un usuario que hayas creado y al que hayas activado el acceso SFTP.<br> 
+            Una vez efectuada satisfactoriamente esta autentificación, encontrarás el interfaz de la aplicación phpMyAdmin, que solicitará un usuario MySQL. Por defecto existe un único usuario MySQL cuyo nombre es root y cuya contraseña has recibido por correo electrónico al activar el servidor.<br><br>
+           Es buena práctica crear un usuario MySQL diferente por cada base de datos y otorgarle permisos únicamente sobre una y no todas las bases de datos que tengas creadas.<br><br>
+            Tanto las bases de datos como los usuarios MySQL y sus respectivas contraseñas se pueden crear y administrar desde phpMyAdmin. <br>
+            Por defecto solamente el usuario root de MySQL tiene los privilegios necesarios para crear nuevas bases de datos, nuevos usuarios y otorgar permisos a cada uno de ellos.
             <br><br>
             Puedes encontrar aquí la <a href='https://www.phpmyadmin.net/docs/' target='_blank' title='Phpmyadmin documentation'>documentación oficial para el uso de la aplicación</a>"),$username, $username);?>
             <br><br>
