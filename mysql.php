@@ -40,20 +40,20 @@ if (isset($_POST["createdb"])){
 $current_page=basename(__FILE__);
 $user_home->check_login_or_redirect($current_page);
 require_once('header.php');
-echo '<h3>'. sprintf(_("Crear Base de datos")). '</h3>';
+echo '<h3>'. sprintf(_("Crear base de datos")). '</h3>';
 echo $messg;
 ?>
 <div id="admin-content" class="content">
   <form id="mysql-create" action="" method="POST">
-  <label for"dbname"><?php printf(_("Nombre base de datos"));?></label>
+  <label for"dbname"><?php printf(_("Nombre de la base de datos"));?></label>
   <input type="text" name="dbname" id="dbname">
-  <label for="mysqluser"><?php printf(_("Usuario base de datos"));?></label>
+  <label for="mysqluser"><?php printf(_("Usuario de la base de datos"));?></label>
   <input type="text" name="mysqluser" id="mysqluser">
-  <label for"pswd1"><?php printf(_("Contraseña base de datos"));?></label>
+  <label for"pswd1"><?php printf(_("Contraseña de la base de datos"));?></label>
   <input type="password" name="pswd1" id="pswd1">
-  <label for"pswd1"><?php printf(_("Confirma contraseña base de datos"));?></label>
+  <label for"pswd1"><?php printf(_("Confirma la contraseña de la base de datos"));?></label>
   <input type="password" name="pswd2" id="pswd2">
-  <input type="submit" name="createdb" value="<?php printf(_('Crear Base de datos'));?>">
+  <input type="submit" name="createdb" value="<?php printf(_('Crear base de datos'));?>">
 </form>
 <!--admin-content-->
 <?php require_once('footer.php');?>
