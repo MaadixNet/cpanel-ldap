@@ -26,7 +26,7 @@ require_once('header.php');?>
   <section class="section">
         <!-- Templates Get Rendered Here -->
         <div class="hero">
-        <h4 class="title"><?php printf(_("Detalles del Servidor"));?></h4>
+        <h4 class="title"><?php printf(_("Detalles del servidor"));?></h4>
             <nav-bar></nav-bar>
         </div>
 
