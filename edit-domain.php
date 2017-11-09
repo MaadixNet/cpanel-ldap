@@ -131,7 +131,7 @@ require_once('sidebar.php');
               $fqdn=trim(shell_exec('hostname -f'));
               $mailtitle = sprintf(_("Activar servidor de correo para este dominio"));
               $mailchecked = "";
-              $mailmessage = sprintf(_("Activa esta casilla si quieres que el correo electrónico para este dominio sea gestionado por este servidor. Recuerda que el registro MX de los DNS tendrá que ser %s. Puedes averiguar cual es la configuración de DNS actual <a href='editdns.php?domain=" . $domain ."'>haciendo click aquí</a>."), $fqdn);
+              $mailmessage = sprintf(_("Activa esta casilla si quieres que el correo electrónico para este dominio sea gestionado por este servidor. Recuerda que el registro MX de los DNS tendrá que ser %s. Puedes averiguar cual es la configuración de DNS actual <a href='editdns.php?domain=" . $domain ."'>haciendo clic aquí</a>."), $fqdn);
               $checkbox =  sprintf(_("Desactivado"));
             } 
           
