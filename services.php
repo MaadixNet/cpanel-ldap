@@ -66,7 +66,7 @@ echo '</pre>';
   ?>
   <article class="content cards-page">
             <div class="title-block">
-                <h3 class="title"> <?php printf(_("Aplicaciones Instaladas"));?> </h3>
+                <h3 class="title"> <?php printf(_("Aplicaciones instaladas"));?> </h3>
             </div>
                  <section class="section">
                         <div class="row ">
@@ -125,7 +125,7 @@ echo '</pre>';
   <?php } else { ?>
     <article class="content cards-page">
             <div class="title-block">
-                <h3 class="title"> <?php printf(_("En este momento no hay descripciones disponibles para las apllicaciones instaladas"));?> </h3>
+                <h3 class="title"> <?php printf(_("En este momento no hay descripciones disponibles para las aplicaciones instaladas"));?> </h3>
                 <br />
                 <p class="title-description"> <?php printf(_("Inténtalo de nuevo pasados unos minutos."));?> </p>
                 <p class="title-description"> <?php printf(_("Disculpa las molestias"));?> </p>
