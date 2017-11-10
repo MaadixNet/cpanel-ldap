@@ -21,7 +21,7 @@ if (isset($_POST["activate"])){
     $message="
     <div class='alert alert-error'>
     <button class='close' data-dismiss='alert'>×</button>"
-    .sprintf(_("La contraseña actual no coincide con que has insertado"))." 
+    .sprintf(_("La contraseña actual no coincide con la que has insertado"))." 
      </div>";
   }
     $pass1=$_POST['pswd1'];
@@ -89,7 +89,7 @@ require_once('sidebar.php');?>
                       <div class="form-group">
                       <label for='usermail'><?php printf(_("Correo electrónico"));?></label><div id="emailresult"></div>
                       <div id="emailresult"><?php if(isset($sanitised_data['usermail'][0]['message'])) echo '<span class="alert-danger">' . $sanitised_data['usermail'][0]['message'] . '</span>';?></div>
-                      <p><?php printf(_("Averigua que el correo electrónico asociado a tu cuenta sea válido y que tengas acceso a él: si pierdes la contraseña solo podrás resetearla a través de este correo electrónico."),$user );?></p>
+                      <p><?php printf(_("Asegúrate de que el correo electrónico asociado a tu cuenta sea válido y que tengas acceso a él: si pierdes la contraseña únicamente podrás resetearla a través de este correo electrónico."),$user );?></p>
                       <input id='usermail' class='usermail form-control' type='email' name='usermail' value="<?php echo $rootusermail;?>" required />
                       </div>
                       <div id="formresult"></div>
