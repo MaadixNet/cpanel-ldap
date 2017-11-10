@@ -80,7 +80,7 @@ if(isset($_POST['adddomain'])){
             $usererro="";
           } else {
             $wemaster=$Ldap->get_sudo_user();
-            $usererror = sprintf (_("El usuario %s no se ha podido crear.Se ha establecido el usuario por defecto %s como administrador del dominio"),$newuser,$wemaster);
+            $usererror = sprintf (_("El usuario %s no se ha podido crear. Se ha establecido el usuario por defecto %s como administrador del dominio"),$newuser,$wemaster);
           }
 
           if (isset($_POST["sendinstruction"]) && $add_user)$Ldap->send_vpn_instructions($user_email,$newuser);
@@ -202,7 +202,7 @@ require_once('sidebar.php');
     ?>
 
     <h3 class="title"> <?php printf(_("Añadir Dominio"));?> </h3>
-    <p class="title-description"> <?php printf(_("Activa dominios o subdominios en este servidor."));?></p>
+    <p class="title-description"> <?php printf(_("Activa dominios o subdominios en este servidor"));?></p>
   </div>
   <div class="subtitle-block">
   <h3 class="subtitle"> <?php printf(_(" Activar un dominio en este panel creará la configuración necesaria para:"));?></h3>
@@ -212,10 +212,10 @@ require_once('sidebar.php');
         <?php printf(_("Crear cuentas de correo electrónico"));?>
       </li>
       <li> 
-        <?php printf(_("Alojar contenido visble visitando el dominio con un navegador"));?>
+        <?php printf(_("Alojar contenido visible visitando el dominio con un navegador"));?>
       </li>
       <li>
-        <?php printf(_("Crear un certificado SSL para navegación segura (iHTTPS)"));?>
+        <?php printf(_("Crear un certificado SSL para navegación segura (HTTPS)"));?>
      </li> 
     </ul>
 
@@ -247,7 +247,7 @@ require_once('sidebar.php');
 
         <?php
               $mailtitle = sprintf(_("Activar servidor de correo para este dominio"));
-              $mailmessage = sprintf(_("Activa la siguiente casilla si quieres que el correo electrónico para este dominio sea gestionado por este servidor. Si el correo está gestionado por otro servidor (por ejemplo el mismo proveedor de dominio), deja esta casilla desactivada. Podrás cambiar esta opción en cualquier momento desde la página de edición del dominio."), $fqdn);
+              $mailmessage = sprintf(_("Activa la siguiente casilla si quieres que el correo electrónico para este dominio sea gestionado por este servidor. Si el correo está gestionado por otro servidor  (por ejemplo el mismo proveedor de dominio), deja esta casilla desactivada. Podrás cambiar esta opción en cualquier momento desde la página de edición del dominio."), $fqdn);
               $checkbox =  sprintf(_("Activar"));
         ?>
         <label><?php echo $mailtitle;?></label>
@@ -348,7 +348,7 @@ require_once('sidebar.php');
             <input class="form-control" id="pswd1" type="password" name="pswd1" autocomplete="off" readonly />
             </div>
             <div class="form-group">
-            <label for="pswd2"><?php printf(_("Confirma contraseña"));?> *</label>
+            <label for="pswd2"><?php printf(_("Confirma la contraseña"));?> *</label>
             <input class="form-control" id="pswd2" type="password" name="pswd2"  />
             <div id="pswresult"></div>
             </div>
