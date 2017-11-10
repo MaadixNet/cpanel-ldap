@@ -45,7 +45,7 @@ if ($domain_dkim_file) {
   //Rebuild the txt record for dkim TXT entry
   $correct_dkim = "v=DKIM1; k=rsa; p=" . $dkim_public_key_value;
 } else {
-  $correct_dkim = sprintf(_('No se ha generado ninguna clave dkim para el dominio %s. Averigua que el dominio esté activado en el panel de control'),$domain);
+  $correct_dkim = sprintf(_('Todavía no se ha generado ninguna clave dkim para el dominio %s. Este proceso puede tardar unos minutos.'),$domain);
 }
 // Strip blank spaces from correct dkim record and cuurent dkim record to check if they're equal.
 // Spaces doesn't matter

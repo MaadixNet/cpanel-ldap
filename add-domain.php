@@ -45,7 +45,6 @@ if(isset($_POST['adddomain'])){
       $error = true;
     } 
     $sanitsed_data= sanitizeData($_POST);
-    $sanitsed_data= sanitizeData($_POST);
     $webmaster=$sanitsed_data['seluser'][0]['value'];
     if($webmaster=='newuser'){
       //$webmaster=$_POST['new_username'];
@@ -142,19 +141,10 @@ if(isset($_POST['adddomain'])){
       $addAbuse=$Ldap->addRecord($ldapconn,'mail=abuse@'.$domain_new.',vd='.$domain_new.','.LDAP_BASE,$entry_abuse); 
     }
     if ($addDomain && $addAbuse && $addDomainpm) {
-      //if a domain has been successfully addeed Check if object opendkim  exists. if not create it
-      $dkimexist = $Ldap->search($ldapconn,'ou=opendkim,ou=cpanel,' . SUFFIX ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
-      if(!$dkimexist){
-            //create ou=opendkim if not exist
-            $Ldap->addDkimObject($ldapconn);
-        }
-      //then put status as locked to create the dkim keys for the new domain
-    
-      $modifystatus ='ou=opendkim,ou=cpanel,' . SUFFIX ;
-      $info = array();
-      $info['status']= 'locked';
-      $updatedkimstatus=$Ldap->modifyRecord($ldapconn, $modifystatus, $info );  
-      
+
+      if(isset($_POST["dkimactive"])) {
+        $Ldap->addDkimkey($ldapconn,$domain_new);
+      } 
        $message .= "
     <div class='alert alert-success'>
     <button class='close' data-dismiss='alert'>&times;</button>
@@ -268,6 +258,19 @@ require_once('sidebar.php');
         <span><?php echo $checkbox ;?></span>
         </label> </div>
 
+
+        <?php
+              $dkimtitle = sprintf(_("Activar DKIM para este dominio"));
+              $dkimmessage = sprintf(_("Activa la siguiente casilla si quieres generar una clave DKIM. Si generas la clave DKIM tendrás que incluir el registro DKIM  en los DNS de tu dominio. De lo contrario, haber generadao la clave sin incluir el registro DKIM en los DNS puede generar problemas de entrega de tu correo electrónico. Sin embargo, activarlo disminuye la probabilidad de que tus mensajes sean calificados como SPAM"), $fqdn);
+              $dkimcheckbox =  sprintf(_("Activar"));
+        ?>
+        <label><?php echo $dkimtitle;?></label>
+        <p><?php echo $dkimmessage;?></p>
+        <div> <label>
+
+        <input name="dkimactive" id="dkimactive" class="checkbox" type="checkbox" >
+        <span><?php echo $dkimcheckbox ;?></span>
+        </label> </div>
 
         <div class="form-group">
           <label for="webmaster"><?php printf (_("Webmaster (Administrador del sitio web)"));?> </label>

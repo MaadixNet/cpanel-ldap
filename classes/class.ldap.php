@@ -52,6 +52,40 @@ class LDAP{
           ldap_add($ldapconn, $adddn, $info);
         }
     }
+
+    function addDkimkey($ldapconn,$domain_new){
+        $dkimexist = $this->search($ldapconn,'ou=opendkim,ou=cpanel,' . SUFFIX ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
+        if(!$dkimexist){
+            //create ou=opendkim if not exist
+            $this->addDkimObject($ldapconn);
+        }
+        //then put status as locked to create the dkim keys for the new domain
+        //add the domain into the ou=opendkim object.
+        $bindDkim ='ou=opendkim,ou=cpanel,' . SUFFIX;
+        $newdomain = 'ou='. $domain_new . ','. $bindDkim;
+        $data["objectclass"][0]    = "organizationalUnit";
+        $data["objectclass"][1]    = "top";
+        $new_dkim_create = $this->addRecord($ldapconn, $newdomain, $data);
+        $this->lockDkim($ldapconn);
+
+
+    }
+
+    function removeDkim($ldapconn,$domain){
+        $bindDkim ='ou=opendkim,ou=cpanel,' . SUFFIX;
+        $deldkimdomain = 'ou='. $domain . ','. $bindDkim;
+        ldap_delete($ldapconn, $deldkimdomain);
+        $this->lockDkim($ldapconn);
+    }
+
+    function lockDkim($ldapconn){
+        $modifystatus ='ou=opendkim,ou=cpanel,' . SUFFIX ;
+        $info = array();
+        $info['status']= 'locked';
+        //add the domain into the ou=opendkim object.
+        $updatedkimstatus=$this->modifyRecord($ldapconn, $modifystatus, $info );
+
+    }
     function addDkimObject ($ldapconn){
         //Only admin can add vpn accounts. Check level
         if($_SESSION["login"]["level"] == '10'){

@@ -53,19 +53,6 @@ if(isset($_POST["update-domain"]) && (!empty($domain) ))
 
 {
   
-/*  $psw1=$_POST['pswd1'];
-  $psw2=$_POST['pswd2'];
-
-
-  # Only change password if inputs fields are not empty and matches
-  if ((!empty($psw1)) && (!empty($psw2)) && ($psw2==$psw1) ) {
-    $newpass=ldap_password_hash($psw2, 'ssha');
-    $modifypswdn='cn=postmaster,vd='.$domain.','.LDAP_BASE;
-    $info['userpassword'][0] =ldap_password_hash($psw2,'ssha');
-    $psw_changed=$Ldap->modifyRecord($ldapconn, $modifypswdn, $info );
-    $message=$psw_changed["message"];
-  }
-   */
   $newwebmaster=trim($_POST["seladmin"]);  
   $old_webmaster=trim($_POST["old-webmaster"]);
   // Bollean not working for accontactive value. Only string is working. This is odd
@@ -73,10 +60,19 @@ if(isset($_POST["update-domain"]) && (!empty($domain) ))
   $entry["adminid"]= $newwebmaster;
   $entry["accountactive"]= $mailstatus;
 
-    $modifydomaindn='vd='. $domain. ',' . LDAP_BASE;     
-    $webmaster_changed=$Ldap->modifyRecord($ldapconn,$modifydomaindn,$entry);
-    $message=$webmaster_changed["message"];
-
+  $modifydomaindn='vd='. $domain. ',' . LDAP_BASE;     
+  $webmaster_changed=$Ldap->modifyRecord($ldapconn,$modifydomaindn,$entry);
+  $message=$webmaster_changed["message"];
+  $dkimCheck = (isset($_POST["dkimactive"]))?1:0;
+  $oldDkim=$_POST["old-dkim"];
+  if($dkimCheck != $oldDkim) {
+    // dkim has changed
+    if (isset($_POST["dkimactive"])) {
+      $Ldap->addDkimkey($ldapconn,$domain);
+    } else {
+      $Ldap->removeDkim($ldapconn,$domain);
+    }
+  }
 }
 //Query domains in database
 if ($ldapbind) {
@@ -85,6 +81,9 @@ if ($ldapbind) {
     $filtersftp="(&(objectClass=person)(uid=*)(authorizedService=sshd))";
     $ldaptree    = LDAP_PEOPLE;
     $allsftpusers=$Ldap->search($ldapconn,$ldaptree, $filtersftp);
+    $binddkim = 'ou=' . $domain . ',ou=opendkim,ou=cpanel,' . SUFFIX;
+    $filterdkim = "(objectClass=organizationalUnit)";
+    $has_dikm = $Ldap->search($ldapconn,$binddkim, $filterdkim);
 
 }
 /*
@@ -120,7 +119,6 @@ require_once('sidebar.php');
               }
           echo "</select>";?>
         </div>
-        <div class="form-group">
         <?php $activemailstatus= $result[0]["accountactive"][0];
             if ($activemailstatus == 'TRUE'){
               $mailtitle = sprintf(_("Desactivar servidor de correo para este dominio"));
@@ -134,18 +132,42 @@ require_once('sidebar.php');
               $mailmessage = sprintf(_("Activa esta casilla si quieres que el correo electrónico para este dominio sea gestionado por este servidor. Recuerda que el registro MX de los DNS tendrá que ser %s. Puedes averiguar cual es la configuración de DNS actual <a href='editdns.php?domain=" . $domain ."'>haciendo click aquí</a>."), $fqdn);
               $checkbox =  sprintf(_("Desactivado"));
             } 
-          
+            if ($has_dikm){
+              $dkimtitle = sprintf(_("Desactivar DKIM para este dominio"));
+              $dkimchecked = "checked='checked'";
+              $dkimmessage = sprintf(_("Desactiva esta casilla si quieres desactivar la clave DKIM para este dominio"));
+              $dkimcheckbox =  sprintf(_("Activado"));
+              $old_dkim_value=1;
+             } else {
+              $fqdn=trim(shell_exec('hostname -f'));
+              $dkimtitle = sprintf(_("Activar DKIM  para este dominio"));
+              $dkimchecked = "";
+              $dkimmessage = sprintf(_("Activa esta casilla si quieres activar la clave DKIM. Puedes averiguar cual es la configuración de DNS necesaria para usar DKIM <a href='editdns.php?domain=" . $domain ."'>haciendo click aquí</a>."));
+              $dkimcheckbox =  sprintf(_("Desactivado"));
+              $old_dkim_value=0;
+            }
           
           ?> 
+        <div class="form-group">
         <h5><?php echo $mailtitle;?></h5>
         <p><?php echo $mailmessage;?></p>
         <div> <label>
-    
         <input name="mailactive" id="mailactive" class="checkbox" type="checkbox"  <?php echo $mailchecked;?>>
         <span><?php echo $checkbox ;?></span>
         </label> </div>
+
+        <h5><?php echo $dkimtitle;?></h5>
+        <p><?php echo $dkimmessage;?></p>
+        <div> <label>
+        <input name="dkimactive" id="dkimactive" class="checkbox" type="checkbox"  <?php echo $dkimchecked;?>>
+        <span><?php echo $dkimcheckbox ;?></span>
+        </label> </div>
+
         <input type="hidden" name="old-webmaster" value="<?php echo $curwebmaster;?>" />
+        <input type="hidden" name="old-dkim" value="<?php echo $old_dkim_value;?>" />
       </div>
+
+
     <hr>
     <input type='submit' name='update-domain' value='Guardar' class='btn btn-small btn-primary' />
     </form>

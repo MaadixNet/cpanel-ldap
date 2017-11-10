@@ -112,7 +112,7 @@ $mailman_domains = pg_fetch_all($result);
       echo '</h4>';
       echo '<h4>';
       printf(_("Puedes activar dominios desde la aplicación Mailman "));
-      echo '<a target=\"_blank\" href=\"/mailman\"><button type="button" class="btn btn-pill-right btn-primary">' . sprintf(_("Añadir dominios para listas de correo")) . '</button></a>';
+      echo '<a target="_blank" href="/mailman"><button type="button" class="btn btn-pill-right btn-primary">' . sprintf(_("Añadir dominios para listas de correo")) . '</button></a>';
       echo '</h4>';
       echo '<h5>';
       printf(_("En caso de dudas puedes consultar las instrucciones en esta página: "));
