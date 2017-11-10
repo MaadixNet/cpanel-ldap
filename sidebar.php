@@ -116,12 +116,18 @@
                     </div>
                     <footer class="sidebar-footer">
                         <ul class="nav metismenu" id="customize-menu">
-                              <li>
-                                <?php require_once 'classes/class.locale.php';
-                                $locale = new CpanelLocale();?>
+                             <!-- <li>
+                                  <?php
+                                  /* 
+                                  require_once 'classes/class.locale.php';
+                                  $locale = new CpanelLocale();
 
-                                <?php echo $locale->locale_select();?>
-                              </li>
+                                  echo $locale->locale_select();
+                                 */
+                                  ?>
+
+
+                              </li>-->
 
                             <li>
                                 <ul>

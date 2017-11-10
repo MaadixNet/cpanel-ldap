@@ -95,7 +95,7 @@ printf(_("Ejemplos de registros MX para dominio example.com y subdominio sub.exa
         echo '<pre>TXT    "v=spf1 mx ip4:' . $_SERVER["SERVER_ADDR"] .' a:' . $fqdn .  ' ~all" ';
 
         echo '</pre>';
-        echo '<h6 class="pink">';
+        echo '<h6 class="pink" id="dkim">';
         printf(_("Registro DKIM (DomainKeys Identified Mail)"));
         echo '</h6>';
         echo '<p>';

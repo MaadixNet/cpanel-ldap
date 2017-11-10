@@ -195,7 +195,7 @@ white_list = ""';
 require_once('header.php');
 require_once('sidebar.php');
 ?>
-<article class="content forms-page">
+<article class="content forms-page" id="add-domain">
   <div class="title-block">
     <?php //then delete
     $dkim = $Ldap->search($ldapconn,'ou=opendkim,ou=cpanel,' . SUFFIX ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
@@ -234,8 +234,9 @@ require_once('sidebar.php');
     ?>
       <div class="card-block">
       <form role="form" autocomplete="off" action="" method="POST" class="form-signin standard jquery-check">
+        <hr>
         <div class="form-group">
-          <label for="domain"><?php printf (_("Nombre de Dominio"))?> </label>
+          <label for="domain" class="title-label"><?php printf (_("Nombre de Dominio"))?> </label>
           <p class="">
             <?php 
             $doc_op_link="<a href='https://docs.maadix.net/dominios/'>";  
@@ -250,7 +251,8 @@ require_once('sidebar.php');
               $mailmessage = sprintf(_("Activa la siguiente casilla si quieres que el correo electrónico para este dominio sea gestionado por este servidor. Si el correo está gestionado por otro servidor  (por ejemplo el mismo proveedor de dominio), deja esta casilla desactivada. Podrás cambiar esta opción en cualquier momento desde la página de edición del dominio."), $fqdn);
               $checkbox =  sprintf(_("Activar"));
         ?>
-        <label><?php echo $mailtitle;?></label>
+        <hr>
+        <label for="mailactive" class="title-label"><?php echo $mailtitle;?></label>
         <p><?php echo $mailmessage;?></p>
         <div> <label>
      
@@ -259,21 +261,9 @@ require_once('sidebar.php');
         </label> </div>
 
 
-        <?php
-              $dkimtitle = sprintf(_("Activar DKIM para este dominio"));
-              $dkimmessage = sprintf(_("Activa la siguiente casilla si quieres generar una clave DKIM. Si generas la clave DKIM tendrás que incluir el registro DKIM  en los DNS de tu dominio. De lo contrario, haber generadao la clave sin incluir el registro DKIM en los DNS puede generar problemas de entrega de tu correo electrónico. Sin embargo, activarlo disminuye la probabilidad de que tus mensajes sean calificados como SPAM"), $fqdn);
-              $dkimcheckbox =  sprintf(_("Activar"));
-        ?>
-        <label><?php echo $dkimtitle;?></label>
-        <p><?php echo $dkimmessage;?></p>
-        <div> <label>
-
-        <input name="dkimactive" id="dkimactive" class="checkbox" type="checkbox" >
-        <span><?php echo $dkimcheckbox ;?></span>
-        </label> </div>
-
+        <hr>
         <div class="form-group">
-          <label for="webmaster"><?php printf (_("Webmaster (Administrador del sitio web)"));?> </label>
+          <label for="webmaster" class="title-label"><?php printf (_("Webmaster (Administrador del sitio web)"));?> </label>
 
           <p>
             <?php printf (_("Por cada dominio que actives en este panel, se creará una carpeta con su mismo nombre en /var/www/html/ en la que puedes subir tu aplicación web."));?>
@@ -339,23 +329,38 @@ require_once('sidebar.php');
                    echo '</select>';
             }?>
             
-            <div id="emailresult"></div>
-            <div class="clearfix"></div>
-            <hr>
-            <div class="form-group">
-            <label for="pswd1"><?php printf(_("Contraseña"));?> *</label>
-            <div id="pswcheck"></div>
-            <input class="form-control" id="pswd1" type="password" name="pswd1" autocomplete="off" readonly />
-            </div>
-            <div class="form-group">
-            <label for="pswd2"><?php printf(_("Confirma la contraseña"));?> *</label>
-            <input class="form-control" id="pswd2" type="password" name="pswd2"  />
-            <div id="pswresult"></div>
-            </div>
-            <hr>
+              <div id="emailresult"></div>
+              <div class="clearfix"></div>
+              <hr>
+              <div class="form-group">
+              <label for="pswd1"><?php printf(_("Contraseña"));?> *</label>
+              <div id="pswcheck"></div>
+              <input class="form-control" id="pswd1" type="password" name="pswd1" autocomplete="off" readonly />
+              </div>
+              <div class="form-group">
+                <label for="pswd2"><?php printf(_("Confirma la contraseña"));?> *</label>
+                <input class="form-control" id="pswd2" type="password" name="pswd2"  />
+                <div id="pswresult"></div>
+              </div>
 
             </div>
             </div>
+        <?php
+        $dkimtitle = sprintf(_("Activar DKIM para este dominio"));
+        $advert= "<span class='advert'>" . sprintf(_("Advertencia:")) . "</span>";
+        $dkimlink = "<a href='domain-instruccions.php#dkim'>" . sprintf(_("aquí")) . "</a>";
+        $dkimmessage = sprintf(_("%s si activas la siguiente casilla tendrás que incluir el registro DKIM  en los DNS de tu dominio. De lo contrario, haber generado la clave DKIM sin incluir el registro correspondiente en los DNS puede generar problemas de entrega de tu correo electrónico. Para saber más sobre las ventajas de activar DKIM, haz clic %s. "),$advert,$dkimlink);
+        $dkimcheckbox =  sprintf(_("Activar"));
+        ?>
+
+        <hr>
+        <label for="dkimactive" class="title-label"><?php echo $dkimtitle;?></label>
+        <p><?php echo $dkimmessage;?></p>
+        <div> <label>
+        <input name="dkimactive" id="dkimactive" class="checkbox" type="checkbox" >
+        <span><?php echo $dkimcheckbox ;?></span>
+        </label> </div>
+
 
             <div class="clear"></div>
             <input type="hidden" name="values[domain][maxmail]" value="0">
@@ -365,6 +370,7 @@ require_once('sidebar.php');
             <input type="hidden" name="values[domain][delete]" value="FALSE">
             <input type="hidden" name="values[mail][editaccounts]" value="TRUE">
             <input type="hidden" name="values[domain][postfixtransport]" value="maildrop:">
+            <hr>
             <input type="submit" name="adddomain" value="Guardar" class="btn btn-small btn-primary" />
 
             </form>

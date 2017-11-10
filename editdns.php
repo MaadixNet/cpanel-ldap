@@ -37,15 +37,26 @@ $allMX[]='';
 /* Save correct DNS  Values into variables for check tasks and user hints*/
 $correct_mx=$fqdn;
 $correct_spf= "v=spf1 mx ip4:" . $server_ipaddr ." a:" . $fqdn . " ~all";
-$domain_dkim_file = file_get_contents("/etc/opendkim/keys/$domain/default.txt"); 
-if ($domain_dkim_file) {
-  //Just get the public key value
-  preg_match_all('/\"p\=(.*)\" \)/',$domain_dkim_file,$the_result_array);
-  $dkim_public_key_value = $the_result_array[1][0];
-  //Rebuild the txt record for dkim TXT entry
-  $correct_dkim = "v=DKIM1; k=rsa; p=" . $dkim_public_key_value;
+
+$binddkim = 'ou=' . $domain . ',ou=opendkim,ou=cpanel,' . SUFFIX;
+$filterdkim = "(objectClass=organizationalUnit)";
+$has_dikm = $Ldap->search($ldapconn,$binddkim, $filterdkim);
+if ($has_dikm) {
+  // Current domain has dkim enables
+  $domain_dkim_file = file_get_contents("/etc/opendkim/keys/$domain/default.txt"); 
+  if ($domain_dkim_file) {
+    //Just get the public key value
+    preg_match_all('/\"p\=(.*)\" \)/',$domain_dkim_file,$the_result_array);
+    $dkim_public_key_value = $the_result_array[1][0];
+    //Rebuild the txt record for dkim TXT entry
+    $correct_dkim = "v=DKIM1; k=rsa; p=" . $dkim_public_key_value;
+  } else {
+    $correct_dkim = sprintf(_('Todavía no se ha generado ninguna clave dkim para el dominio %s. Este proceso puede tardar unos minutos.'),$domain);
+  }
 } else {
-  $correct_dkim = sprintf(_('Todavía no se ha generado ninguna clave dkim para el dominio %s. Este proceso puede tardar unos minutos.'),$domain);
+  // dkim is insactive for current doamin
+  // Return correct message forthis case
+  $correct_dkim = sprintf(_('La clave DKIM no está activada para este dominio')); 
 }
 // Strip blank spaces from correct dkim record and cuurent dkim record to check if they're equal.
 // Spaces doesn't matter
@@ -376,7 +387,7 @@ require_once('sidebar.php');
              if ($dkim_stat!=$statok){
                 printf(_('
 El objetivo de DKIM (DomainKeys Identified Mail) es asegurar que un mensaje enviado por example.com sea realmente de example.com.
-Vista la complejidad de su configuracióni, es mejor asegurarse de que se ha insertado correctamente su valor en los DNS ya que, al igual que pasa con los registros SPF, es mejor no tener ningún registro DKIM que tener uno incorrecto.')); 
+Vista la complejidad de su configuración, es mejor asegurarse de que se ha insertado correctamente su valor en los DNS ya que, al igual que pasa con los registros SPF, es mejor no tener ningún registro DKIM que tener uno incorrecto.')); 
                 echo '<br />';
                 printf(_("Lamentablemente, este tipo de registro tiene una sintaxis diferente dependiendo del proveedor con el que tengas contratado el dominio. Estos son los valores DKIM  correctos para el dominio %s."),$domain);
                 echo '

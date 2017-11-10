@@ -40,6 +40,14 @@ form.standard select {
 
 hr {margin-top: 1.5rem;
   margin-bottom: 1.5rem;}
+
+#add-domain label.title-label {
+  font-size: 20px;
+
+}
+span.advert {
+  color:red;
+}
 /*Table style*/
 
 
