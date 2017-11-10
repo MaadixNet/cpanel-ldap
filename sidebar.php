@@ -14,7 +14,7 @@
                                 <a href="/<?php echo BASE_PATH;?>/"> <i class="fa fa-home"></i> <?php printf(_("Detalles"));?></a>
                                 </li>
                                 <li>
-                                <a href=""> <i class="fa fa-th-large"></i><?php printf(_("Mis Aplicaciones"));?><i class="fa arrow"></i> </a>
+                                <a href=""> <i class="fa fa-th-large"></i><?php printf(_("Mis aplicaciones"));?><i class="fa arrow"></i> </a>
                                     <ul>
                                     <li> <a href="/<?php echo BASE_PATH;?>/services.php">
                                           <?php printf(_("Ver todas"));?>
@@ -55,16 +55,16 @@
                                 <a href=""> <i class="fa fa-mail-reply-all"></i> Mailman<i class="fa arrow"></i> </a>
                                 <ul>
                                   <li><a href="https://docs.maadix.net/mailman/" target="_blank"><?php printf(_("Instrucciones"));?></a></li>
-                                  <li><a  href="/<?php echo BASE_PATH;?>/mailman-domains.php"><?php printf(_("Dominios de lista"));?></a></li>
+                                  <li><a  href="/<?php echo BASE_PATH;?>/mailman-domains.php"><?php printf(_("Dominios de la lista"));?></a></li>
                                   <li><a target="_blank" href="/mailman"><?php printf(_("Ir a la aplicación"));?></a></li>
                                 </ul>
                               </li>
                               <?php }?> 
 
                                     </ul>
-                                <li><a href="/<?php echo BASE_PATH;?>/service-available.php"> <i class="fa fa-dashboard"></i> <?php printf(_("Instalar Aplicaciones"));?></a>
+                                <li><a href="/<?php echo BASE_PATH;?>/service-available.php"> <i class="fa fa-dashboard"></i> <?php printf(_("Instalar aplicaciones"));?></a>
                                 </li>
-                                <li><a href="/<?php echo BASE_PATH;?>/check-updates.php"> <i class="fa fa-refresh"></i> <?php printf(_("Actualizar Versión"));?></a>
+                                <li><a href="/<?php echo BASE_PATH;?>/check-updates.php"> <i class="fa fa-refresh"></i> <?php printf(_("Actualizar versión"));?></a>
                                 </li>
                                 <li>
                                 <a href=""> <i class="fa fa-globe"></i><?php printf (_("Dominios"));?> <i class="fa arrow"></i> </a>
@@ -77,7 +77,7 @@
                                 <?php }?>
                                 <?php if((!empty($serv_installed) && array_search('mail', array_column(array_column($serv_installed, 'ou'),0)) !== false) || $permissions >2 ){?>
                                 <li>
-                                <a href=""> <i class="fa fa-envelope-o"></i> <?php printf (_("Email"));?><i class="fa arrow"></i> </a>
+                                <a href=""> <i class="fa fa-envelope-o"></i> <?php printf (_("Correo"));?><i class="fa arrow"></i> </a>
                                     <ul>
                                      <li><a href="/<?php echo BASE_PATH;?>/mails.php"><?php printf(_("Cuentas de correo"));?></a></li>
                                      <?php if( !empty($serv_installed) &&  array_search('rainloop', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
@@ -92,7 +92,7 @@
                                   <a href=""><i class="fa fa-users"></i> <?php printf(_("Usuarios"));?> <i class="fa arrow"></i> </a>
                                   <ul>
                                     <li><a href="/<?php echo BASE_PATH;?>/usuarios.php"><?php printf(_("Usuarios ordinarios"));?></a></li>
-                                    <li><a href="/<?php echo BASE_PATH;?>/edit-supuser.php"><?php printf(_("SuperUsuario"));?></a></li>
+                                    <li><a href="/<?php echo BASE_PATH;?>/edit-supuser.php"><?php printf(_("Superusuario"));?></a></li>
                                     <li><a href="/<?php echo BASE_PATH;?>/view-postmasters.php"><?php printf(_("Postmasters"));?></a></li>
                                   </ul>
                                 </li> 
