@@ -9,11 +9,25 @@ $domain=(isset($_GET["domain"]))?$_GET["domain"]:'';
 $ldapconn=$Ldap->connect();
 $psw=$Ldap->decrypt_psw();
 $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
+/* Get current domain data */
 $binddn=LDAP_BASE;
 $filter="(vd=" . $domain . ")";
 $result=$Ldap->search($ldapconn,$binddn, $filter);
-// Check if current domain has the email service activated
-$ismailActive = $result[0]["accountactive"][0];
+
+/*
+ * Check if current domain has the email service activated
+ * This check is only valid for Hosting domains
+ * Mailman domains can't have email activated
+ * If domain is not in result, set the value to a string that will
+ * not match "FALSE" to  skip alert
+ * $result[0]["accountactive"][0] can be FALSE o TRUE in ldap
+ *
+ */
+if ($result['count'] > 0) {
+  $ismailActive = ($result[0]["accountactive"][0]);
+} else {
+  $ismailActive = 'mailmandomain';
+}
 require_once('header.php');
 $errorttpe="";
 $message="";
@@ -30,10 +44,12 @@ $resultTXT = dns_get_record($domain,  DNS_TXT );
 $command= "dig default._domainkey." . $domain ." TXT | grep -o -P \"(?<=TXT).*\"";
 $resultDKIM = shell_exec($command);
 $resultDKIM = str_replace('\\', '', $resultDKIM);
-//Founr some dig that returns spf for domainkey. 
-//So we empty the vriable if ther is not DKIM string 
+
+/* Found some dig that returns spf for domainkey. 
+ * So we empty the vriable if ther is not DKIM string 
+*/
 if (strpos($resultDKIM, 'v=DKIM') == false) $resultDKIM='';
-$domain_ip=($resultA[0]['ip'])?($resultA[0]['ip']):'No hay registro';
+$domain_ip=( $resultA && $resultA[0]['ip'])?($resultA[0]['ip']):'No hay registro';
 $statok='<i class="fa fa-check-circle-o icon checkok"></i>';
 $staterr='<i class="fa fa-exclamation-triangle icon checkko"></i>';
 $allMX[]='';
@@ -43,12 +59,17 @@ $correct_spf= "v=spf1 mx ip4:" . $server_ipaddr ." a:" . $fqdn . " ~all";
 
 $binddkim = 'ou=' . $domain . ',ou=opendkim,ou=cpanel,' . SUFFIX;
 $filterdkim = "(objectClass=organizationalUnit)";
-$has_dikm = $Ldap->search($ldapconn,$binddkim, $filterdkim);
-// Check if is a host domain or a mailman domaiin
-// If is mailman domain there is no entry in vh=domainname
-if ($has_dikm || array_search($domain, array_column(array_column($result, 'vd'),0)) == false) {
-  // Current domain has dkim enables
-  $domain_dkim_file = file_get_contents("/etc/opendkim/keys/$domain/default.txt"); 
+$has_dkim = $Ldap->search($ldapconn,$binddkim, $filterdkim);
+
+/* Check if is a host domain or a mailman domaiin
+ * If is mailman domain there is no entry in vh=domainname
+*/
+if ($has_dkim || $ismailActive == 'mailmandomain') {
+  /*
+   * Current domain has dkim enabled
+   * look for dkim file. If exists get the dkim key
+  */
+  $domain_dkim_file =( file_exists("/etc/opendkim/keys/$domain/default.txt"))?file_get_contents("/etc/opendkim/keys/$domain/default.txt"):false; 
   if ($domain_dkim_file) {
     //Just get the public key value
     preg_match_all('/\"p\=(.*)\" \)/',$domain_dkim_file,$the_result_array);
@@ -59,12 +80,19 @@ if ($has_dikm || array_search($domain, array_column(array_column($result, 'vd'),
     $correct_dkim = sprintf(_('Todavía no se ha generado ninguna clave dkim para el dominio %s. Este proceso puede tardar unos minutos.'),$domain);
   }
 } else {
-  // dkim is insactive for current doamin
-  // Return correct message forthis case
+  /* 
+   * dkim is insactive for current doamin       
+   * Return correct message forthis case
+  */
   $correct_dkim = sprintf(_('La clave DKIM no está activada para este dominio')); 
 }
-// Strip blank spaces from correct dkim record and cuurent dkim record to check if they're equal.
-// Spaces doesn't matter
+
+
+/*
+ * Strip blank spaces from correct dkim record and cuurent dkim record to check if they're equal.
+ * Spaces doesn't matter
+*/
+
 $nospace_public_dkim=preg_replace('/\s+/', '', $resultDKIM);
 $nospace_correct_dkim= preg_replace('/\s+/', '', $correct_dkim);
 $nospace_correct_dkim = '"' . $nospace_correct_dkim . '"';
@@ -81,7 +109,7 @@ require_once('sidebar.php');
       foreach($resultMX as $value){
           array_push($allMX,$value['target']);
       }
-        
+
       echo '<h2 class="center">';
       printf(_("Servidor Web"));
       echo '</h2>';
@@ -111,16 +139,15 @@ require_once('sidebar.php');
           echo '<tr>';
           echo '<td>A</td>';
           echo '<td>' . $domain . '</td>';
-          echo '<td>' . sprintf(_("No hay registro")) . '</td>';
+          echo '<td>' . sprintf(_("No hay registro A")) . '</td>';
           echo '<td>' . $server_ipaddr . '</td>';
           echo '<td>';
           echo $staterr . " <a href='#ACorrect'>" . sprintf(_("Como Corregir?")) . "</a>";
           echo '</td>';
           echo '</tr>';
-          $i++;
-      }
-      $i=0;
-      foreach ( $resultA as $ip) {
+      } else {
+        $i=0;
+        foreach ( $resultA as $ip) {
           echo '<tr>';
           echo '<td>A</td>';
           echo '<td>' . $domain . '</td>';
@@ -133,7 +160,8 @@ require_once('sidebar.php');
           echo '</td>';
           echo '</tr>';
           $i++;
-      }
+        }// end foreach
+      } //end if !$resultA
       echo '</tbody></table>';
       echo '<br />';
       /* Email configuration */
@@ -160,49 +188,70 @@ require_once('sidebar.php');
           </tr>
         </thead>
         <tbody>';
-        $i=1;
-        foreach($resultMX as $value){
-          echo "<tr>";
-          echo "<td>MX</td>";
-          echo "<td>" . $value['host'] . "</td>";
-          echo "<td>";
-          echo $value['target'];
-          echo "</td>";
-          echo "<td>";
-          echo $correct_mx;
-          echo "</td>";
-          $mx_stat=(($value['target']== $correct_mx) || ($value['target']== $fqdn ))?$statok:$staterr . " <a href='#mxCorrect'>" . sprintf(_("Cómo Corregir?")) . "</a>";
-          if ($i>1)$mx_stat= sprintf(_("Eliminar. Un solo registro MX será necesario para una correcta configuración"));
-          echo '<td class="center">' . $mx_stat . '</td>';
-          $i++;
-          echo "</tr>";
-        } //end foreach mx as value
+
+        if (!$resultMX){
+            echo "<tr>";
+            echo "<td>MX</td>";
+            $mx_value= sprintf(_('No hay registro MX'));
+            echo "<td>" . $domain . "</td>";
+            echo "<td>" . $mx_value . "</td>";
+            echo "<td>";
+            echo $correct_mx;
+            echo "</td>";
+            $mx_stat=$staterr . " <a href='#mxCorrect'>" . sprintf(_("Cómo Corregir?")) . "</a>"; 
+            echo '<td class="center">' . $mx_stat . '</td>';
+            echo "</tr>";
+
+        } else {
+          $i=1;
+          foreach($resultMX as $value){
+            echo "<tr>";
+            echo "<td>MX</td>";
+            $mx_value= ($value && $value['host'])? $value['host']:sprintf(_('No hay registro MX'));
+            echo "<td>" . $mx_value . "</td>";
+            echo "<td>";
+            echo $value['target'];
+            echo "</td>";
+            echo "<td>";
+            echo $correct_mx;
+            echo "</td>";
+            $mx_stat=(($value['target']== $correct_mx) || ($value['target']== $fqdn ))?$statok:$staterr . " <a href='#mxCorrect'>" . sprintf(_("Cómo Corregir?")) . "</a>";
+            if ($i>1)$mx_stat= sprintf(_("Eliminar. Un solo registro MX será necesario para una correcta configuración"));
+            echo '<td class="center">' . $mx_stat . '</td>';
+            $i++;
+            echo "</tr>";
+          } //end foreach mx as value
+        } //endi if $resultMX
         /*start  spf Records*/
         $c=0;
+
         $spf_present=0;
         if (!$resultTXT){
           echo "<tr>";
           echo "<td>TXT</td>";
-          echo "<td>" . $value['host'] . "</td>";
+          echo "<td>" . $domain . "</td>";
           echo "<td>";
-          printf(_("No hay registro"));
+          printf(_("No hay registro SPF"));
           echo "</td>";
           echo "<td>";
           echo '"'. $correct_spf . '"';
           echo "</td>";
           echo "<td class='center'>";
-          echo $staterr. " <a href='#spfCorrect'>Cómo Corregir?</a>";
+          $spf_stat = $staterr. " <a href='#spfCorrect'>Cómo Corregir?</a>";
+          echo $spf_stat;
           echo "</td>";
           echo "</tr>";
       } else {
+
           foreach($resultTXT as $txtvalue){
           // Get the txt record string
-          $spf_record = ($resultTXT[$c]['entries'][0])?$resultTXT[$c]['entries'][0]:'No hay registro';
+          $spf_record = ($resultTXT && $resultTXT[$c]['entries'][0])?$resultTXT[$c]['entries'][0]:sprintf(_('No hay registro SPF'));
             //Only check spf records
             if (strpos($spf_record, 'v=spf') !== false) {
                 echo "<tr>";
                 echo "<td>TXT</td>";
-                echo "<td>" . $value['host'] . "</td>";
+                $current_spf = ($txtvalue && $txtvalue['host'])?$txtvalue['host']:'';  
+                echo "<td>" . $current_spf . "</td>";
                 echo "<td>";
                 echo '"'. $spf_record .'"';
                 echo "</td>";
@@ -216,20 +265,23 @@ require_once('sidebar.php');
             } // end if spf is present in string
           } //end foreach spf txt reocrds
         } // end if txt found
-        /* Start dkim records*/
+
+        /* 
+        ** Start dkim records
+        */
+        
         echo "<tr>";
         echo "<td>TXT</td>";
         echo "<td>default._domainkey." . $domain . "</td>";
         echo "<td class='longRecord'>";
-        $dkim_record = ($resultDKIM)?$resultDKIM:'No hay registro';
-        //TODO: if a domain has DKIM deactivated, don't suggest any record. But if is a list domain print the correct dkim, as mailman domains always have dkim 
-        //$correct_dkim =($has_dkim)?$correct_dkim:sprintf(_('DKIM desacticado'));
+        $dkim_record = ($resultDKIM)?$resultDKIM:sprintf(_('No hay registro DKIM'));
+
         echo $dkim_record;
         echo "</td>";
         echo "<td class='longRecord'>";
         echo '"'.$correct_dkim .'"';
         echo "</td>";
-        $dkim_stat=($nospace_public_dkim == $nospace_correct_dkim)?$statok:$staterr . " <a href='#dkimCorrect'>" . sprintf(_("Cómo Corregir?")) ."</a>";
+        $dkim_stat=($nospace_public_dkim == $nospace_correct_dkim || (!$has_dkim && $ismailActive != 'mailmandomain' && !$resultDKIM))?$statok:$staterr . " <a href='#dkimCorrect'>" . sprintf(_("Cómo Corregir?")) ."</a>";
         echo '<td class="center">' . $dkim_stat . '</td>';
         echo "</tr>";
         echo '
@@ -243,6 +295,7 @@ require_once('sidebar.php');
         } else {
           echo '<h5>' . sprintf(_("El dominio %s no está registrado o no está creado."),$domain) .  '</h5>';
         }
+
         if ($server_ipaddr==$domain_ip){
           echo "<p>";
           printf(_("La configuración es correcta para que puedas acceder a tus aplicaciones desde el navegador, usando el dominio %s"),$domain);
@@ -279,12 +332,22 @@ require_once('sidebar.php');
             echo "</li><li>";
             printf(_("Localiza una pestaña que indique algo como <em>DNS/editar registros dns</em>"));
             echo  "</li><li>";
-            printf(_("Edita el registro de tipo A cambiando la actual IP %s por %s. Los dominios principales se definen normalmente con el carácter '@' mientras que los subdominios se suelen definir emitiendo la parte relativa al domninio (para el subdominio <em>subdomain.example.com</em> el nombre de la entrada sería solo <em>subdomain</em>. La sintaxis varía dependiendo de la interfaz que proporciona tu proveedor de dominio."),$resultA[0]['ip'],$server_ipaddr);
+            $curr_ip =  ( $resultA && $resultA[0]['ip'])?$resultA[0]['ip']:''; 
+            if($resultA && $resultA[0]['ip']) {
+              $curr_ip =  $resultA[0]['ip'];
+              $action_A = sprintf(_("Edita el registro de tipo A cambiando la actual IP %s por&nbsp;"), $curr_ip);
+            } else {
+              $curr_ip = '';
+              $action_A = sprintf(_("Crea el registro de tipo A asignando el valor"));
+            }
+            printf(_("%s %s. Los dominios principales se definen normalmente con el carácter '@' mientras que los subdominios se suelen definir emitiendo la parte relativa al domninio (para el subdominio <em>subdomain.example.com</em> el nombre de la entrada sería solo <em>subdomain</em>. La sintaxis varía dependiendo de la interfaz que proporciona tu proveedor de dominio."),$action_A,$server_ipaddr);
             echo "</li><li>" . sprintf(_("Guarda los cambios")) . "</li><li>";
             printf(_("Este cambio puede tardar entre 0 i 72 horas en ser operativo, dependiendo de la configuración de tu provedor de dominio. Sé paciente"));
             echo "</li>
                 </ul>";
-          }
+          } 
+          
+
           echo '<hr>';  
           echo '<h4 id="mxCorrect" class="center">' . sprintf(_("Registros de tipo 'MX' para correo electrónico")) . '</h4>';
           if($ismailActive=="FALSE" && $result) {
@@ -320,17 +383,40 @@ require_once('sidebar.php');
                     <th>' . sprintf(_("Priordad")) . '</th>
                   </tr></thead><tbody>';
                   $i=1;     
-                  if(!$resultMX)$resultMX[0]["target"]=sprintf(_('no hay registro'));
+                  if(!$resultMX){
+                      $host_val=$domain;
+                      $target_val=sprintf(_('no hay registro'));
+                          echo "<tr>";
+                          echo '<td>';
+                          echo 'MX';
+                          echo '</td>';
+                          echo "<td>";
+                          echo $host_val;
+                          echo "</td>";
+                          echo "<td>";
+                          echo $target_val;
+                          echo "</td>";
+                          echo "<td>";
+                          echo $correct_mx;
+                          echo "</td>";
+                          echo "<td>";
+                          echo "10";
+                          echo "</td>";
+                          echo "</tr>";
+
+                  } else {
                       foreach($resultMX as $value){
                           echo "<tr>";
                           echo '<td>';
                           echo 'MX';  
                           echo '</td>';                              
                           echo "<td>";
-                          echo $resultMX[0]["host"];
+                          $host_val=$value["host"];
+                          echo $host_val;
                           echo "</td>";
                           echo "<td>";
-                          echo $resultMX[0]["target"];
+                          $target_val=$value["target"];
+                          echo $target_val;
                           echo "</td>";
                           echo "<td>";
                           if ($i>1)$correct_mx=sprintf(_('Eliminar. Un solo registro MX será necesario para una correcta configuración'));
@@ -341,18 +427,19 @@ require_once('sidebar.php');
                               echo "</td>";
                               echo "</tr>";
                               $i++;
-                          }
-                          echo '
-                          </tbody>
-                            </table>
-                            </br>
-                            </br>';
-                            //if there is more than one MX record tell user that one is enough...he can delete all the others
-                            if ($i>2){
-                                echo '
-                                <p>' . sprintf(_("Tu actual configuración tiene más de un registro MX. Elimina todos los restantes. Un solo registro es necesario para poder usar el servidor mail instalado en esta máquina")) . '</p>';
-                            }
-                            echo '      
+                      } //end foreach
+                  } // end if $resultMX
+                        echo '
+                        </tbody>
+                        </table>
+                        </br>
+                        </br>';
+                        //if there is more than one MX record tell user that one is enough...he can delete all the others
+                        if ($i>2){
+                            echo '
+                            <p>' . sprintf(_("Tu actual configuración tiene más de un registro MX. Elimina todos los restantes. Un solo registro es necesario para poder usar el servidor mail instalado en esta máquina")) . '</p>';
+                        }
+                          echo '      
                             </li>
                             <li>' . sprintf(_("Guarda los cambios")) . '</li>
                             <li>' . sprintf(_("Este cambio puede tardar entre 0 i 72 horas en ser operativo, dependiendo de la configuración de tu provedor de dominio. Esta fase es conocida como propagación de los DNS."));
@@ -363,7 +450,7 @@ require_once('sidebar.php');
                         // If spf record is not correct, give more details about how to fix it
                        echo '<hr>';    
                        echo '<h4 id="spfCorrect" class="center">' . sprintf(_("Registros de tipo SPF para correo electrónico")) . '</h4>';
-                       if ($spf_stat!=$statok){
+                       if ($spf_stat && $spf_stat!=$statok){
                        printf(_('SPF (Sender Policy Framework) es un registro de tipo TXT que especifica qué servidores pueden enviar correo electrónico en nombre de tu dominio. Los proveedores de servicios de correo electrónico requieren a menudo registros de SPF  válidos. Un registro SPF ausente o incorrecto puede provocar que tu correo electrónico sea enviado a la carpeta de correo no deseado. Algunos operadores podrían incluso bloquear tus correos por completo. Para evitar estos problemas, tendrás que añadir el siguiente registro de tipo TXT a cada dominio que quieras utilizar para crear cuentas de correo electrónico (además del registro MX):'));
                       echo '<pre>TXT   ' . $correct_spf.' </pre>'; 
                       echo '

@@ -22,7 +22,7 @@ if ($permissions==2){
 
 // Check puppet status
 $status = getpuppetstatus($Ldap,$ldapconn,$ldapbind);
-
+$available='';
 if ($status == 'error' || $status == 'pending'){
   //sidebar
   require_once('sidebar.php');

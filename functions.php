@@ -193,7 +193,7 @@ function check_domain_dns($domain){
   $resultA=dns_get_record ( $domain,  DNS_A );
   $resultMX=dns_get_record ( $domain,  DNS_MX );
   $resultNS = dns_get_record($domain,  DNS_NS );
-  $domain_ip=($resultA[0]['ip'])?($resultA[0]['ip']):'No hay registro';
+  $domain_ip=($resultA && $resultA[0]['ip'])?($resultA[0]['ip']):'No hay registro';
 
   $fqdn=trim(shell_exec('hostname -f'));
   $correct_mx=$fqdn;
