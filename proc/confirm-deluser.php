@@ -38,12 +38,12 @@ if ($number>0) {
     $plural=($number>1)?'s':'';
     printf(_("El usuario %s es actualmente el administrador de %d dominio%s Para poder eliminar el usuario tienes antes que asignar otro administrador para los siguientes dominios:"), $user,$number, $plural);
   
-      echo "<ul>";
-      for ($i=0; $i<$results["count"]; $i++) {
+    echo "<ul>";
+    for ($i=0; $i<$results["count"]; $i++) {
         $domain= $results[$i]["vd"][0];
         echo "<li>" . $domain . "</li>";
-      }
-      echo "</ul>";
+    }
+    echo "</ul>";
 
     echo "<div class='modal-footer'>";
     echo "<button type='button' class='btn btn-secondary' data-dismiss='modal'>" . sprintf (_("Cancelar")) . "</button>";

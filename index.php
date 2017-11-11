@@ -45,7 +45,7 @@ require_once('header.php');?>
 
 <!--admin-content-->
 <?php require_once('footer.php');?>
-        <!-- Javascript-->
-        <script src="js/linuxDash.js" type="text/javascript"></script>
-        <script src="js/modules.js" type="text/javascript"></script>
-        <script src="js/smoothie.min.js" type="text/javascript"></script>
+<!-- Javascript-->
+<script src="js/linuxDash.js" type="text/javascript"></script>
+<script src="js/modules.js" type="text/javascript"></script>
+<script src="js/smoothie.min.js" type="text/javascript"></script>

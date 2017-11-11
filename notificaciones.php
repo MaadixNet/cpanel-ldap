@@ -34,23 +34,23 @@ if ($ldapconn){
     #$modifydn='mail=' . $mailaccount . ',vd='.$domain.','.LDAP_BASE;
     $entry["cn"] =$modifydn; 
     ldap_mod_replace($ldapconn,'ou=sendermail,' . SUFFIX, $entry);
-      }
+  }
   
 
 
   
 //Check if a custom mail has been set
-if ($ldapbind) {
-  $mailsenderou= $Ldap->search($ldapconn,'ou=sendermail,' . SUFFIX ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
-}
-//Check if object senderemail existe. if not create it
-if(!$mailsenderou){
+  if ($ldapbind) {
+    $mailsenderou= $Ldap->search($ldapconn,'ou=sendermail,' . SUFFIX ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
+  }
+  //Check if object senderemail existe. if not create it
+  if(!$mailsenderou){
     $senderemail_exist=$Ldap->search($ldapconn,SUFFIX,"(ou=senderemail)");
     if ($senderemail_exist["count"]==0){
         //create ou=sendermail if not exist
         $Ldap->addSenderObject($ldapconn);
     }
-}
+  }
 
   $fqdn=trim(shell_exec('hostname -f'));
   $sender_email = (isset($mailsenderou[0]["cn"][0]))?$mailsenderou[0]["cn"][0]: 'www-data@'.$fqdn;
@@ -79,9 +79,9 @@ if(!$mailsenderou){
                 echo '<br>';
                 printf(_('Para cambiar este valor, elige un correo electrónico disponible en el listado y haz clic en Guardar'));?>
 
-              <form autocomplete="off" action="" method="POST" class="form-signin standard">
-              <hr>
-              <?php
+                <form autocomplete="off" action="" method="POST" class="form-signin standard">
+                <hr>
+                <?php
                 echo '<select id="selmail" name="selmail" required>';
                 echo '<option value="">' . sprintf(_("Seleccionar correo")) .'</option>';
                 for ($c=0; $c<$result["count"]; $c++) {
@@ -92,8 +92,8 @@ if(!$mailsenderou){
                 echo '</select></span>';
               };?>
 
-                <br>
-                <hr>
+              <br>
+              <hr>
               <input type="submit" name="chmail_notif" value="<?php printf(_('Guardar'));?>" class="btn btn-small btn-primary" />
             </form>
             <?php 
@@ -104,8 +104,6 @@ if(!$mailsenderou){
   </div><!--row-->
 </section>
 </article>
-<?php
-?>
 <?php
   ldap_close($ldapconn);   
   require_once('footer.php');

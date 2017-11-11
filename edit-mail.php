@@ -85,28 +85,6 @@ if ($ldapconn){
 
 	}
 
-//delete user
-        /*
-	if(isset($_POST['deluser'])){
-		$mail_account= $_POST['userid'];
-		$mail_domain = $_POST['domain']; 
-		$deletedn='mail=' . $mail_account .',vd=' . $mail_domain .','. LDAP_BASE;
-		$delAccount=$Ldap->deleteRecord($ldapconn, $deletedn, $recursive = false);
-		if ($delAccount) {
-			$message='
-			<div class="alert alert-success">
-			<button class="close" data-dismiss="alert">×</button>
-			<strong>Cuenta '. $mail_account .' eliminada</strong>
-			</div>';
-			} else {
-			$message = '
-			<div class="alert alert-error">
-			<button class="close" data-dismiss="alert">×</button>
-			<strong>Ha ocurrido un error. La cuenta no se ha podido eliminar>/strong>
-			</div>';
-			}	
-		}
-        */
 	if ($ldapbind) {
             $result=$Ldap->search($ldapconn,$binddn, $filter);
         }

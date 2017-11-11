@@ -59,113 +59,113 @@ if ($ldapconn){
 			<button class="close" data-dismiss="alert">×</button>
 			<strong>' . sprintf(_("Nombre no válido para la cuenta de correo")) .'</strong>
 			</div>';
-			} else {
+                } else {
 
-		$mail_domain = $_POST['maildomain'];
-		$mail_account= $mail_new . '@' . $mail_domain;
-		$password = $_POST["password"];
-		$entry = array();
-		$entry["objectclass"][0] = "top";
-		$entry["objectclass"][1] = "VirtualMailAccount";
-		$entry["objectclass"][2] = "Vacation";
-		$entry["objectclass"][3] = "VirtualForward";
-		$entry["objectclass"][4] = "amavisAccount";
-		$entry["lastchange"][0]	= time();
-		$entry["creationDate"]      = date('Ymd');
-		$entry["accountActive"]     = "TRUE";
-		$entry["amavisspamtaglevel"] = "3.0";
-		$entry["amavisspamtag2level"] = "5.5";
-		$entry["amavisspamkilllevel"] = "6.0";
-		$entry["amavisbypassviruschecks"]     = "TRUE";
-		$entry["amavisbypassspamchecks"] = "FALSE" ;
-		$entry["forwardactive"] = "FALSE" ;
-		$entry["vacationactive"] = "FALSE" ;
-		$entry["smtpauth"] = "TRUE";
-		$entry["delete"] = "FALSE";
-		$entry["mailautoreply"] = $mail_account;
-		$entry["uid"] = $mail_new  . '.' . $mail_domain;
-		$entry["mailbox"] = $mail_domain .'/' . $mail_new;
-		$entry["vdhome"] = '/home/vmail/domains';
-		$entry["quota"] = '0';
-		$entry["mail"] = $mail_account;
-		$entry["userPassword"] = ldap_password_hash($password, 'md5crypt');
-		$entry["sn"] = $_POST["surname"];
-		$entry["givenname"] = $_POST["givenname"];
-		$entry["cn"] = $_POST["givenname"] .' '. $_POST["surname"];
-		$maildn='mail=' . $mail_account .',vd=' . $mail_domain .','. LDAP_BASE;
-		$addAccount=$Ldap->addRecord($ldapconn,$maildn,$entry);
+                    $mail_domain = $_POST['maildomain'];
+                    $mail_account= $mail_new . '@' . $mail_domain;
+                    $password = $_POST["password"];
+                    $entry = array();
+                    $entry["objectclass"][0] = "top";
+                    $entry["objectclass"][1] = "VirtualMailAccount";
+                    $entry["objectclass"][2] = "Vacation";
+                    $entry["objectclass"][3] = "VirtualForward";
+                    $entry["objectclass"][4] = "amavisAccount";
+                    $entry["lastchange"][0]	= time();
+                    $entry["creationDate"]      = date('Ymd');
+                    $entry["accountActive"]     = "TRUE";
+                    $entry["amavisspamtaglevel"] = "3.0";
+                    $entry["amavisspamtag2level"] = "5.5";
+                    $entry["amavisspamkilllevel"] = "6.0";
+                    $entry["amavisbypassviruschecks"]     = "TRUE";
+                    $entry["amavisbypassspamchecks"] = "FALSE" ;
+                    $entry["forwardactive"] = "FALSE" ;
+                    $entry["vacationactive"] = "FALSE" ;
+                    $entry["smtpauth"] = "TRUE";
+                    $entry["delete"] = "FALSE";
+                    $entry["mailautoreply"] = $mail_account;
+                    $entry["uid"] = $mail_new  . '.' . $mail_domain;
+                    $entry["mailbox"] = $mail_domain .'/' . $mail_new;
+                    $entry["vdhome"] = '/home/vmail/domains';
+                    $entry["quota"] = '0';
+                    $entry["mail"] = $mail_account;
+                    $entry["userPassword"] = ldap_password_hash($password, 'md5crypt');
+                    $entry["sn"] = $_POST["surname"];
+                    $entry["givenname"] = $_POST["givenname"];
+                    $entry["cn"] = $_POST["givenname"] .' '. $_POST["surname"];
+                    $maildn='mail=' . $mail_account .',vd=' . $mail_domain .','. LDAP_BASE;
+                    $addAccount=$Ldap->addRecord($ldapconn,$maildn,$entry);
 
-	if ($addAccount) {
-		$message='
-		<div class="alert alert-success">
-		<button class="close" data-dismiss="alert">×</button>
-		<strong>' . sprintf(_("Usario añadido correctamente")) . '</strong>
-                </div>';
+                    if ($addAccount) {
+                    $message='
+                    <div class="alert alert-success">
+                    <button class="close" data-dismiss="alert">×</button>
+                    <strong>' . sprintf(_("Usario añadido correctamente")) . '</strong>
+                    </div>';
 
-                /* This is for general mail page
-                * Witout GET. After adding an email account
-                * check MX record and tell user if the email
-                * will work or not on this server
-                * Only check if no dmain var is found in URL
-                * 
-                */
-        
-              /*  if (empty($_GET['domain'])){
+                    /* This is for general mail page
+                    * Witout GET. After adding an email account
+                    * check MX record and tell user if the email
+                    * will work or not on this server
+                    * Only check if no dmain var is found in URL
+                    * 
+                    */
+            
+                  /*  if (empty($_GET['domain'])){
 
-                  $domain_dns=check_domain_dns($mail_domain);
-                  $dns_result=$domain_dns["result"];
-                  $message = $domain_dns["message"];
-                  $message = sprintf(_($wrong_mx_message),$mail_domain,$mail_domain,$mail_domain);
-              }
-              */  
-                $fqdn=shell_exec('hostname -f');
-                $body='Bienvenido a tu nuevo buzón.' . "\r\n";
-                $body .='Por favor, no contestes a este mensaje.';
-                $to=$mail_account;
-                $from='no-replay@' . $fqdn;
-                $subject='Bienvenido';
-                $cabeceras  = 'MIME-Version: 1.0' . "\r\n";
-                $cabeceras .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-                $cabeceras .= 'From: no-reply@' . $fqdn . "\r\n"; 
-                mail($to,$subject,$body,$cabeceras); 
-		} else {
-		$errorttpe  = (ldap_errno($ldapconn)==68)?"La cuenta " . $mail_account . " ya existe": $errorttpe;
-		$message = '
-		<div class="alert alert-error">
-		<button class="close" data-dismiss="alert">×</button>
-		<strong>' . sprintf(_("Ha ocurrido un error. %s"), $errorttpe) . '</strong>
-		</div>';
-		}
-	}
-}
+                      $domain_dns=check_domain_dns($mail_domain);
+                      $dns_result=$domain_dns["result"];
+                      $message = $domain_dns["message"];
+                      $message = sprintf(_($wrong_mx_message),$mail_domain,$mail_domain,$mail_domain);
+                  }
+                  */  
+                    $fqdn=shell_exec('hostname -f');
+                    $body='Bienvenido a tu nuevo buzón.' . "\r\n";
+                    $body .='Por favor, no contestes a este mensaje.';
+                    $to=$mail_account;
+                    $from='no-replay@' . $fqdn;
+                    $subject='Bienvenido';
+                    $cabeceras  = 'MIME-Version: 1.0' . "\r\n";
+                    $cabeceras .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+                    $cabeceras .= 'From: no-reply@' . $fqdn . "\r\n"; 
+                    mail($to,$subject,$body,$cabeceras); 
+                    } else {
+                    $errorttpe  = (ldap_errno($ldapconn)==68)?"La cuenta " . $mail_account . " ya existe": $errorttpe;
+                    $message = '
+                    <div class="alert alert-error">
+                    <button class="close" data-dismiss="alert">×</button>
+                    <strong>' . sprintf(_("Ha ocurrido un error. %s"), $errorttpe) . '</strong>
+                    </div>';
+                    }
+                }
+            }
 
-//delete user
-	if(isset($_POST['deluser'])){
-		$mail_account= $_POST['userid'];
-		$mail_domain = $_POST['domain']; 
-		$deletedn='mail=' . $mail_account .',vd=' . $mail_domain .','. LDAP_BASE;
-		$delAccount=$Ldap->deleteRecord($ldapconn, $deletedn, $recursive = false);
-		if ($delAccount) {
-			$message='
-			<div class="alert alert-success">
-			<button class="close" data-dismiss="alert">×</button>
-			<strong>' . sprintf(_("Cuenta %s eliminada"), $mail_account) . '</strong>
-			</div>';
-			} else {
+            //delete user
+            if(isset($_POST['deluser'])){
+                    $mail_account= $_POST['userid'];
+                    $mail_domain = $_POST['domain']; 
+                    $deletedn='mail=' . $mail_account .',vd=' . $mail_domain .','. LDAP_BASE;
+                    $delAccount=$Ldap->deleteRecord($ldapconn, $deletedn, $recursive = false);
+                    if ($delAccount) {
+                            $message='
+                            <div class="alert alert-success">
+                            <button class="close" data-dismiss="alert">×</button>
+                            <strong>' . sprintf(_("Cuenta %s eliminada"), $mail_account) . '</strong>
+                            </div>';
+                    } else {
 			$message = '
 			<div class="alert alert-error">
 			<button class="close" data-dismiss="alert">×</button>
 			<strong>' . sprintf(_("Ha ocurrido un error. La cuenta no se ha podido eliminar")) . '</strong>
 			</div>';
-			}	
-		}
+                    }	
+            }
 
-          if ($ldapbind) {
+            if ($ldapbind) {
               $result=$Ldap->search($ldapconn,$binddn, $filter);
-          }
-}
+            }
+    }
 
-require_once('sidebar.php');
+  require_once('sidebar.php');
 
   # Check if the domain has correct MX Recodrs for this server
   #
@@ -187,7 +187,7 @@ require_once('sidebar.php');
     /* Domains needs to has an active status n order to send and receive amails,
     */
 
-      If ($status == 'FALSE'){
+    If ($status == 'FALSE'){
       $inactivemsg = sprintf(_('<h5>Servidor de correo</h5>'));
       $inactivemsg .= sprintf(_('<p>El servidor de correo no está activado para este dominio y no podrá enviar ni recibir correos electrónicos. <a href="edit-domain.php?domain=%s">Actívalo en esta página</a></p>'), $mail_domain);
       }
@@ -210,9 +210,9 @@ require_once('sidebar.php');
 
    if (!empty($wrong_mx_message) || !empty($inactivemsg)){
       $message = '<div class="card card-block"><h4>Configuración</h4><hr>' . 
-               $inactivemsg . 
-               $wrong_mx_message . 
-              '</div>';
+       $inactivemsg . 
+       $wrong_mx_message . 
+      '</div>';
     }
 
 }
@@ -345,63 +345,61 @@ require_once('sidebar.php');
                   </div><!--card-block-->
                 </div><!--change-->
 
-			<?php
-			if ($permissions == 4 ){
-				## Postmaster can only see mails assoicated to his domain
-				$domain=$result[0]["vd"][0];
-				$resultmail=$Ldap->search($ldapconn,'vd='. $domain . ','. LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))'); 
-			} elseif ($permissions ==  2 ){
-				 $resultmail=$result;
+                <?php
+                if ($permissions == 4 ){
+                  ## Postmaster can only see mails assoicated to his domain
+                  $domain=$result[0]["vd"][0];
+                  $resultmail=$Ldap->search($ldapconn,'vd='. $domain . ','. LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))'); 
+                } elseif ($permissions ==  2 ){
+                   $resultmail=$result;
 						
-			} else {
-				$queryvar=($queryvar)?'vd='. $queryvar. ',':'';
-				# Show a full list of email accounts for all domains
-				$resultmail=$Ldap->search($ldapconn,$queryvar . LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
-			}
-			if($resultmail>0) { 
-				echo '<table id="email">';
-				echo '<thead>';
-				echo '<tr>';
-				echo '<th>' . sprintf(_("Correo electrónico")) . '</th>';
-				echo '<th>' . sprintf(_("Nombre")) . '</th>';
-                                echo '<th>' . sprintf(_("Editar")). '</th>';
+                } else {
+                   $queryvar=($queryvar)?'vd='. $queryvar. ',':'';
+                   # Show a full list of email accounts for all domains
+                   $resultmail=$Ldap->search($ldapconn,$queryvar . LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
+                }
+                if($resultmail>0) { 
+                    echo '<table id="email">';
+                    echo '<thead>';
+                    echo '<tr>';
+                    echo '<th>' . sprintf(_("Correo electrónico")) . '</th>';
+                    echo '<th>' . sprintf(_("Nombre")) . '</th>';
+                    echo '<th>' . sprintf(_("Editar")). '</th>';
 
-                                if($_SESSION["login"]["level"] != 2) echo '<th>Borrar</th>';//Only admin or postamster can delete email account
-                                        echo '</tr>';
-                                        echo '</thead>';
-                                        echo '<tbody>';
+                    if($_SESSION["login"]["level"] != 2) echo '<th>Borrar</th>';//Only admin or postamster can delete email account
+                    echo '</tr>';
+                    echo '</thead>';
+                    echo '<tbody>';
 
 	
-                                  for ($c=0; $c<$resultmail["count"]; $c++) {
-                                        $queryvar=(explode("@",$resultmail[$c]["mail"][0]));
-                                        $domain=$queryvar[1];
-                                        echo "<tr>";
-                                        echo "<td>";
-                                        echo $resultmail[$c]["mail"][0];
-                                        echo "</td>";
-                                        echo "<td>";
-                                        echo html_entity_decode($resultmail[$c]["cn"][0]);
-                                        echo "</td>";
-                                        echo "<td>";
-                                        echo "<a href='edit-mail.php?mail=". $resultmail[$c]["mail"][0] ."'><button class='btn btn-small'><i class='fa fa-cogs' aria-hidden='true'></i> ". sprintf(_('Ver | Editar')) ."</button></a>";
-                                        echo "</td>";
-                                        if($permissions > 2) { //a normal user cannot deñlete his own account
-                                        echo "<td>";
-                                        echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-domain="' . $domain .'" data-language="' . $_SESSION["language"] .'" data-target="#mailModal" data-email="' . $resultmail[$c]["mail"][0] .  '">' . sprintf (_('Eliminar')) . '</button>';
-                                        echo "</td>";
-                                        }//end permissions >2
-                                  echo '</tr>';
+                    for ($c=0; $c<$resultmail["count"]; $c++) {
+                        $queryvar=(explode("@",$resultmail[$c]["mail"][0]));
+                        $domain=$queryvar[1];
+                        echo "<tr>";
+                        echo "<td>";
+                        echo $resultmail[$c]["mail"][0];
+                        echo "</td>";
+                        echo "<td>";
+                        echo html_entity_decode($resultmail[$c]["cn"][0]);
+                        echo "</td>";
+                        echo "<td>";
+                        echo "<a href='edit-mail.php?mail=". $resultmail[$c]["mail"][0] ."'><button class='btn btn-small'><i class='fa fa-cogs' aria-hidden='true'></i> ". sprintf(_('Ver | Editar')) ."</button></a>";
+                        echo "</td>";
+                        if($permissions > 2) { //a normal user cannot deñlete his own account
+                          echo "<td>";
+                          echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-domain="' . $domain .'" data-language="' . $_SESSION["language"] .'" data-target="#mailModal" data-email="' . $resultmail[$c]["mail"][0] .  '">' . sprintf (_('Eliminar')) . '</button>';
+                          echo "</td>";
+                        }//end permissions >2
+                        echo '</tr>';
 
 
-                          }
-			echo '</tbody>';
-			echo '</table>';
-            }
+                    }
+                    echo '</tbody>';
+                    echo '</table>';
+            }?>
 
-?>
-
-            </div><!--ineer-->
-        </div><!--col-sm-9-->
+          </div><!--ineer-->
+      </div><!--col-sm-9-->
 <!-- Modal -->
 <div class="bd-example">
   <div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
@@ -421,13 +419,12 @@ require_once('sidebar.php');
 </div><!--bd-example-->
 
 <?php  ?>
-          </div> <!--class="col-sm-12"-->
-	</div><!--row-->
+    </div> <!--class="col-sm-12"-->
+  </div><!--row-->
 <?php
 ?>
   </section>
 </article>
 <?php
-	ldap_close($ldapconn);   
-	require_once('footer.php');?>
-
+ldap_close($ldapconn);   
+require_once('footer.php');?>

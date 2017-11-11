@@ -48,24 +48,24 @@ if (count($groups)>0){
   echo '<br />';
   echo '<br />';
   printf(_("Confirmas que quiere instalar las aplicaciones ahora?"));
-    echo '<br />';
-    echo '<br />';
+  echo '<br />';
+  echo '<br />';
 
   echo "<div class='modal-footer'>
-        <form action='' method='POST'>
-          <input type='hidden' name='release' value='". $release ."' />";
+  <form action='' method='POST'>
+  <input type='hidden' name='release' value='". $release ."' />";
   //merge in groups, selected groups and dependencies
   foreach ($groups as $group) {
     echo "    <input type='hidden' name='groups[]' value='". $group ."' />";
   }
   if (count($dependencies)>0){
     foreach ($dependencies as $group) {
-      echo "    <input type='hidden' name='groups[]' value='". $group ."' />";
+        echo "    <input type='hidden' name='groups[]' value='". $group ."' />";
     }
   }
-    echo "    <button type='submit' name='install' class='btn btn-small btn-primary'>". sprintf(_('Instalar')) ."</button>
-              <button type='button' class='btn btn-secondary' data-dismiss='modal'>" . sprintf (_("Cancelar")) . "</button>
-              </form>
+  echo "    <button type='submit' name='install' class='btn btn-small btn-primary'>". sprintf(_('Instalar')) ."</button>
+            <button type='button' class='btn btn-secondary' data-dismiss='modal'>" . sprintf (_("Cancelar")) . "</button>
+          </form>
         </div>";
 } else {
 

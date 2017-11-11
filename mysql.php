@@ -67,7 +67,5 @@ require_once 'sidebar.php';
   </article>
 
 <?php
-  ldap_close($ldapconn);   
-  require_once('footer.php');?>
-
-
+ldap_close($ldapconn);   
+require_once('footer.php');?>

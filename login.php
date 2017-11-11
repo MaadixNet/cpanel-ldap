@@ -144,12 +144,12 @@ function updating(){
                              Panel de Control </h1>
                     </header>
                     <div class="auth-content">
-<?php
+                    <?php
 
-echo $message;
-print_form();
-updating();
-?>
+                    echo $message;
+                    print_form();
+                    updating();
+                    ?>
 
 
                     </div>
