@@ -20,7 +20,16 @@ class LDAP{
 	 	return $this->connection;
 	 
     }
- 
+    function warning_handler($errno, $errstr) { 
+        if (!(error_reporting() & $errno)) {
+          // Este código de error no está incluido en error_reporting
+          return;
+         }
+        if ($errno=='E_WARNING') {
+          throw new WarningException ($errno, $errstr);
+        }
+     }    
+
     function bind($connection,$dn, $psw){
         $bind = ldap_bind($connection,$dn, $psw);
         return $bind;
@@ -99,10 +108,11 @@ class LDAP{
         }
     }
     function search($ldapconn,$searchdn, $filter){
+          set_error_handler(array($this, 'warning_handler'), E_WARNING);
           //escape filter
           //$filter = ldap_escape($filter, null, LDAP_ESCAPE_FILTER);
           $sr = ldap_search($ldapconn, $searchdn, $filter );
- 
+          restore_error_handler(); 
           if ($sr) {
               $info = ldap_get_entries($ldapconn, $sr);
               return $info; 
