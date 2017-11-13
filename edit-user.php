@@ -26,37 +26,41 @@ $info='';
 $message='';
 $ldaptree    = LDAP_PEOPLE;
 $selecteduser=(isset($_GET['user']))?$_GET['user']:'';
-$users_group_tree = "cn=web,ou=groups,ou=People," . SUFFIX;
-$users_in = $Ldap->search($ldapconn, $users_group_tree ,"(&(memberuid=$selecteduser))");
-#$all_users_in = $Ldap->search($ldapconn, $users_group_tree ,"(&(memberuid=*))");
-if (isset($_POST['updateuser']) && (!empty($selecteduser))){
-  $modifydn='uid='.$selecteduser. ',' . $ldaptree;
-  $psw1=$_POST['pswd1'];
-  $psw2=$_POST['pswd2'];
-  # Only update pswd if fields are filled and matches
+if ( $selecteduser) {
+    $filter="(&(vd=*)(adminid=".$selecteduser."))";
+    $resultsdomain=$Ldap->search($ldapconn, LDAP_BASE,$filter);
 
-  if ((!empty($psw1)) && (!empty($psw2)) && ($psw2==$psw1) ) {
-    //First ebcrynt password so no plain text is used
-    $newpass=ldap_password_hash($psw2, "ssha");
-    $_POST['pswd1'] = $newpass;
-    $_POST['pswd2'] = $newpass;
-    $info['userpassword'][0]=$newpass;
-    $info['shadowlastchange'][0] = floor(time()/86400);
-  }
-  //Sanitize user inputs
-  $sanitised_data= sanitizeData($_POST);
-  $user_email=$sanitised_data['usermail'][0]['value'];
-  $info['cn']=$sanitised_data['commonname'][0]['value'];
-  $info['sn']=$sanitised_data['surname'][0]['value'];
-  $info['mail']=$user_email;
+    $users_group_tree = "cn=web,ou=groups,ou=People," . SUFFIX;
+    $users_in = $Ldap->search($ldapconn, $users_group_tree ,"(&(memberuid=$selecteduser))");
+    #$all_users_in = $Ldap->search($ldapconn, $users_group_tree ,"(&(memberuid=*))");
+  if (isset($_POST['updateuser']) && (!empty($selecteduser))){
+    $modifydn='uid='.$selecteduser. ',' . $ldaptree;
+    $psw1=$_POST['pswd1'];
+    $psw2=$_POST['pswd2'];
+    # Only update pswd if fields are filled and matches
 
-  ## Check authorizesServices
-  #
-  # ssh has been checked
-  #
+    if ((!empty($psw1)) && (!empty($psw2)) && ($psw2==$psw1) ) {
+      //First ebcrynt password so no plain text is used
+      $newpass=ldap_password_hash($psw2, "ssha");
+      $_POST['pswd1'] = $newpass;
+      $_POST['pswd2'] = $newpass;
+      $info['userpassword'][0]=$newpass;
+      $info['shadowlastchange'][0] = floor(time()/86400);
+    }
+    //Sanitize user inputs
+    $sanitised_data= sanitizeData($_POST);
+    $user_email=$sanitised_data['usermail'][0]['value'];
+    $info['cn']=$sanitised_data['commonname'][0]['value'];
+    $info['sn']=$sanitised_data['surname'][0]['value'];
+    $info['mail']=$user_email;
 
-  $c=0;
-  if (isset($_POST['sshd'])){
+    ## Check authorizesServices
+    #
+    # ssh has been checked
+    #
+
+    $c=0;
+    if (isset($_POST['sshd'])){
       $groupinfo = posix_getgrnam("sftpusers");
       $grid=$groupinfo["gid"];
       $info['gidnumber']=(int)$grid;
@@ -69,7 +73,7 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
             $group['memberuid'] = $selecteduser;
             ldap_mod_add($ldapconn, $users_group_tree, $group);
       }
-  } else {
+    } else {
 
       $info['loginshell']='none';
       $info['homedirectory']='none';
@@ -82,32 +86,32 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
         ldap_mod_del($ldapconn, $users_group_tree, $group); 
       }
     
-  }
-  if (isset($_POST['apache'])){
+    }
+    if (isset($_POST['apache'])){
       $info['authorizedservice'][$c]='apache';
       $c++;
 
-  }
+    }
 
-  if (isset($_POST['vpn'])){
+    if (isset($_POST['vpn'])){
       $info['authorizedservice'][$c]='openvpn';
       $c++;
 
-  }
-  if(!(isset($_POST['sshd'])) && !(isset($_POST['vpn'])) && !(isset($_POST['apache']))) {
+    }
+    if(!(isset($_POST['sshd'])) && !(isset($_POST['vpn'])) && !(isset($_POST['apache']))) {
     $info['authorizedservice']='none';
+    }
+
+    $edit_user=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
+    if($edit_user && isset($_POST["sendinstruction"]) && isset($_POST["vpn"]))$Ldap->send_vpn_instructions($user_email,$selecteduser);
+    $message.=$edit_user["message"];
   }
 
-  $edit_user=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
-  if($edit_user && isset($_POST["sendinstruction"]) && isset($_POST["vpn"]))$Ldap->send_vpn_instructions($user_email,$selecteduser);
-  $message.=$edit_user["message"];
-}
-
-# Get current user data from ldap
- if($selecteduser && $ldapbind){
-   $filteruser="(&(objectClass=person)(uid=$selecteduser))";
-   $result=$Ldap->search($ldapconn,$ldaptree, $filteruser);
- }
+  # Get current user data from ldap
+   if($selecteduser && $ldapbind){
+     $filteruser="(&(objectClass=person)(uid=$selecteduser))";
+     $result=$Ldap->search($ldapconn,$ldaptree, $filteruser);
+   }
 
 ?>
 <div id="admin-content" class="content">
@@ -166,12 +170,30 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
                 ?>
 
                 <div class="clear"></div>
+<?php
+                #Allow disabling sftp only if user is not webmaster
+                # Otherwise t      
+?>
                 <h4><?php printf(_("Acceso SFTP"));?></h4>
+                  <?php if($resultsdomain["count"] >0){
+                    echo '<p>';
+                    printf(_("Acceso SFTP activado."));
+                    echo '<br />';
+                    printf(_("Para poderlo desactivar necesitas antes quitarle el rol de webmaster para los siguientes dominios:"));
+                    echo '</p>';
+                    echo '<pre>';
+                    for ($c=0; $c<$resultsdomain["count"]; $c++) {
+                      $domain= $resultsdomain[$c]["vd"][0];
+                      echo $domain . ' ' ;
+                    }
+                    echo '</pre>';
+                  } else { ?>
+
                     <div> <label>
-                    <input name="sshd" id="sshd" class="checkbox" type="checkbox"  <?php echo $sshd;?>>
+                    <input name="sshd" id="sshd" class="checkbox" type="checkbox"  <?php echo $sshd ;?>>
                     <span><?php printf(_("Activar acceso SFTP"));?></span>
                     </label> </div>
-                <?php
+                <?php }
 
                 if(!empty($sshd)){                       
                   echo '<p>'. sprintf(_("Directorio Personal")) . '</p>';
@@ -216,5 +238,11 @@ if (isset($_POST['updateuser']) && (!empty($selecteduser))){
             </form>
       </div>
 </div><!--admin-content-->
-<?php ldap_close($ldapconn);
+<?php } else {
+echo '<div id="admin-content" class="content">';
+echo '<h3>'.  sprintf(_('No hay resultados')). '</h3>';
+echo '</div>';
+}
+
+ldap_close($ldapconn);
 require_once('footer.php');?>
