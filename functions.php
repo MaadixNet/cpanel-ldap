@@ -211,7 +211,7 @@ function check_domain_dns($domain){
           $result=1;
   elseif(!in_array($correct_mx , $allMX) && $server_ipaddr==$domain_ip):
           # Need this in case somebody wish to  create emails account to prepare a migration and avoid service blackout
-    $message = sprintf(_('<div class="card card-block"><p>Los DNS del dominio %s no están configurados para que el correo electrónico sea administrado por este servidor. Esto significa que el correo electrónico será entregado al servidor actualmente configurado en los registros MX del dominio.
+    $message = sprintf(_('<div class="card-block"><p>Los DNS del dominio %s no están configurados para que el correo electrónico sea administrado por este servidor. Esto significa que el correo electrónico será entregado al servidor actualmente configurado en los registros MX del dominio.
       </br>
       Puedes crear igualmente la cuenta que empezará a recibir correo en este servidor cuando los DNS estén configurados correctamente. Si estás planteando una migración del dominio hacía este servidor, revisa la configuración actual y consulta cual es la correcta en esta página: <a href="editdns.php?domain=%s">Configuración de DNS activa para el dominio %s</a></p></div>'),$domain, $domain, $domain);
           $result=2;
