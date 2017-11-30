@@ -30,8 +30,8 @@ lockattribute="status"
 status=`ldapsearch -Q -Y EXTERNAL -H "$url" -b "$basedn" "$cpaneldn" | awk -F ": " '$1 == "'"$lockattribute"'" {print $2}'`
 echo "$status"
 
-# If cpanel is locked or running, exit
-if [ "$status" = 'locked' ] || [ "$status" = 'running' ]
+# If cpanel is locked or running, or cannot retrieve any value from ldap  exit
+if [ "$status" = 'locked' ] || [ "$status" = 'running' ] || [ -z "$status" ]
   then
     echo "Cpanel has status locked or running, exit cron"
     exit 0
@@ -146,29 +146,6 @@ do
         mkdir $documenRoot/$domain
         echo 'Folder created'
 
-        # Crete the index.html file for the root domain only if it
-        # does not exists. Do not override previous user content
-
-        if [ ! -f $documenRoot/"$domain"/index.html ];
-        then
-          echo "<!DOCTYPE html>
-          <html>
-          <head>
-          <title>Welcome! </title>
-          <style>
-          body {
-            width: 35em;
-            margin: 0 auto;
-            font-family: Tahoma, Verdana, Arial, sans-serif;
-          }
-          </style>
-          </head>
-          <body>
-          <h1>Welcome to "$domain"</h1>
-          <h3>You can now start building your website</h3>
-
-          </body> </html>">$documenRoot/$domain/index.html
-        fi
         # Get domain webmaster. If no webmaster is set use the sudo user
         userexists=$(getent passwd | grep "<\$webmaster\>")
         if [[ -z "$webmaster" ]];
