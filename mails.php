@@ -307,7 +307,7 @@ if ($ldapconn){
 					echo '<input type="hidden" name="maildomain" value="' .$result[0]["vd"][0] .'" />';
 					echo '<span class="inline">@' . $result[0]["vd"][0] .'</span>';
                                     } else {
-                                        echo '<span class="inline">@<select id="seldomain" name="maildomain" style="display:inline" required>';
+                                        echo '<span class="inline">@<select id="seldomain" name="maildomain" required>';
                                         echo '<option value="">Seleccionar dominio</option>';
                                         for ($c=0; $c<$result["count"]; $c++) {
                                           $selected=($queryvar==$result[$c]["vd"][0])?"selected":"";
