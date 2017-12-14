@@ -187,6 +187,7 @@ if ( $selecteduser) {
                       echo $domain . ' ' ;
                     }
                     echo '</pre>';
+                    echo '<input name="sshd" id="sshd" type="hidden" value=TRUE>';
                   } else { ?>
 
                     <div> <label>
