@@ -264,31 +264,55 @@ do
         then
           mkdir $sftpusershome/$webmaster && chmod 700 $sftpusershome/$webmaster && chown $webmaster:sftpusers $sftpusershome/$webmaster
         fi
-        mountedsource=$(findmnt | grep "\[$documenRoot/$domain\]")
-        # Check all mounted points that a website may have 
-        printf '%s\n' "$mountedsource" | while IFS= read -r line
-        do
-          echo $line
+
+        ########## Umount domains START ##################################################
+
+        mountedsource=$(findmnt | grep "\[$documenRoot/$domain\]" | grep "$sftpusershome" )
+        # Check all mounted points that a website may have and umount if the user is not the website owner
+        while read line; do
+          echo "DEBUG: Mounted source for domain $domain is $line"
           # Extract only username. We only check in /home/sftpusers/ folder. Other mount points 
           # for the website are indifferent to us 
           activemount=$(echo "$line" | awk -v FS="(\/sftpusers\/|\/$domain)" '{print $2}')
+          echo "DEBUG: Mounted source for domain $domain is in the user $activemount"
 
           # store all users  space separeted ("$var") in whose home a  website is mounted
           mountresult+=("$activemount")
+
           # If there is a mounting point in a user home, and this user is not the website owner
           # umont it.It probably means ownership changed
           if [ "$activemount" != "$webmaster" ] && [ ! -z "$activemount" ];then
             umount $sftpusershome/$activemount/$domain
           fi
-          # If $owner is not listed between the active mounting points we have collected 
-          # by username in $mountresult() it means that we have to mount the web folder on his home 
-          # We check exact match (between spaces) in order to avoid parcial matches (mari is not maria)
-          if [[ ! ${mountresult[@]} =~ $(echo '\<'$webmaster'\>') && $defaultsudouser != $webmaster ]];then
+        done < <(printf '%s\n' "$mountedsource")
+
+        ########## Umount domains STOP ##################################################
+
+        ########## Mount domains START ##################################################
+
+        echo "DEBUG: Array mountresult in the loop of domain $domain:"
+        echo ${mountresult[@]}
+
+        # If $owner is not listed between the active mounting points we have collected 
+        # by username in $mountresult() it means that we have to mount the web folder on his home 
+        # We check exact match (between spaces) in order to avoid parcial matches (mari is not maria)
+
+        if [[ ! ${mountresult[@]} =~ $(echo '\<'$webmaster'\>') && $defaultsudouser != $webmaster ]];then
+            echo "DEBUG: Mount $domain in $webmaster home"
             mkdir -p $sftpusershome/$webmaster/$domain
             chown $webmaster:www-data $sftpusershome/$webmaster/$domain
             mount --bind  $documenRoot/$domain $sftpusershome/$webmaster/$domain
+        else
+          if [[ $defaultsudouser != $webmaster ]];then
+            echo "DEBUG: Already mounted $domain in $webmaster home"
+          else
+            echo "DEBUG: $domain webmaster is sudouser, mount not needed"
           fi
-      done
+        fi
+        #reset mountresult array
+        mountresult=()
+        ########## Mount domains STOP ##################################################
+
     fi     
   done < <(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "$ldapbase" "(objectclass=VirtualDomain)" | grep -o -P '(?<=vd=).*(?=,o=hosting,dc=example)') 
 #delete vhost that are not anymore in ldap tree but still in apache
