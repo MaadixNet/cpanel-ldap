@@ -430,9 +430,20 @@ else
       echo "$basehome" 'is present in ldap'
     else
       if [ ! -z "$basehome" ]; then
-        echo "$sftphome"  es huerfana y la movemos
+        echo "$sftphome es huerfana y la movemos"
+
+        #Umount any domain before moving home:
+        cd $sftphome
+        for udomain in *; do
+          umount "$sftphome$udomain"
+        done
+
+        #change owner
         chown -R "$defaultsudouser" "$sftphome"
-        mv "$sftphome" "$moveto"
+
+        #move the user home with -date, just in case later the user is created again
+        udate=$(date '+%Y_%b_%d_%T')
+        mv "$sftphome" "$moveto/$basehome-$udate"
       fi
     fi
   done
