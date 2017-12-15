@@ -242,7 +242,8 @@ do
     # @TODO: We have  just created new vhosts and folder with $webmaster as owner
     # web folder in /var/www/html
 
-    if [[ ! -z $webmaster ]];
+    # Only mount domains pointing to this ip: with $documenRoot/$domain folder
+    if [[ ! -z $webmaster && -d $documenRoot/$domain ]];
     then
 
         echo $domain ' Webmaster is: ' $webmaster
