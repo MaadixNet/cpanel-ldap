@@ -1,3 +1,4 @@
+
 #!/bin/bash -x
 # Check if some user asked for a reset password
 # if /tmp/checkfile.txt && /tmp/update-"$token".ldif
@@ -112,8 +113,10 @@ myip=$(ip route get 8.8.8.8 | awk '/8.8.8.8/ {print $NF}')
 #The default user which is sudo (in our configurations is usually user 10000
 defaultsudouser=$(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "$peopletree" "(&(objectClass=person)(gidnumber=27))" | grep -o -P "(?<=uid: ).*")
 
-while read domain 
-do
+########## Domain Loop START #############################################################################
+while read domain
+  do
+    echo "DEBUG: ##### $domain START #####################################################"
     # Create array with all the domains in ldap and add .conf to all them
     # We will use this arryay to check deleted domains from ldap that are
     # still present in /etc/apache2/ldap-enabled, so we can remove them.
@@ -131,6 +134,8 @@ do
     # Check DNS for current domain
     domainip="$(dig +short "$domain")"
 
+    ########## Domain Loop: Create virtual hosts and certbot for domains pointing to this ip ########
+
     # If virtualhost does not exists Let's create it
     if [ "$domainip" == $myip ] && [ ! -f $vhroot/"$domain".conf ];
     then
@@ -146,8 +151,6 @@ do
         mkdir $documenRoot/$domain
         echo 'Folder created'
 
-        # Get domain webmaster. If no webmaster is set use the sudo user
-        userexists=$(getent passwd | grep "<\$webmaster\>")
         if [[ -z "$webmaster" ]];
         then
           $webmaster="$defaultsudouser"
@@ -234,15 +237,23 @@ do
         </VirtualHost>" > $vhroot/"$domain".conf
         rm $vhroot/"$domain"-nossl-.conf
     else
-      echo 'Cambia los dns'
+      if [ ! "$domainip" == $myip ]; then 
+        echo "El dominio $domain no apunta a esta ip, se deben cambiar los dns"
+      else
+        echo "El dominio $domain ya tiene vhost y certificado"
+      fi
     fi
+
+    ########## Domain Loop: Mount domains in user folder and umount domains if webmaster changes ########
+
     # Check ownership and mountpoints for all domains in ldap
     # as administrator should change this ownership in any time
     # 
     # @TODO: We have  just created new vhosts and folder with $webmaster as owner
     # web folder in /var/www/html
 
-    if [[ ! -z $webmaster ]];
+    # Only mount domains pointing to this ip: with $documenRoot/$domain folder
+    if [[ ! -z $webmaster && -d $documenRoot/$domain ]];
     then
 
         echo $domain ' Webmaster is: ' $webmaster
@@ -264,39 +275,69 @@ do
         then
           mkdir $sftpusershome/$webmaster && chmod 700 $sftpusershome/$webmaster && chown $webmaster:sftpusers $sftpusershome/$webmaster
         fi
-        mountedsource=$(findmnt | grep "\[$documenRoot/$domain\]")
-        # Check all mounted points that a website may have 
-        printf '%s\n' "$mountedsource" | while IFS= read -r line
-        do
-          echo $line
+
+        ########## Umount domains START ##################################################
+
+        mountedsource=$(findmnt | grep "\[$documenRoot/$domain\]" | grep "$sftpusershome" )
+        # Check all mounted points that a website may have and umount if the user is not the website owner
+        while read line; do
+          echo "DEBUG: Mounted source for domain $domain is $line"
           # Extract only username. We only check in /home/sftpusers/ folder. Other mount points 
           # for the website are indifferent to us 
           activemount=$(echo "$line" | awk -v FS="(\/sftpusers\/|\/$domain)" '{print $2}')
+          echo "DEBUG: Mounted source for domain $domain is in the user $activemount"
 
           # store all users  space separeted ("$var") in whose home a  website is mounted
           mountresult+=("$activemount")
+
           # If there is a mounting point in a user home, and this user is not the website owner
           # umont it.It probably means ownership changed
           if [ "$activemount" != "$webmaster" ] && [ ! -z "$activemount" ];then
             umount $sftpusershome/$activemount/$domain
           fi
-          # If $owner is not listed between the active mounting points we have collected 
-          # by username in $mountresult() it means that we have to mount the web folder on his home 
-          # We check exact match (between spaces) in order to avoid parcial matches (mari is not maria)
-          if [[ ! ${mountresult[@]} =~ $(echo '\<'$webmaster'\>') && $defaultsudouser != $webmaster ]];then
+        done < <(printf '%s\n' "$mountedsource")
+
+        ########## Umount domains STOP ##################################################
+
+        ########## Mount domains START ##################################################
+
+        echo "DEBUG: Array mountresult in the loop of domain $domain:"
+        echo ${mountresult[@]}
+
+        # If $owner is not listed between the active mounting points we have collected 
+        # by username in $mountresult() it means that we have to mount the web folder on his home 
+        # We check exact match (between spaces) in order to avoid parcial matches (mari is not maria)
+
+        if [[ ! ${mountresult[@]} =~ $(echo '\<'$webmaster'\>') && $defaultsudouser != $webmaster ]];then
+            echo "DEBUG: Mount $domain in $webmaster home"
             mkdir -p $sftpusershome/$webmaster/$domain
             chown $webmaster:www-data $sftpusershome/$webmaster/$domain
             mount --bind  $documenRoot/$domain $sftpusershome/$webmaster/$domain
+        else
+          if [[ $defaultsudouser != $webmaster ]];then
+            echo "DEBUG: Already mounted $domain in $webmaster home"
+          else
+            echo "DEBUG: $domain webmaster is sudouser, mount not needed"
           fi
-      done
-    fi     
-  done < <(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "$ldapbase" "(objectclass=VirtualDomain)" | grep -o -P '(?<=vd=).*(?=,o=hosting,dc=example)') 
+        fi
+        #reset mountresult array
+        mountresult=()
+        ########## Mount domains STOP ##################################################
+    fi
+    echo "DEBUG: ##### $domain END #####################################################"
+    echo ""
+done < <(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "$ldapbase" "(objectclass=VirtualDomain)" | grep -o -P '(?<=vd=).*(?=,o=hosting,dc=example)') 
+########## Domain Loop END ############################################################################
+
+########## Vhost Loop START ###########################################################################
+
 #delete vhost that are not anymore in ldap tree but still in apache
 printf "%s\n" "${ldapresult[@]}"
 for vhost in "$vhroot"/*;
 do
     basevhost=$(basename $vhost)
     # Exclude default and default-ssl virtual 
+
     [[ $basevhost =~ ^($defaultvhost|$defaultssl)$ ]] && continue
     #echo $(basename $vhost)
 
@@ -306,6 +347,7 @@ do
         echo $folderdomain 'is present in system'
     else
         if [ ! -z "$basevhost" ]; then
+            #folder domain is vhotst removing .conf
             folderdomain=${basevhost:0:-5}
 
             #disable and delete apache virtualhost, and web files
@@ -359,12 +401,17 @@ do
             done
         fi
     fi
-    done
-    #reload apache with new vhosts
-    if $has_new_domains ; then #only reload the apache config if there is at least one new domain
+done
+########## Vhost Loop END ###########################################################################
+
+
+#reload apache with new vhosts
+if $has_new_domains ; then #only reload the apache config if there is at least one new domain
       /etc/init.d/apache2 reload
 fi
 cd
+
+########## sftpusers Loop START ###########################################################################
 
 # Now we are out of the domain loop
 # Check if there are some homes in sftpuser's home folder
@@ -375,8 +422,6 @@ cd
 # with an sftp connection Let's move it into the default user 
 # home and change ownerships
 
-
-sftpusershome="/home/sftpusers"
 existingusers=$(ldapsearch -H ldapi:// -Y EXTERNAL -b "$peopletree" "(&(objectClass=person)(authorizedservice=sshd)(uid=*)(!(gidnumber=27)))" uid | grep -o -P "(?<=uid: ).*")
 # Create the directory in which to move the orphaned homes
 
@@ -405,18 +450,29 @@ else
       echo "$basehome" 'is present in ldap'
     else
       if [ ! -z "$basehome" ]; then
-        echo "$sftphome"  es huerfana y la movemos
+        echo "$sftphome es huerfana y la movemos"
+
+        #Umount any domain before moving home:
+        cd $sftphome
+        for udomain in *; do
+          umount "$sftphome$udomain"
+        done
+
+        #change owner
         chown -R "$defaultsudouser" "$sftphome"
-        mv "$sftphome" "$moveto"
+
+        #move the user home with -date, just in case later the user is created again
+        udate=$(date '+%Y_%b_%d_%T')
+        mv "$sftphome" "$moveto/$basehome-$udate"
       fi
     fi
   done
 fi
+########## sftpusers Loop END ###########################################################################
 
 
-
+########## Mailman Loop START ###########################################################################
 # Check if new mailman domain is added to trigger puppet local
-
 function lock_opendkim ()
 {
 ldapmodify -Q -Y EXTERNAL -H ldapi:///  << EOF
@@ -442,3 +498,4 @@ if [ "$mailmanenabled" -gt 0 ]; then
     fi
   done
 fi
+########## Mailman Loop END ###########################################################################
