@@ -60,6 +60,15 @@
                                 </ul>
                               </li>
                               <?php }?> 
+                             <?php if( !empty($serv_installed) && array_search('rocketchat', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+                              <li>
+                                <a href=""> <i class="fa fa-random"></i> Rocketchat<i class="fa arrow"></i> </a>
+                                <ul>
+                                  <li><a href="https://rocket.chat/docs/" target="_blank"><?php printf(_("Documetación"));?></a></li>
+                                  <li><a target="_blank" href="/rocketchat"><?php printf(_("Ir a la aplicación"));?></a></li>
+                                </ul>
+                              </li>
+                              <?php }?>
 
                                     </ul>
                                 <li><a href="/<?php echo BASE_PATH;?>/service-available.php"> <i class="fa fa-dashboard"></i> <?php printf(_("Instalar aplicaciones"));?></a>
