@@ -44,10 +44,24 @@ if($Ldap->is_logged_in()){
   //Get all installed services to show or not in menu
   if ($ldapbind) {
     $serv_installed= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled))');
+    /* Get data for notifications. 
+     ** Available Notifications are:
+     ** Reboot needed :  when ou=reboot,ou=cpanel,dc=example,dc=tld  attribute info=reboot
+     ** Update available: when ou=cpanel,dc=example,dc=tld attrinute status=pending
+    */
+    // Notification bell string 
+    $notification_count=0;
+    $notification_string = '<i class="fa fa-bell-o"></i>';
+    // Check if a reboot is needed
+    $need_reboot = $Ldap->check_reboot_needed($ldapconn);
+    // Check available updates 
+    
+    $vm_status= getpuppetstatus($Ldap,$ldapconn,$ldapbind); 
+    $has_updates = $Ldap->check_available_updates($ldapconn, $vm_status);
   }
 }
 $permissions= (isset($_SESSION["login"]["level"]))?$_SESSION["login"]["level"]:"";
-//:w!$serv_installed = $Ldap->check_installed_service();
+//$serv_installed = $Ldap->check_installed_service();
 ?>
 <!doctype html>
 <html class="no-js" lang="en"  ng-app="linuxDash">
@@ -91,6 +105,7 @@ $permissions= (isset($_SESSION["login"]["level"]))?$_SESSION["login"]["level"]:"
                     <div class="header-block header-block-nav">
                         <ul class="nav-profile">
                             <li class="notifications new">
+                              <?php echo  $Ldap->notifications_header_dropdown($ldapconn, $vm_status);?>
                             </li>
                             <li class="profile dropdown">
                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user icon"></i> 

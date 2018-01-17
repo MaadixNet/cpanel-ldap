@@ -739,8 +739,8 @@ function getpuppetstatus($Ldap,$ldapconn,$ldapbind){
   print_r ($result);
   print_r ($url);
   print_r ($api_url);
+  print_r ($status_info);
   echo '</pre>';
-  */
-
+   */
   return $status_info["puppetstatus"];
 }

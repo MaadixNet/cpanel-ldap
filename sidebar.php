@@ -11,8 +11,20 @@
                             <ul class="nav metismenu" id="sidebar-menu">
                                <?php if($permissions==10){?>
                                 <li class="home">
-                                <a href="/<?php echo BASE_PATH;?>/"> <i class="fa fa-home"></i> <?php printf(_("Detalles"));?></a>
-                                </li>
+                                  <a href=""> <i class="fa fa-home"></i><?php printf(_("Sistema"));?><i class="fa arrow"></i> </a>
+                                  <ul>
+                                    <li class="dashboard">
+                                      <a href="/<?php echo BASE_PATH;?>/#/basic-info"> <i class="fa fa-home"></i> <?php printf(_("Detalles"));?></a>
+                                    </li>
+                               
+                                    <li><a href="/<?php echo BASE_PATH;?>/check-updates.php"> <i class="fa fa-refresh"></i> <?php printf(_("Actualizar"));echo $has_updates;?></a>
+                                    </li>
+   
+                                    <li>
+                                      <a href="/<?php echo BASE_PATH;?>/reboot.php"> <i class="fa fa-power-off"></i> <?php printf(_("Reinicar")); echo $need_reboot;?></a>
+                                    </li>
+                                  </ul>
+  
                                 <li>
                                 <a href=""> <i class="fa fa-th-large"></i><?php printf(_("Mis aplicaciones"));?><i class="fa arrow"></i> </a>
                                     <ul>
@@ -72,8 +84,6 @@
 
                                     </ul>
                                 <li><a href="/<?php echo BASE_PATH;?>/service-available.php"> <i class="fa fa-dashboard"></i> <?php printf(_("Instalar aplicaciones"));?></a>
-                                </li>
-                                <li><a href="/<?php echo BASE_PATH;?>/check-updates.php"> <i class="fa fa-refresh"></i> <?php printf(_("Actualizar versión"));?></a>
                                 </li>
                                 <li>
                                 <a href=""> <i class="fa fa-globe"></i><?php printf (_("Dominios"));?> <i class="fa arrow"></i> </a>

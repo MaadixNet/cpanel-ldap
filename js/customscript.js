@@ -70,9 +70,11 @@ $(document).ready(function() {
 
      var pgurl = window.location.href.substr(window.location.href
 .lastIndexOf("/")+1);
-      
+     console.log('pg url: ' +pgurl); 
      $("#sidebar-menu a").each(function(){
           var itemurl= $(this).attr("href").substr($(this).attr("href").lastIndexOf("/")+1);
+          console.log('itemurl: '+ itemurl);
+
           if( itemurl  == pgurl && itemurl != '' ){
             $(this).parent('li').addClass("active");
             $("#sidebar-menu ul:has(li.active)").addClass('collapse in');
@@ -80,6 +82,8 @@ $(document).ready(function() {
           } else {
             if ( itemurl  == pgurl && itemurl == ''  || pgurl == 'index.php' || pgurl=='basic-info' || pgurl=='loading' || pgurl=='accounts' ){
               $("#sidebar-menu li.home").addClass('active');
+              $("#sidebar-menu li.home ul").addClass('collapse in');
+              $("#sidebar-menu li.dashboard").addClass('active');
             }
           }
 
@@ -282,6 +286,23 @@ $('#userModal').on('show.bs.modal', function (event) {
                 type : 'POST',
                 url  : 'proc/confirm-deluser.php',
                 data : {user: user, superuser: superuser},
+                success : function(data)
+                          {
+                            body.html(data);
+                          }
+                });
+})
+$('#rebootModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget); // Button that triggered the modal
+  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+  var modal = $(this);
+  var body=modal.find('.modal-body');
+            $.ajax({
+
+                type : 'POST',
+                url  : 'proc/confirm-reboot.php',
+                data : {},
                 success : function(data)
                           {
                             body.html(data);

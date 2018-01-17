@@ -154,6 +154,11 @@ span.counter {
     font-size: 15px;
     padding: 2px 6px;
 }
+.nav-profile span.counter {
+    background: none;
+    padding: 0;
+}
+.sidebar .nav > li > ul > li>  a i.notify{float:right;}
 #sidebarleft a {text-decoration:none;}
 .sidebar .nav > li > ul > li > a i.arrow::before {
       content: "\f105" !important;
