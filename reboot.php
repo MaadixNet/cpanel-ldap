@@ -61,10 +61,6 @@ require_once('sidebar.php');
             <div class="inner"i id="maincol">
               <?php
               echo $message; 
-              echo '<pre>';
-              print_r($reboot_attr);
-              echo '</pre>';
-              echo $reboot_attr['info'][0];
               echo '<p>' . sprintf(_("En esta página puedes reinciar el servidor.")) . '<br>' .
                 sprintf(_("El proceso de reincio tardará unos segundos durante los cuales los servicios no estarán disponibles")) . '<br>';?>
                 <div class="title-block">
