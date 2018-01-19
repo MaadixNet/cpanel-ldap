@@ -19,7 +19,7 @@ require_once __DIR__.'/../site-config.php';
 
   echo "<div class='modal-footer'>
   <form action='' method='POST'>
-      <button type='submit' name='reboot' class='btn btn-small btn-primary'>". sprintf(_('Reinicar')) ."</button>
+      <button type='submit' name='reboot' class='btn btn-small btn-primary'>". sprintf(_('Reiniciar')) ."</button>
       <button type='button' class='btn btn-secondary' data-dismiss='modal'>" . sprintf (_("Cancelar")) . "</button>
   </form>
   </div>";
