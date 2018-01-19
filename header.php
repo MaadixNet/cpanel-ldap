@@ -78,7 +78,7 @@ $permissions= (isset($_SESSION["login"]["level"]))?$_SESSION["login"]["level"]:"
         <link rel="stylesheet" href="css/vendor.css">
         <!-- Theme initialization -->
         <script src="js/styles.js"></script>
-        <link rel="stylesheet" href="css/client.css">
+        <link rel="stylesheet" href="css/client.css?v=1.1">
     </head>
 
     <body>
