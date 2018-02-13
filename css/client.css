@@ -329,3 +329,18 @@ span.counter {
 
 	}
 
+
+.fields-info {
+  text-align: left !important;
+  padding: 15px;
+}
+
+#fieldset{
+  margin-bottom: 10px;
+}
+.hide {display:none;}
+span.has-error {
+color: #FF4444;
+font-size: 13px;
+display: block !important;
+}

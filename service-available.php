@@ -7,12 +7,13 @@ $current_page=basename(__FILE__);
 $Ldap->check_login_or_redirect($current_page);
 require_once('header.php');
 //connect and BInd
+/*
 $ldapconn=$Ldap->connect();
 $psw=$Ldap->decrypt_psw();
 if ($ldapconn){
   $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
 }
-
+*/
 //Only admin can see this page
 if ($permissions==2){
     $Ldap->redirect('404.php');
@@ -44,15 +45,24 @@ if ($status == 'error' || $status == 'pending'){
 $release_info = getreleaseinfo($Ldap,$ldapconn,$ldapbind, 'release');
 // Get available groups in the release
 $obj = $release_info['groups'];
-
+//Create mpty array for dependencies
+$dep_form_fields=array();
+// Create an array with all installable goups to create divs in form
+$installable_service=array();
+// A string with all hidden inputs /value for dependencies 
+ $formelements='';
 /****************** Perform install after submitting form **********/
 
+$groups=$inputDep=array();
 if(isset($_POST['install']) && isset($_POST['release'])){
 
   $release = $_POST['release'];
-  $groups = $_POST['groups'];
-
+  //$groups = $_POST['groups'];
+  $groups = (isset($_POST['installGroup']))?$_POST['installGroup']:'';
+  //$domains = $_POST['domain'];
+  $inputDep = (isset($_POST['inputDep']))?$_POST['inputDep']:'';
   //Modify new groups to ldap with status 'install'
+  
   foreach ($groups as $group){
     if ($Ldap->search($ldapconn, 'ou=' . $group . ',' . LDAP_SERVICES, '(objectclass=*)')){
       //Modify status of existing group
@@ -72,7 +82,31 @@ if(isset($_POST['install']) && isset($_POST['release'])){
       $addGroup=$Ldap->addRecord($ldapconn,$entrydn,$entry);
     }
   }
+ 
+  print_r($inputDep);
+  
+  foreach ($inputDep as $key => $value){
 
+    echo 'la app es: ' . $key;
+    foreach ($value as $dep => $val){
+      echo 'depName: ' . $dep . ' depValue: ' . $val;
+    $entrydn='ou='. $dep .',ou=' . $key .',' . LDAP_SERVICES;
+   if (!$Ldap->search($ldapconn, $entrydn, '(objectclass=*)')){
+      $entry["objectclass"][0] = "organizationalUnit";
+      $entry["objectclass"][1] = "metaInfo";
+      $entry["ou"] = $dep;
+      $addGroup=$Ldap->addRecord($ldapconn,$entrydn,$entry);
+    }
+      echo 'depName: ' . $dep . ' depValue: ' . $val;
+
+      //Modify domain object
+      $info = array();
+      $info['status'] = $val;
+      ldap_mod_replace($ldapconn,$entrydn,$info);
+    }
+
+  }
+ 
   //Update ou=cpanel object with lock status
   $modifydn='ou=cpanel,' . SUFFIX ;
   $info = array();
@@ -84,7 +118,6 @@ if(isset($_POST['install']) && isset($_POST['release'])){
 
   //Redirect to home
   header('Location: /cpanel');
-
 }
 
 /****************** End perform update after submitting form *******/
@@ -93,10 +126,14 @@ if(isset($_POST['install']) && isset($_POST['release'])){
 foreach ($obj as $service_data){
   if (array_search($service_data['id'], array_column(array_column($serv_installed, 'ou'),0)) === false) $available=1;
 }
-
 //sidebar
 require_once('sidebar.php');
+if (!empty($arrto)){
+    echo '<pre>';
+    print_r($arrto);
+    echo '</pre';
 
+}
 if (empty($release_info)) { ?>
     <article class="content cards-page">
             <div class="title-block">
@@ -107,7 +144,6 @@ if (empty($release_info)) { ?>
     </article>
 
 <?php }else{ ?>
-
   <article class="content cards-page">
           <?php if ($available != 1){ ?>
 
@@ -123,16 +159,20 @@ if (empty($release_info)) { ?>
                 <h5 class=""> <?php printf(_("Selecciona las aplicaciones que quieras instalar y haz clic en el botón 'Instalar' que encontrarás al fondo de esta página para empezar el proceso de instalación"));?> </h5>
 
             </div>
+
                  <section class="section">
                         <div class="row ">
                        <?php $c = 0;?>
                        <?php foreach ($obj as $service_data ) {
+
                           if ( $c % 3 == 0 ){; ?>
                            <div class="clearfix visible-xs"></div>
                           <?php
                                             }
                           ?>
-                            <?php if( !empty($serv_installed) && array_search($service_data['id'], array_column(array_column($serv_installed, 'ou'),0)) === false){ ?>
+                            <?php if( !empty($serv_installed) && array_search($service_data['id'], array_column(array_column($serv_installed, 'ou'),0)) === false){
+                            $installable_service[$c]['id']=$service_data['id']; 
+                            $installable_service[$c]['name']=$service_data['name'];?>
                             <div class="col-xl-4">
                                 <div class="card ">
                                     <div class="card-block">
@@ -154,18 +194,27 @@ if (empty($release_info)) { ?>
                                                     <p><div class='img service-img'><img src="images/services/<?php echo $service_data['img'];?> " /></div></p>
                                                   </div>
                                                   <div class="col-md-6">
-                                                     <div><label>
-                                                     <input type="checkbox" class="checkbox" name="groups" value="<?php echo $service_data['id']; ?>" />
-                                                    <span><?php printf(_("Seleccionar"));?></span></label></div>
                                                      <?php
-                                                      $ii=0;
+                                                        $depNeedsInput='';
+                                                        $dep_form_fields=array();
                                                       if(array_key_exists('dependencies', $service_data)) {
-                                                         foreach ($service_data['dependencies'] as $dependency){ ?>
-                                                           <input class="dependency" type="hidden" name="dependencies[<?php echo $service_data['id']; ?>][<?php echo $ii; ?>]" value="<?php echo $service_data['dependencies'][$ii]; ?>" />
-                                                         <?php
-                                                           $ii=$ii+1;
-                                                         }
-                                                       } ?>
+                                                        //If there are dependencies, print the input fields that ill be cloned in the modal
+                                                         $dep_form_fields= dependencies_input_fields($service_data);
+                                                      }
+                                                      if (!empty($dep_form_fields['inputHtml'])) {
+                                                        $depNeedsInput='depNeedsInput';
+                                                        echo '<div id="#modalfields">';
+                                                        echo $dep_form_fields['inputHtml'];
+                                                        echo '</div>';
+                                                        
+                                                      }
+                                                    ?>  
+                                                    <div><label>
+                                                      <input type="checkbox" class="checkbox <?php echo $depNeedsInput;?>" name="groups" value="<?php echo $service_data['id']; ?>" />
+                                                    <span><?php printf(_("Seleccionar"));?></span></label></div>
+                                                      <input type="hidden" class="groupname" name="groupname" value="<?php echo $service_data['name']; ?>" />
+                                                    <?php if (isset($dep_form_fields['hiddenHtml'])) echo $dep_form_fields['hiddenHtml'];?>
+                                                    <span class="activatedDomain"></span>
                                                   </div>
                                                 </div>
 
@@ -208,6 +257,48 @@ if (empty($release_info)) { ?>
            <h4 class="modal-title" id="userModalLabel"></h4>
         </div>
         <div class="modal-body" id="modal-body">
+        <form id="groups-to-install" action='' method='POST'>
+
+          <div id="modal-response"></div>
+              <input type='hidden' name='release' value='<?php echo $release_info['release'];?>' />
+                <?php 
+              // Create one empty div for each available gorup. Then punt the input hidden in each of them
+              foreach($installable_service as $value) {
+                printf(_('<div id="install-group-%s" data-groupname="%s" class="group-inputs hide"></div>'),$value['id'],$value['name']);
+              }
+             ?>
+            </form>
+          
+        </div><!--modal-body-->
+      </div><!--modal-content-->
+    </div><!--modal-dialog-->
+  </div><!--exampleModal-->
+</div><!--bd-example-->
+<?php
+$appnameSpan='<span class="appnameSpan"></span>';
+?>
+<div class="bd-example">
+  <div class="modal fade" id="fieldsModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+           <h4 class="modal-title" id="userModalLabel"><?php printf(_("Campos resqueridos para %s"),$appnameSpan );?></h4>
+        </div>
+        <div class="modal-body" id="modal-body">
+          <form id="fieldset">
+            <div class="form-group">
+            </div>
+
+            <div class='modal-footer'>
+              <input type="submit" class="btn btn-primary btn-sm" id="fieldsSave" name="fieldsSave" value="<?php printf(_("Guardar"));?>"  />
+              <div class="fields-info" id="fields-info">
+              </div>
+            </div>
+
+          </form>
         </div>
       </div><!--modal-content-->
     </div><!--modal-dialog-->
@@ -219,3 +310,5 @@ if (empty($release_info)) { ?>
 <?php
   ldap_close($ldapconn);
   require_once('footer.php');
+
+

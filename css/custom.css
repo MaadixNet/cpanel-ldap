@@ -24,6 +24,7 @@ a:focus {
 .vis-hidden {
 	visibility: hidden !important;
 }
+label.hide {display:none;}
 a {
 	-webkit-transition: 0.25s;
 	-moz-transition: 0.25s;

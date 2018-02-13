@@ -7,7 +7,7 @@ $current_page=basename(__FILE__);
 $Ldap->check_login_or_redirect($current_page);
 require_once('header.php');
 //connect and BInd
-$ldapconn=$Ldap->connect();
+//
 $psw=$Ldap->decrypt_psw();
 if ($ldapconn){
   $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
@@ -168,7 +168,7 @@ switch ($status) :
                                               <li><?php printf(_("Descripción: %s"), $updates['description']);?></li>
                                             </ul>
                                             <br>
-                                        <h3 class="title"><?php printf(_(" Selecciona las aplicaciones que quieras instalar y haz click en el botón 'Actualizar' que encontrarás al fondo de esta página para empezar el proceso de actualización." ));?></h3>
+                                        <h3 class="title"><?php printf(_(" Haz click en el botón 'Actualizar' para empezar el proceso." ));?></h3>
                                         </div>
                                     </div>
                                     <!-- /.card-block -->
@@ -179,73 +179,6 @@ switch ($status) :
                       </div>
                  </section>
 
-            <div class="title-block">
-                <h4 class="title"> <?php printf(_("Aplicaciones Disponibles en la Actualización"));?> </h4>
-                <p class="title-description"> <?php printf(_("Una vez efectuada la actualizaciíon toda las aplicaciones estarán disponibles en el apartado 'Instalar Aplicaciones'"));?> </p>
-            </div>
-                 <section class="section">
-                        <div class="row ">
-                       <?php $c = 0;?>
-                       <?php foreach ($obj as $service_data ) {
-                          if ( $c % 3 == 0 ){; ?>
-                           <div class="clearfix visible-xs"></div>
-                          <?php
-                                            }
-                          ?>
-
-                            <?php if( !empty($serv_installed) && array_search($service_data['id'], array_column(array_column($serv_installed, 'ou'),0)) === false){ ?>
-                            <div class="col-xl-4">
-                                <div class="card ">
-                                    <div class="card-block">
-                                        <!-- Nav tabs -->
-                                        <div class="card-title-block">
-                                            <h3 class="title"><?php echo  $service_data['title'];?></h3>
-                                        </div>
-                                        <ul class="nav nav-tabs nav-tabs-bordered">
-                                            <li class="nav-item"> <a href="#home-<?php echo $c;?>" class="nav-link active" data-target="#home-<?php echo $c;?>" data-toggle="tab" aria-controls="home-<?php echo $c;?>" role="tab">App</a> </li>
-                                            <li class="nav-item"> <a href="#desc-<?php echo $c;?>" class="nav-link" data-target="#desc-<?php echo $c;?>" aria-controls="desc-<?php echo $c;?>" data-toggle="tab" role="tab"><?php printf(_("Descripción"));?></a> </li>
-
-                                        </ul>
-                                        <!-- Tab panes -->
-                                        <div class="tab-content tabs-bordered">
-                                            <div class="tab-pane fade in active" id="home-<?php echo $c;?>">
-                                            <h4><?php echo $service_data['name'];?></h4>
-                                                <div class="row">
-                                                  <div class="col-md-6">
-                                                    <p><div class='img service-img'><img src="images/services/<?php echo $service_data['img'];?> " /></div></p>
-                                                  </div>
-                                                  <div class="col-md-6">
-                                                     <div><label>
-                                                     <input type="checkbox" class="checkbox" name="groups" value="<?php echo $service_data['id']; ?>" />
-                                                    <span><?php printf(_("Seleccionar"));?></span>
-                                                    </label></div>
-                                                     <?php
-                                                       $ii=0;
-                                                       foreach ($service_data['dependencies'] as $dependency){ ?>
-                                                         <input class="dependency" type="hidden" name="dependencies[<?php echo $service_data['id']; ?>][<?php echo $ii; ?>]" value="<?php echo $service_data['dependencies'][$ii]; ?>" />
-                                                     <?php
-                                                         $ii=$ii+1;
-                                                       } ?>
-                                                  </div>
-                                                </div>
-
-                                            </div>
-                                            <div class="tab-pane fade" id="desc-<?php echo $c;?>">
-                                                <h4><?php echo $service_data['name'];?></h4>
-                                                <p><?php echo $service_data['description'];?></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- /.card-block -->
-                                </div>
-                                <!-- /.card -->
-                            </div>
-                            <!-- /.col-xl-4 -->
-                          <?php $c++;
-                            }
-                          };?>
-                        </div>
-                    </section>
                  <?php
                   echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" data-release ="' . $updates['release'] . '">' . sprintf (_('Actualizar')) . '</button>';
                  ?> 

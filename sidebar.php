@@ -72,12 +72,17 @@
                                 </ul>
                               </li>
                               <?php }?> 
-                             <?php if( !empty($serv_installed) && array_search('rocketchat', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+                             <?php if( !empty($serv_installed) && array_search('rocketchat', array_column(array_column($serv_installed, 'ou'),0)) !== false){
+                                     if ($ldapbind) {
+                                       $domain= $Ldap->search($ldapconn,'ou=domain,ou='.$gr["id"].','.LDAP_SERVICES ,'(objectClass=organizationalUnit)');
+                                       $rocketchatdomain = "https://".$domain[0]['status'][0];
+                                     }
+                             ?>
                               <li>
                                 <a href=""> <i class="fa fa-random"></i> Rocketchat<i class="fa arrow"></i> </a>
                                 <ul>
                                   <li><a href="https://rocket.chat/docs/" target="_blank"><?php printf(_("Documetación"));?></a></li>
-                                  <li><a target="_blank" href="/rocketchat"><?php printf(_("Ir a la aplicación"));?></a></li>
+                                  <li><a target="_blank" href="<?php echo $rocketchatdomain;?>"><?php printf(_("Ir a la aplicación"));?></a></li>
                                 </ul>
                               </li>
                               <?php }?>

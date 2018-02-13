@@ -6,24 +6,10 @@
  * Returns a window for confirmation
  *
  */
-$dependencies=array();
-$release=$_POST['release'];
+$groups=$deps=array();
 $groups=$_POST['groups'];
-$dependencies_all=(array_key_exists('dependencies', $_POST))?$_POST['dependencies']:false;
-//force adding dependencies
-if ($dependencies_all){
-  foreach ($groups as $group){
-    if (isset($dependencies_all[$group])){
-      foreach ($dependencies_all[$group] as $dep){
-      if (!in_array($dep, $groups)) $dependencies[]=$dep;
-      }
-    }
-  }
-}
-session_start();
-require_once  __DIR__.'/../classes/class.ldap.php';
-require_once __DIR__.'/../site-config.php';
-
+$deps=$_POST['deps'];
+//$domains=$_POST['inputDep'];
 if (count($groups)>0){
   printf(_("Las siguientes aplicaciones se han seleccionado para ser instaladas"));
   echo '<br />';
@@ -33,13 +19,12 @@ if (count($groups)>0){
     echo '<li class="update-groups">'.$group.'</li>';
   }
   echo '</ul>';
-
-  if (count($dependencies)>0){
+  if (count($deps)>0){
     printf(_("Además se instalarán las siguientes dependencias:"));
     echo '<br />';
     echo '<br />';
     echo '<ul>';
-    foreach ($dependencies as $dep){
+    foreach ($deps as $dep){
       echo '<li class="update-groups">'.$dep.'</li>';
     }
     echo '</ul>';
@@ -50,32 +35,16 @@ if (count($groups)>0){
   printf(_("Confirmas que quiere instalar las aplicaciones ahora?"));
   echo '<br />';
   echo '<br />';
-
-  echo "<div class='modal-footer'>
-  <form action='' method='POST'>
-  <input type='hidden' name='release' value='". $release ."' />";
-  //merge in groups, selected groups and dependencies
-  foreach ($groups as $group) {
-    echo "    <input type='hidden' name='groups[]' value='". $group ."' />";
-  }
-  if (count($dependencies)>0){
-    foreach ($dependencies as $group) {
-        echo "    <input type='hidden' name='groups[]' value='". $group ."' />";
-    }
-  }
+  echo "<div class='modal-footer'>";
   echo "    <button type='submit' name='install' class='btn btn-small btn-primary'>". sprintf(_('Instalar')) ."</button>
-            <button type='button' class='btn btn-secondary' data-dismiss='modal'>" . sprintf (_("Cancelar")) . "</button>
-          </form>
-        </div>";
+            <button type='button' class='btn btn-secondary' data-dismiss='modal'>" . sprintf (_("Cancelar")) . "</button>";
+  echo "</div>";
 } else {
-
   printf(_("No hay ninguna aplicación seleccionada para instalar."));
   echo '<br />';
   echo '<br />';
 
   echo "<div class='modal-footer'>
-        <form action='' method='POST'>
           <button type='button' class='btn btn-secondary' data-dismiss='modal'>" . sprintf (_("Volver")) . "</button>
-        </form>
       </div>";
 }

@@ -265,7 +265,7 @@ class LDAP{
                 <a href="" class="notification-item">
                     <div class="body-col">
                         <p>
-                            <span class="accent">' . sprintf(_("No hay ninguna toficiación")) .'</span>
+                            <span class="accent">' . sprintf(_("No hay ninguna notificación")) .'</span>
                     </div>
                 </a>
             </li>';

@@ -70,10 +70,10 @@ $(document).ready(function() {
 
      var pgurl = window.location.href.substr(window.location.href
 .lastIndexOf("/")+1);
-     console.log('pg url: ' +pgurl); 
+    // console.log('pg url: ' +pgurl); 
      $("#sidebar-menu a").each(function(){
           var itemurl= $(this).attr("href").substr($(this).attr("href").lastIndexOf("/")+1);
-          console.log('itemurl: '+ itemurl);
+     //     console.log('itemurl: '+ itemurl);
 
           if( itemurl  == pgurl && itemurl != '' ){
             $(this).parent('li').addClass("active");
@@ -205,13 +205,11 @@ $(document).ready(function() {
       $('#new_user').hide();
       $('.' + $(this).val()).show();
       if($('#new_user.newuser').is(":visible")){
-        console.log('visible');
         $('input#username').prop('required', true);
         $('input#usermail').prop('required', true);
         $('input#pswd1').prop('required', true);
         $('input#pswd2').prop('required', true);
       } else {
-        console.log('invisible');
           $('input#username').prop('required', false);
           $('input#usermail').prop('required', false);
           $('input#pswd1').prop('required', false);
@@ -312,7 +310,7 @@ $('#rebootModal').on('show.bs.modal', function (event) {
 
 $('#updateModal').on('show.bs.modal', function (event) {
   //groups
-  var groups = [];
+  /*var groups = [];
   $("input:checkbox[name=groups]:checked").each(function(){
     groups.push($(this).val());
   });
@@ -327,6 +325,18 @@ $('#updateModal').on('show.bs.modal', function (event) {
     }
     dependencies[m[1]][m[2]]= inputs[i].value;
   }
+
+  //domains
+  var inputs = $('.domain').get();
+  var domains  = { };
+  for (i=0; i<inputs.length; i++){
+    m = inputs[i].name.match(/\[(.*?)\]/);
+    if(!domains[m[1]]){
+       domains[m[1]] = { };
+    }
+    domains[m[1]]= inputs[i].value;
+  }
+*/
 
   //release
   var button = $(event.relatedTarget); // Button that triggered the modal
@@ -344,7 +354,7 @@ $('#updateModal').on('show.bs.modal', function (event) {
 
                 type : 'POST',
                 url  : 'proc/confirm-update.php',
-                data : {release: release, groups: groups, dependencies: dependencies},
+                data : {release: release },
                 success : function(data)
                           {
                             body.html(data);
@@ -356,13 +366,35 @@ $('#updateModal').on('show.bs.modal', function (event) {
 $('#installModal').on('show.bs.modal', function (event) {
   //groups
   var groups = [];
-  $("input:checkbox[name=groups]:checked").each(function(){
+  var deps = [];
+  //$("input:checkbox[name=gorups]:checked").each(function(){
+  $("input[name='installGroup\[\]']").not('.dependency').each(function(){
     groups.push($(this).val());
   });
+  $("input.dependency[name='installGroup\[\]']").each(function(){
+      var newItem = $(this).val();
 
+      if(deps.indexOf(newItem) === -1){
+        deps.push(newItem);
+      }
+  });
   //dependencies
+//var appl=dep=[];
+  /*Get all value with dependencies to be written in ldap*/
+  /*
   var inputs = $('.dependency').get();
-  var dependencies  = { };
+  var dependencies  = {};
+  $(".col-md-6").find(":input.dependency[type='hidden']").each(function() {
+  // Create an indexed aray filedId: fieldValue 
+  // eg.Array [fields] Object { domain: mydomain.com, mail: me@example.com}...
+  // encode to base64 because of the ] character at the end of the string
+  // php gets crazy with that [] are not good in array keys
+      dependencies[btoa($(this).attr('name'))] = $(this).val();
+
+
+  });
+console.log(dependencies);
+ /* 
   for (i=0; i<inputs.length; i++){
     m = inputs[i].name.match(/\[(.*?)\]\[(\d+)\]/);
     if(!dependencies[m[1]]){
@@ -371,6 +403,17 @@ $('#installModal').on('show.bs.modal', function (event) {
     dependencies[m[1]][m[2]]= inputs[i].value;
   }
 
+  //domains
+  var inputs = $('.domain').get();
+  var domains  = { };
+  for (i=0; i<inputs.length; i++){
+    m = inputs[i].name.match(/\[(.*?)\]/);
+    if(!domains[m[1]]){
+       domains[m[1]] = { };
+    }
+    domains[m[1]]= inputs[i].value;
+  }
+*/
   //release
   var button = $(event.relatedTarget); // Button that triggered the modal
   var release = button.data('release');
@@ -378,12 +421,12 @@ $('#installModal').on('show.bs.modal', function (event) {
   //modal
   var modal = $(this);
   modal.find('.modal-title').text( 'Instalar Aplicaciones' );
-  var body=modal.find('.modal-body');
+  var body=modal.find('#modal-response');
             $.ajax({
 
                 type : 'POST',
                 url  : 'proc/confirm-install.php',
-                data : {release: release, groups: groups, dependencies: dependencies},
+                data : {release: release, groups: groups,deps:deps },
                 success : function(data)
                           {
                             body.html(data);
@@ -504,7 +547,6 @@ $('#installModal').on('show.bs.modal', function (event) {
                           {
                              $("#result").html(data);
                             
-                            console.log(data);
                           }
                 });
                 //return false;
@@ -556,3 +598,141 @@ $(document).ready(function() {
     bar.css('width',barwidth);
     });
 });
+
+//////      Modal frames required fields apps     //////////////////////////////////////////////////////
+//doc: https://stackoverflow.com/questions/27554027/pass-data-to-parent-window-from-modal-using-bootstrap
+//doc: https://stackoverflow.com/questions/35754776/checkbox-change-state-of-checkbox-by-ajax
+
+//current app modal var
+//var appmodal;
+
+$('input[type="checkbox"]').on('change', function(e){
+  var appmodal = $(this).parents('.col-md-6').find('input[name="groups"]').val();
+  if(e.target.checked){
+    //get values
+    var groupname = $(this).parents('.col-md-6').find('input[name="groupname"]').val();
+    // If is a user input clone it into the modal window
+    // Also populate modal window wuth hidden inputs, so we have all in one place
+    if ($(this).hasClass('depNeedsInput')){
+      //set modal title
+      $("span.appnameSpan").text(groupname);
+      //leave chekbox unchanged
+      $(this).prop('checked', false);
+      //clone all requiered inputs of this app to modal, except groups and dependency fields
+      $(this).parents('.col-md-6').find('.modalfield, .noinput').not('input[name="groups"],.dependency').clone().removeClass( "hide").prop('required',true).prependTo( "#fieldsModal form .form-group" );
+      $(this).parents('.col-md-6').find('.noinput').clone().prependTo( "#fieldsModal form .form-group" ); 
+      //Also add an input name=gorups type hidden, to use in final form for install submission
+      $('<input type="hidden" name="installGroup\[\]" value="' + appmodal + '">').prependTo( "#fieldsModal form .form-group" );
+      //open modal
+      $('#fieldsModal').modal();
+    } else {
+      // If no user input is required just populate the main page with the input hidden fields
+      // Each of them is placed in his div inside the final form for installing
+       $('<input type="hidden" name="installGroup\[\]" value="' + appmodal + '">').prependTo("#install-group-" +appmodal); 
+      var depNoInput =  $(this).parents('.col-md-6').find('.noinput').val();
+      if (depNoInput)$('<input type="hidden" class="dependency" name="installGroup\\]" value="' + depNoInput+ '">').prependTo("#install-group-" +appmodal);
+    }
+  } else {
+    // If a ceckbox is uncheckek remove all input field from the form. Using a div for each app make it easy
+    // To remove all the inputs for one unchecked app in one line.
+    $('#install-group-' +appmodal +' input').remove();
+  }
+});
+
+
+$("#fieldset").submit(function(e) {
+  var appmodal = $(this).parents('#fieldsModal').find(':input[name="installGroup\[\]"]').val();
+  //var appmodal = $('#fieldsModal').find(':input[name="installGroup"]').val();
+    var depNoInput = $(this).parents('#fieldsModal').find(':input[name="depNoInput"]').val();
+  e.preventDefault();
+
+  var checkInput='';
+
+  //Clean previous errors in divs  
+  $('div#error-' +appmodal +'-domain' ).html();
+  $("#fields-info").html();
+
+  // Get all inputs inserted by user in dependency domain field 
+  var fields = {};
+  $("#fieldsModal").find(":input.modalfield").each(function() {
+  // Create an indexed aray filedId: fieldValue 
+  // eg.Array [fields] Object { domain: mydomain.com, mail: me@example.com}...
+
+      fields[$(this).attr('data-dependency')] = $(this).val();
+  });
+  //This give us the name of the group to be installed
+  var appmodal = $('#fieldsModal').find(':input[name*="installGroup\[\]"]').val();
+  /* check if another group has the same domain assigned*/
+  //get all inputs type=hidden, with class="dependency", name=domain[* and value=last user inserted  domain 
+    checkInput=$('input[type="hidden"][name*="domain"][value="' + fields.domain + '"]');
+
+  //If this domain has been assigned to another aplication to be installed, print an error
+  if(checkInput.length > 0) {
+    //get the name of the other aplicaction using same domain
+    var usedby = $(checkInput).parents('.group-inputs').attr('data-groupname');
+
+    // Notfy user that the domain has just been assigned to another aplication to be installed
+    // The message will be printed above the input field
+    $('div#error-' +appmodal +'-domain' ).html('<span class="has-error">Dominio ya asignado a ' + usedby + '</span>');
+  } else {
+    /* If the inserted domain is not selected for another aplication to be installed
+    * check other fields and domain validity against ldap, and DNS
+    * sending AJAX request to proc/check-fields.php
+    */
+    //check values
+    var modal = $('#fieldsModal');
+    var fieldsinfo=modal.find('.fields-info');
+            $.ajax({
+
+                type : 'POST',
+                url  : 'proc/check-fields.php',
+                data : fields,
+                // Si usamos json habrá que actualizar php
+                success : function(data)
+                    
+                    {
+                    data=$.parseJSON(data);
+                    if(data.totErros== 0){
+                         $("#fieldsModal").modal('hide');
+                          $(this).off('submit').submit();
+                          $('input:checkbox[name="groups"][value=' + appmodal + ']').prop('checked', true);
+                          // Populate all the inputs for groups to be installed
+                          $('<input type="hidden" name="installGroup[]" value="' + appmodal + '">').prependTo( "#install-group-" +appmodal );
+                          //Add all dependencies that have no input field to the final form, for install submission 
+                          if(depNoInput){
+                              $('<input type="hidden" name="installGroup[]" class="dependency" value="' + depNoInput + '">').prependTo( "#install-group-" +appmodal );
+                        }
+                          /* Loop through all dependencies with a user input (domains, emal, custom text)
+                           * and print them in the final form
+                           * Format is name=inputDep[aplication][dependency-name] 
+                           * element is the array, coming from proc/check-fields.php
+                           * element.fieldId = the name of the dependency field
+                           * appmodal = the name of the aplication 
+                           */
+                          $.each(data.inputs, function(index, element) {
+                           $('<input type="hidden" name="inputDep['+ appmodal + '][' + element.fieldId +']" value="' + element.fieldValue +  '">').prependTo( '#install-group-' +appmodal+ '');
+                          });
+
+                    } else  {
+
+                      //Generic error in modal footer
+                      $("#fields-info").html(data.formError);
+                      // detailed errors, each one above their correspondent input field
+                      // errors are  an idexed Array [errors] of Objects {fieldId: doamin, fieldValue: example.comi, msg: invalid value for field, error: integer of error id}....
+                         $.each(data.errors, function(index, errval) {
+                              var mydiv = $('div#error-' +appmodal +'-'+ errval.fieldId + '' ); 
+                              $('div#error-' +appmodal +'-'+ errval.fieldId + '' ).addClass('red').html(errval.msg);
+                          });
+
+                      }
+                    }
+                });
+      } //End if existsDomain>0
+});
+
+$('#fieldsModal').on('hide.bs.modal', function (event) {
+  //clear all input forms from modal and div info
+  $('#fieldsModal form .form-group').children().not(':button, :submit, :reset').remove();
+  $('#fieldsModal #fields-info, .has-error').empty();
+});
+

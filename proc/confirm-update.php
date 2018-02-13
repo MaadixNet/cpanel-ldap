@@ -8,9 +8,10 @@
  */
 
 $release=$_POST['release'];
-$groups=$_POST['groups'];
-$dependencies_all=$_POST['dependencies'];
+//$groups=$_POST['groups'];
+//$dependencies_all=$_POST['dependencies'];
 //force adding dependencies
+/*
 foreach ($groups as $group){
   if (isset($dependencies_all[$group])){
     foreach ($dependencies_all[$group] as $dep){
@@ -18,10 +19,11 @@ foreach ($groups as $group){
     }
   }
 }
+ */
 session_start();
 require_once  __DIR__.'/../classes/class.ldap.php';
 require_once __DIR__.'/../site-config.php';
-
+/*
 if (count($groups)>0){
   printf(_("Las siguientes aplicaciones se han seleccionado para ser instaladas en esta actualización:"));
   echo '<br />';
@@ -44,7 +46,8 @@ if (count($dependencies)>0){
 }
 echo '<br />';
 echo '<br />';
-printf(_("El proceso de instalación durará unos minutos durante los cuales el Panel de Control quedará inactivo. Todos los usuarios que tengan una sesión activa serán forzados a salir y redireccionados a una página en la que se mostrará el estado de la operación. Cuando el proceso de instalación termine se activará el formulario para volver a acceder."));
+ */
+printf(_("El proceso de actualización durará unos minutos durante los cuales el Panel de Control quedará inactivo. Todos los usuarios que tengan una sesión activa serán forzados a salir y redireccionados a una página en la que se mostrará el estado de la operación. Cuando el proceso de termine se activará el formulario para volver a acceder."));
 echo '<br />';
 echo '<br />';
 
@@ -59,12 +62,14 @@ echo "<div class='modal-footer'>
         <form action='' method='POST'>
           <input type='hidden' name='release' value='". $release ."' />";
 //here are merged in groups, selected groups and dependencies
+/*
 foreach ($groups as $group) {
 echo "    <input type='hidden' name='groups[]' value='". $group ."' />";
 }
 foreach ($dependencies as $group) {
 echo "    <input type='hidden' name='groups[]' value='". $group ."' />";
 }
+ */
 echo "    <button type='submit' name='update' class='btn btn-small btn-primary'>". sprintf(_('Actualizar')) ."</button>
           <button type='button' class='btn btn-secondary' data-dismiss='modal'>" . sprintf (_("Cancelar")) . "</button>
         </form>

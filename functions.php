@@ -382,6 +382,19 @@ function applySanitize($key, $val) {
           $message = sprintf(_("%s no es una dirección de correo válida"), $value);
       }      
       break;
+    case "domain":
+      //Only chek syntax. Used in proc/chec-fields.php 
+      //Dns check is performed by dns_get_record()
+        $value = filter_var($val, FILTER_SANITIZE_STRING);
+        $value = filter_var($value ,FILTER_SANITIZE_SPECIAL_CHARS);
+        $value=htmlspecialchars($value);
+        if(!check_syntax ('domain',$value) || !$value) {
+          $message = sprintf(_("%s no es un nombre de dominio válido"), $value);
+          $value = "";
+        } else {
+          //$value = filter_var($val, FILTER_SANITIZE_STRING);
+        }
+      break;
     default:
       $value=$val;
       break;
@@ -682,7 +695,7 @@ function getreleaseinfo($Ldap,$ldapconn,$ldapbind,$route){
 
 
   //Debug
-  /*
+ /* 
   echo '<pre>';
   print_r ($release_info);
   print_r ($result);
@@ -743,4 +756,54 @@ function getpuppetstatus($Ldap,$ldapconn,$ldapbind){
   echo '</pre>';
    */
   return $status_info["puppetstatus"];
+}
+/* Function to print intput fields for groups 
+ * Used in service-available
+ * @param $service_data : an array from the api that contains dependencies for groups
+ *
+*/ 
+function dependencies_input_fields($service_data){
+  $inputs_fields=$hidden_fields=$text='';
+  $field=array();
+  foreach ($service_data['dependencies'] as $dependency){ 
+        if (strpos($dependency, ".") !== false){
+            // This field needs input
+            /*we know the string has three elements divided by dot
+            * [0] = id
+            * [1] = type
+            * [2] = Lable
+            * Explode the string and create an array withe these trhee data
+            * Maybe we should add a more explicit value such as input: id.type.label.input?
+             */
+            $deps= explode(".", $dependency);
+            $keys = array('id','type', 'label');
+            $field = array_combine($keys,$deps);
+            //First print the user input fields
+            $inputs_fields.=sprintf(_('<label class="modalfield hide" for="%s">%s</label>'),$field['id'],$field['label']);
+            $inputs_fields.=sprintf(_('<p class="form-control-static underlined hide modalfield">%s</p>'),get_input_field_description($field['id']));
+            $inputs_fields.=sprintf(_('<div id="error-%s-%s" class="hide modalfield"></div>'),$service_data['id'],$field['id']);
+            $inputs_fields.=sprintf(_('<input class="modalfield hide form-control" data-dependency="%s" placeholder="%s" type="%s" name="%s[%s]" />'),$field['id'],$field['label'],$field['type'],$field['id'],$service_data['id']);
+            
+            $hidden_fields.=sprintf(_('<input class="dependency" type="hidden" name="%s[%s]" />'),$field['id'],$service_data['id']);
+        } else {
+           //don' t print user input filed 
+            $hidden_fields.=sprintf(_('<input class="dependency noinput" type="hidden" name="depNoInput" value="%s" />'),$dependency);
+       }
+  }
+return array('hiddenHtml' => $hidden_fields, 'inputHtml' => $inputs_fields);
+}
+
+function get_input_field_description($field){
+  switch($field){
+    case 'domain':
+      $text=sprintf(_("Esta aplicación necesita ser instalada bajo un dominio o subdominio propio. Inserta un dominio váldio que no esté siendo usado por ninguna otra aplicación y cuyos dns estén ya apuntando a la IP de este servidor: %s"), $_SERVER["SERVER_ADDR"]);
+      break;
+    case 'email':
+      $text=sprintf(_("Esta aplicación necesita una cuenta de email asocicada. Inserta una diercción de correo electrónico válida:"));
+      break;
+    default:
+      $text=sprintf(_("Inserta un texto"));
+      break;
+  }
+  return $text;
 }
