@@ -630,7 +630,7 @@ $('input[type="checkbox"]').on('change', function(e){
       // Each of them is placed in his div inside the final form for installing
        $('<input type="hidden" name="installGroup\[\]" value="' + appmodal + '">').prependTo("#install-group-" +appmodal); 
       var depNoInput =  $(this).parents('.col-md-6').find('.noinput').val();
-      if (depNoInput)$('<input type="hidden" class="dependency" name="installGroup\\]" value="' + depNoInput+ '">').prependTo("#install-group-" +appmodal);
+      if (depNoInput)$('<input type="hidden" class="dependency" name="installGroup\[\]" value="' + depNoInput+ '">').prependTo("#install-group-" +appmodal);
     }
   } else {
     // If a ceckbox is uncheckek remove all input field from the form. Using a div for each app make it easy
