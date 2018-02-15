@@ -42,6 +42,12 @@ if ($domain){
         $errormsg=sprintf(_("El dominio %s ya está dado de alta como dominio web o mail."), $domain);
         $errormsg.='<br />';
         $errormsg.= sprintf(_("Si quieres utilizarlo para esta aplicación deberás primero eliminarlo desde el listado de dominios"));
+        //Some other applicaction may ne using same domain. This is not allowed
+    } else if($Ldap->is_domain_in_use($domain)) {
+      
+        $totalerrors++;
+        $error=4;
+        $errormsg=sprintf(_("El dominio %s ya está asignado a otra aplicación."), $domain);
 
     } else {
     //Get this server IP address
@@ -56,7 +62,7 @@ if ($domain){
             $errormsg='';
         } else {
             $totalerrors++;
-            $error=4;
+            $error=5;
             $errormsg=sprintf(_("La configuración de los DNS para el dominio %s es incorrecta. El registro A para este dominio debe apuntar a la IP %s."), $domain, $server_ipaddr);
             $errormsg.='<br />';
             $errormsg.= sprintf(_("Corrige este valor en el panel de administración de tu proveedor de dominio"));

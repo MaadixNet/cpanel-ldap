@@ -134,6 +134,7 @@ if (!empty($arrto)){
     echo '</pre';
 
 }
+
 if (empty($release_info)) { ?>
     <article class="content cards-page">
             <div class="title-block">

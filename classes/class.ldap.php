@@ -731,7 +731,17 @@ function send_vpn_instructions($to,$username) {
       $action=send_mail($from,$to,$body,$subject,$attachments);
       }
 }
+  function is_domain_in_use($domain) {
+    $filter="(&(objectClass=organizationalUnit)(ou=domain)(status=" . $domain . "))";
+    $app_domain= $this->search($this->connection,LDAP_SERVICES ,$filter);
+    if($app_domain["count"]>0){
+      return true; 
+    } else {
+      return false;
+    }
 
+
+  }
 
 function get_sudo_user(){
   $filter="(&(objectClass=person)(uid=*)(gidnumber=27))";
