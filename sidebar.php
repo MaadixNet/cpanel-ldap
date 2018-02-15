@@ -74,8 +74,8 @@
                               <?php }?> 
                              <?php if( !empty($serv_installed) && array_search('rocketchat', array_column(array_column($serv_installed, 'ou'),0)) !== false){
                                      if ($ldapbind) {
-                                       $domain= $Ldap->search($ldapconn,'ou=domain,ou='.$gr["id"].','.LDAP_SERVICES ,'(objectClass=organizationalUnit)');
-                                       $rocketchatdomain = "https://".$domain[0]['status'][0];
+                                       $app_domain= $Ldap->search($ldapconn,'ou=domain,ou=rocketchat,'.LDAP_SERVICES ,'(objectClass=organizationalUnit)');
+                                       $rocketchatdomain = "https://".$app_domain[0]['status'][0];
                                      }
                              ?>
                               <li>
