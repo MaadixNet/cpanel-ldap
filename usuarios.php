@@ -3,6 +3,7 @@
 //ini_set('display_errors', 'On');
 
 session_start();
+/*
 require_once 'classes/class.ldap.php';
 $Ldap = new LDAP();
 $current_page=basename(__FILE__);
@@ -13,18 +14,19 @@ if ($Ldap->is_logged_in()&& $permissions != '10'){
 
         $Ldap->redirect('404.php');
 }
-
+ */
 require_once('header.php');
 require_once('sidebar.php');?>
 
 <?php
 
 //Set variables for ldap connection
-$ldapconn=$Ldap->connect();
+/*$ldapconn=$Ldap->connect();
 $psw=$Ldap->decrypt_psw();
 if ($ldapconn){
     $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw);
 }
+ */
 $message='';
 $ldaptree    = LDAP_PEOPLE;
 $groupinfo = posix_getgrnam("sftpusers");

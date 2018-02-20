@@ -1,10 +1,10 @@
 <?php
 
 session_start();
-require_once 'classes/class.ldap.php';
-$Ldap= new LDAP();
-$current_page=basename(__FILE__);
-$Ldap->check_login_or_redirect($current_page);
+//require_once 'classes/class.ldap.php';
+//$Ldap= new LDAP();
+//$current_page=basename(__FILE__);
+//$Ldap->check_login_or_redirect($current_page);
 require_once('header.php');
 //connect and BInd
 /*

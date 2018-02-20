@@ -1,13 +1,14 @@
 <?php 
 session_start();
-require_once 'classes/class.ldap.php';
+//require_once 'classes/class.ldap.php';
 require_once 'classes/class.psql_query.php';
+/*
 $Ldap= new LDAP();
 $sqlDomains= new Domains();
 $mailman_domains= $sqlDomains->getDomains();
 $current_page=basename(__FILE__);
 $Ldap->check_login_or_redirect($current_page);
-
+ */
 require_once('header.php');
 //connect and BInd
 $errorttpe="";
@@ -15,11 +16,11 @@ $message="";
 $statok='<i class="fa fa-check-circle-o icon checkok"></i>';
 $loading='<span class="loading"></span>';
 
-$ldapconn=$Ldap->connect();
-$psw=$Ldap->decrypt_psw();
-$permissions= $_SESSION["login"]["level"];
+//$ldapconn=$Ldap->connect();
+//$psw=$Ldap->decrypt_psw();
+//$permissions= $_SESSION["login"]["level"];
 if ($ldapconn && $permissions==10){
-	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$psw); 
+//	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$psw); 
         $ldaptree=LDAP_BASE;
         $filter="(&(vd=*)(accountActive=TRUE))";
         $attributes_vd=array("vd");

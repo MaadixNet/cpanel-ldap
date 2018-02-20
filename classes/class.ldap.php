@@ -901,7 +901,7 @@ function decrypt_psw () {
         # Restrict some pages
         //$current_page=basename(__FILE__);
       }
-       elseif ( $current_page != 'edit-mail.php' && $current_page != 'mails.php' && $permission==4 ) {
+       elseif ( strpos($current_page, 'edit-mail.php')!= false && $current_page != 'mails.php' && $permission==4 ) {
 
         $this->redirect('mails.php');
       } elseif ($permission==2 && $current_page != 'edit-mail.php'){

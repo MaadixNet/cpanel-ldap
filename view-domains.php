@@ -1,13 +1,13 @@
 <?php 
 session_start();
-require_once 'classes/class.ldap.php';
+//require_once 'classes/class.ldap.php';
+/*
 $Ldap= new LDAP();
 
 $current_page=basename(__FILE__);
 $Ldap->check_login_or_redirect($current_page);
-
+ */
 require_once('header.php');
-
 /* Set some variable to show in table, for domain statuses
  *
 */
@@ -25,11 +25,11 @@ $loading='<span class="loading"></span>';
 $mail_active= "<span class='isservice hasaccess'>" . sprintf(_("Activado")) . "</span>";
 $mail_inactive= "<span class='isservice noaccess'>" . sprintf(_("Desactivado")) . "</span>";
 //connect and BInd
-$ldapconn=$Ldap->connect();
-$psw=$Ldap->decrypt_psw();
+//$ldapconn=$Ldap->connect();
+//$psw=$Ldap->decrypt_psw();
 if ($ldapconn){
-	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$psw); 
-	$permissions= $_SESSION["login"]["level"];
+//	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$psw); 
+//	$permissions= $_SESSION["login"]["level"];
 	switch ($permissions) :
 	case "10" :
 		$binddn=LDAP_BASE;

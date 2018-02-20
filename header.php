@@ -35,7 +35,11 @@ if (isset($_POST["language"]))
     //
 $fqdn=trim(shell_exec('hostname -f'));
 $Ldap= new LDAP();
-$current_page=basename(__FILE__);
+//$current_page=basename(__FILE__);
+$url=$_SERVER['REQUEST_URI'];
+$tokens = explode('/', $url);
+$current_page = $tokens[sizeof($tokens)-1];
+echo 'CURRR page ' .$current_page;
 $Ldap->check_login_or_redirect($current_page);
 
 if($Ldap->is_logged_in()){

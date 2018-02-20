@@ -3,24 +3,27 @@
 //ini_set('display_errors', 'On');
 
 session_start();
-require_once 'classes/class.ldap.php';
+/*require_once 'classes/class.ldap.php';
 $Ldap = new LDAP();
 
 $current_page=basename(__FILE__);
 $Ldap->check_login_or_redirect($current_page);
 
 $permissions=$_SESSION["login"]["level"];
+ */
 require_once('header.php');
 require_once('sidebar.php');
 ?>
 <?php
 
 //Set variables for ldap connection
+/*
 $ldapconn=$Ldap->connect();
 $psw=$Ldap->decrypt_psw();
 if ($ldapconn){
     $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw);
 }
+ */
 //set $info as empty
 $info='';
 $message='';

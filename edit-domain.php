@@ -2,10 +2,10 @@
 
 session_start();
 require_once 'classes/class.ldap.php';
-$Ldap= new LDAP();
+//$Ldap= new LDAP();
 
-$current_page=basename(__FILE__);
-$Ldap->check_login_or_redirect($current_page);
+//$current_page=basename(__FILE__);
+//$Ldap->check_login_or_redirect($current_page);
 require_once('header.php');
 //connect and BInd
 $errorttpe="";
@@ -17,15 +17,17 @@ $domain=($_GET["domain"])?$_GET["domain"]:'';;
 $binddn=LDAP_BASE;
 $filter="(vd=". $domain . ")";
 
-$ldapconn=$Ldap->connect();
-$psw=$Ldap->decrypt_psw();
-if ($ldapconn){
+//$ldapconn=$Ldap->connect();
+//$psw=$Ldap->decrypt_psw();
+/*if ($ldapconn){
 	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$psw); 
 	$permissions= $_SESSION["login"]["level"];
 }
-
+ */
 
 //delete domain 
+/* No deletion of domain available from this page*/
+/*
 if(isset($_POST['deldomain'])){
     //$ldapbind = $Ldap->bind($ldapconn, BINDDN , $_SESSION["login"]["password"]);
     $deletedn = 'vd='. $_POST['domainid']. ',' . LDAP_BASE;
@@ -47,7 +49,7 @@ if(isset($_POST['deldomain'])){
     }
 
 }
-
+ */
 if(isset($_POST["update-domain"]) && (!empty($domain) ))
 
 {
