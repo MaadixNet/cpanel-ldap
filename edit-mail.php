@@ -1,22 +1,11 @@
 <?php 
 
 session_start();
-/*
-require_once 'classes/class.ldap.php';
-$Ldap= new LDAP();
-$current_page=basename(__FILE__);
-$Ldap->check_login_or_redirect($current_page);
- */
 $message='';
 require_once('header.php');
-//$permissions=$_SESSION["login"]["level"];
-//connect and BInd
 $email=(isset($_GET["mail"]))?$_GET["mail"]:'';
 $domain=end(explode('@', $email));
-//$psw=$Ldap->decrypt_psw();
-//$ldapconn=$Ldap->connect();
 if ($ldapconn){
-//	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,  $psw); 
 	#TODO: Check user level to show and allow differents permissions
 	#Level 10= admin : can read and manage all accounts
 	#Level 4 postmaste (domain administratod) can read and edit all accounts related to his domain

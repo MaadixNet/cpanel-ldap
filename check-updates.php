@@ -1,17 +1,7 @@
 <?php
 
 session_start();
-//require_once 'classes/class.ldap.php';
-//$Ldap= new LDAP();
-//$current_page=basename(__FILE__);
-//$Ldap->check_login_or_redirect($current_page);
 require_once('header.php');
-//connect and BInd
-//
-//$psw=$Ldap->decrypt_psw();
-//if ($ldapconn){
-//  $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
-//}
 
 //Only admin can see this page
 if ($permissions==2){
@@ -19,23 +9,8 @@ if ($permissions==2){
 }
 
 // Check puppet status
-var_dump($ldapconn);
-
+/*
     if(isset($_POST['update']) && isset($_POST['release'])){
-      /* Maybe don't need to bind again
-       * Header has benn required
-       */
-      /*
-      $Ldap= new LDAP();
-      $current_page=basename(__FILE__);
-      $Ldap->check_login_or_redirect($current_page);
-      //connect and BInd
-      $psw=$Ldap->decrypt_psw();
-      if ($ldapconn){
-        $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
-      }
-       */
-      /* End Bind*/
 
       $release = $_POST['release'];
       $groups = $_POST['groups'];
@@ -53,7 +28,7 @@ var_dump($ldapconn);
       header('Location: /cpanel');
 
     }
-
+ */
 //$status = getpuppetstatus($Ldap,$ldapconn,$ldapbind);
 $status = $Ldap->getpuppetstatus();
 if (!isset($_POST['update']) && !isset($_POST['release'])) {
@@ -79,7 +54,6 @@ switch ($status) :
   case "pending" :
 
     /****************** Simple lock cpanel after submitting form **********/
-/*
     if(isset($_POST['update']) && isset($_POST['release'])){
       $Ldap= new LDAP();
       $current_page=basename(__FILE__);
@@ -91,7 +65,7 @@ switch ($status) :
       }
 
       $release = $_POST['release'];
-      $groups = $_POST['groups'];
+    //  $groups = $_POST['groups'];
 
       //Update ou=cpanel object to lock cpanel
       $modifydn='ou=cpanel,' . SUFFIX;
@@ -106,7 +80,6 @@ switch ($status) :
       //header('Location: /cpanel');
 
     }
-*/
     /****************** End perform update after submitting form *******/
 
     //sidebar
@@ -132,7 +105,7 @@ switch ($status) :
     $updates =$Ldap->getreleaseinfo('updates');
 
     // Get available groups in the new release
-    $obj = $updates['groups'];
+    //$obj = $updates['groups'];
 
     /****************** Perform update after submitting form **********/
 
@@ -140,13 +113,13 @@ switch ($status) :
      * on same operation, so we roemove all these 
      */
   
-  /* if(isset($_POST['update']) && isset($_POST['release'])){
+   if(isset($_POST['update']) && isset($_POST['release'])){
 
       $release = $_POST['release'];
-      $groups = $_POST['groups'];
+  //    $groups = $_POST['groups'];
 
       //Add new groups to ldap with status 'install'
-      foreach ($groups as $group){
+  /*    foreach ($groups as $group){
         if ($Ldap->search($ldapconn, 'ou='.$group.',ou=groups,' . SUFFIX, '(objectclass=*)')){
           //Modify status of existing group
           $info = array();
@@ -165,6 +138,7 @@ switch ($status) :
           $addGroup=$Ldap->addRecord($ldapconn,$entrydn,$entry);
         }
       }
+   */
 
       //Update ou=cpanel object with new release name and lock cpanel
       $modifydn='ou=cpanel,' . SUFFIX;
@@ -180,7 +154,6 @@ switch ($status) :
       header('Location: /cpanel');
 
     }
-   */
     /****************** End perform update after submitting form *******/
 
 

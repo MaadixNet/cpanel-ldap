@@ -1,21 +1,11 @@
 <?php 
 session_start();
-/*require_once 'classes/class.ldap.php';
-$Ldap= new LDAP();
-
-$current_page=basename(__FILE__);
-$Ldap->check_login_or_redirect($current_page);
- */
 require_once('header.php');
 //connect and BInd
 $errorttpe="";
 $message="";
 
-//$ldapconn=$Ldap->connect();
-//$psw=$Ldap->decrypt_psw();
 if ($ldapconn){
-//	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$psw); 
-//	$permissions= $_SESSION["login"]["level"];
 	switch ($permissions) :
 	case "10" :
 		$binddn=LDAP_BASE;
@@ -39,35 +29,9 @@ if ($ldapconn){
 
 
 
-    }
-
-
-//Modifiy Passord
-if(isset($_POST['chpsw'])){
-    //$ldapbind=$Ldap->bind($ldapconn, $_SESSION["login"]["dn"] , $_SESSION["login"]["password"]);
-    //$modifydn='uid='. $_POST['userid']. ',' . $ldaptree;
-	$domain=$_POST['domainid'];
-	$modifydn='cn=postmaster,vd='.$domain.','.LDAP_BASE;
-    #$info['userpassword'][0]="{MD5}".base64_encode(pack("H*",md5($_POST['changepsw'])));
-	$info['userpassword'][0] =ldap_password_hash($_POST['changepsw'],'md5crypt');
-    if($permissions==2) {
-    $Ldap->modifyRecord($ldapconn, $modifydn, $info );
-    } else {
-        $modifs = [
-    [
-        "attrib"  => "userPassword",
-        "modtype" => LDAP_MODIFY_BATCH_REMOVE,
-        "values"  => [$_SESSION["login"]["password"]],
-    ],
-    [
-        "attrib"  => "userPassword",
-        "modtype" => LDAP_MODIFY_BATCH_ADD,
-        "values"  => [$info['userpassword'][0]],
-    ],
-];
-    ldap_modify_batch($ldapconn, $modifydn, $modifs);
-    }
 }
+
+
 
 if ($ldapbind) {
     //Query domains in database

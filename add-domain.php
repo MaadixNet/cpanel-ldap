@@ -1,19 +1,9 @@
 <?php 
 session_start();
-require_once 'classes/class.ldap.php';
-/*
-$Ldap= new LDAP();
-$fqdn=trim(shell_exec('hostname -f'));
-$current_page=basename(__FILE__);
-$Ldap->check_login_or_redirect($current_page);
- */
-//connect and BInd
 $errorttpe=$error="";
 $message=$dns_result="";
 $statok='<i class="fa fa-check-circle-o icon checkok"></i>';
 $loading='<span class="loading"></span>';
-//$ldapconn=$Ldap->connect();
-//$psw=$Ldap->decrypt_psw();
 if ($ldapconn){
   //$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$psw); 
   $permissions= $_SESSION["login"]["level"];
@@ -38,6 +28,7 @@ if ($ldapconn){
 }
 //Add new domain
 if(isset($_POST['adddomain'])){
+  require_once 'classes/class.ldap.php';
   // header is not called so we need to perform the bind agaiin
     $Ldap= new LDAP();
     $Ldap->check_login_or_redirect($current_page);

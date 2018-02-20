@@ -1,23 +1,10 @@
 <?php 
 
 session_start();
-/*
-require_once 'classes/class.ldap.php';
-$Ldap= new LDAP();
-
-$current_page=basename(__FILE__);
-$Ldap->check_login_or_redirect($current_page);
- */
 $message='';
 require_once('header.php');
 require_once('sidebar.php');
-//connect and BInd
-/*
-$ldapconn=$Ldap->connect();
-$psw=$Ldap->decrypt_psw();
- */
 if ($ldapconn){
-  //$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
 
   #TODO: Check user level to show and allow differents permissions
   #Level 10= admin : can read and manage all accounts
@@ -26,7 +13,6 @@ if ($ldapconn){
   #need LDAP ACL to be set
   #
 
-  //$permissions= $_SESSION["login"]["level"];
   $binddn=LDAP_BASE;
   $filter="(vd=*)";
 
