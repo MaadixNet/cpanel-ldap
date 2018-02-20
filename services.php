@@ -2,22 +2,11 @@
 
 session_start();
 require_once 'classes/class.ldap.php';
-//$Ldap= new LDAP();
 
 $current_page=basename(__FILE__);
-//$Ldap->check_login_or_redirect($current_page);
 
 $message='';
 require_once('header.php');
-//connect and BInd
-//
-/*
-$ldapconn=$Ldap->connect();
-$psw=$Ldap->decrypt_psw();
-if ($ldapconn){
-  $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
-}
-*/
   #TODO: Check user level to show and allow differents permissions
   #Level 10= admin : can read and manage all accounts
   #Level 4 postmaster (domain administrator) can read and edit all accounts related to his domain excluded VPN
@@ -33,9 +22,6 @@ if ($ldapbind) {
 }
 
 // Get current release info
-// 
-//
-//$release_info = getreleaseinfo($Ldap,$ldapconn,$ldapbind, 'release');
 $release_info = $Ldap->getreleaseinfo('release');
 
 // Get available groups in the release

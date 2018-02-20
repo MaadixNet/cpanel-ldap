@@ -2,10 +2,7 @@
 
 session_start();
 require_once 'classes/class.ldap.php';
-//$Ldap= new LDAP();
 
-//$current_page=basename(__FILE__);
-//$Ldap->check_login_or_redirect($current_page);
 require_once('header.php');
 //connect and BInd
 $errorttpe="";
@@ -17,39 +14,7 @@ $domain=($_GET["domain"])?$_GET["domain"]:'';;
 $binddn=LDAP_BASE;
 $filter="(vd=". $domain . ")";
 
-//$ldapconn=$Ldap->connect();
-//$psw=$Ldap->decrypt_psw();
-/*if ($ldapconn){
-	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$psw); 
-	$permissions= $_SESSION["login"]["level"];
-}
- */
 
-//delete domain 
-/* No deletion of domain available from this page*/
-/*
-if(isset($_POST['deldomain'])){
-    //$ldapbind = $Ldap->bind($ldapconn, BINDDN , $_SESSION["login"]["password"]);
-    $deletedn = 'vd='. $_POST['domainid']. ',' . LDAP_BASE;
-    $deldomain = $Ldap->deleteRecord($ldapconn, $deletedn, $recursive = true);
-	if ($deldomain){
-       $message = "
-        <div class='alert alert-success'>
-        <button class='close' data-dismiss='alert'>&times;</button>
-        <strong>" . sprintf(_("Dominio %s eliminado"), $domain_new ) . "</strong>
-        </div>
-        ";
-    } else {
-        $message=  "
-        <div class='alert alert-error'>
-        <button class='close' data-dismiss='alert'>&times;</button>
-        <strong>" . sprintf(_("Error")) . "</strong> 
-        </div>
-        ";
-    }
-
-}
- */
 if(isset($_POST["update-domain"]) && (!empty($domain) ))
 
 {

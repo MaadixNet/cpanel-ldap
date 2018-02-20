@@ -1,28 +1,12 @@
 <?php
 
 session_start();
-//require_once 'classes/class.ldap.php';
-//$Ldap= new LDAP();
-//$current_page=basename(__FILE__);
-//$Ldap->check_login_or_redirect($current_page);
 require_once('header.php');
-//connect and BInd
-/*
-$ldapconn=$Ldap->connect();
-$psw=$Ldap->decrypt_psw();
-if ($ldapconn){
-  $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
-}
-*/
 //Only admin can see this page
 if ($permissions==2){
     $Ldap->redirect('404.php');
 }
 
-//require_once('sidebar.php');
-
-// Check puppet status
-//$status = getpuppetstatus($Ldap,$ldapconn,$ldapbind);
 $status = $Ldap->getpuppetstatus();
 $available='';
 if ($status == 'error' || $status == 'pending'){
@@ -43,7 +27,6 @@ if ($status == 'error' || $status == 'pending'){
 }
 
 // Get current release info
-//$release_info = getreleaseinfo($Ldap,$ldapconn,$ldapbind, 'release');
 $release_info = $Ldap->getreleaseinfo('release');
 // Get available groups in the release
 $obj = $release_info['groups'];

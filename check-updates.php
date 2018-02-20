@@ -1,17 +1,7 @@
 <?php
 
 session_start();
-//require_once 'classes/class.ldap.php';
-//$Ldap= new LDAP();
-//$current_page=basename(__FILE__);
-//$Ldap->check_login_or_redirect($current_page);
 require_once('header.php');
-//connect and BInd
-//
-//$psw=$Ldap->decrypt_psw();
-//if ($ldapconn){
-//  $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
-//}
 
 //Only admin can see this page
 if ($permissions==2){
@@ -22,20 +12,6 @@ if ($permissions==2){
 var_dump($ldapconn);
 
     if(isset($_POST['update']) && isset($_POST['release'])){
-      /* Maybe don't need to bind again
-       * Header has benn required
-       */
-      /*
-      $Ldap= new LDAP();
-      $current_page=basename(__FILE__);
-      $Ldap->check_login_or_redirect($current_page);
-      //connect and BInd
-      $psw=$Ldap->decrypt_psw();
-      if ($ldapconn){
-        $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
-      }
-       */
-      /* End Bind*/
 
       $release = $_POST['release'];
       $groups = $_POST['groups'];

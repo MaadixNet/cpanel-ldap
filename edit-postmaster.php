@@ -1,12 +1,6 @@
 <?php 
 
 session_start();
-require_once 'classes/class.ldap.php';
-/*$Ldap= new LDAP();
-
-$current_page=basename(__FILE__);
-$Ldap->check_login_or_redirect($current_page);
- */
 require_once('header.php');
 //connect and BInd
 $errorttpe="";
@@ -17,16 +11,6 @@ $loading='<span class="loading"></span>';
 $domain=($_GET["domain"])?$_GET["domain"]:'';;
 $binddn=LDAP_BASE;
 $filter="(vd=". $domain . ")";
-
-/*
-$ldapconn=$Ldap->connect();
-$psw=$Ldap->decrypt_psw();
-if ($ldapconn){
-	$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$psw); 
-	$permissions= $_SESSION["login"]["level"];
-}
- */
-
 
 
 if(isset($_POST["update-domain"]) && (!empty($domain) ))
