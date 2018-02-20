@@ -33,7 +33,11 @@ if (isset($_POST["language"]))
 
 /////////////////////////////////////////////////////////////////
     //
+$fqdn=trim(shell_exec('hostname -f'));
 $Ldap= new LDAP();
+$current_page=basename(__FILE__);
+$Ldap->check_login_or_redirect($current_page);
+
 if($Ldap->is_logged_in()){
 
   $ldapconn=$Ldap->connect();
@@ -56,8 +60,9 @@ if($Ldap->is_logged_in()){
     $need_reboot = $Ldap->check_reboot_needed($ldapconn);
     // Check available updates 
     
-    $vm_status= getpuppetstatus($Ldap,$ldapconn,$ldapbind); 
-    $has_updates = $Ldap->check_available_updates($ldapconn, $vm_status);
+    //$vm_status= getpuppetstatus($Ldap,$ldapconn,$ldapbind); 
+    $vm_status=$Ldap->getpuppetstatus();
+    $has_updates = $Ldap->check_available_updates();
   }
 }
 $permissions= (isset($_SESSION["login"]["level"]))?$_SESSION["login"]["level"]:"";

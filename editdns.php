@@ -1,5 +1,6 @@
 <?php 
 session_start();
+require_once('header.php');
 require_once 'classes/class.ldap.php';
 $Ldap= new LDAP();
 $current_page=basename(__FILE__);
@@ -28,7 +29,6 @@ if ($result['count'] > 0) {
 } else {
   $ismailActive = 'mailmandomain';
 }
-require_once('header.php');
 $errorttpe="";
 $message="";
 /* Set variables */

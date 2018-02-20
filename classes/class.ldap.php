@@ -206,12 +206,132 @@ class LDAP{
                             );
 
     }
-    function check_available_updates($ldapconn, $vm_status) {
-      $notification_string = '<i class="fa fa-info notify"></i>';
-      // Check available updates 
-      $avalibale_update = ($vm_status == 'pending')?$notification_string:'';
-      return $avalibale_update;
+  /******************** Get release info ***************************/
+
+  function getreleaseinfo($route){
+
+
+    //Get current release
+      $release_info= $this->search($this->connection, 'ou=cpanel,dc=example,dc=tld',  '(objectclass=*)');
+      $release = $release_info[0]['type'][0];
+
+    //Get credentials and BASE API url
+      $credentials = $this->search($this->connection, 'ou=api,dc=example,dc=tld',  '(objectclass=*)');
+      $api_userid = $credentials[0]['uid'][0];
+      $api_usertoken = $credentials[0]['userpassword'][0];
+      $api_url = $credentials[0]['host'][0];
+
+      //API url
+      $url = $api_url.$route;
+
+      //Initiate cURL.
+      $ch = curl_init($url);
+
+      //VM name
+      $vmname = gethostname();
+
+
+      //The JSON data.
+      $jsonData = array(
+        'vmname' => $vmname,
+        'release' => $release
+      );
+
+      //Encode the array into JSON.
+      $jsonDataEncoded = json_encode($jsonData);
+
+      //Tell cURL that we want to send a POST request.
+      curl_setopt($ch, CURLOPT_POST, 1);
+
+      // Will return the response, if false it print the response
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+      //Attach our encoded JSON string to the POST fields.
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonDataEncoded);
+
+      //Set the content type to application/json and add credentials to header
+      curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+      'Content-Type: application/json',
+      'X-Auth-Token: ' . $api_usertoken,
+      'X-User-Id: ' . $api_userid
+      ));
+
+      //Execute the request
+      $result = curl_exec($ch);
+
+      // Json
+      $release_info = json_decode($result, true);
+
+      //Debug
+      /*
+      echo '<pre>';
+      print_r ($release_info);
+      print_r ($result);
+      print_r ($credentials);
+      print_r ($url);
+      print_r ($api_url);
+      echo '</pre>';
+      */
+      return $release_info;
     }
+
+/******************** Get puppet status from API ***************************/
+
+  function getpuppetstatus(){
+
+
+    //Get credentials and BASE API url
+      $credentials = $this->search($this->connection, 'ou=api,' . SUFFIX,  '(objectclass=*)');
+      $api_userid = $credentials[0]['uid'][0];
+      $api_usertoken = $credentials[0]['userpassword'][0];
+      $api_url = $credentials[0]['host'][0];
+
+    //VM name
+    $vmname = gethostname();
+
+    //API url
+    $url = $api_url."vmstatus/".$vmname;
+
+    //Initiate cURL.
+    $ch = curl_init($url);
+
+    // Will return the response, if false it print the response
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    //Set the content type to application/json and add credentials to header
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+      'Content-Type: application/json',
+      'X-Auth-Token: ' . $api_usertoken,
+      'X-User-Id: ' . $api_userid
+    ));
+
+    //Execute the request
+    $result = curl_exec($ch);
+
+    // Json
+    $status_info = json_decode($result, true);
+
+    //Debug
+    /*
+    echo '<pre>';
+    print_r ($result);
+    print_r ($url);
+    print_r ($api_url);
+    print_r ($status_info);
+    echo '</pre>';
+     */
+    return $status_info["puppetstatus"];
+  }
+
+    function check_available_updates() {
+        $notification_string = '<i class="fa fa-info notify"></i>';
+        $vm_status = $this->getpuppetstatus();
+        $updates = $this->getreleaseinfo('updates');
+        // Check available updates 
+        $avalibale_update = (!empty($updates)|| $vm_status=='pending')?$notification_string:'';
+        return $avalibale_update;
+    }
+
     function check_reboot_needed($ldapconn) {
       $notification_string = '<i class="fa fa-info notify"></i>';
       // Check if a reboot is needed
@@ -238,7 +358,7 @@ class LDAP{
       }
       //$has_update= $this->check_available_updates($ldapconn);
       //$status = getpuppetstatus($Ldap,$ldapconn,$ldapbind);
-      if ($vm_status=='pending'){
+      if ($vm_status=='pending' || $this->getreleaseinfo('updates')){
         $count_notif++;
         $notification_list.='
         <li>

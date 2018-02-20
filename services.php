@@ -2,19 +2,22 @@
 
 session_start();
 require_once 'classes/class.ldap.php';
-$Ldap= new LDAP();
+//$Ldap= new LDAP();
 
 $current_page=basename(__FILE__);
-$Ldap->check_login_or_redirect($current_page);
+//$Ldap->check_login_or_redirect($current_page);
 
 $message='';
 require_once('header.php');
 //connect and BInd
+//
+/*
 $ldapconn=$Ldap->connect();
 $psw=$Ldap->decrypt_psw();
 if ($ldapconn){
   $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
 }
+*/
   #TODO: Check user level to show and allow differents permissions
   #Level 10= admin : can read and manage all accounts
   #Level 4 postmaster (domain administrator) can read and edit all accounts related to his domain excluded VPN
@@ -30,11 +33,13 @@ if ($ldapbind) {
 }
 
 // Get current release info
-$release_info = getreleaseinfo($Ldap,$ldapconn,$ldapbind, 'release');
+// 
+//
+//$release_info = getreleaseinfo($Ldap,$ldapconn,$ldapbind, 'release');
+$release_info = $Ldap->getreleaseinfo('release');
 
 // Get available groups in the release
 $obj = $release_info['groups'];
-
 // Build groups info for loop
 $group_info = [];
 foreach ($obj as $gr){
@@ -56,22 +61,11 @@ foreach ($obj as $gr){
   $group_info[$gr['id']]['link_text']=(isset($gr['link_text']))?$gr['link_text']:'';
 }
 
-/*
-echo '<pre>';
-print_r ($group_info);
-echo '</pre>';
-*/
-
 // Sidebar
 require_once('sidebar.php');
 
 // If API is available
-if (isset ($obj)){
-/*  echo '<pre>';
-  print_r($release_info );
-echo '</pre>';
- */
-  ?>
+if (isset ($obj)){?>
   <article class="content cards-page">
             <div class="title-block">
                 <h3 class="title"> <?php printf(_("Aplicaciones instaladas"));?> </h3>
@@ -102,7 +96,7 @@ echo '</pre>';
                                                 <h4></h4>
                                                 <div class="row">
                                                   <div class="col-md-6">
-                                                    <p><div class='img service-img'><img src="/cpanel/images/services/<?php echo $group_info[$service]['img'];?> " /></div></p>
+                                                    <p><div class='img service-img'><img src="<?php echo ASSETS_URI;?>/c-panel/images/services/<?php echo $group_info[$service]['img'];?> " /></div></p>
                                                   </div>
                                                   <div class="col-md-6">
                                                    <?php if (!empty($group_info[$service]['link_url'])){ ?>

@@ -22,7 +22,8 @@ if ($permissions==2){
 //require_once('sidebar.php');
 
 // Check puppet status
-$status = getpuppetstatus($Ldap,$ldapconn,$ldapbind);
+//$status = getpuppetstatus($Ldap,$ldapconn,$ldapbind);
+$status = $Ldap->getpuppetstatus();
 $available='';
 if ($status == 'error' || $status == 'pending'){
   //sidebar
@@ -42,7 +43,8 @@ if ($status == 'error' || $status == 'pending'){
 }
 
 // Get current release info
-$release_info = getreleaseinfo($Ldap,$ldapconn,$ldapbind, 'release');
+//$release_info = getreleaseinfo($Ldap,$ldapconn,$ldapbind, 'release');
+$release_info = $Ldap->getreleaseinfo('release');
 // Get available groups in the release
 $obj = $release_info['groups'];
 //Create mpty array for dependencies
@@ -128,13 +130,8 @@ foreach ($obj as $service_data){
 }
 //sidebar
 require_once('sidebar.php');
-if (!empty($arrto)){
-    echo '<pre>';
-    print_r($arrto);
-    echo '</pre';
 
-}
-
+print_r ($status);
 if (empty($release_info)) { ?>
     <article class="content cards-page">
             <div class="title-block">
@@ -192,7 +189,7 @@ if (empty($release_info)) { ?>
                                             <h4><?php echo $service_data['name'];?></h4>
                                                 <div class="row">
                                                   <div class="col-md-6">
-                                                    <p><div class='img service-img'><img src="images/services/<?php echo $service_data['img'];?> " /></div></p>
+                                                    <p><div class='img service-img'><img src="<?php echo ASSETS_URI;?>/c-panel/images/services/<?php echo $service_data['img'];?> " /></div></p>
                                                   </div>
                                                   <div class="col-md-6">
                                                      <?php

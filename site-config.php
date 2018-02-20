@@ -15,6 +15,8 @@ define ("LDAP_PEOPLE","ou=sshd,ou=People," .  SUFFIX);
 define ("LDAP_SERVICES", "ou=groups," . SUFFIX);
 //To create internal links
 define ("BASE_PATH" , basename(__DIR__));  
+//Uri to get externar resource from (images)
+define ("ASSETS_URI", "https://assets.maadix.net");
 // The languages available
  $supported_languages = array();
 // $supported_languages["de_DE"] = "Deutsch";

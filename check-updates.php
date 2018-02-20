@@ -1,17 +1,17 @@
 <?php
 
 session_start();
-require_once 'classes/class.ldap.php';
-$Ldap= new LDAP();
-$current_page=basename(__FILE__);
-$Ldap->check_login_or_redirect($current_page);
+//require_once 'classes/class.ldap.php';
+//$Ldap= new LDAP();
+//$current_page=basename(__FILE__);
+//$Ldap->check_login_or_redirect($current_page);
 require_once('header.php');
 //connect and BInd
 //
-$psw=$Ldap->decrypt_psw();
-if ($ldapconn){
-  $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
-}
+//$psw=$Ldap->decrypt_psw();
+//if ($ldapconn){
+//  $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
+//}
 
 //Only admin can see this page
 if ($permissions==2){
@@ -19,7 +19,43 @@ if ($permissions==2){
 }
 
 // Check puppet status
-$status = getpuppetstatus($Ldap,$ldapconn,$ldapbind);
+var_dump($ldapconn);
+
+    if(isset($_POST['update']) && isset($_POST['release'])){
+      /* Maybe don't need to bind again
+       * Header has benn required
+       */
+      /*
+      $Ldap= new LDAP();
+      $current_page=basename(__FILE__);
+      $Ldap->check_login_or_redirect($current_page);
+      //connect and BInd
+      $psw=$Ldap->decrypt_psw();
+      if ($ldapconn){
+        $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
+      }
+       */
+      /* End Bind*/
+
+      $release = $_POST['release'];
+      $groups = $_POST['groups'];
+
+      //Update ou=cpanel object to lock cpanel
+      $modifydn='ou=cpanel,' . SUFFIX;
+      $info = array();
+      $info['status']= 'locked';
+      $updaterelease=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
+
+      //Clear this sessions
+      session_destroy();
+
+      //Redirect to home
+      header('Location: /cpanel');
+
+    }
+
+//$status = getpuppetstatus($Ldap,$ldapconn,$ldapbind);
+$status = $Ldap->getpuppetstatus();
 if (!isset($_POST['update']) && !isset($_POST['release'])) {
   require_once('sidebar.php');
 }
@@ -43,8 +79,16 @@ switch ($status) :
   case "pending" :
 
     /****************** Simple lock cpanel after submitting form **********/
-
+/*
     if(isset($_POST['update']) && isset($_POST['release'])){
+      $Ldap= new LDAP();
+      $current_page=basename(__FILE__);
+      $Ldap->check_login_or_redirect($current_page);
+      //connect and BInd
+      $psw=$Ldap->decrypt_psw();
+      if ($ldapconn){
+        $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
+      }
 
       $release = $_POST['release'];
       $groups = $_POST['groups'];
@@ -56,13 +100,13 @@ switch ($status) :
       $updaterelease=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
 
       //Clear this sessions
-      session_destroy();
+      //session_destroy();
 
       //Redirect to home
-      header('Location: /cpanel');
+      //header('Location: /cpanel');
 
     }
-
+*/
     /****************** End perform update after submitting form *******/
 
     //sidebar
@@ -84,14 +128,19 @@ switch ($status) :
   case "ready" :
 
     // Check for updates
-    $updates = getreleaseinfo($Ldap,$ldapconn,$ldapbind, 'updates');
+    //$updates = getreleaseinfo($Ldap,$ldapconn,$ldapbind, 'updates');
+    $updates =$Ldap->getreleaseinfo('updates');
 
     // Get available groups in the new release
     $obj = $updates['groups'];
 
     /****************** Perform update after submitting form **********/
 
-    if(isset($_POST['update']) && isset($_POST['release'])){
+    /* Update does not allow anymore to install gorups
+     * on same operation, so we roemove all these 
+     */
+  
+  /* if(isset($_POST['update']) && isset($_POST['release'])){
 
       $release = $_POST['release'];
       $groups = $_POST['groups'];
@@ -131,13 +180,12 @@ switch ($status) :
       header('Location: /cpanel');
 
     }
-
+   */
     /****************** End perform update after submitting form *******/
 
 
     //sidebar
     //require_once('sidebar.php');
-
     if (empty($updates)) { ?>
       <article class="content cards-page">
             <div class="title-block">

@@ -48,7 +48,6 @@ if(isset($_POST['deldomain'])){
 
 }
 
-
 if(isset($_POST["update-domain"]) && (!empty($domain) ))
 
 {

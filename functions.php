@@ -634,7 +634,12 @@ function sqsetcookie($sName, $sValue='deleted', $iExpire=0, $sPath="", $sDomain=
 }
 
 /******************** Get release info ***************************/
-
+/*
+ * This function has benn transformed into a method of the ldap class
+ * So it's not needed to pass so many variables
+ * we just need route
+ * 
+ 
 function getreleaseinfo($Ldap,$ldapconn,$ldapbind,$route){
 
 
@@ -695,7 +700,7 @@ function getreleaseinfo($Ldap,$ldapconn,$ldapbind,$route){
 
 
   //Debug
- /* 
+ 
   echo '<pre>';
   print_r ($release_info);
   print_r ($result);
@@ -703,13 +708,13 @@ function getreleaseinfo($Ldap,$ldapconn,$ldapbind,$route){
   print_r ($url);
   print_r ($api_url);
   echo '</pre>';
-  */
+
 
   return $release_info;
 }
-
 /******************** Get puppet status from API ***************************/
-
+/* function transformed into a method of the class Ldap
+ *
 function getpuppetstatus($Ldap,$ldapconn,$ldapbind){
 
 
@@ -747,16 +752,16 @@ function getpuppetstatus($Ldap,$ldapconn,$ldapbind){
   $status_info = json_decode($result, true);
 
   //Debug
-  /*
   echo '<pre>';
   print_r ($result);
   print_r ($url);
   print_r ($api_url);
   print_r ($status_info);
   echo '</pre>';
-   */
   return $status_info["puppetstatus"];
 }
+ */
+
 /* Function to print intput fields for groups 
  * Used in service-available
  * @param $service_data : an array from the api that contains dependencies for groups

@@ -21,8 +21,8 @@ foreach ($groups as $group){
 }
  */
 session_start();
-require_once  __DIR__.'/../classes/class.ldap.php';
-require_once __DIR__.'/../site-config.php';
+//require_once  __DIR__.'/../classes/class.ldap.php';
+//require_once __DIR__.'/../site-config.php';
 /*
 if (count($groups)>0){
   printf(_("Las siguientes aplicaciones se han seleccionado para ser instaladas en esta actualización:"));
@@ -74,5 +74,3 @@ echo "    <button type='submit' name='update' class='btn btn-small btn-primary'>
           <button type='button' class='btn btn-secondary' data-dismiss='modal'>" . sprintf (_("Cancelar")) . "</button>
         </form>
       </div>";
-
-ldap_close($ldapconn);
