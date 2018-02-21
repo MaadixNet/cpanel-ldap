@@ -9,15 +9,17 @@ if ($permissions==2){
 }
 
 // Check puppet status
-/*
     if(isset($_POST['update']) && isset($_POST['release'])){
 
       $release = $_POST['release'];
-      $groups = $_POST['groups'];
+      //$groups = $_POST['groups'];
 
       //Update ou=cpanel object to lock cpanel
       $modifydn='ou=cpanel,' . SUFFIX;
       $info = array();
+      if ($release != 'pending'){
+        $info['type']= $release;
+      }
       $info['status']= 'locked';
       $updaterelease=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
 
@@ -28,7 +30,6 @@ if ($permissions==2){
       header('Location: /cpanel');
 
     }
- */
 //$status = getpuppetstatus($Ldap,$ldapconn,$ldapbind);
 $status = $Ldap->getpuppetstatus();
 if (!isset($_POST['update']) && !isset($_POST['release'])) {
@@ -53,38 +54,6 @@ switch ($status) :
   break;
   case "pending" :
 
-    /****************** Simple lock cpanel after submitting form **********/
-    if(isset($_POST['update']) && isset($_POST['release'])){
-      $Ldap= new LDAP();
-      $current_page=basename(__FILE__);
-      $Ldap->check_login_or_redirect($current_page);
-      //connect and BInd
-      $psw=$Ldap->decrypt_psw();
-      if ($ldapconn){
-        $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
-      }
-
-      $release = $_POST['release'];
-    //  $groups = $_POST['groups'];
-
-      //Update ou=cpanel object to lock cpanel
-      $modifydn='ou=cpanel,' . SUFFIX;
-      $info = array();
-      $info['status']= 'locked';
-      $updaterelease=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
-
-      //Clear this sessions
-      //session_destroy();
-
-      //Redirect to home
-      //header('Location: /cpanel');
-
-    }
-    /****************** End perform update after submitting form *******/
-
-    //sidebar
-    //require_once('sidebar.php');
-
     ?>
 
       <article class="content cards-page">
@@ -104,61 +73,6 @@ switch ($status) :
     //$updates = getreleaseinfo($Ldap,$ldapconn,$ldapbind, 'updates');
     $updates =$Ldap->getreleaseinfo('updates');
 
-    // Get available groups in the new release
-    //$obj = $updates['groups'];
-
-    /****************** Perform update after submitting form **********/
-
-    /* Update does not allow anymore to install gorups
-     * on same operation, so we roemove all these 
-     */
-  
-   if(isset($_POST['update']) && isset($_POST['release'])){
-
-      $release = $_POST['release'];
-  //    $groups = $_POST['groups'];
-
-      //Add new groups to ldap with status 'install'
-  /*    foreach ($groups as $group){
-        if ($Ldap->search($ldapconn, 'ou='.$group.',ou=groups,' . SUFFIX, '(objectclass=*)')){
-          //Modify status of existing group
-          $info = array();
-          $modifydn='ou='.$group.',ou=groups,' . SUFFIX;
-          $info['status']= 'install';
-          $updategroup=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
-        }else{
-          //Add new group to ldap
-          $entry = array();
-          $entry["objectclass"][0] = "organizationalUnit";
-          $entry["objectclass"][1] = "metaInfo";
-          $entry["ou"] = $group;
-          $entry["status"] = "install";
-          $entry["type"] = "available";
-          $entrydn='ou=' . $group .',ou=groups,' . SUFFIX;
-          $addGroup=$Ldap->addRecord($ldapconn,$entrydn,$entry);
-        }
-      }
-   */
-
-      //Update ou=cpanel object with new release name and lock cpanel
-      $modifydn='ou=cpanel,' . SUFFIX;
-      $info = array();
-      $info['type']= $release;
-      $info['status']= 'locked';
-      $updaterelease=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
-
-      //Clear this sessions
-      session_destroy();
-
-      //Redirect to home
-      header('Location: /cpanel');
-
-    }
-    /****************** End perform update after submitting form *******/
-
-
-    //sidebar
-    //require_once('sidebar.php');
     if (empty($updates)) { ?>
       <article class="content cards-page">
             <div class="title-block">
@@ -180,7 +94,7 @@ switch ($status) :
                                     <div class="card-block">
                                         <!-- Nav tabs -->
                                         <div class="card-title-block">
-                                        <h3 class="title"><?php printf(_("Existe una nueva versión del panel de control. Desde esta página puedes actualizaar el sistema a la última versión y a la vez instalar nuevas aplicaciones en una única operación."));?></h3>
+                                        <h3 class="title"><?php printf(_("Existe una nueva versión del panel de control. Desde esta página puedes actualizaar a la última versión, para que tu sistema incluya los cambios listados a continuación."));?></h3>
                                         <br>
                                         <h3 class="title"><?php printf(_("Detalles"));?></h3>
                                             <br>
@@ -234,6 +148,13 @@ switch ($status) :
         </div>
         <div class="modal-body" id="modal-body">
         </div>
+        <div class='modal-footer'>
+        <form action='' method='POST'>
+          <input type='hidden' name='release' value='<?php echo $updates['release'];?>' />
+          <button type='submit' name='update' class='btn btn-small btn-primary'><?php printf(_('Actualizar'));?></button>
+          <button type='button' class='btn btn-secondary' data-dismiss='modal'><?php printf (_("Cancelar"));?></button>
+        </form>
+      </div>
       </div><!--modal-content-->
     </div><!--modal-dialog-->
   </div><!--exampleModal-->

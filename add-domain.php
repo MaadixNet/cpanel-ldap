@@ -4,37 +4,9 @@ $errorttpe=$error="";
 $message=$dns_result="";
 $statok='<i class="fa fa-check-circle-o icon checkok"></i>';
 $loading='<span class="loading"></span>';
-if ($ldapconn){
-  //$ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$psw); 
-  $permissions= $_SESSION["login"]["level"];
-  switch ($permissions) :
-  case "10" :
-    $binddn=LDAP_BASE;
-    $filter="(vd=*)";
-  break;
-    case "4" :
-    $binddn=LDAP_BASE;
-    $who=$_SESSION["phamm"]["domain"];
-    $filter="(vd=" . $who .")";
-    break;
-  case "2":
-    $who= $_SESSION['login']["username"];
-    $binddn="vd=".$_SESSION["phamm"]["domain"].",".LDAP_BASE;           
-    $filter="(mail=" . $who .")";
-    break;
-  default:
-  break;
-  endswitch;
-}
+require_once('header.php');
 //Add new domain
 if(isset($_POST['adddomain'])){
-  require_once 'classes/class.ldap.php';
-  // header is not called so we need to perform the bind agaiin
-    $Ldap= new LDAP();
-    $Ldap->check_login_or_redirect($current_page);
-    $ldapconn=$Ldap->connect();
-    $psw=$Ldap->decrypt_psw();
-    $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"]  ,$psw);
     // Start cecking fields
     $password=$_POST['pswd1'];
     $password2=$_POST['pswd2'];
@@ -191,8 +163,10 @@ white_list = ""';
       }
   
 }
-require_once('header.php');
+//require_once('header.php');
 require_once('sidebar.php');
+
+
 ?>
 <article class="content forms-page" id="add-domain">
   <div class="title-block">
@@ -207,7 +181,7 @@ require_once('sidebar.php');
   <h3 class="subtitle"> <?php printf(_(" Activar un dominio en este panel creará la configuración necesaria para:"));?></h3>
   <p>
     <ul>
-      </li>
+      <li>
         <?php printf(_("Crear cuentas de correo electrónico"));?>
       </li>
       <li> 
