@@ -17,7 +17,7 @@ if ($permissions==2){
       //Update ou=cpanel object to lock cpanel
       $modifydn='ou=cpanel,' . SUFFIX;
       $info = array();
-      if ($release != 'pending'){
+      if (!empty($release) && $release != 'pending'){
         $info['type']= $release;
       }
       $info['status']= 'locked';
@@ -39,6 +39,8 @@ switch ($status) :
   case "error" :
     //sidebar
     //require_once('sidebar.php');
+    //Set the correct value for the update type: pending, error or new release
+    $update_type = ''; 
     ?>
 
     <article class="content cards-page">
@@ -53,7 +55,7 @@ switch ($status) :
     <?php
   break;
   case "pending" :
-
+    $update_type = 'pending';
     ?>
 
       <article class="content cards-page">
@@ -80,7 +82,8 @@ switch ($status) :
             </div>
       </article>
 
-    <?php }else{ ?>
+    <?php }else{
+    $update_type = $updates['release'];?>
 
       <article class="content cards-page">
             <div class="title-block">
@@ -150,7 +153,7 @@ switch ($status) :
         </div>
         <div class='modal-footer'>
         <form action='' method='POST'>
-          <input type='hidden' name='release' value='<?php echo $updates['release'];?>' />
+          <input type='hidden' name='release' value='<?php echo $update_type;?>' />
           <button type='submit' name='update' class='btn btn-small btn-primary'><?php printf(_('Actualizar'));?></button>
           <button type='button' class='btn btn-secondary' data-dismiss='modal'><?php printf (_("Cancelar"));?></button>
         </form>
