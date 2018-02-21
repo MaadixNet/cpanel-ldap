@@ -6,7 +6,9 @@ $errorttpe="";
 $message="";
 $statok='<i class="fa fa-check-circle-o icon checkok"></i>';
 $loading='<span class="loading"></span>';
-
+require_once 'classes/class.psql_query.php';
+$sqlDomains= new Domains();
+$mailman_domains= $sqlDomains->getDomains();
 if ($ldapconn && $permissions==10){
         $ldaptree=LDAP_BASE;
         $filter="(&(vd=*)(accountActive=TRUE))";
