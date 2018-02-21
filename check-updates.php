@@ -94,7 +94,7 @@ switch ($status) :
                                     <div class="card-block">
                                         <!-- Nav tabs -->
                                         <div class="card-title-block">
-                                        <h3 class="title"><?php printf(_("Existe una nueva versión del panel de control. Desde esta página puedes actualizaar el sistema a la última versión y a la vez instalar nuevas aplicaciones en una única operación."));?></h3>
+                                        <h3 class="title"><?php printf(_("Existe una nueva versión del panel de control. Desde esta página puedes actualizaar a la última versión, para que tu sistema incluya los cambios listados a continuación."));?></h3>
                                         <br>
                                         <h3 class="title"><?php printf(_("Detalles"));?></h3>
                                             <br>

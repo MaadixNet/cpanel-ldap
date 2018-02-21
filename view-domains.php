@@ -50,7 +50,7 @@ if(isset($_POST['deldomain'])){
        $message = "
         <div class='alert alert-success'>
         <button class='close' data-dismiss='alert'>&times;</button>
-        <strong>" . sprintf(_("Dominio %s eliminado"), $domain_new ) . "</strong>
+        <strong>" . sprintf(_("Dominio %s eliminado"), $_POST['domainid'] ) . "</strong>
         </div>
         ";
     } else {

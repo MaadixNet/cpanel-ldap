@@ -97,10 +97,11 @@ require_once('sidebar.php');
 
       <div class="inner" id="maincol">
       <?php
-      foreach($resultMX as $value){
+      if ($resultMX) {
+        foreach($resultMX as $value){
           array_push($allMX,$value['target']);
+        }
       }
-
       echo '<h2 class="center">';
       printf(_("Servidor Web"));
       echo '</h2>';
