@@ -9,26 +9,27 @@ if ($permissions==2){
 }
 
 // Check puppet status
-/*
     if(isset($_POST['update']) && isset($_POST['release'])){
 
       $release = $_POST['release'];
-      $groups = $_POST['groups'];
+      //$groups = $_POST['groups'];
 
       //Update ou=cpanel object to lock cpanel
       $modifydn='ou=cpanel,' . SUFFIX;
       $info = array();
-      $info['status']= 'locked';
+      if ($release != 'pending'){
+        $info['type']= $release;
+      }
+      $info['status']= 'loccccccccked';
       $updaterelease=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
 
       //Clear this sessions
-      session_destroy();
+      //session_destroy();
 
       //Redirect to home
-      header('Location: /cpanel');
+     // header('Location: /cpanel');
 
     }
- */
 //$status = getpuppetstatus($Ldap,$ldapconn,$ldapbind);
 $status = $Ldap->getpuppetstatus();
 if (!isset($_POST['update']) && !isset($_POST['release'])) {
@@ -54,6 +55,7 @@ switch ($status) :
   case "pending" :
 
     /****************** Simple lock cpanel after submitting form **********/
+/*
     if(isset($_POST['update']) && isset($_POST['release'])){
       $Ldap= new LDAP();
       $current_page=basename(__FILE__);
@@ -80,6 +82,7 @@ switch ($status) :
       //header('Location: /cpanel');
 
     }
+*/
     /****************** End perform update after submitting form *******/
 
     //sidebar
@@ -112,14 +115,14 @@ switch ($status) :
     /* Update does not allow anymore to install gorups
      * on same operation, so we roemove all these 
      */
-  
+ /* 
    if(isset($_POST['update']) && isset($_POST['release'])){
 
       $release = $_POST['release'];
   //    $groups = $_POST['groups'];
 
       //Add new groups to ldap with status 'install'
-  /*    foreach ($groups as $group){
+      foreach ($groups as $group){
         if ($Ldap->search($ldapconn, 'ou='.$group.',ou=groups,' . SUFFIX, '(objectclass=*)')){
           //Modify status of existing group
           $info = array();
@@ -138,7 +141,6 @@ switch ($status) :
           $addGroup=$Ldap->addRecord($ldapconn,$entrydn,$entry);
         }
       }
-   */
 
       //Update ou=cpanel object with new release name and lock cpanel
       $modifydn='ou=cpanel,' . SUFFIX;
@@ -154,6 +156,7 @@ switch ($status) :
       header('Location: /cpanel');
 
     }
+*/
     /****************** End perform update after submitting form *******/
 
 
@@ -234,6 +237,13 @@ switch ($status) :
         </div>
         <div class="modal-body" id="modal-body">
         </div>
+        <div class='modal-footer'>
+        <form action='' method='POST'>
+          <input type='hidden' name='release' value='<?php echo $updates['release'];?>' />
+          <button type='submit' name='update' class='btn btn-small btn-primary'><?php printf(_('Actualizar'));?></button>
+          <button type='button' class='btn btn-secondary' data-dismiss='modal'><?php printf (_("Cancelar"));?></button>
+        </form>
+      </div>
       </div><!--modal-content-->
     </div><!--modal-dialog-->
   </div><!--exampleModal-->

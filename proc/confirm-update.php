@@ -57,20 +57,12 @@ if ($release=="pending"){
     printf(_("Confirmas que quiere actualizar a la nueva versión %s ahora?"), $release);
 }
 
-
+/*
 echo "<div class='modal-footer'>
         <form action='' method='POST'>
           <input type='hidden' name='release' value='". $release ."' />";
-//here are merged in groups, selected groups and dependencies
-/*
-foreach ($groups as $group) {
-echo "    <input type='hidden' name='groups[]' value='". $group ."' />";
-}
-foreach ($dependencies as $group) {
-echo "    <input type='hidden' name='groups[]' value='". $group ."' />";
-}
- */
 echo "    <button type='submit' name='update' class='btn btn-small btn-primary'>". sprintf(_('Actualizar')) ."</button>
           <button type='button' class='btn btn-secondary' data-dismiss='modal'>" . sprintf (_("Cancelar")) . "</button>
         </form>
       </div>";
+ */

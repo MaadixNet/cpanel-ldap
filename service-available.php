@@ -68,13 +68,10 @@ if(isset($_POST['install']) && isset($_POST['release'])){
     }
   }
  
-  print_r($inputDep);
   
   foreach ($inputDep as $key => $value){
 
-    echo 'la app es: ' . $key;
     foreach ($value as $dep => $val){
-      echo 'depName: ' . $dep . ' depValue: ' . $val;
     $entrydn='ou='. $dep .',ou=' . $key .',' . LDAP_SERVICES;
    if (!$Ldap->search($ldapconn, $entrydn, '(objectclass=*)')){
       $entry["objectclass"][0] = "organizationalUnit";
