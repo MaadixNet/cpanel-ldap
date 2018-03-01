@@ -39,8 +39,9 @@ $Ldap= new LDAP();
 $url=$_SERVER['REQUEST_URI'];
 $tokens = explode('/', $url);
 $current_page = $tokens[sizeof($tokens)-1];
-$Ldap->check_login_or_redirect($current_page);
-
+if ($current_page !='activate.php') {
+  $Ldap->check_login_or_redirect($current_page);
+}
 if($Ldap->is_logged_in()){
 
   $ldapconn=$Ldap->connect();

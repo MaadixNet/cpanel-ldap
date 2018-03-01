@@ -27,13 +27,14 @@ $permission = $_SESSION["login"]["level"];
   default:
   break;
   endswitch;
-
+/*
 if ($permission==10 && $_SESSION["login"]["status"] != "active") {
 
     $url='activate.php';
 
 }
   $user_home->redirect($url);
+*/
 }
 
 
