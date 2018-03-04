@@ -35,7 +35,7 @@ foreach ($obj as $gr){
   $group_info[$gr['id']]['img']=(isset($gr['img']))?$gr['img']:'';
   $group_info[$gr['id']]['title']=(isset($gr['title']))?$gr['title']:$gr['title'];
   //if group has domain as dependency, search in ldap the domain to build the link
-  if (isset($gr['dependencies']) && in_array("domain", $gr['dependencies'])) {
+  if (isset($gr['dependencies']) && in_array("domain.domain.Dominio", $gr['dependencies'])) {
     if ($ldapbind) {
       $domain= $Ldap->search($ldapconn,'ou=domain,ou='.$gr["id"].','.LDAP_SERVICES ,'(objectClass=organizationalUnit)');
     }
@@ -46,7 +46,12 @@ foreach ($obj as $gr){
   $group_info[$gr['id']]['target']=(isset($gr['target']))?$gr['target']:'';
   $group_info[$gr['id']]['link_text']=(isset($gr['link_text']))?$gr['link_text']:'';
 }
+/*
+echo '<pre>';
+print_r($obj);
 
+echo '<pre>';
+ */
 // Sidebar
 require_once('sidebar.php');
 
