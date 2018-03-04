@@ -223,6 +223,36 @@ $(document).ready(function() {
    * when adding domain
    * TODO
    */
+/* Confirm deactivate or reactivate gorups in services.php */
+$('#changeStatusModal').on('show.bs.modal', function (event) {
+  //groups
+  var activategroups = [];
+  var deactivategroups= [];
+  //$("input:checkbox[name=gorups]:checked").each(function(){
+  $("input[name='activateGroup\[\]']").each(function(){
+    var appName = $(this).parent('div').attr('data-groupname');
+    activategroups.push(appName);
+  });
+  $("input[name='deactivateGroup\[\]']").each(function(){
+    var appName = $(this).parent('div').attr('data-groupname');
+    deactivategroups.push(appName);
+  });
+
+
+  var button = $(event.relatedTarget); // Button that triggered the modal
+  var modal = $(this);
+  var body=modal.find('#modal-response');
+            $.ajax({
+
+                type : 'POST',
+                url  : 'proc/confirm-changeAppStatus.php',
+                data : {activategroups: activategroups, deactivategroups: deactivategroups},
+                success : function(data)
+                          { 
+                            body.html(data);
+                          }
+                });
+})
 
   /*Confrm button on delete Domain
    * in page edomain.php
@@ -309,34 +339,6 @@ $('#rebootModal').on('show.bs.modal', function (event) {
 })
 
 $('#updateModal').on('show.bs.modal', function (event) {
-  //groups
-  /*var groups = [];
-  $("input:checkbox[name=groups]:checked").each(function(){
-    groups.push($(this).val());
-  });
-
-  //dependencies
-  var inputs = $('.dependency').get();
-  var dependencies  = { };
-  for (i=0; i<inputs.length; i++){
-    m = inputs[i].name.match(/\[(.*?)\]\[(\d+)\]/);
-    if(!dependencies[m[1]]){
-       dependencies[m[1]] = { };
-    }
-    dependencies[m[1]][m[2]]= inputs[i].value;
-  }
-
-  //domains
-  var inputs = $('.domain').get();
-  var domains  = { };
-  for (i=0; i<inputs.length; i++){
-    m = inputs[i].name.match(/\[(.*?)\]/);
-    if(!domains[m[1]]){
-       domains[m[1]] = { };
-    }
-    domains[m[1]]= inputs[i].value;
-  }
-*/
 
   //release
   var button = $(event.relatedTarget); // Button that triggered the modal
@@ -369,7 +371,8 @@ $('#installModal').on('show.bs.modal', function (event) {
   var deps = [];
   //$("input:checkbox[name=gorups]:checked").each(function(){
   $("input[name='installGroup\[\]']").not('.dependency').each(function(){
-    groups.push($(this).val());
+     var appName = $(this).parent('div').attr('data-groupname');
+    groups.push(appName);
   });
   $("input.dependency[name='installGroup\[\]']").each(function(){
       var newItem = $(this).val();
@@ -378,42 +381,6 @@ $('#installModal').on('show.bs.modal', function (event) {
         deps.push(newItem);
       }
   });
-  //dependencies
-//var appl=dep=[];
-  /*Get all value with dependencies to be written in ldap*/
-  /*
-  var inputs = $('.dependency').get();
-  var dependencies  = {};
-  $(".col-md-6").find(":input.dependency[type='hidden']").each(function() {
-  // Create an indexed aray filedId: fieldValue 
-  // eg.Array [fields] Object { domain: mydomain.com, mail: me@example.com}...
-  // encode to base64 because of the ] character at the end of the string
-  // php gets crazy with that [] are not good in array keys
-      dependencies[btoa($(this).attr('name'))] = $(this).val();
-
-
-  });
-console.log(dependencies);
- /* 
-  for (i=0; i<inputs.length; i++){
-    m = inputs[i].name.match(/\[(.*?)\]\[(\d+)\]/);
-    if(!dependencies[m[1]]){
-       dependencies[m[1]] = { };
-    }
-    dependencies[m[1]][m[2]]= inputs[i].value;
-  }
-
-  //domains
-  var inputs = $('.domain').get();
-  var domains  = { };
-  for (i=0; i<inputs.length; i++){
-    m = inputs[i].name.match(/\[(.*?)\]/);
-    if(!domains[m[1]]){
-       domains[m[1]] = { };
-    }
-    domains[m[1]]= inputs[i].value;
-  }
-*/
   //release
   var button = $(event.relatedTarget); // Button that triggered the modal
   var release = button.data('release');
@@ -599,6 +566,27 @@ $(document).ready(function() {
     });
 });
 
+
+/* Modals for groups activation and desactivation */
+$('input.deactivateGroup:checkbox').on('change', function(e){
+  var appmodal= $(this).parents('.col-md-6').find('input[name="groupname"]').val();
+  if(e.target.checked){
+    $('<input type="hidden" name="deactivateGroup\[\]" value="' + appmodal + '">').prependTo("#deactivate-group-" +appmodal);
+  } else {
+  $('#deactivate-group-' +appmodal +' input').remove();
+  }
+});
+
+/* Modal for groups activation and desactivation */
+$('input.activateGroup:checkbox').on('change', function(e){
+  var appmodal= $(this).parents('.col-md-6').find('input[name="groupname"]').val();
+  if(e.target.checked){
+    $('<input type="hidden" name="activateGroup\[\]" value="' + appmodal + '">').prependTo("#activate-group-" +appmodal);
+  } else {
+  $('#activate-group-' +appmodal +' input').remove();
+  }
+});
+
 //////      Modal frames required fields apps     //////////////////////////////////////////////////////
 //doc: https://stackoverflow.com/questions/27554027/pass-data-to-parent-window-from-modal-using-bootstrap
 //doc: https://stackoverflow.com/questions/35754776/checkbox-change-state-of-checkbox-by-ajax
@@ -606,7 +594,7 @@ $(document).ready(function() {
 //current app modal var
 //var appmodal;
 
-$('input[type="checkbox"]').on('change', function(e){
+$('input.installGroups:checkbox').on('change', function(e){
   var appmodal = $(this).parents('.col-md-6').find('input[name="groups"]').val();
   if(e.target.checked){
     //get values

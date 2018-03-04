@@ -188,7 +188,7 @@ if (empty($release_info)) { ?>
                                                       }
                                                     ?>  
                                                     <div><label>
-                                                      <input type="checkbox" class="checkbox <?php echo $depNeedsInput;?>" name="groups" value="<?php echo $service_data['id']; ?>" />
+                                                      <input type="checkbox" class="installGroups checkbox <?php echo $depNeedsInput;?>" name="groups" value="<?php echo $service_data['id']; ?>" />
                                                     <span><?php printf(_("Seleccionar"));?></span></label></div>
                                                       <input type="hidden" class="groupname" name="groupname" value="<?php echo $service_data['name']; ?>" />
                                                     <?php if (isset($dep_form_fields['hiddenHtml'])) echo $dep_form_fields['hiddenHtml'];?>
