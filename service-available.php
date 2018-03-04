@@ -263,7 +263,7 @@ $appnameSpan='<span class="appnameSpan"></span>';
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
-           <h4 class="modal-title" id="userModalLabel"><?php printf(_("Campos resqueridos para %s"),$appnameSpan );?></h4>
+           <h4 class="modal-title" id="userModalLabel"><?php printf(_("Campos requeridos para %s"),$appnameSpan );?></h4>
         </div>
         <div class="modal-body" id="modal-body">
           <form id="fieldset">
