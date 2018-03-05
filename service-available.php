@@ -103,8 +103,15 @@ if(isset($_POST['install']) && isset($_POST['release'])){
 }
 
 /****************** End perform update after submitting form *******/
-
+// Repopulate $serv_installed with all the applicatios that are installed, also if they are disabled,
+// so they don't appear between available apllicatio.
+// $serv_installed originally comes from header, and it ocly includes active apps
 // Check if there is any group to install
+
+
+
+$serv_installed= $Ldap->search($ldapconn, LDAP_SERVICES ,'(|(&(objectClass=organizationalUnit)(status=enabled)(type=available))(&(objectClass=organizationalUnit)(status=disabled)(type=installed)))');
+
 foreach ($obj as $service_data){
   if (array_search($service_data['id'], array_column(array_column($serv_installed, 'ou'),0)) === false) $available=1;
 }
