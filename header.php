@@ -51,7 +51,7 @@ if($Ldap->is_logged_in()){
   }
   //Get all installed services to show or not in menu
   if ($ldapbind) {
-    $serv_installed= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled))');
+    $serv_installed= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled)(type=available))');
     /* Get data for notifications. 
      ** Available Notifications are:
      ** Reboot needed :  when ou=reboot,ou=cpanel,dc=example,dc=tld  attribute info=reboot

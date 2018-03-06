@@ -46,6 +46,18 @@ if (!empty($activateGroup)) {
     
     }
   }
+// Lock cpanel and destroy session
+  if ($updategroup){
+    //Update ou=cpanel object with lock status
+    $modifydn='ou=cpanel,' . SUFFIX ;
+    $info = array();
+    $info['status']= 'locked';
+    $updaterelease=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
+    //Clear this sessions
+    session_destroy();
+    //Redirect to home
+    header('Location: /cpanel');
+  }
 }
 // Get current release info
 $release_info = $Ldap->getreleaseinfo('release');
@@ -151,6 +163,7 @@ $forbidden_deactivate=array('mail','mongodb','nodejs'); ?>
               </div>
                  <section class="section inactive">
                         <div class="row ">
+                      
                        <?php for ($c=0; $c<$serv_disabled["count"]; $c++) {
                           $service=$serv_disabled[$c]["ou"][0];
                           if ( $c % 3 == 0 ){; ?>
@@ -165,13 +178,13 @@ $forbidden_deactivate=array('mail','mongodb','nodejs'); ?>
                                             <h3 class="title"><?php echo  $group_info[$service]['title'];?></h3>
                                         </div>
                                         <ul class="nav nav-tabs nav-tabs-bordered">
-                                            <li class="nav-item"> <a href="#home-<?php echo $c;?>" class="nav-link active" data-target="#home-<?php echo $c;?>" data-toggle="tab" aria-controls="home-<?php echo $c;?>" role="tab">App</a> </li>
-                                            <li class="nav-item"> <a href="#desc-<?php echo $c;?>" class="nav-link" data-target="#desc-<?php echo $c;?>" aria-controls="desc-<?php echo $c;?>" data-toggle="tab" role="tab"><?php printf(_("Descripción"));?></a> </li>
+                                            <li class="nav-item"> <a href="#home-des-<?php echo $c;?>" class="nav-link active" data-target="#home-des-<?php echo $c;?>" data-toggle="tab" aria-controls="home-des-<?php echo $c;?>" role="tab">App</a> </li>
+                                            <li class="nav-item"> <a href="#desc-des-<?php echo $c;?>" class="nav-link" data-target="#desc-des-<?php echo $c;?>" aria-controls="desc-des-<?php echo $c;?>" data-toggle="tab" role="tab"><?php printf(_("Descripción"));?></a> </li>
 
                                         </ul>
                                         <!-- Tab panes -->
                                         <div class="tab-content tabs-bordered">
-                                            <div class="tab-pane fade in active" id="home-<?php echo $c;?>">
+                                            <div class="tab-pane fade in active" id="home-des-<?php echo $c;?>">
                                                 <h4></h4>
                                                 <div class="row">
                                                   <div class="col-md-6">
@@ -190,7 +203,7 @@ $forbidden_deactivate=array('mail','mongodb','nodejs'); ?>
                                                   </div>
                                                 </div>
                                             </div>
-                                            <div class="tab-pane fade" id="desc-<?php echo $c;?>">
+                                            <div class="tab-pane fade" id="desc-des-<?php echo $c;?>">
                                                 <h4><?php echo $group_info[$service]['name'];?></h4>
                                                 <p><?php echo $group_info[$service]['description'];?></p>
                                             </div>

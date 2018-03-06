@@ -101,7 +101,8 @@ if(isset($_POST['install']) && isset($_POST['release'])){
   //Redirect to home
   header('Location: /cpanel');
 }
-
+//sidebar
+require_once('sidebar.php');
 /****************** End perform update after submitting form *******/
 // Repopulate $serv_installed with all the applicatios that are installed, also if they are disabled,
 // so they don't appear between available apllicatio.
@@ -116,7 +117,7 @@ foreach ($obj as $service_data){
   if (array_search($service_data['id'], array_column(array_column($serv_installed, 'ou'),0)) === false) $available=1;
 }
 //sidebar
-require_once('sidebar.php');
+//require_once('sidebar.php');
 
 print_r ($status);
 if (empty($release_info)) { ?>
