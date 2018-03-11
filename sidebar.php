@@ -37,6 +37,13 @@
                                   <a target="_blank" href="/owncloud"><i class="fa fa-cloud"></i> <?php printf(_("Owncloud"));?></a>
                                 </li>
                               <?php }?>
+                              <?php if( !empty($serv_installed) && array_search('nextcloud', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+
+                                <li>
+                                  <a target="_blank" href="/nextcloud"><i class="fa fa-cloud"></i> <?php printf(_("Nextcloud"));?></a>
+                                </li>
+                              <?php }?>
+
                              <?php if( !empty($serv_installed) && array_search('phpmyadmin', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
                               <li>
                                 <a href=""> <i class="fa fa-list-alt"></i> Mysql <i class="fa arrow"></i> </a>
