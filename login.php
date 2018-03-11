@@ -131,6 +131,7 @@ function updating(){
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
         <!-- Place favicon.ico in the root directory -->
+        <link rel="shortcut icon" href="favicon.ico">
         <link rel="stylesheet" href="css/vendor.css">
         <link rel="stylesheet" href="css/login.css">
         <!-- Theme initialization -->
