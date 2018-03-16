@@ -58,7 +58,8 @@ if(isset($_POST['adddomain'])){
           $message=$add_user['message'];
     }
     $values = $_POST["values"];
-    $domain_new = $_POST["domain_new"];
+    //Domain must be lower case in File System to avoid inconsistency 
+    $domain_new =strtolower($_POST["domain_new"]);
 
     # Check if DNS are ok for this server
     $check_dns=check_domain_dns($domain_new);
