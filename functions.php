@@ -276,7 +276,7 @@ function check_syntax ($type,$arg,$length="0")
    // DOMAIN
     elseif ($type == 'domain')
     {
-        if (!preg_match("/^([0-9a-z][0-9a-z-]+\.)+[a-z]{2,7}$/i", $arg))
+        if (!preg_match("/^([0-9a-z][0-9a-z-]+\.)+[a-z]{2,27}$/i", $arg))
         {
             return FALSE;
         }
