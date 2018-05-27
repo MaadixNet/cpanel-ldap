@@ -402,6 +402,25 @@ $('#installModal').on('show.bs.modal', function (event) {
 
 })
 
+$('#fqdnModal').on('show.bs.modal', function (event) {
+  var modal = $(this);
+  var body=modal.find('#modal-body');
+  body.html('');
+  var domain = $("#domain_new").val();
+  var button = $(event.relatedTarget); // Button that triggered the modal
+
+            $.ajax({
+
+                type : 'POST',
+                url  : 'proc/domain-check-fqdn.php',
+                data : {domain: domain},
+                success : function(data)
+                          {
+                            body.html(data);
+                          }
+                });
+
+})
 
 /* Check password strenght*/
     $("#pswd2").blur(function()

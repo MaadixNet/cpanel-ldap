@@ -750,23 +750,32 @@ class LDAP{
                   'message' => $message
      );
 }
-function show_path(){
-        echo $foldername='VPN-'.$_SERVER['SERVER_ADDR'];
-        echo  $filesdir=dirname(__DIR__).'/files';
-        echo  $folderpath=$filesdir.'/'.$foldername;
-}
+  function show_path(){
+          echo $foldername='VPN-'.$_SERVER['SERVER_ADDR'];
+          echo  $filesdir=dirname(__DIR__).'/files';
+          echo  $folderpath=$filesdir.'/'.$foldername;
+  }
 
-function check_installed_service($service) {
-      $serv_enabled = $this->search($this->connection, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled))');
-      if(!empty($serv_enabled) && array_search($service, array_column(array_column($serv_enabled, 'ou'),0)) !== false){
-        return true;
-      } else {
-        return false;
-      }
+  function check_installed_service($service) {
+        $serv_enabled = $this->search($this->connection, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=enabled))');
+        if(!empty($serv_enabled) && array_search($service, array_column(array_column($serv_enabled, 'ou'),0)) !== false){
+          return true;
+        } else {
+          return false;
+        }
 
-}       
+    }       
+  function get_admin_email(){
+    $ldaptree    =  SUFFIX;
+    $user=$_SESSION["login"]["username"];
+    $filter="(&(objectClass=extensibleObject)(cn=$user))";
+    $rootuser=$this->search($this->connection,$ldaptree, $filter);
+    $rootusermail=$rootuser[0]["email"][0];
+    return $rootusermail;
+  }
 
-function send_vpn_instructions($to,$username) {
+
+  function send_vpn_instructions($to,$username) {
       {
         //Get email sender option for notifications
 
@@ -863,24 +872,24 @@ function send_vpn_instructions($to,$username) {
 
   }
 
-function get_sudo_user(){
-  $filter="(&(objectClass=person)(uid=*)(gidnumber=27))";
-  $sudouser=$this->search($this->connection,LDAP_PEOPLE, $filter);
-  return $sudouser[0]['uid'][0];
- } 
+  function get_sudo_user(){
+    $filter="(&(objectClass=person)(uid=*)(gidnumber=27))";
+    $sudouser=$this->search($this->connection,LDAP_PEOPLE, $filter);
+    return $sudouser[0]['uid'][0];
+   } 
 
 
 
 
 
-function decrypt_psw () {
+  function decrypt_psw () {
 
     $key=$_SESSION["login"]["key"];
     $encpsw=$_COOKIE['usec'];
     $psw=OneTimePadDecrypt ($encpsw, $key);
     return $psw;
 
-} 
+  } 
 
 
   function check_login_or_redirect($current_page){
