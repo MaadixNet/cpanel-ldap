@@ -1,7 +1,7 @@
 <?php
 session_start();
 $host_domain=$_POST['domain'];
-if ($domain){
+if ($host_domain){
   /*check domains in o=hosting
   / TODO: write a function that checks if a domain is already present in o=hosting
   // Instead of using following code
@@ -36,7 +36,7 @@ if ($domain){
     } else if ($domain == $fqdn){
         $totalerrors++;
         $error=2;
-        $errormsg.= sprintf(_("No hay cambios. el dominio que has insertado es igual al que está en uso. Debes de introducir un nombre de dominio o subdominio diferente al actual."));
+        $errormsg.= sprintf(_("No hay cambios. el dominio que has insertado es igual al que está en uso. Debes de introducir un nombre de dominio diferente al actual."));
 
     } else if( !empty($vds) && array_search($domain, array_column(array_column($vds, 'vd'),0)) !== false){
 
@@ -67,6 +67,8 @@ if ($domain){
 
         /*
         * Check A records
+        * DNS errors have vlaue $error>=5
+        * So we can manage different error message strngs
         */
 
         $ipA = $resultA[0]['ip'];
@@ -76,7 +78,7 @@ if ($domain){
         } else {
             $totalerrors++;
             $error=5;
-            $errormsg=sprintf(_("El registro A para este dominio debe apuntar a la IP %s."), $domain, $server_ipaddr);
+            $errormsg=sprintf(_("El registro A para este dominio debe apuntar a la IP %s"), $domain, $server_ipaddr);
             $errormsg.='<br />';
 
         }   
@@ -88,6 +90,7 @@ if ($domain){
             $totalerrors++;
             $errormsg.= sprintf(_('No se ha encontrado ningún registro MX'));
             $errormsg.='<br />';
+            $error=6;
         } else {
           $i=1;
           foreach($resultMX as $value){
@@ -95,6 +98,7 @@ if ($domain){
               $totalerrors++;
               $errormsg.= sprintf(_('Valor incorrecto para el registro MX %s'),$value['target']);              
               $errormsg.='<br />';
+              $error=7;
               $i++;
             }
           } //end foreach mx as value
@@ -111,6 +115,7 @@ if ($domain){
           $totalerrors++;
           $errormsg.= sprintf(_("No se ha encontrado ningún registro SPF"));
           $errormsg.='<br />';
+          $error=8;
         } else {
           foreach($resultTXT as $txtvalue){
           // Get the txt record string
@@ -122,6 +127,7 @@ if ($domain){
                   $totalerrors++;
                   $errormsg.= sprintf(_("El registro SPF %s es incorrecto"), $spf_record);
                   $errormsg.='<br />'; 
+                  $error=8;
                   $c++;
                 } //end if spf=correct_spf
             } // end if spf is present in string
@@ -136,8 +142,10 @@ if ($domain){
 if ($totalerrors>0){
   //$errormsg='<span class="has-error">'.  $errormsg . '</span>';
   //$return_value['errors'][] = array('error' =>$error , 'msg' => $errormsg, 'fieldValue' => $value);
-  $return_string = sprintf(_("La configuración de los DNS para el dominio %s es incorrecta."),$domain);
-  $return_string .= '<br><br>';
+  if ($error>=5) {
+    $return_string = sprintf(_("La configuración de los DNS para el dominio %s es incorrecta."),$domain);
+    $return_string .= '<br><br>';
+  }
   $return_string .= $errormsg;
   $return_string .= '<br>';
   $return_string .= sprintf(_("Corrige los errores para poder seguir"));

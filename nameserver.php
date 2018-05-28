@@ -53,14 +53,17 @@ if ($ldapconn){
 
     /*
     * Lock cpanel and destroy session
+    *  ou=customfqdn,ou=cpanel,dc=example,dc=tld
+    *  status= locked
     */
     if ($up_fqdn && $ch_domain && $ch_mail) {
-      $modifydn='ou=cpanel,' . SUFFIX ;
+
+      $modifydn='ou=customfqdn,ou=cpanel,' . SUFFIX ;
       $info['status']= 'locked';
-      //$ch_fqdn=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
+      $ch_fqdn=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
 
       //Clear this sessions
-      //session_destroy();
+      session_destroy();
       //Redirect to home
       header('Location: /cpanel');
     }
@@ -96,7 +99,7 @@ if ($ldapconn){
               echo $message; 
               $op_str='<strong>';
               $cl_str='</strong>';
-              printf(_('En esta página puedes cambiar el dominio principal asoicado a tu servidor.'));
+              printf(_('En esta página puedes cambiar el dominio principal asociado a tu servidor.'));
               echo '<br>'; 
 
               printf(_('El nombre que distingue de forma única el servidor es %s"%s"%s.'), $op_str,$fqdn, $cl_str);
@@ -105,7 +108,7 @@ if ($ldapconn){
               echo '<br>';
               printf(_('En esta página puedes proceder a sustituir el valor del dominio asociado "%s%s%s" por otro, de tu elección.'),$op_str,$domain_asociated,$cl_str);
               echo '<br>';
-              printf(_('Para cambiar este valor es indispensable que crees antes las configuraciones de DNS necesarias. De lo contrario, tu servidor y las aplicaciones instaladas, pueden dejar de responder y funcionar.'));
+              printf(_('Para cambiar este valor es indispensable que crees antes las configuraciones de DNS necesarias. Para ello, sigue las siguientes instrucciones.'));
               echo '<br>';
               echo '<br>';
               echo '<h5>';
@@ -121,9 +124,9 @@ if ($ldapconn){
                   </thead>
                 <tbody>
                 <tr>
-                <td class="center">'. $hostname . '</td>
-                <td class="center">'. $domain_asociated . '</td>
-                <td class="center">'. $fqdn . '</td>
+                  <td class="center">'. $hostname . '</td>
+                  <td class="center">'. $domain_asociated . '</td>
+                  <td class="center">'. $fqdn . '</td>
                 </tr>
               </tbody>
             </table>';
@@ -145,19 +148,19 @@ if ($ldapconn){
                   </thead>
                 <tbody>
                 <tr>
-                <td class="center">'. $hostname . '</td>
-                <td class="center">example.com</td>
-                <td class="center">'. $fqdn_example . '</td>
+                  <td class="center">'. $hostname . '</td>
+                  <td class="center">example.com</td>
+                  <td class="center">'. $fqdn_example . '</td>
                 </tr>
               </tbody>
             </table>';
               echo '<br>';
 
-              printf(_('Para poder cambiar este valor tienes que crear el subdominio y las configuraciones de DNS necesarias.  Estas configuraciones las tendrás que hacer desde el panel de gestión de Zonas DNS, de tu provedor de dominio.'));
+              printf(_('Para poder cambiar este valor tienes que crear el subdominio y las configuraciones de DNS necesarias.  Estas configuraciones las tendrás que hacer desde el panel de gestión de Zonas DNS, de tu proveedor de dominio.'));
               echo '<br>';
               echo '<br>';
 
-              printf(_('Siguiendo el ejemplo anterior, antes de poder proceder, necesitarás crear los siguientes registros DNS (sustitue example.com por tu propio dominio)'));
+              printf(_('Siguiendo el ejemplo anterior, antes de poder proceder, necesitarás crear los siguientes registros DNS (sustituye example.com por tu propio dominio)'));
               echo '<br>';
               echo '<table><thead><tr>';
               echo '<th>' . sprintf(_("Tipo")) . '</th>';
@@ -187,9 +190,9 @@ if ($ldapconn){
               echo '<br>';
               echo '<br>';
               echo '<p><span class="advert">NOTA: </span>';
-              printf(_('El nombre del servidor y el FQDN son usados por múltiples aplicaciones, como por ejemplo el servidor de correo, servidor de listas, VPN, etc.'));
+              printf(_('El nombre del servidor y el FQDN son usados por múltiples aplicaciones, dentro del sistema. Todas ellas se actualizarán automáticamente para que funcionen con la nueva configuracón.'));
               echo '<br>';
-              printf(_('Una vez efectuado el cambio desde esta página, tendrás que actualizar las aplicaciones locales, que estén usando algunos de estos valores. Por ejemplo, si tienes configurada alguna cuenta de correo en aplicaciones como Thunderbird o Outlook, tendrás que cambiar el valor para el servidor de entrada y de salida. Encontrarás la nueva configuración en la página de edición de las cuentas de correo electrónico de este panel de control.'));
+              printf(_('Si estás usando software externos en otros dispositivos, por ejemplo, si tienes configurada alguna cuenta de correo en aplicaciones como Thunderbird o Outlook, tendrás que cambiar el valor para el servidor de entrada y de salida, y sustituirlo con el nuevo. Encontrarás los nuevos valores de configuración en la página de edición de las cuentas de correo electrónico de este panel de control.'));
               echo '<br>';
               printf(_('Si tienes activada alguna cuenta de VPN, tendrás también que volver a cargar la configuración en tu cliente, ya que el certificado se modificará, y el anterior dejará de ser válido.'));
               echo '</p>';
@@ -198,21 +201,21 @@ if ($ldapconn){
               echo '<br>';
               echo '<ul>
                     <li>'.
-                    sprintf(_('Comprobación de la existencia de las entradas DNS necesarias. El proceso no se efectuará, hatsa que la comprobación devuelva los resultados correctos')).
+                    sprintf(_('Comprobación de la existencia de las entradas DNS necesarias. El cambio de dominio no se aplicará, hatsa que la comprobación devuelva los resultados correctos')).
                     '</li>
                     <li>'.
                     sprintf(_('Bloqueo del Panel de Control durante el proceso')).
                     '</li>
                     <li>'.
-                    sprintf(_('Envío de un correo electrónico a los técnico de MaadiX, para que actualicen los certificados que te permiten acceder a las actualizaciones y a la publicación de nuevas aplicaciones.')).
+                    sprintf(_('Envío de un correo electrónico al equipo técnico de MaadiX, que actualizará los certificados necesarios, para que tu sistema pueda seguir accediendo a las actualizaciones de seguridad y a las nuevas aplicaciones.')).
                     '</li>
 
                     <li>'.
-                    sprintf(_('Envío de un correo electrónico a la cuenta %s, con los valores necesarios para crear la entradad DNS para DKIM. Este valor es muy importante para garantizar que los correos que envíes no sean tratados como SPAM. %s'),$admin_mail, $dkim_info_link).
+                    sprintf(_('Envío de un correo electrónico a la cuenta %s, con los valores necesarios para crear la entrada DNS para DKIM. Este valor es muy importante para garantizar que los correos que envíes no sean tratados como SPAM. %s'),$admin_mail, $dkim_info_link).
                     '</li>
                     </ul>';
               if ($domain_asociated == 'maadix.org'){
-                printf(_('Una vez terminado el proceso de forma satisfactoria, procederemos a eliminar las entrada DNS antiguas, creadas para %s'),$fqdn);
+                printf(_('Una vez terminado el proceso de forma satisfactoria, procederemos a eliminar las entradas DNS antiguas, creadas para %s'),$fqdn);
               } 
 
               echo '<br>';
@@ -260,17 +263,14 @@ if ($ldapconn){
             <span aria-hidden="true">&times;</span>
           </button>
            <h4 class="modal-title" id="userModalLabel"><?php printf(_("Cambiar dominio"));?></h4>
-        </div>
+        </div> <!--modal-header-->
         <div class="modal-body" id="modal-body">
-              <div class="fields-info" id="fields-info">
-              </div>
-            </div>
-
-          </form>
+          <div class="fields-info" id="fields-info">
+          </div>
         </div>
       </div><!--modal-content-->
     </div><!--modal-dialog-->
-  </div><!--exampleModal-->
+  </div><!--fqdnModal-->
 </div><!--bd-example-->
 <?php
   ldap_close($ldapconn);   
