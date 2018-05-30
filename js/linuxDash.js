@@ -645,6 +645,7 @@
             scope.seriesArray[x] = new TimeSeries();
             chart.addTimeSeries(scope.seriesArray[x], seriesOptions[x]);
             scope.metricsArray[x] = {
+              tdclass: x, 
               name: keyForThisLine,
               color: seriesOptions[x].strokeStyle,
             };

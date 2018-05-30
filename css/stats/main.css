@@ -259,6 +259,12 @@ canvas {
   margin: 0 auto;
 /*  max-width: 100%;*/
 }
+
+.tdline-0 {background: rgba(251, 73, 77, 1); border: 1px solid rgba(251, 73, 77, 1);}
+.tdline-1 {background: rgba(75, 207, 153, 1); border: 1px solid rgba(75, 207, 153, 1);}
+.tdline-2 {background: rgba(65,150,168, 1); border: 1px solid rgba(65,150,168, 1);}
+.metric-square {
+  display: inline-block; border: 1px solid ; width: 8px; height: 8px; }
 /*********************************************
     Widget Elements
 *********************************************/

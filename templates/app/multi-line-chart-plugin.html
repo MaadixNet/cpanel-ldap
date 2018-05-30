@@ -5,13 +5,11 @@
 
 		<canvas class="canvas" width="400" height="200"></canvas>
 
-		<table class="metrics-table" border="0">
+		<table class="metrics-table">
 			<tbody>
 				<tr ng-repeat="metric in metricsArray">
 					<td>
-						<div 
-							class="metric-square" 
-							style="display: inline-block; border: 1px solid {{metric.color}}; width: 8px; height: 8px; background: {{metric.color}}">
+                                          <div class="metric-square tdline-{{metric.tdclass}}">
 						</div>
 					</td>
 					<td>{{ metric.name }}</td>
