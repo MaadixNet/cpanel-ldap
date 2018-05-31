@@ -647,19 +647,32 @@ function dependencies_input_fields($service_data){
             /*we know the string has three elements divided by dot
             * [0] = id
             * [1] = type
-            * [2] = Lable
-            * Explode the string and create an array withe these trhee data
+            * [2] = Label[Description:.....]
+            * First remove the description string,that will be the help text for the input
+            * Then            
+            * Explode the remaining string and create an array withe these trhee data
             * Maybe we should add a more explicit value such as input: id.type.label.input?
              */
+            //Get the strng between [Description:.....]
+            preg_match("/\[Description:(.*?)\]/is", $dependency, $matches);
+            // Set an empty default value for field_description, in case it is missing
+            $field_dedscription='';
+            if ($matches) {
+            // Assing to a variable
+              $field_dedscription = $matches[1];
+            // Create a string with only the three elements (id, type, label) delimited by dots
+              $dependency = str_replace($matches[0],'', $dependency);
+            }  
             $deps= explode(".", $dependency);
+            // Try preg_split(".",$string, 4); to split the string  in 4 matches. next dots will not be take in account
+
             $keys = array('id','type', 'label');
             $field = array_combine($keys,$deps);
             //First print the user input fields
             $inputs_fields.=sprintf(_('<label class="modalfield hide" for="%s">%s</label>'),$field['id'],$field['label']);
-            $inputs_fields.=sprintf(_('<p class="form-control-static underlined hide modalfield">%s</p>'),get_input_field_description($field['id']));
+            $inputs_fields.=sprintf(_('<p class="form-control-static underlined hide modalfield">%s</p>'),$field_dedscription);
             $inputs_fields.=sprintf(_('<div id="error-%s-%s" class="hide modalfield"></div>'),$service_data['id'],$field['id']);
             $inputs_fields.=sprintf(_('<input class="modalfield hide form-control" data-dependency="%s" placeholder="%s" type="%s" name="%s[%s]" />'),$field['id'],$field['label'],$field['type'],$field['id'],$service_data['id']);
-            
             $hidden_fields.=sprintf(_('<input class="dependency" type="hidden" name="%s[%s]" />'),$field['id'],$service_data['id']);
         } else {
            //don' t print user input filed 
@@ -678,8 +691,7 @@ function get_input_field_description($field){
       $text=sprintf(_("Esta aplicación necesita una cuenta de email asocicada. Inserta una diercción de correo electrónico válida:"));
       break;
     default:
-      $text=sprintf(_("Inserta un texto"));
+      $text=sprintf(_(""));
       break;
   }
-  return $text;
 }

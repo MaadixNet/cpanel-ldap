@@ -10,6 +10,8 @@
   z-index: 100;
 }
 #loadModal .modal-content {border: 0px;}
+input.modalfield.form-control{margin-bottom: 19px;}
+
 .btn.btn-small.btn-primary {margin-right:12px;}
 pre {padding-top: 10px;}
 h6 {

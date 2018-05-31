@@ -119,7 +119,7 @@ foreach ($obj as $service_data){
 //sidebar
 //require_once('sidebar.php');
 
-print_r ($status);
+//print_r ($status);
 if (empty($release_info)) { ?>
     <article class="content cards-page">
             <div class="title-block">
@@ -129,7 +129,8 @@ if (empty($release_info)) { ?>
             </div>
     </article>
 
-<?php }else{ ?>
+<?php }else{ 
+?>
   <article class="content cards-page">
           <?php if ($available != 1){ ?>
 
