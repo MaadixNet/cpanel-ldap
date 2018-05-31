@@ -46,7 +46,7 @@
 
                              <?php if( !empty($serv_installed) && array_search('phpmyadmin', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
                               <li>
-                                <a href=""> <i class="fa fa-list-alt"></i> Mysql <i class="fa arrow"></i> </a>
+                                <a href=""> <i class="fa fa-sort-alpha-asc"></i> Mysql <i class="fa arrow"></i> </a>
                                 <ul>
                                   <li><a href="https://docs.maadix.net/mysql/" target="_blank"><?php printf(_("Instrucciones"));?></a></li>
                                   <li><a target="_blank" href="/phpmyadmin"><?php printf(_("phpMyAdmin"));?></a></li>
@@ -88,11 +88,38 @@
                               <li>
                                 <a href=""> <i class="fa fa-random"></i> Rocketchat<i class="fa arrow"></i> </a>
                                 <ul>
-                                  <li><a href="https://rocket.chat/docs/" target="_blank"><?php printf(_("Documetación"));?></a></li>
                                   <li><a target="_blank" href="<?php echo $rocketchatdomain;?>"><?php printf(_("Ir a la aplicación"));?></a></li>
+                                   <li><a href="https://rocket.chat/docs/" target="_blank"><?php printf(_("Documetación"));?></a></li>
+                                   <li><a href="/<?php echo BASE_PATH;?>/settings.php?app=rocketchat"><?php printf(_("Configurar"));?></a>
                                 </ul>
                               </li>
                               <?php }?>
+
+
+
+                             <?php if( !empty($serv_installed) && array_search('discourse', array_column(array_column($serv_installed, 'ou'),0)) !== false){
+                                     if ($ldapbind) {
+                                       $app_domain= $Ldap->search($ldapconn,'ou=domain,ou=disocurse,'.LDAP_SERVICES ,'(objectClass=organizationalUnit)');
+                                       $discoursedomain = "https://".$app_domain[0]['status'][0];
+                                     }
+                             ?>
+                              <li>
+                                <a href=""> <i class="fa fa-comments"></i> Discourse<i class="fa arrow"></i> </a>
+                                <ul>
+                                  <li><a target="_blank" href="<?php echo $discoursedomain;?>"><?php printf(_("Ir a la aplicación"));?></a></li>
+                                  <li><a href="/<?php echo BASE_PATH;?>/settings.php?app=discourse"><?php printf(_("Configurar"));?></a>
+                                </ul>
+                              </li>
+                              <?php }?>
+
+
+                              <?php if( !empty($serv_installed) && array_search('lool', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+
+                                <li>
+                                  <a href="/<?php echo BASE_PATH;?>/settings.php?app=discourse"><i class="fa fa-paste"></i> <?php printf(_("Libre Office Online"));?></a>
+                                </li>
+                              <?php }?>
+
 
                                     </ul>
                                 <li><a href="/<?php echo BASE_PATH;?>/service-available.php"> <i class="fa fa-dashboard"></i> <?php printf(_("Instalar aplicaciones"));?></a>
