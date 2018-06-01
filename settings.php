@@ -7,8 +7,41 @@ $app=$_GET['app'];
 require_once 'classes/class.ldap.php';
   require_once('header.php');
 if ($ldapconn && $ldapbind){
+  // Get current release info
+   $release_info = $Ldap->getreleaseinfo('release');
+  /*
+   * Get available groups in the release
+   * Extract dependecies from the api, to make a comparision
+   * with LDAP.
+   * User can only update thes data, not other such us version
+   */
+  $obj = $release_info['groups'];
+  foreach ($obj as $service_data => $val)
+    {
+      if ( $val['id'] == $app )
+        $deps=$val['dependencies'];
+   }
 
-  //Get  current app
+ /* 
+  * Get only the first part of the dep string from the API  
+  *
+  */
+  $depsapi=array();
+  foreach ($deps as $value) {
+    // Maybe create a function for that
+    echo 'VALUE' .$value;
+    if (strpos($value, ".") !== false){
+      $depname= explode(".", $value);
+      echo $depname[0];
+
+    }
+  }
+  /*
+   * Get  current app data from LDAP
+   *
+   */
+
+
     $filter="(ou=". $app . ")";
     $serv_target= $Ldap->search($ldapconn, LDAP_SERVICES ,$filter);
    // $serv_disabled= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=disabled)(type=installed))');
@@ -25,7 +58,8 @@ if ($ldapconn && $ldapbind){
 
   
   $fqdn=trim(shell_exec('hostname -f'));
-
+  $filter = '(&(objectClass=organizationalUnit)(ou=*)(!(ou=' . $app .')))';
+$resultapp= $Ldap->search($ldapconn,'ou='. $app . ','. LDAP_SERVICES,$filter);  
 }?>
 <article class="content forms-page">
     <div class="title-block">
@@ -44,9 +78,21 @@ if ($ldapconn && $ldapbind){
               <?php
               echo $message; 
               echo '<pre>';
-              print_r($serv_target);
+              //print_r($serv_target);
+              print_r($deps);
               echo '</pre>';
-              sprintf(_("Actualmente, el dominio de la aplicación es")) . '<br>
+              echo 'SERV TARGET <br><pre>';
+              print_r($resultapp);
+              echo '</pre>';
+              if ($resultapp['count'] > 0 ){
+                for ($c=0; $c<$resultapp["count"]; $c++) {
+
+                  $attributes=$resultapp[$c]["ou"][0];
+                  
+                echo '<br>';
+                }
+              }
+              printf(_("Actualmente, el dominio de la aplicación es")) . '<br>
               <div class="box-placeholder">'. $serv_target[0]['domain']['status'] .'</div>';
 
                 printf(_('Puedes cambiar esta configuración y elegir otro dominio'));
