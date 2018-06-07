@@ -4,23 +4,28 @@ session_start();
 $message='';
 require_once('header.php');
 
-$return_value=array();
-if ($ldapconn){
-  if ($ldapbind) {
-      $admin_mail= $Ldap->get_admin_email();
-  }
+/* The fqdn Change can be performed only if the vm has status ready in teh API
+*/
+$status = $Ldap->getpuppetstatus();
 
-  $server_ipaddr=$_SERVER["SERVER_ADDR"];
-  $hostname = trim(shell_exec('hostname'));
-  $fqdn=trim(shell_exec('hostname -f'));
-  $domain_asociated= str_replace($hostname.'.', '',$fqdn);
+if ($status=='ready'){
+  $return_value=array();
+  if ($ldapconn){
+    if ($ldapbind) {
+        $admin_mail= $Ldap->get_admin_email();
+    }
 
-  /* Gat all deactivated Group
-  */
-  $serv_disabled= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=disabled)(type=installed))');
+    $server_ipaddr=$_SERVER["SERVER_ADDR"];
+    $hostname = trim(shell_exec('hostname'));
+    $fqdn=trim(shell_exec('hostname -f'));
+    $domain_asociated= str_replace($hostname.'.', '',$fqdn);
+
+    /* Gat all deactivated Group
+    */
+    $serv_disabled= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=disabled)(type=installed))');
   /* TODO: if there is some disabled group, return the Title name from API
   */
-  $count_diabled=count($serv_disabled); 
+    $count_diabled=count($serv_disabled); 
     /*
     echo '<pre>';
     print_r($serv_disabled);
@@ -62,7 +67,7 @@ if ($ldapconn){
       } else { 
         $up_fqdn = $Ldap->modifyRecord($ldapconn,'ou=fqdn_domain_old,' . $base_dn, $old_domain );
       }
-    }
+    } //end if domain_asociated
 
     /* 
     * Change admin mail
@@ -118,9 +123,9 @@ if ($ldapconn){
         $updatefqdn=$Ldap->modifyRecord($ldapconn, $modifydn, $info ); 
       //Redirect to home
         header('Location: /cpanel');
-    }
-  }
-
+    } // end if ($up_fqdn && $ch_domain && $ch_mail)
+  } //end if isset($_POST['changenameserver']
+} // end check satuts ready
 
   
 
@@ -128,8 +133,6 @@ if ($ldapconn){
 * Set variables tu use in this page
 */
   require_once('sidebar.php');
-  $fqdn_example = $hostname.'.example.com';
-  $dkim_info_link = '<a href="/' . BASE_PATH . '/domain-instruccions.php#dkim">[+ Info]</a>';
 }?>
 <article class="content forms-page">
     <div class="title-block">
@@ -139,51 +142,55 @@ if ($ldapconn){
         <div class="row">
 
           <div class="col-sm-12">
-            <div class="inner"i id="maincol">
+            <div class="inner" id="maincol">
               <?php
-              echo $message; 
-              $op_str='<strong>';
-              $cl_str='</strong>';
-              printf(_('En esta página puedes cambiar el dominio principal asociado a tu servidor.'));
-              echo '<br>'; 
+              if ($status='ready'){
 
-              printf(_('El nombre que distingue de forma única el servidor es %s"%s"%s.'), $op_str,$fqdn, $cl_str);
-              echo '<br>';
-              printf(_('Este valor se denomina %sFQDN%s (sigla en inglés de fully qualified domain name). El FQDN está compuesto por dos partes: "%s" [Nombre del equipo] , y %s [Dominio asociado].'),$op_str,$cl_str, $hostname, $domain_asociated);
-              echo '<br>';
-              printf(_('En esta página puedes proceder a sustituir el valor del dominio asociado "%s%s%s" por otro, de tu elección.'),$op_str,$domain_asociated,$cl_str);
-              echo '<br>';
-              printf(_('Para cambiar este valor es indispensable que crees antes las configuraciones de DNS necesarias. Para ello, sigue las siguientes instrucciones.'));
-              echo '<br>';
-              echo '<br>';
-              echo '<h5>';
-              printf(_('Configuración actual')); 
-              echo '</h5>';
-              echo '<table id="nameserver">
+                $fqdn_example = $hostname.'.example.com';
+                $dkim_info_link = '<a href="/' . BASE_PATH . '/domain-instruccions.php#dkim">[+ Info]</a>';
+                echo $message; 
+                $op_str='<strong>';
+                $cl_str='</strong>';
+                printf(_('En esta página puedes cambiar el dominio principal asociado a tu servidor.'));
+                echo '<br>'; 
+
+                printf(_('El nombre que distingue de forma única el servidor es %s"%s"%s.'), $op_str,$fqdn, $cl_str);
+                echo '<br>';
+                printf(_('Este valor se denomina %sFQDN%s (sigla en inglés de fully qualified domain name). El FQDN está compuesto por dos partes: "%s" [Nombre del equipo] , y %s [Dominio asociado].'),$op_str,$cl_str, $hostname, $domain_asociated);
+                echo '<br>';
+                printf(_('En esta página puedes proceder a sustituir el valor del dominio asociado "%s%s%s" por otro, de tu elección.'),$op_str,$domain_asociated,$cl_str);
+                echo '<br>';
+                printf(_('Para cambiar este valor es indispensable que crees antes las configuraciones de DNS necesarias. Para ello, sigue las siguientes instrucciones.'));
+                echo '<br>';
+                echo '<br>';
+                echo '<h5>';
+                printf(_('Configuración actual')); 
+                echo '</h5>';
+                echo '<table id="nameserver">
                     <thead>
                      <tr>
                       <th>'. sprintf(_("Nombre del servidor")) . '</th>
                       <th>' .sprintf(_("Dominio asoicado")) .'</th>
                       <th>' .sprintf(_("FQDN (Nombre del servidor + dominio asoicado)")). '</th>
                     </tr>
-                  </thead>
-                <tbody>
-                <tr>
-                  <td class="center">'. $hostname . '</td>
-                  <td class="center">'. $domain_asociated . '</td>
-                  <td class="center">'. $fqdn . '</td>
-                </tr>
-              </tbody>
-            </table>';
-              echo '<br>';
-              printf(_('El valor "Nombre del servidor" no puede ser cambiado. Solo podrás cambiar el valor "Dominio Asociado". Así, por ejemplo, si el dominio que quieres usar a partir de ahora fuera "example.com", tu nuevo FQDN será "%s".'),$fqdn_example);
+                    </thead>
+                    <tbody>
+                    <tr>
+                      <td class="center">'. $hostname . '</td>
+                      <td class="center">'. $domain_asociated . '</td>
+                      <td class="center">'. $fqdn . '</td>
+                    </tr>
+                    </tbody>
+                  </table>';
+                echo '<br>';
+                printf(_('El valor "Nombre del servidor" no puede ser cambiado. Solo podrás cambiar el valor "Dominio Asociado". Así, por ejemplo, si el dominio que quieres usar a partir de ahora fuera "example.com", tu nuevo FQDN será "%s".'),$fqdn_example);
 
-             echo '<br>';
-             echo '<br>';
-             echo '<h5>';
-              printf(_('Nueva configuración'));
-              echo '</h5>';
-              echo '<table id="domains">
+                echo '<br>';
+                echo '<br>';
+                echo '<h5>';
+                printf(_('Nueva configuración'));
+                echo '</h5>';
+                echo '<table id="domains">
                     <thead>
                      <tr>
                       <th>'. sprintf(_("Nombre del servidor")) . '</th>
@@ -198,79 +205,79 @@ if ($ldapconn){
                   <td class="center">'. $fqdn_example . '</td>
                 </tr>
               </tbody>
-            </table>';
-              echo '<br>';
+                </table>';
+                echo '<br>';
 
-              printf(_('Para poder cambiar este valor tienes que crear el subdominio y las configuraciones de DNS necesarias.  Estas configuraciones las tendrás que hacer desde el panel de gestión de Zonas DNS, de tu proveedor de dominio.'));
-              echo '<br>';
-              echo '<br>';
+                printf(_('Para poder cambiar este valor tienes que crear el subdominio y las configuraciones de DNS necesarias.  Estas configuraciones las tendrás que hacer desde el panel de gestión de Zonas DNS, de tu proveedor de dominio.'));
+                echo '<br>';
+                echo '<br>';
 
-              printf(_('Siguiendo el ejemplo anterior, antes de poder proceder, necesitarás crear los siguientes registros DNS (sustituye example.com por tu propio dominio)'));
-              echo '<br>';
-              echo '<table><thead><tr>';
-              echo '<th>' . sprintf(_("Tipo")) . '</th>';
-              echo '<th>' . sprintf(_("Name")) . '</th>';
-              echo '<th>' . sprintf(_("Valor Requerido")) . '</th>';
-              echo '</tr></thead><tbody>';
-              echo '<tr>';
-              echo '<td>A</td>';
-              echo '<td>' . $fqdn_example . '</td>';
-              echo '<td>' . $server_ipaddr . '</td>';
-              echo '</tr>';
-              echo '<tr>';
-              echo '<td>MX</td>';
-              echo '<td>' . $fqdn_example . '</td>';
-              echo '<td>' . $fqdn_example . '</td>';
-              echo '</tr>';
-              echo '<td>TXT</td>';
-              echo '<td>' . $fqdn_example . '</td>';
-              echo '<td>"v=spf1 a mx ~all"</td>';
-              echo '</tr>'; 
+                printf(_('Siguiendo el ejemplo anterior, antes de poder proceder, necesitarás crear los siguientes registros DNS (sustituye example.com por tu propio dominio)'));
+                echo '<br>';
+                echo '<table><thead><tr>';
+                echo '<th>' . sprintf(_("Tipo")) . '</th>';
+                echo '<th>' . sprintf(_("Name")) . '</th>';
+                echo '<th>' . sprintf(_("Valor Requerido")) . '</th>';
+                echo '</tr></thead><tbody>';
+                echo '<tr>';
+                echo '<td>A</td>';
+                echo '<td>' . $fqdn_example . '</td>';
+                echo '<td>' . $server_ipaddr . '</td>';
+                echo '</tr>';
+                echo '<tr>';
+                echo '<td>MX</td>';
+                echo '<td>' . $fqdn_example . '</td>';
+                echo '<td>' . $fqdn_example . '</td>';
+                echo '</tr>';
+                echo '<td>TXT</td>';
+                echo '<td>' . $fqdn_example . '</td>';
+                echo '<td>"v=spf1 a mx ~all"</td>';
+                echo '</tr>'; 
 
-              echo '</tbody></table>';
-              echo '<br>';
-              echo '<br>';
-              echo '<p><span class="advert">NOTA: </span>';
-              printf(_('El nombre del servidor y el FQDN son usados por múltiples aplicaciones, dentro del sistema. Todas ellas se actualizarán automáticamente para que funcionen con la nueva configuracón.'));
-              echo '<br>';
-              printf(_('Si estás usando software externos en otros dispositivos, por ejemplo, si tienes configurada alguna cuenta de correo en aplicaciones como Thunderbird o Outlook, tendrás que cambiar el valor para el servidor de entrada y de salida, y sustituirlo con el nuevo. Encontrarás los nuevos valores de configuración en la página de edición de las cuentas de correo electrónico de este panel de control.'));
-              echo '<br>';
-              printf(_('Si tienes activada alguna cuenta de VPN, tendrás también que volver a cargar la configuración en tu cliente, ya que el certificado se modificará, y el anterior dejará de ser válido.'));
-              echo '</p>';
-              echo '<br>';
-              printf(_('Esta herramienta para el cambio de dominio del servidor, efectuará varias tareas:'));
-              echo '<br>';
-              echo '<ul>';
-              if ($count_diabled>0){
+                echo '</tbody></table>';
+                echo '<br>';
+                echo '<br>';
+                echo '<p><span class="advert">NOTA: </span>';
+                printf(_('El nombre del servidor y el FQDN son usados por múltiples aplicaciones, dentro del sistema. Todas ellas se actualizarán automáticamente para que funcionen con la nueva configuracón.'));
+                echo '<br>';
+                printf(_('Si estás usando software externos en otros dispositivos, por ejemplo, si tienes configurada alguna cuenta de correo en aplicaciones como Thunderbird o Outlook, tendrás que cambiar el valor para el servidor de entrada y de salida, y sustituirlo con el nuevo. Encontrarás los nuevos valores de configuración en la página de edición de las cuentas de correo electrónico de este panel de control.'));
+                echo '<br>';
+                printf(_('Si tienes activada alguna cuenta de VPN, tendrás también que volver a cargar la configuración en tu cliente, ya que el certificado se modificará, y el anterior dejará de ser válido.'));
+                echo '</p>';
+                echo '<br>';
+                printf(_('Esta herramienta para el cambio de dominio del servidor, efectuará varias tareas:'));
+                echo '<br>';
+                echo '<ul>';
+                if ($count_diabled>0){
+                  echo '<li>'.
+                      sprintf(_('Reactivar todas las aplicaciones que tengas desactivadas, para que puedan actualizarse con la nueva configuración. Una vez acabado el proceso podrás volver a descativarlas, desde la página del listado de aplicaciones instaladas ')).
+                      '</li>';
+                }
                 echo '<li>'.
-                    sprintf(_('Reactivar todas las aplicaciones que tengas desactivadas, para que puedan actualizarse con la nueva configuración. Una vez acabado el proceso podrás volver a descativarlas, desde la página del listado de aplicaciones instaladas ')).
-                    '</li>';
-              }
-              echo '<li>'.
-                    sprintf(_('Comprobación de la existencia de las entradas DNS necesarias. El cambio de dominio no se aplicará, hatsa que la comprobación devuelva los resultados correctos')).
-                    '</li>
-                    <li>'.
-                    sprintf(_('Bloqueo del Panel de Control durante el proceso')).
-                    '</li>
-                    <li>'.
-                    sprintf(_('Envío de un correo electrónico al equipo técnico de MaadiX, que actualizará los certificados necesarios, para que tu sistema pueda seguir accediendo a las actualizaciones de seguridad y a las nuevas aplicaciones.')).
-                    '</li>
+                      sprintf(_('Comprobación de la existencia de las entradas DNS necesarias. El cambio de dominio no se aplicará, hatsa que la comprobación devuelva los resultados correctos')).
+                      '</li>
+                      <li>'.
+                      sprintf(_('Bloqueo del Panel de Control durante el proceso')).
+                      '</li>
+                      <li>'.
+                      sprintf(_('Envío de un correo electrónico al equipo técnico de MaadiX, que actualizará los certificados necesarios, para que tu sistema pueda seguir accediendo a las actualizaciones de seguridad y a las nuevas aplicaciones.')).
+                      '</li>
 
-                    <li>'.
-                    sprintf(_('Se generará la clave DKIM para el nuevo dominio de este servidor, que tendrás que utilizar para crear la entrada DNS correspondiente. Este valor es muy importante para garantizar que los correos que envíes no sean tratados como SPAM. %s'), $dkim_info_link).
-                    '</li>
-                    </ul>';
-              if ($domain_asociated == DEFAULT_FQDN){
-                printf(_('Una vez terminado el proceso de forma satisfactoria, procederemos a eliminar las entradas DNS antiguas, creadas para %s'),$fqdn);
-              } 
+                      <li>'.
+                      sprintf(_('Se generará la clave DKIM para el nuevo dominio de este servidor, que tendrás que utilizar para crear la entrada DNS correspondiente. Este valor es muy importante para garantizar que los correos que envíes no sean tratados como SPAM. %s'), $dkim_info_link).
+                      '</li>
+                      </ul>';
+                if ($domain_asociated == DEFAULT_FQDN){
+                  printf(_('Una vez terminado el proceso de forma satisfactoria, procederemos a eliminar las entradas DNS antiguas, creadas para %s'),$fqdn);
+                } 
 
-              echo '<br>';
-              echo '<div class="form-group">
-                <span><button class="togglevisibility btn btn-small btn-secondary">';
-                printf(_("continuar"));
-              echo '</button>  </span>
-                </div>
-                <div class="clear"></div>';
+                echo '<br>';
+                echo '<div class="form-group">
+                  <span><button class="togglevisibility btn btn-small btn-secondary">';
+                  printf(_("continuar"));
+                echo '</button>  </span>
+                  </div>
+                  <div class="clear"></div>';
 
 ?>
               <div id="change">
@@ -300,6 +307,14 @@ if ($ldapconn){
                   <br>
                 </div><!--card-block-->
               </div><!--change-->
+        <?php } else { //end iff status is active
+
+                printf(_('No se puede efectuar el cambio de dominio para el servidor debido a alguna tarea pendiendte'));
+                echo '<br>';
+                echo '<br>';
+
+
+        }?>
         </div><!--inner-->
 
       </div><!--col-sm-12-->
