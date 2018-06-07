@@ -1,4 +1,5 @@
 <?php 
+define ("DEFAULT_FQDN","maadix.org");
 define ("LDAP_HOST_NAME","localhost");
 // The protocol version [2,3]
 define ("LDAP_PROTOCOL_VERSION","3");

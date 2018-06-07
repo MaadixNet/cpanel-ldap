@@ -98,10 +98,6 @@ $forbidden_deactivate=array('mail','mongodb','nodejs'); ?>
             </div>
                  <section class="section">
                         <div class="row ">
-<?php echo '<pre>';
-print_r($group_info);
-echo '</pre>';
-?>
                        <?php for ($c=0; $c<$serv_enabled["count"]; $c++) {
                           $service=$serv_enabled[$c]["ou"][0];
                           if ( $c % 3 == 0 ){; ?>

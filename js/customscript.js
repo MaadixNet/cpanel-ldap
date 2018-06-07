@@ -404,16 +404,18 @@ $('#installModal').on('show.bs.modal', function (event) {
 
 $('#fqdnModal').on('show.bs.modal', function (event) {
   var modal = $(this);
+  var customlogmail = false;
   var body=modal.find('#modal-body');
   body.html('');
   var domain = $("#domain_new").val();
+  if(document.getElementById('logmailctive').checked)customlogmail=true;   
   var button = $(event.relatedTarget); // Button that triggered the modal
 
             $.ajax({
 
                 type : 'POST',
                 url  : 'proc/domain-check-fqdn.php',
-                data : {domain: domain},
+                data : {domain: domain, customlogmail:customlogmail},
                 success : function(data)
                           {
                             body.html(data);

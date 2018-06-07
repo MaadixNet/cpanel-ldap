@@ -6,7 +6,34 @@
   ////////////////// Module Directives /////////////////// //
   ///////////////////////////////////////////////////////////
 
-  angular.module('linuxDash').directive('diskSpace', ['server', function(server) {
+
+
+
+
+angular.module('linuxDash').directive('dnsInfo', ['server', function(server) {
+    return {
+      restrict: 'E',
+      scope: {},
+      templateUrl: 'templates/modules/dns-info.html',
+      link: function(scope) {
+
+        scope.heading = "DNS Configuration";
+
+        scope.getData = function() {
+          server.get('dns_info', function(serverResponseData) {
+            scope.dnsInfoData= serverResponseData;
+          });
+
+          scope.lastGet = new Date().getTime();
+        };
+
+        scope.getData();
+
+      }
+    };
+  }]);
+
+ angular.module('linuxDash').directive('diskSpace', ['server', function(server) {
     return {
       restrict: 'E',
       scope: {},
@@ -185,6 +212,7 @@
       name: 'ramIntensiveProcesses',
       template: '<table-data heading="RAM Intensive Processes" module-name="ram_intensive_processes" info="Processes which are using most RAM."></table-data>'
     },
+
     {
       name: 'cpuIntensiveProcesses',
       template: '<table-data heading="CPU Intensive Processes" module-name="cpu_intensive_processes" info="Processes which are using most CPU."></table-data>'

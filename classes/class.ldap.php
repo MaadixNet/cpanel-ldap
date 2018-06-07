@@ -62,6 +62,18 @@ class LDAP{
         }
     }
 
+    /* Create old fqn object in Ldap
+    */
+
+    function addFqdnDomainOld($status='false'){
+        $adddn ='ou=fqdn_domain_old,ou=conf,ou=cpanel,' . SUFFIX;
+        $data["objectclass"][0]    = "organizationalUnit";
+        $data["objectclass"][1]    = "metaInfo";
+        $data["objectclass"][2]    = "top";
+        $data["status"] = $status;
+        ldap_add($this->connection, $adddn, $data);
+    }
+
     function addDkimkey($ldapconn,$domain_new){
         $dkimexist = $this->search($ldapconn,'ou=opendkim,ou=cpanel,' . SUFFIX ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
         if(!$dkimexist){

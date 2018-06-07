@@ -1,6 +1,10 @@
 <?php
 session_start();
 $host_domain=$_POST['domain'];
+$customlogmail = $_POST['customlogmail'];
+$return_string='';
+$errormsg='';
+$totalerrors=0;
 if ($host_domain){
   /*check domains in o=hosting
   / TODO: write a function that checks if a domain is already present in o=hosting
@@ -26,8 +30,8 @@ if ($host_domain){
     $hostname = trim(shell_exec('hostname'));
     $fqdn=trim(shell_exec('hostname -f'));
     $domain = $hostname.'.' . $host_domain;
-    $errormsg='';
-    $totalerrors=0;
+
+    
     //Domain has invalid format
     if(empty($validdomain["value"])){
       $totalerrors++;
@@ -78,7 +82,7 @@ if ($host_domain){
         } else {
             $totalerrors++;
             $error=5;
-            $errormsg=sprintf(_("El registro A para este dominio debe apuntar a la IP %s"), $domain, $server_ipaddr);
+            $errormsg=sprintf(_("El registro A para el dominio %s debe apuntar a la IP %s"), $domain, $server_ipaddr);
             $errormsg.='<br />';
 
         }   
@@ -135,8 +139,11 @@ if ($host_domain){
         } // end if txt found
 
     } //End checking all dns records
-  } //End if domain
-
+} else { //End if domain
+  $totalerrors++;
+  $error=1;
+  $errormsg = sprintf(_("El campo dominio es obligatrio"));
+}
 // Build the form inside the MOdal window.
 // The submit button 
 if ($totalerrors>0){
@@ -152,6 +159,11 @@ if ($totalerrors>0){
   $return_string .= '<br>';
   $return_string .= " <div class='modal-footer'><button type='button' class='btn btn-primary' data-dismiss='modal'>" . sprintf (_("Cancelar")) . "</button></div>";
 } else {
+
+  /* Alert user taht all the deactived groups will be activated
+   */
+  //get array with aal deactvated groups
+  $serv_disabled= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=disabled)(type=installed))');
   $return_string='
              <form id="fieldset" method="POST" action="">
             <div class="form-group">' .
@@ -159,6 +171,8 @@ if ($totalerrors>0){
               '</div><br>
               <div class="modal-footer">
               <input type="hidden" name="domain" value="' . $host_domain .'" />
+              <input type="hidden" name="logmailctive" value="' . $customlogmail .'" />
+              <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">'. sprintf (_("Cancelar")) . '</button>
               <input type="submit" class="btn btn-primary btn-sm" id="changenameserver" name="changenameserver" value="' . sprintf(_("Continuar")) .'"
               <div class="fields-info" id="fields-info">
               </div>

@@ -15,22 +15,33 @@ if ($ldapconn){
   $fqdn=trim(shell_exec('hostname -f'));
   $domain_asociated= str_replace($hostname.'.', '',$fqdn);
 
-//Modifiy sender email account 
-  if(isset($_POST['changenameserver'])){
-    $base_dn = "ou=conf,ou=cpanel,dc=example,dc=tld";
-    $domain=strtolower($_POST["domain"]);
-
+  /* Gat all deactivated Group
+  */
+  $serv_disabled= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=disabled)(type=installed))');
+  /* TODO: if there is some disabled group, return the Title name from API
+  */
+  $count_diabled=count($serv_disabled); 
     /*
-    * Record new domain fro server
-    * ou=fqdn_domain,ou=conf,ou=cpanel,dc=example,dc=tld
-    * status=$domain
+    echo '<pre>';
+    print_r($serv_disabled);
+    echo '</pre>';
     */
+    //Modifiy sender email account 
+    if(isset($_POST['changenameserver'])){
+      $base_dn = "ou=conf,ou=cpanel,dc=example,dc=tld";
+      $domain=strtolower($_POST["domain"]);
 
-    if($domain) { //avoid emnpty values
-      $entry=array();
-      $entry["status"] = $domain; 
-      $ch_domain = $Ldap->modifyRecord($ldapconn, 'ou=fqdn_domain,' . $base_dn, $entry );
-    }
+      /*
+      * Record new domain fro server
+      * ou=fqdn_domain,ou=conf,ou=cpanel,dc=example,dc=tld
+      * status=$domain
+      */
+
+      if($domain) { //avoid emnpty values
+        $entry=array();
+        $entry["status"] = $domain; 
+        $ch_domain = $Ldap->modifyRecord($ldapconn, 'ou=fqdn_domain,' . $base_dn, $entry );
+      }
 
     /*
     * Record old domain in Ldap
@@ -38,34 +49,75 @@ if ($ldapconn){
     * status= $fqdn
     */
 
-    if ($domain_asociated) {
+    if ($domain_asociated ) {
       $old_domain = array(); 
       $old_domain["status"] = $domain_asociated;
-      $up_fqdn = $Ldap->modifyRecord($ldapconn, 'ou=fqdn_domain_old,' . $base_dn, $old_domain );
+
+      /* Check if fqn_domain_old object exists
+       * If not, create it
+       */
+      $fqdnOldexist = $Ldap->search($ldapconn,'ou=fqdn_domain_old,' . $base_dn ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
+      if (!$fqdnOldexist){
+        $up_fqdn = $Ldap->addFqdnDomainOld($domain_asociated);
+      } else { 
+        $up_fqdn = $Ldap->modifyRecord($ldapconn,'ou=fqdn_domain_old,' . $base_dn, $old_domain );
+      }
     }
+
     /* 
     * Change admin mail
     * ou=adminmail_custom,ou=conf,ou=cpanel,dc=example,dc=tld
     */
-    $mail=array();
-    $mail["status"] = 'true';
-    $ch_mail = $Ldap->modifyRecord($ldapconn, 'ou=adminmail_custom,' . $base_dn, $mail);
+
+    if(isset($_POST['logmailctive'])){
+      $mail=array();
+      $mail["status"] = 'true';
+
+    /*
+    * TODO: olcy if checkobx is checked
+    * This is just for logs
+    */
+      $ch_mail = $Ldap->modifyRecord($ldapconn, 'ou=logmail_custom,' . $base_dn, $mail);
+    }
 
     /*
     * Lock cpanel and destroy session
     *  ou=customfqdn,ou=cpanel,dc=example,dc=tld
     *  status= locked
     */
-    if ($up_fqdn && $ch_domain && $ch_mail) {
+
+  if ($up_fqdn && $ch_domain && $ch_mail) {
 
       $modifydn='ou=customfqdn,ou=cpanel,' . SUFFIX ;
       $info['status']= 'locked';
       $ch_fqdn=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
 
+
+      
       //Clear this sessions
       session_destroy();
+      /*
+      *TODO like a house: hay que reactivar los grupos que están desactivadas
+      * Y añadir cancelar en popup 
+      */
+    if($serv_disabled["count"]>0){
+       for ($c=0; $c<$serv_disabled["count"]; $c++) {
+          $service=$serv_disabled[$c]["ou"][0];
+          $entry = array(); 
+          $modifydn='ou=' . $service . ',' . LDAP_SERVICES;
+
+          $entry['type'] = 'available';
+          $entry['status'] = 'enabled';
+          $updategroup=$Ldap->modifyRecord($ldapconn, $modifydn, $entry );
+        }
+      }
+     //Update ou=cpanel object with lock status
+        $modifydn='ou=cpanel,' . SUFFIX ;
+        $info = array();
+        $info['status']= 'locked';
+        $updatefqdn=$Ldap->modifyRecord($ldapconn, $modifydn, $info ); 
       //Redirect to home
-      header('Location: /cpanel');
+        header('Location: /cpanel');
     }
   }
 
@@ -78,13 +130,6 @@ if ($ldapconn){
   require_once('sidebar.php');
   $fqdn_example = $hostname.'.example.com';
   $dkim_info_link = '<a href="/' . BASE_PATH . '/domain-instruccions.php#dkim">[+ Info]</a>';
-  //$sender_email = (isset($mailsenderou[0]["cn"][0]))?$mailsenderou[0]["cn"][0]: 'www-data@'.$fqdn;
-  /*
-  echo '<pre>';
-  print_r($return_value);
-  echo '</pre>';
-   */
-//  $result = $Ldap->search($ldapconn, LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
 }?>
 <article class="content forms-page">
     <div class="title-block">
@@ -181,10 +226,6 @@ if ($ldapconn){
               echo '<td>' . $fqdn_example . '</td>';
               echo '<td>"v=spf1 a mx ~all"</td>';
               echo '</tr>'; 
-              echo '<td>TXT</td>';
-              echo '<td>default._domainkey.' . $fqdn_example . '</td>';
-              echo '<td>Este valor se generará durante el proceso y lo recibirás por correo electrónico</td>';
-              echo '</tr>';
 
               echo '</tbody></table>';
               echo '<br>';
@@ -199,8 +240,13 @@ if ($ldapconn){
               echo '<br>';
               printf(_('Esta herramienta para el cambio de dominio del servidor, efectuará varias tareas:'));
               echo '<br>';
-              echo '<ul>
-                    <li>'.
+              echo '<ul>';
+              if ($count_diabled>0){
+                echo '<li>'.
+                    sprintf(_('Reactivar todas las aplicaciones que tengas desactivadas, para que puedan actualizarse con la nueva configuración. Una vez acabado el proceso podrás volver a descativarlas, desde la página del listado de aplicaciones instaladas ')).
+                    '</li>';
+              }
+              echo '<li>'.
                     sprintf(_('Comprobación de la existencia de las entradas DNS necesarias. El cambio de dominio no se aplicará, hatsa que la comprobación devuelva los resultados correctos')).
                     '</li>
                     <li>'.
@@ -211,10 +257,10 @@ if ($ldapconn){
                     '</li>
 
                     <li>'.
-                    sprintf(_('Envío de un correo electrónico a la cuenta %s, con los valores necesarios para crear la entrada DNS para DKIM. Este valor es muy importante para garantizar que los correos que envíes no sean tratados como SPAM. %s'),$admin_mail, $dkim_info_link).
+                    sprintf(_('Se generará la clave DKIM para el nuevo dominio de este servidor, que tendrás que utilizar para crear la entrada DNS correspondiente. Este valor es muy importante para garantizar que los correos que envíes no sean tratados como SPAM. %s'), $dkim_info_link).
                     '</li>
                     </ul>';
-              if ($domain_asociated == 'maadix.org'){
+              if ($domain_asociated == DEFAULT_FQDN){
                 printf(_('Una vez terminado el proceso de forma satisfactoria, procederemos a eliminar las entradas DNS antiguas, creadas para %s'),$fqdn);
               } 
 
@@ -232,9 +278,9 @@ if ($ldapconn){
                                     
                      <form autocomplete="off" action="" method="POST" class="form-signin standard">
                       <div class="form-group">
-                        <label class="title-label">
+                        <h5>
                           <?php printf(_('Nuevo nombre del servidor'));?>
-                        </label>
+                        </h5>
                         <p>
                         <?php printf(_('inserta el dominio que quieres asignar al servidor'));?>
                         </p>
@@ -242,6 +288,12 @@ if ($ldapconn){
                       </label>
                       <span class="inline"><?php echo $hostname;?>.</span><input id="domain_new" type="text" name="domain_new" class="inline" required />
                     </div>
+                    <h5><?php printf(_("Recibir Mails de Log del sistema"));?></h5>
+                    <p><?php printf(_("Activa esta casilla si quieres recibir correos electrónicos con avisos de lo que no va y lo que si va...tooooooma. Podrás cambiar esta configuración en cualquier momento desde la página de Notificaciones"));?></p>
+                    <div> <label>
+                        <input name="logmailctive" id="logmailctive" class="checkbox" type="checkbox">
+                        <span><?php printf(_("Recibir Logs"));?></span>
+                    </label> </div>
                     <br>
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#fqdnModal"><?php printf (_('Guardar'));?></button>
                   </form>

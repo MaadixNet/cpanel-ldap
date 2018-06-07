@@ -1,0 +1,28 @@
+<plugin 
+	heading="DNS Configuration"
+	last-updated="lastGet"
+	on-refresh="getData()">
+
+
+	<table ng-show="dnsInfoData">
+		<thead>
+			<tr>
+				<th>Type</th>
+                                <th>Current Value</th>
+                                <th>Correct Value</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr  ng-repeat="dns in dnsInfoData">
+				<td>{{ dns['Type'] }}</td>
+				<td>
+					{{ dns['val'] }} 
+				</td>
+				<td>
+					{{ dns['valok'] }}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	
+</plugin>
