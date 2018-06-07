@@ -93,6 +93,20 @@
   margin-left: 20px;
   margin-bottom: 50px;
 }
+
+.fullwidth .plugin {
+  width: 90%;
+
+}
+
+.fullwidth .plugin th.col-sm3, .fullwidth .plugin td.col-sm3 {
+    max-width: 55px;
+    width: 10%;
+    min-width: 50px;
+
+
+  }
+
 @media (max-width: 768px) {
   .plugin {
     max-width: 100%;

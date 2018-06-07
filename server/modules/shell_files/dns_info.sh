@@ -1,7 +1,6 @@
 #!/bin/bash
 
 fqdn="$(/bin/hostname -f)"
-fqdn="usavm3list.gadix.net"
 #Get DNS configuration
 recorda=$(/usr/bin/dig -t A +short "$fqdn")
 recordMX=$(/usr/bin/dig -t MX +short "$fqdn" | awk '{print $2}')
@@ -13,4 +12,4 @@ recordspfok="v=spf1 a mx ~all"
 
 recorddkimok=$(/bin/cat /etc/opendkim/keys/"$fqdn"/default.txt | grep -o -P "(?<=\"p=).*(?=\")")
 
-echo [" {\"Type\": \"A\", \"val\": \"$recorda\", \"valok\": \"$recordaok\"}, {\"Type\": \"MX\", \"val\": \"$recordMX\", \"valok\": \"$recordMXok\"}, {\"Type\": \"SPF\", \"val\": \"$recordspf\", \"valok\": \"$recordspfok\"}, {\"Type\": \"DKIM\", \"val\": \"$recorddkim\", \"valok\": \"$recorddkimok\"}"]
+echo [" {\"TypeA\": \"A\", \"valA\": \"$recorda\", \"valAok\": \"$recordaok\",\"TypeMX\": \"MX\", \"valMX\": \"$recordMX\", \"valMXok\": \"$recordMXok\",\"TypeSPF\": \"SPF\", \"valSPF\": \"$recordspf\", \"valSPFok\": \"$recordspfok\",\"TypeDKIM\": \"DKIM\", \"valDKIM\": \"$recorddkim\", \"valDKIMok\": \"$recorddkimok\"}"]

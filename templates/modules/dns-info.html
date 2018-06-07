@@ -1,4 +1,5 @@
 <plugin 
+        class="fullwidth"
 	heading="DNS Configuration"
 	last-updated="lastGet"
 	on-refresh="getData()">
@@ -7,21 +8,23 @@
 	<table ng-show="dnsInfoData">
 		<thead>
 			<tr>
-				<th>Type</th>
+				<th class="col-sm3">Type</th>
                                 <th>Current Value</th>
                                 <th>Correct Value</th>
 			</tr>
 		</thead>
-		<tbody>
-			<tr  ng-repeat="dns in dnsInfoData">
-				<td>{{ dns['Type'] }}</td>
-				<td>
-					{{ dns['val'] }} 
-				</td>
-				<td>
-					{{ dns['valok'] }}
-				</td>
+		<tbody ng-repeat="dns in dnsInfoData">
+                  <tr> 
+				<td class="col-sm3">{{ dns['TypeA'] }}</td>
+				<td>{{ dns['valA'] }} </td>
+				<td>{{ dns['valAok'] }}</td>
 			</tr>
+                  <tr>
+                                <td class="col-sm3">{{ dns['TypeMX'] }}</td>
+                                <td>{{ dns['valMX'] }} </td>
+                                <td>{{ dns['valMXok'] }}dello </td>
+                        </tr>
+
 		</tbody>
 	</table>
 	
