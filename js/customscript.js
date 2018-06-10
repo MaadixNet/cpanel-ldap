@@ -1,65 +1,3 @@
-/*$(document).ready(function() {
-
-   $('.mobileSlider').flexslider({
-        animation: "slide",
-        slideshowSpeed: 3000,
-        controlNav: false,
-        directionNav: true,
-        prevText: "&#171;",
-        nextText: "&#187;"
-    });
-    $('.flexslider').flexslider({
-        animation: "slide",
-        directionNav: false
-    });
-        
-    $('a[href*=#]:not([href=#])').click(function() {
-        if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') || location.hostname == this.hostname) {
-            var target = $(this.hash);
-            target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
-            if ($(window).width() < 768) {
-                if (target.length) {
-                    $('html,body').animate({
-                        scrollTop: target.offset().top - $('.navbar-header').outerHeight(true) + 1
-                    }, 1000);
-                    return false;
-                }
-            }
-            else {
-                if (target.length) {
-                    $('html,body').animate({
-                        scrollTop: target.offset().top - $('.nav').outerHeight(true) + 1
-                    }, 1000);
-                    return false;
-                }
-            }
-
-        }
-    });
-    
-    $('#toTop').click(function() {
-        $('html,body').animate({
-            scrollTop: 0
-        }, 1000);
-    });
-    
-    var timer;
-    $(window).bind('scroll',function () {
-        clearTimeout(timer);
-        timer = setTimeout( refresh , 50 );
-    });
-    var refresh = function () {
-        if ($(window).scrollTop()>100) {
-            $(".tagline").fadeTo( "slow", 0 );
-        }
-        else {
-            $(".tagline").fadeTo( "slow", 1 );
-        }
-    };
-        
-});
-*/
-
 $(document).ready(function() {
 
      $(window).load(function() {
@@ -548,7 +486,6 @@ $('#fqdnModal').on('show.bs.modal', function (event) {
 /*check errors in regitration form */
     $( ".jquery-check" ).submit(function( event ) {
         var count = $(".jquery-check .error:visible").length;
-        console.log(count);
         if (count != 0 ) event.preventDefault();
     });
 
@@ -648,6 +585,8 @@ $('input.installGroups:checkbox').on('change', function(e){
   }
 });
 
+/* Function to check valididty for input fields wheun istalling apps with dependencies
+ * */
 
 $("#fieldset").submit(function(e) {
   var appmodal = $(this).parents('#fieldsModal').find(':input[name="installGroup\[\]"]').val();
@@ -737,6 +676,85 @@ $("#fieldset").submit(function(e) {
                     }
                 });
       } //End if existsDomain>0
+});
+
+/* Funtion to call the domain validator only for dependencies updates
+*/
+$("#checkFieldsUpdate").click(function(e){
+    form=$("#updateDependencies");
+    var app = $(form).find(':input[name*="application"]').val();
+    $('#loading').show();
+    $(form).find(".errorrecords").each(function() {
+      $(this).html('');
+    });
+  // Get all inputs inserted by user in dependency domain field 
+  var fields = {};
+  $(form).find(":input.boxed").each(function() {
+    // Check if vañue has changed, If not, don't do any check
+    if ($(this).val() != $(this).attr('data-oldvalue')){
+ 
+      // Create an indexed aray filedId: fieldValue 
+      // eg.Array [fields] Object { domain: mydomain.com, mail: me@example.com}...
+      fields[$(this).attr('data-dependency')] = $(this).val();
+    } 
+  });
+  //Clean previous errors in divs  
+//  $('div#error-' +appmodal +'-domain' ).html();
+//  $("#fields-info").html();
+    var modal = $('#updateGroupDepsModal');
+//    var fieldsinfo=modal.find('.fields-info');
+    var body=$('#updateDependencies').find('.modal-body');
+
+    /* If no changes are made , pass over
+    */
+    if(jQuery.isEmptyObject( fields )){
+    /*TODO: pront some message?
+    */
+      $('#loading').hide();
+    
+    } else {
+    /* 
+    * check other fields and domain validity against ldap, and DNS
+    * sending AJAX request to proc/check-fields.php
+    */
+    //check values
+            $.ajax({
+
+                type : 'POST',
+                url  : 'proc/check-fields.php',
+                data : fields,
+                // Si usamos json habrá que actualizar php
+                success : function(data)
+
+                    {
+                    data=$.parseJSON(data);
+                    if(data.totErros== 0){
+                          $('#loading').hide();
+                          $(form).find('div#lastConfirm').removeClass("hide");
+                          $(form).find('div#form-elements').addClass("hide");  
+                    } else  {
+                      //return error from ajaz function
+                      // detailed errors, each one above their correspondent input field
+                      // errors are  an idexed Array [errors] of Objects {fieldId: doamin, fieldValue: example.comi, msg: invalid value for field, error: integer of error id}....
+                      /* TODO: if a groups has multiple custom deps, and a user wants to 
+                      * chande a txt value preserving the domain, it gives error, because the domain is
+                      * is already in use by itself. Maybe check after the data response if is this case and 
+                      * remove te error
+                      */
+                         $.each(data.errors, function(index, errval) {
+                              $('div#error-' +errval.fieldId+ '' ).addClass('red').html(errval.msg);
+                          });
+                        $('#loading').hide();
+ 
+                    }
+                  }
+                });
+      }//end if field is empty
+});
+$("#checkBack").click(function(e){
+    $("#updateDependencies").find('div#lastConfirm').toggleClass("hide");
+    $("#updateDependencies").find('div#form-elements').removeClass("hide");
+
 });
 
 $('#fieldsModal').on('hide.bs.modal', function (event) {

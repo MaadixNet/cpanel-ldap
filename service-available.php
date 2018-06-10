@@ -45,7 +45,7 @@ if(isset($_POST['install']) && isset($_POST['release'])){
   //$groups = $_POST['groups'];
   $groups = (isset($_POST['installGroup']))?$_POST['installGroup']:'';
   //$domains = $_POST['domain'];
-  $inputDep = (isset($_POST['inputDep']))?$_POST['inputDep']:'';
+  if (isset($_POST['inputDep'])) $inputDep = $_POST['inputDep'];
   //Modify new groups to ldap with status 'install'
   
   foreach ($groups as $group){

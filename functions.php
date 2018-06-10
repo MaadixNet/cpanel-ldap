@@ -640,37 +640,12 @@ function sqsetcookie($sName, $sValue='deleted', $iExpire=0, $sPath="", $sDomain=
 */ 
 function dependencies_input_fields($service_data){
   $inputs_fields=$hidden_fields=$text='';
-  $field=array();
   foreach ($service_data['dependencies'] as $dependency){ 
         if (strpos($dependency, ".") !== false){
-            // This field needs input
-            /*we know the string has three elements divided by dot
-            * [0] = id
-            * [1] = type
-            * [2] = Label[Description:.....]
-            * First remove the description string,that will be the help text for the input
-            * Then            
-            * Explode the remaining string and create an array withe these trhee data
-            * Maybe we should add a more explicit value such as input: id.type.label.input?
-             */
-            //Get the strng between [Description:.....]
-            preg_match("/\[Description:(.*?)\]/is", $dependency, $matches);
-            // Set an empty default value for field_description, in case it is missing
-            $field_dedscription='';
-            if ($matches) {
-            // Assing to a variable
-              $field_dedscription = $matches[1];
-            // Create a string with only the three elements (id, type, label) delimited by dots
-              $dependency = str_replace($matches[0],'', $dependency);
-            }  
-            $deps= explode(".", $dependency);
-            // Try preg_split(".",$string, 4); to split the string  in 4 matches. next dots will not be take in account
-
-            $keys = array('id','type', 'label');
-            $field = array_combine($keys,$deps);
+            $field=get_dependencies_properties($dependency);
             //First print the user input fields
             $inputs_fields.=sprintf(_('<label class="modalfield hide" for="%s">%s</label>'),$field['id'],$field['label']);
-            $inputs_fields.=sprintf(_('<p class="form-control-static underlined hide modalfield">%s</p>'),$field_dedscription);
+            $inputs_fields.=sprintf(_('<p class="form-control-static underlined hide modalfield">%s</p>'),$field['description']);
             $inputs_fields.=sprintf(_('<div id="error-%s-%s" class="hide modalfield"></div>'),$service_data['id'],$field['id']);
             $inputs_fields.=sprintf(_('<input class="modalfield hide form-control" data-dependency="%s" placeholder="%s" type="%s" name="%s[%s]" />'),$field['id'],$field['label'],$field['type'],$field['id'],$service_data['id']);
             $hidden_fields.=sprintf(_('<input class="dependency" type="hidden" name="%s[%s]" />'),$field['id'],$service_data['id']);
@@ -681,6 +656,49 @@ function dependencies_input_fields($service_data){
   }
 return array('hiddenHtml' => $hidden_fields, 'inputHtml' => $inputs_fields);
 }
+
+
+
+function get_dependencies_properties($dependency){
+        $field=array();
+        if (strpos($dependency, ".") !== false){
+            // This field needs input
+            /*we know the string has 4 elements divided by dot
+            * [0] = id
+            * [1] = type
+            * [2] = Label
+            * .[Description:.....]
+            * First remove the ,[Description ....] string,that will be the help text for the input
+            * Previous version of the API may have field with just 3 elements.
+            * To avoid error totally renove 4the elemente .[Description and  then add it again. if it s missing use the default valued
+            * Then            
+            * Explode the remaining string and create an array withe these trhee data
+            * Maybe we should add a more explicit value such as input: id.type.label.input?
+             */
+            //Get the strng between [Description:.....]
+            preg_match("/.\[Description:(.*?)\]/is", $dependency, $matches);
+            // Set an empty default value for field_description, in case it is missing
+            $field_dedscription='';
+            if ($matches) {
+            // Assing to a variable 
+              $field_dedscription = $matches[1];
+            // Create a string with only the three elements (id, type, label) delimited by dots
+              $dependency = str_replace($matches[0],'', $dependency);
+            }  
+            $deps= explode(".", $dependency);
+            // Try preg_split(".",$string, 4); to split the string  in 4 matches. next dots will not be take in account
+            if ($field_dedscription==''){
+              $field_dedscription=get_input_field_description($deps[0]);
+            }
+            $keys = array('id','type', 'label','description');
+            // add the forurth element
+            $deps[]=$field_dedscription;
+            $field = array_combine($keys,$deps);
+            return $field;
+        }
+}
+
+
 
 function get_input_field_description($field){
   switch($field){
@@ -694,4 +712,5 @@ function get_input_field_description($field){
       $text=sprintf(_(""));
       break;
   }
+  return $text;
 }

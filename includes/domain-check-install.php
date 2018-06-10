@@ -70,7 +70,13 @@ if ($domain){
       }   
 
     } //End cases for doamins
-}//End count domains 
+} else {//End count domains 
+  //No domain value
+  $totalerrors++;
+  $error=1;
+  $errormsg.=sprintf(_("Este campo no puede esatr vacío."));
+}
+
 
 // Build the form inside the MOdal window.
 // The submit button 

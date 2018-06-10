@@ -7,8 +7,8 @@
  *
  */
 $groups=$deps=array();
-$groups=$_POST['groups'];
-$deps=$_POST['deps'];
+if($_POST['groups'])$groups=$_POST['groups'];
+$deps=(isset($_POST['deps']))?$_POST['deps']:array();
 //$domains=$_POST['inputDep'];
 if (count($groups)>0){
   printf(_("Las siguientes aplicaciones se han seleccionado para ser instaladas"));

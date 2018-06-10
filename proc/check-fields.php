@@ -18,11 +18,11 @@ $errormsg='';
 $totalerrors=0;
 //We  are receiving an array from  customscript.js
 $fields=$_POST;
-$domain=$_POST['domain'];
+$domain=(isset($_POST['domain']))?trim($_POST['domain']):'';
 $keys=[];
 $return_value=array();
 foreach($_POST as $key=>$value){
-    switch($key){
+  switch($key){
       case 'domain':
       //do domain check
       //This checr returns an array to be used in customscript.js

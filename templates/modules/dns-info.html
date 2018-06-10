@@ -8,22 +8,39 @@
 	<table ng-show="dnsInfoData">
 		<thead>
 			<tr>
+
 				<th class="col-sm3">Type</th>
+                                <th>Name</th>
                                 <th>Current Value</th>
                                 <th>Correct Value</th>
 			</tr>
 		</thead>
-		<tbody ng-repeat="dns in dnsInfoData">
+		<tbody>
                   <tr> 
-				<td class="col-sm3">{{ dns['TypeA'] }}</td>
-				<td>{{ dns['valA'] }} </td>
-				<td>{{ dns['valAok'] }}</td>
+                    <td class="col-sm3 {{ dnsInfoData['classA'] }}">{{ dnsInfoData['TypeA'] }}</td>
+                                <td>{{ dnsInfoData['Fqdn'] }} </td>
+				<td>{{ dnsInfoData['valA'] }} </td>
+				<td>{{ dnsInfoData['valAok'] }}</td>
 			</tr>
                   <tr>
-                                <td class="col-sm3">{{ dns['TypeMX'] }}</td>
-                                <td>{{ dns['valMX'] }} </td>
-                                <td>{{ dns['valMXok'] }}dello </td>
+                    <td class="col-sm3 {{ dnsInfoData['classMX'] }}">{{ dnsInfoData['TypeMX'] }}</td>
+                                <td>{{ dnsInfoData['Fqdn'] }} </td>
+                                <td>{{ dnsInfoData['valMX'] }} </td>
+                                <td>{{ dnsInfoData['valMXok'] }}.</td>
                         </tr>
+                  <tr>
+                    <td class="col-sm3 {{ dnsInfoData['classSPF'] }}">{{ dnsInfoData['TypeSPF'] }}</td>
+                                <td>{{ dnsInfoData['Fqdn'] }} </td>
+                                <td>"{{ dnsInfoData['valSPF'] }}"</td>
+                                <td>"{{ dnsInfoData['valSPFok'] }}" </td>
+                        </tr>
+                  <tr>
+                    <td class="col-sm3 {{ dnsInfoData['classDKIM'] }}">{{ dnsInfoData['TypeDKIM'] }}</td>
+                                <td>default._domainkey.{{ dnsInfoData['Fqdn'] }} </td>
+                                <td>"{{ dnsInfoData['valDKIM'] }}"</td>
+                                <td>"{{ dnsInfoData['valDKIMok'] }}"</td>
+                        </tr>
+
 
 		</tbody>
 	</table>

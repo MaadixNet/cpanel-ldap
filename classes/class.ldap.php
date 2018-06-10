@@ -36,7 +36,16 @@ class LDAP{
 
  
     } 
-    
+    function lock_cpanel_puppet_master(){   
+        $modifydn='ou=cpanel,' . SUFFIX ;
+        $info = array(); 
+        $info['status']= 'locked';
+        $updaterelease=$this->modifyRecord($this->connection, $modifydn, $info );
+        //Clear this sessions
+        session_destroy();
+        //Redirect to home
+        header('Location: /cpanel');
+    }
     /*function addVpnObject ($ldapconn){
         //Only admin can add vpn accounts. Check level
         if($_SESSION["login"]["level"] == '10'){				
