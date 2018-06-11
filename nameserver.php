@@ -237,7 +237,7 @@ if ($status=='ready'){
                 echo '</tbody></table>';
                 echo '<br>';
                 echo '<br>';
-                echo '<p><span class="advert">NOTA: </span>';
+                echo '<p><span class="advert">' . sprintf(_("ADVERTENCIA")).': </span>';
                 printf(_('El nombre del servidor y el FQDN son usados por múltiples aplicaciones, dentro del sistema. Todas ellas se actualizarán automáticamente para que funcionen con la nueva configuracón.'));
                 echo '<br>';
                 printf(_('Si estás usando software externos en otros dispositivos, por ejemplo, si tienes configurada alguna cuenta de correo en aplicaciones como Thunderbird o Outlook, tendrás que cambiar el valor para el servidor de entrada y de salida, y sustituirlo con el nuevo. Encontrarás los nuevos valores de configuración en la página de edición de las cuentas de correo electrónico de este panel de control.'));
