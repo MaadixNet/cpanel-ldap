@@ -31,6 +31,16 @@ if ($ldapconn && $ldapbind){
         $service_data=$val;
       }
    }
+
+
+/* Get current value for domain dependecies
+* to store as old_domain
+*/
+$filter="(ou=domain)";
+$dn="ou=domain,ou=". $app . ", " . LDAP_SERVICES;
+$ldap_dep_object = $Ldap->search($ldapconn, $dn ,$filter);
+$old_domain=$ldap_dep_object[0]['status'][0];
+
   /*
    * Get  current app data from LDAP
    * Checking if it is enabled and activavted
@@ -47,7 +57,7 @@ if ($ldapconn && $ldapbind){
   if(isset($_POST['confirmChage'])){
     //Check DNS
     if (isset($_POST['inputDep'])) $inputDep = $_POST['inputDep'];
-    if (isset($_POST['inputDep'])) $inputDepOld = $_POST['inputDep'];
+    if (isset($_POST['inputDepOld'])) $inputDepOld = $_POST['inputDep'];
 
     foreach ($inputDep as $key => $value){
 
@@ -62,9 +72,22 @@ if ($ldapconn && $ldapbind){
         }
 
       }
+      /* Check if fqn_domain_old object exists
+       * If not, create it
+       * Need to store this value for domains, for puppet be able to remove old domain configuration
+       */
+      $base_old_dn = 'ou=domain_old,ou=' . $app . ','. LDAP_SERVICES;
+      $old_dom_entry['status'] = $old_domain;
+      $domainOldexist = $Ldap->search($ldapconn, $base_old_dn , '(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
+      if (!$domainOldexist){
+        $up_old_doamin= $Ldap->addGroupDomainOld($base_old_dn,$old_domain);
+      } else { 
+        $up_fqdn = $Ldap->modifyRecord($ldapconn,$base_old_dn, $old_dom_entry );
+      }
+     
 
         if ($changeValues){
-            $Ldap->lock_cpanel_puppet_master();
+        //    $Ldap->lock_cpanel_puppet_master();
 
         }
   }
@@ -84,8 +107,9 @@ if ($ldapconn && $ldapbind){
       /* TODO: use the name from the api, not the group name
       *  And maybe get the image too
        */
+
       ?>
-      <h3 class=i"title"> <?php printf(_("Configuración de la aplicación %s"),$service_data['name']);?></h3>
+      <h3 class="title"> <?php printf(_("Configuración de la aplicación %s"),$service_data['name']);?></h3>
     </div>
     <section class="section">
         <div class="row">
