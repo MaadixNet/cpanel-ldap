@@ -15,7 +15,39 @@ if ($ldapconn){
 
   $binddn=LDAP_BASE;
   $filter="(vd=*)";
+$base_dn = 'ou=logmail_custom,ou=conf,ou=cpanel,' . SUFFIX;
 
+if(isset($_POST['logmailactive'])){
+      $mail=array();
+      $mails_status_log = (isset($_POST['logactive']))?'true':'false';
+      $mail["status"] = $mails_status_log;
+      $change_log = $Ldap->modifyRecord($ldapconn, $base_dn, $mail);//Check if a custom mail has been set
+}
+
+/* Check if log mail is active
+*/
+$admin_mail = $Ldap->get_admin_email();
+
+$is_log_active = $Ldap->search($ldapconn, $base_dn, '(&(objectClass=organizationalUnit)(status=true))');
+//Check if a custom mail has been set
+
+if ($is_log_active["count"]>0) {
+
+  $logs_status = sprintf(_("Actualmente, estos mensajes se están enviando a la dirección de correo %s"),$admin_mail);
+  $ischecked = 'checked="checked"';
+  $logs_status_change =sprintf(_("Para dejar de recibir los Logs, desactiva la siguiente casilla. Los correos se enviarán a una cuenta a la que tiene acceso el equipo técnico de MaadiX, para que se puedan consultar en el caso que se produzcan errores."));
+
+} else {
+
+  $ischecked = '';
+  $logs_status =sprintf(_("Actualmente, estos mensajes se están enviando %s"),DEFAULT_FQDN);
+  $logs_status_change =sprintf(_("Puedes cambiar esta configuración para recibir los Logs de sistema a la cuenta de correo %s"),$admin_mail);
+
+}
+
+
+/* Check if custom log mail is activaded or not
+*/
 //Modifiy sender email account 
   if(isset($_POST['chmail_notif'])){
     $modifydn=$_POST['selmail'];
@@ -27,8 +59,6 @@ if ($ldapconn){
   
 
 
-  
-//Check if a custom mail has been set
   if ($ldapbind) {
     $mailsenderou= $Ldap->search($ldapconn,'ou=sendermail,' . SUFFIX ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
   }
@@ -45,6 +75,7 @@ if ($ldapconn){
   $sender_email = (isset($mailsenderou[0]["cn"][0]))?$mailsenderou[0]["cn"][0]: 'www-data@'.$fqdn;
 
   $result = $Ldap->search($ldapconn, LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
+print_r($is_log_active);
 }?>
 <article class="content forms-page">
     <div class="title-block">
@@ -54,9 +85,10 @@ if ($ldapconn){
         <div class="row">
 
           <div class="col-sm-12">
-            <div class="inner"i id="maincol">
+            <div class="inner" id="maincol">
               <?php
               echo $message; 
+              echo '<h5>'. sprintf(_("Configurar remitente")) . '</h5>';
               echo '<p>' . sprintf(_("Tu sistema puede enviar correos de notificaciones a los usuarios. Por ejemplo, si creas una cuenta VPN, puedes enviar las instrucciones al usuario para configurar correctamente su conexión.")) . '<br>' .
               sprintf(_("Actualmente, el correo electrónico desde el que se envían los correos del sistema es:")) . '<br>
               <div class="box-placeholder">'. $sender_email .'</div>';
@@ -64,12 +96,15 @@ if ($ldapconn){
                   printf(_('Todavía no has activado ninguna cuenta de correo en el servidor. Cuando hayas creado al menos una, podrás designarla como remitente para las notificaciones'));
 
               } else {
+                echo '<p>';
                 printf(_('Puedes cambiar esta configuración y elegir una de las cuentas de correo activadas en tu sistema para que sea el remitente de las notificaciones.'));
                 echo '<br>';
-                printf(_('Para cambiar este valor, elige un correo electrónico disponible en el listado y haz clic en Guardar'));?>
-
+                printf(_('Para cambiar este valor, elige un correo electrónico disponible en el listado y haz clic en Guardar'));
+                echo '</p>';
+                ?>
+                <br>
                 <form autocomplete="off" action="" method="POST" class="form-signin standard">
-                <hr>
+                  <div class="form-group">
                 <?php
                 echo '<select id="selmail" name="selmail" required>';
                 echo '<option value="">' . sprintf(_("Seleccionar correo")) .'</option>';
@@ -80,11 +115,32 @@ if ($ldapconn){
                 echo '<option value="www-data@'.$fqdn . '">www-data@'.$fqdn . '</option>';
                 echo '</select></span>';
               };?>
-
+                </div><!--form-group-->
               <br>
-              <hr>
               <input type="submit" name="chmail_notif" value="<?php printf(_('Guardar'));?>" class="btn btn-small btn-primary" />
             </form>
+              <hr>
+              <?php
+              echo '<h5>'. sprintf(_("Configurar destinatario de Logs")) . '</h5>';
+              echo '<p>' . sprintf(_("Tu sistema envia periodcamente correos con información sobre su estado como fallos de los servicios, errores o actualizaciones.")) . '<br>' .
+              $logs_status .
+
+              '<br>' .
+              $logs_status_change .
+              '<br>';?>
+
+              <form action="" method="POST" class="form-signin standard">
+                  <div> <label>
+                    <input type="checkbox" name="logactive" id="logactive" class="checkbox" type="checkbox" <?php echo $ischecked;?> />
+                    <span></span>
+                  </label> </div>
+                <?php
+              ?>
+
+              <br>
+              <input type="submit" name="logmailactive" value="<?php printf(_('Guardar'));?>" class="btn btn-small btn-primary" />
+            </form>
+
             <?php 
            //end if domain not =  0?>
         </div><!--inner-->
