@@ -87,7 +87,7 @@ $old_domain=$ldap_dep_object[0]['status'][0];
      
 
         if ($changeValues){
-        //    $Ldap->lock_cpanel_puppet_master();
+           $Ldap->lock_cpanel_puppet_master();
 
         }
   }
