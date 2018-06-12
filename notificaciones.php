@@ -2,8 +2,18 @@
 
 session_start();
 $message='';
-require_once('header.php');
-require_once('sidebar.php');
+require_once 'classes/class.ldap.php';
+$Ldap= new LDAP();
+$current_page=basename(__FILE__);
+$Ldap->check_login_or_redirect($current_page);
+
+//connect and BInd
+$ldapconn=$Ldap->connect();
+$psw=$Ldap->decrypt_psw();
+if ($ldapconn){
+  $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
+}
+
 if ($ldapconn){
 
   #TODO: Check user level to show and allow differents permissions
@@ -22,6 +32,8 @@ if(isset($_POST['logmailactive'])){
       $mails_status_log = (isset($_POST['logactive']))?'true':'false';
       $mail["status"] = $mails_status_log;
       $change_log = $Ldap->modifyRecord($ldapconn, $base_dn, $mail);//Check if a custom mail has been set
+      // Lock cpanel
+      $Ldap->lock_cpanel_puppet_master();
 }
 
 /* Check if log mail is active
@@ -75,7 +87,10 @@ if ($is_log_active["count"]>0) {
   $sender_email = (isset($mailsenderou[0]["cn"][0]))?$mailsenderou[0]["cn"][0]: 'www-data@'.$fqdn;
 
   $result = $Ldap->search($ldapconn, LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
-print_r($is_log_active);
+  require_once('header.php');
+
+  require_once('sidebar.php');
+
 }?>
 <article class="content forms-page">
     <div class="title-block">
@@ -138,6 +153,9 @@ print_r($is_log_active);
               ?>
 
               <br>
+              <p>
+              <?php printf(_("Para este cambio, se bloqueará el acceso al panel de control durante unos minutos. Todos los usuarios que tengan una sesión activa serán forzados a salir y redireccionados a una página en la que se mostrará el estado de la operación. Cuando el proceso termine, se activará el formulario para volver a acceder."));?>
+              </p>
               <input type="submit" name="logmailactive" value="<?php printf(_('Guardar'));?>" class="btn btn-small btn-primary" />
             </form>
 
