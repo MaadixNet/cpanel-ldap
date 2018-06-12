@@ -2,18 +2,7 @@
 
 session_start();
 $message='';
-require_once 'classes/class.ldap.php';
-$Ldap= new LDAP();
-$current_page=basename(__FILE__);
-$Ldap->check_login_or_redirect($current_page);
-
-//connect and BInd
-$ldapconn=$Ldap->connect();
-$psw=$Ldap->decrypt_psw();
-if ($ldapconn){
-  $ldapbind=$Ldap->bind($ldapconn,$_SESSION["login"]["dn"],$psw); 
-}
-
+require_once('header.php');
 if ($ldapconn){
 
   #TODO: Check user level to show and allow differents permissions
@@ -87,9 +76,7 @@ if ($is_log_active["count"]>0) {
   $sender_email = (isset($mailsenderou[0]["cn"][0]))?$mailsenderou[0]["cn"][0]: 'www-data@'.$fqdn;
 
   $result = $Ldap->search($ldapconn, LDAP_BASE,'(&(objectClass=VirtualMailAccount)(!(cn=postmaster))(!(mail=abuse@*)))');
-  require_once('header.php');
-
-  require_once('sidebar.php');
+require_once('sidebar.php');
 
 }?>
 <article class="content forms-page">
