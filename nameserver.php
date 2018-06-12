@@ -296,7 +296,7 @@ if ($status=='ready'){
                       <span class="inline"><?php echo $hostname;?>.</span><input id="domain_new" type="text" name="domain_new" class="inline" required />
                     </div>
                     <h5><?php printf(_("Recibir Mails de Log del sistema"));?></h5>
-                    <p><?php printf(_("Activa esta casilla si quieres recibir correos electrónicos con avisos de lo que no va y lo que si va...tooooooma. Podrás cambiar esta configuración en cualquier momento desde la página de Notificaciones"));?></p>
+                    <p><?php printf(_("Activa esta casilla si quieres recibir a tu cuenta de correo, informes diarios sobre el estado del sitema, fallos en los servicios, errores o actualizaciones. Podrás cambiar esta configuración en cualquier momento desde la página de Notificaciones"));?></p>
                     <div> <label>
                         <input name="logmailctive" id="logmailctive" class="checkbox" type="checkbox">
                         <span><?php printf(_("Recibir Logs"));?></span>
