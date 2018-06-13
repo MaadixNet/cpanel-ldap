@@ -123,33 +123,33 @@ require_once('sidebar.php');
             </form>
               <hr>
               <?php
-              echo '<h5>'. sprintf(_("Configurar destinatario de Logs")) . '</h5>';
-              echo '<p>' . sprintf(_("Tu sistema envia periodcamente correos con información sobre su estado como fallos de los servicios, errores o actualizaciones.")) . '<br>' .
-              $logs_status .
+              /* Custom admin mail needs puppet agent 
+              * Check if status is ready
+              */
+              $status = $Ldap->getpuppetstatus();
+              if ($status=='ready'){
+                echo '<h5>'. sprintf(_("Configurar destinatario de Logs")) . '</h5>';
+                echo '<p>' . sprintf(_("Tu sistema envia periodcamente correos con información sobre su estado como fallos de los servicios, errores o actualizaciones.")) . '<br>' .
+                $logs_status .
 
-              '<br>' .
-              $logs_status_change .
-              '<br>';?>
+                '<br>' .
+                $logs_status_change .
+                '<br>';?>
 
-              <form action="" method="POST" class="form-signin standard">
+                <form action="" method="POST" class="form-signin standard">
                   <div> <label>
                     <input type="checkbox" name="logactive" id="logactive" class="checkbox" type="checkbox" <?php echo $ischecked;?> />
                     <span></span>
                   </label> </div>
-                <?php
-              ?>
+                  <br>
+                  <p>
+                  <?php printf(_("Para este cambio, se bloqueará el acceso al panel de control durante unos minutos. Todos los usuarios que tengan una sesión activa serán forzados a salir y redireccionados a una página en la que se mostrará el estado de la operación. Cuando el proceso termine, se activará el formulario para volver a acceder."));?>
+                  </p>
+                  <input type="submit" name="logmailactive" value="<?php printf(_('Guardar'));?>" class="btn btn-small btn-primary" />
+              </form>
 
-              <br>
-              <p>
-              <?php printf(_("Para este cambio, se bloqueará el acceso al panel de control durante unos minutos. Todos los usuarios que tengan una sesión activa serán forzados a salir y redireccionados a una página en la que se mostrará el estado de la operación. Cuando el proceso termine, se activará el formulario para volver a acceder."));?>
-              </p>
-              <input type="submit" name="logmailactive" value="<?php printf(_('Guardar'));?>" class="btn btn-small btn-primary" />
-            </form>
-
-            <?php 
-           //end if domain not =  0?>
-        </div><!--inner-->
-
+              <?php } //end if status = ready?>
+          </div><!--inner-->
       </div><!--col-sm-12-->
   </div><!--row-->
 </section>

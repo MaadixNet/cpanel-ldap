@@ -120,7 +120,7 @@ if ($status=='ready'){
         $modifydn='ou=cpanel,' . SUFFIX ;
         $info = array();
         $info['status']= 'locked';
-        $updatefqdn=$Ldap->modifyRecord($ldapconn, $modifydn, $info ); 
+//        $updatefqdn=$Ldap->modifyRecord($ldapconn, $modifydn, $info ); 
       //Redirect to home
         header('Location: /cpanel');
     } // end if ($up_fqdn && $ch_domain && $ch_mail)
