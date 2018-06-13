@@ -58,7 +58,7 @@ $new_fqn_arr= $Ldap->search($ldapconn, "ou=fqdn_domain,ou=conf,ou=cpanel," . SUF
 $new_fqdn = $new_fqn_arr[0]['status'][0];
 $hostname = trim(shell_exec('hostname'));
 $new_url = $hostname .'.'. $new_fqdn;
-//if ($new_url)session_destroy();
+session_destroy();
 function print_form($new_url){
     		echo '<div class="form-signin hidden-form">
                       <h5 class="text-center auth-title">' . sprintf(_("Proceso terminado")) .'</h5>

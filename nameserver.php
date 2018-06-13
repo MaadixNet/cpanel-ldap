@@ -100,7 +100,7 @@ if ($status=='ready'){
 
       
       //Clear this sessions
-      session_destroy();
+      //session_destroy();
       /*
       *TODO like a house: hay que reactivar los grupos que están desactivadas
       * Y añadir cancelar en popup 
@@ -120,9 +120,9 @@ if ($status=='ready'){
         $modifydn='ou=cpanel,' . SUFFIX ;
         $info = array();
         $info['status']= 'locked';
-//        $updatefqdn=$Ldap->modifyRecord($ldapconn, $modifydn, $info ); 
+        $updatefqdn=$Ldap->modifyRecord($ldapconn, $modifydn, $info ); 
       //Redirect to home
-        header('Location: /cpanel');
+        header('Location: /cpanel/fqdn-process.php');
     } // end if ($up_fqdn && $ch_domain && $ch_mail)
   } //end if isset($_POST['changenameserver']
 } // end check satuts ready
