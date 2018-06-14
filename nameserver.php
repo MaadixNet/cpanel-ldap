@@ -91,7 +91,7 @@ if ($status=='ready'){
     *  status= locked
     */
 
-  if ($up_fqdn && $ch_domain && $ch_mail) {
+  if ($up_fqdn && $ch_domain) {
 
       $modifydn='ou=customfqdn,ou=cpanel,' . SUFFIX ;
       $info['status']= 'locked';
