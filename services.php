@@ -91,7 +91,7 @@ require_once('sidebar.php');
 // If API is available
 if (isset ($obj)){
 //For  some groups there is no option to deactivate. We store all of them into an array
-$forbidden_deactivate=array('mail','mongodb','nodejs'); ?>
+$forbidden_deactivate=array('mail','mongodb','nodejs', 'docker'); ?>
   <article class="content cards-page">
             <div class="title-block">
                 <h3 class="title"> <?php printf(_("Aplicaciones instaladas"));?> </h3>
