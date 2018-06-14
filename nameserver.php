@@ -48,92 +48,86 @@ if ($status=='ready'){
         $ch_domain = $Ldap->modifyRecord($ldapconn, 'ou=fqdn_domain,' . $base_dn, $entry );
       }
 
-    /*
-    * Record old domain in Ldap
-    * ou=fqdn_domain_old,ou=conf,ou=cpanel,dc=example,dc=tld
-    * status= $fqdn
-    */
+      /*
+      * Record old domain in Ldap
+      * ou=fqdn_domain_old,ou=conf,ou=cpanel,dc=example,dc=tld
+      * status= $fqdn
+      */
 
-    if ($domain_asociated ) {
-      $old_domain = array(); 
-      $old_domain["status"] = $domain_asociated;
+      if ($domain_asociated ) {
+        $old_domain = array(); 
+        $old_domain["status"] = $domain_asociated;
 
-      /* Check if fqn_domain_old object exists
-       * If not, create it
-       */
-      $fqdnOldexist = $Ldap->search($ldapconn,'ou=fqdn_domain_old,' . $base_dn ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
-      if (!$fqdnOldexist){
-        $up_fqdn = $Ldap->addFqdnDomainOld($domain_asociated);
-      } else { 
-        $up_fqdn = $Ldap->modifyRecord($ldapconn,'ou=fqdn_domain_old,' . $base_dn, $old_domain );
+        /* Check if fqn_domain_old object exists
+         * If not, create it
+         */
+        $fqdnOldexist = $Ldap->search($ldapconn,'ou=fqdn_domain_old,' . $base_dn ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
+        if (!$fqdnOldexist){
+          $up_fqdn = $Ldap->addFqdnDomainOld($domain_asociated);
+        } else { 
+          $up_fqdn = $Ldap->modifyRecord($ldapconn,'ou=fqdn_domain_old,' . $base_dn, $old_domain );
+        }
+      } //end if domain_asociated
+
+      /* 
+      * Change admin mail
+      * ou=adminmail_custom,ou=conf,ou=cpanel,dc=example,dc=tld
+      */
+
+      if(isset($_POST['logmailctive'])){
+        $mail=array();
+        $mail["status"] = 'true';
+
+        /*
+        * TODO: olcy if checkobx is checked
+        * This is just for logs
+        */
+        $ch_mail = $Ldap->modifyRecord($ldapconn, 'ou=logmail_custom,' . $base_dn, $mail);
       }
-    } //end if domain_asociated
 
-    /* 
-    * Change admin mail
-    * ou=adminmail_custom,ou=conf,ou=cpanel,dc=example,dc=tld
-    */
+        /*
+      * Lock cpanel and destroy session
+      *  ou=customfqdn,ou=cpanel,dc=example,dc=tld
+      *  status= locked
+      */
 
-    if(isset($_POST['logmailctive'])){
-      $mail=array();
-      $mail["status"] = 'true';
+      if ($up_fqdn && $ch_domain) {
 
-    /*
-    * TODO: olcy if checkobx is checked
-    * This is just for logs
-    */
-      $ch_mail = $Ldap->modifyRecord($ldapconn, 'ou=logmail_custom,' . $base_dn, $mail);
-    }
-
-    /*
-    * Lock cpanel and destroy session
-    *  ou=customfqdn,ou=cpanel,dc=example,dc=tld
-    *  status= locked
-    */
-
-  if ($up_fqdn && $ch_domain) {
-
-      $modifydn='ou=customfqdn,ou=cpanel,' . SUFFIX ;
-      $info['status']= 'locked';
-      $ch_fqdn=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
+        $modifydn='ou=customfqdn,ou=cpanel,' . SUFFIX ;
+        $info['status']= 'locked';
+        $ch_fqdn=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
 
 
       
-      //Clear this sessions
-      //session_destroy();
-      /*
-      *TODO like a house: hay que reactivar los grupos que están desactivadas
-      * Y añadir cancelar en popup 
-      */
-    if($serv_disabled["count"]>0){
-       for ($c=0; $c<$serv_disabled["count"]; $c++) {
-          $service=$serv_disabled[$c]["ou"][0];
-          $entry = array(); 
-          $modifydn='ou=' . $service . ',' . LDAP_SERVICES;
+        //Clear this sessions
+        //session_destroy();
+        /*
+        *TODO like a house: hay que reactivar los grupos que están desactivadas
+        * Y añadir cancelar en popup 
+        */
+      if($serv_disabled["count"]>0){
+         for ($c=0; $c<$serv_disabled["count"]; $c++) {
+            $service=$serv_disabled[$c]["ou"][0];
+            $entry = array(); 
+            $modifydn='ou=' . $service . ',' . LDAP_SERVICES;
 
-          $entry['type'] = 'available';
-          $entry['status'] = 'enabled';
-          $updategroup=$Ldap->modifyRecord($ldapconn, $modifydn, $entry );
+            $entry['type'] = 'available';
+            $entry['status'] = 'enabled';
+            $updategroup=$Ldap->modifyRecord($ldapconn, $modifydn, $entry );
+          }
         }
-      }
-     //Update ou=cpanel object with lock status
+       //Update ou=cpanel object with lock status
         $modifydn='ou=cpanel,' . SUFFIX ;
         $info = array();
         $info['status']= 'locked';
         $updatefqdn=$Ldap->modifyRecord($ldapconn, $modifydn, $info ); 
-      //Redirect to home
+        //Redirect to home
         header('Location: /cpanel/fqdn-process.php');
-    } // end if ($up_fqdn && $ch_domain && $ch_mail)
-  } //end if isset($_POST['changenameserver']
+      } // end if ($up_fqdn && $ch_domain && $ch_mail)
+    } //end if isset($_POST['changenameserver']
+  } // end check satuts ready
 } // end check satuts ready
-
-  
-
-/*
-* Set variables tu use in this page
-*/
-  require_once('sidebar.php');
-}?>
+require_once('sidebar.php');?>
 <article class="content forms-page">
     <div class="title-block">
       <h3 class="title"> <?php printf(_("Cambiar nombre de dominio del servidor"));?></h3>
@@ -144,7 +138,7 @@ if ($status=='ready'){
           <div class="col-sm-12">
             <div class="inner" id="maincol">
               <?php
-              if ($status='ready'){
+              if ($status=='ready'){
 
                 $fqdn_example = $hostname.'.example.com';
                 $dkim_info_link = '<a href="/' . BASE_PATH . '/domain-instruccions.php#dkim">[+ Info]</a>';
