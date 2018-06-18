@@ -642,13 +642,24 @@ function dependencies_input_fields($service_data){
   $inputs_fields=$hidden_fields=$text='';
   foreach ($service_data['dependencies'] as $dependency){ 
         if (strpos($dependency, ".") !== false){
-            $field=get_dependencies_properties($dependency);
             //First print the user input fields
-            $inputs_fields.=sprintf(_('<label class="modalfield hide" for="%s">%s</label>'),$field['id'],$field['label']);
-            $inputs_fields.=sprintf(_('<p class="form-control-static underlined hide modalfield">%s</p>'),$field['description']);
-            $inputs_fields.=sprintf(_('<div id="error-%s-%s" class="hide modalfield"></div>'),$service_data['id'],$field['id']);
-            $inputs_fields.=sprintf(_('<input class="modalfield hide form-control" data-dependency="%s" placeholder="%s" type="%s" name="%s[%s]" />'),$field['id'],$field['label'],$field['type'],$field['id'],$service_data['id']);
-            $hidden_fields.=sprintf(_('<input class="dependency" type="hidden" name="%s[%s]" />'),$field['id'],$service_data['id']);
+            /*There are trhee types of dependencies:
+             * 1- groupname - this is a group to be installed. No input is required from user
+             * 2- type.value (eg for aplication user - this is to check that the user used by the group is not present in ldap or sustem
+             * 3- name.type.value.[Description] - this is for dependencies that need a user input, such as domain value
+             */
+            $deps= explode(".", $dependency);
+             
+            if (count($deps) >=3 ) {
+              $field=get_dependencies_properties($dependency);
+              $inputs_fields.=sprintf(_('<label class="modalfield hide" for="%s">%s</label>'),$field['id'],$field['label']);
+              $inputs_fields.=sprintf(_('<p class="form-control-static underlined hide modalfield">%s</p>'),$field['description']);
+              $inputs_fields.=sprintf(_('<div id="error-%s-%s" class="hide modalfield"></div>'),$service_data['id'],$field['id']);
+              $inputs_fields.=sprintf(_('<input class="modalfield hide form-control" data-dependency="%s" placeholder="%s" type="%s" name="%s[%s]" />'),$field['id'],$field['label'],$field['type'],$field['id'],$service_data['id']);
+              $hidden_fields.=sprintf(_('<input class="dependency" type="hidden" name="%s[%s]" />'),$field['id'],$service_data['id']);
+            } else {
+              $hidden_fields.=sprintf(_('<input class="dependency-check" type="hidden" name="%s[%s]" />'),$deps[0],$deps[1]);
+            }
         } else {
            //don' t print user input filed 
             $hidden_fields.=sprintf(_('<input class="dependency noinput" type="hidden" name="depNoInput" value="%s" />'),$dependency);
