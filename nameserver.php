@@ -23,8 +23,6 @@ if ($status=='ready'){
     /* Gat all deactivated Group
     */
     $serv_disabled= $Ldap->search($ldapconn, LDAP_SERVICES ,'(&(objectClass=organizationalUnit)(status=disabled)(type=installed))');
-  /* TODO: if there is some disabled group, return the Title name from API
-  */
     $count_diabled=count($serv_disabled); 
     /*
     echo '<pre>';
@@ -78,10 +76,6 @@ if ($status=='ready'){
         $mail=array();
         $mail["status"] = 'true';
 
-        /*
-        * TODO: olcy if checkobx is checked
-        * This is just for logs
-        */
         $ch_mail = $Ldap->modifyRecord($ldapconn, 'ou=logmail_custom,' . $base_dn, $mail);
       }
 
@@ -101,10 +95,6 @@ if ($status=='ready'){
       
         //Clear this sessions
         //session_destroy();
-        /*
-        *TODO like a house: hay que reactivar los grupos que están desactivadas
-        * Y añadir cancelar en popup 
-        */
       if($serv_disabled["count"]>0){
          for ($c=0; $c<$serv_disabled["count"]; $c++) {
             $service=$serv_disabled[$c]["ou"][0];
