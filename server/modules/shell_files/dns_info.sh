@@ -19,7 +19,7 @@ recordspfok="v=spf1 a mx ~all"
 recorddkim=$(/usr/bin/dig default._domainkey."$fqdn" TXT | grep -o -P "(?<=TXT).*(?:\"\K).*(?=\")" | sed 's/\\//g')
 
 recorddkimKey=$(/bin/cat /etc/opendkim/keys/"$fqdn"/default.txt | grep -o -P "(?<=\"p=).*(?=\")")
-recorddkimok="v=DKIM1; k=rsa; "$recorddkimKey
+recorddkimok="v=DKIM1; k=rsa; p="$recorddkimKey
 
 if [ "$recordspfok" != "$recordspf" ];then
   spfClass="error"
