@@ -562,6 +562,7 @@ $('input.installGroups:checkbox').on('change', function(e){
     var username= $(this).parents('.col-md-6').find('input[name="sysuser"]').val(); 
     /* If the application needs a user to be created, check that it is not present in system yet
      */
+    
     var usererror=0;
     if (username){
     var usererror = function () {
@@ -570,7 +571,7 @@ $('input.installGroups:checkbox').on('change', function(e){
                 async: false,
                 type : 'POST',
                 url  : 'proc/check-username.php',
-                data : username,
+                data : {username: username },
                 // Si usamos json habrá que actualizar php
                 success : function(data)
 
