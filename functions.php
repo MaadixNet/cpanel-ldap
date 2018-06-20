@@ -658,7 +658,7 @@ function dependencies_input_fields($service_data){
               $inputs_fields.=sprintf(_('<input class="modalfield hide form-control" data-dependency="%s" placeholder="%s" type="%s" name="%s[%s]" />'),$field['id'],$field['label'],$field['type'],$field['id'],$service_data['id']);
               $hidden_fields.=sprintf(_('<input class="dependency" type="hidden" name="%s[%s]" />'),$field['id'],$service_data['id']);
             } else {
-              $hidden_fields.=sprintf(_('<input class="dependency-check" type="hidden" name="%s[%s]" />'),$deps[0],$deps[1]);
+              $hidden_fields.=sprintf(_('<input class="dependency-check" type="hidden" name="%s" value="%s" />'),$deps[0],$deps[1]);
             }
         } else {
            //don' t print user input filed 

@@ -559,7 +559,47 @@ $('input.installGroups:checkbox').on('change', function(e){
     var groupname = $(this).parents('.col-md-6').find('input[name="groupname"]').val();
     // If is a user input clone it into the modal window
     // Also populate modal window wuth hidden inputs, so we have all in one place
-    if ($(this).hasClass('depNeedsInput')){
+    var username= $(this).parents('.col-md-6').find('input[name="sysuser"]').val(); 
+    /* If the application needs a user to be created, check that it is not present in system yet
+     */
+    var usererror=0;
+    if (username){
+    var usererror = function () {
+     var error=0; 
+                 $.ajax({
+                async: false,
+                type : 'POST',
+                url  : 'proc/check-username.php',
+                data : username,
+                // Si usamos json habrá que actualizar php
+                success : function(data)
+
+                  {
+                    console.log('DATA' + data + 'END'); 
+                    if (data.indexOf("error") >= 0) {
+                        error=1;
+                        console.log(username); 
+                    }else {
+                      error=0; 
+                    }
+                  }
+                });
+                return error;
+
+              }(); 
+    }
+    /* TODO: change proc/check-username.php to return errornumber and texts so to avoiud writing string
+    * in this function. When doing so usuarios.php and add-domain need to be updated to in order to print
+    * correctly the error sytring in case a already existing user is created
+    */
+    if (usererror !=0){
+        $(this).prop('checked', false);
+        $('#fieldsModal h4.modal-title').html('Error');
+        $('#fieldsModal .modal-body').html('No se puede instalar la aplicación porque necesita crear el nombre de usuario ' + username + ' que ya está presente en el sistema');
+        $( '#fieldsModal #fieldsSavei').addClass('hide');
+        $('#fieldsModal').modal();
+        
+    }else if ($(this).hasClass('depNeedsInput') && usererror==0){
       //set modal title
       $("span.appnameSpan").text(groupname);
       //leave chekbox unchanged
