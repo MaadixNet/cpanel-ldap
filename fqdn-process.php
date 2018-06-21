@@ -107,7 +107,7 @@ function updating($new_url){
                         <h1 class="auth-title">
                              Panel de Control </h1>
                     </header>
-                    <div class="auth-content">
+                    <div class="auth-content" id="newUrl" data-url="https://<?php echo $new_url;?>/cpanel/status.php">
                     <?php
                     echo $message;
                     print_form($new_url);
