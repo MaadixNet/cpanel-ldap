@@ -13,10 +13,8 @@ function httpGetAsync(theUrl, thenewUrl)
     xmlHttp.onreadystatechange = function() { 
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
             //console.log(xmlHttp.responseText);
-            if (xmlHttp.responseText == '' && thenewUrl !='' ){
-              theUrl=thenewUrl;
 
-            }else if (xmlHttp.responseText == 'ready'){
+            if (xmlHttp.responseText == 'ready'){
               //UNLOCK GUI
               //console.log('ready');
               $( ".form-signin" ).show();
@@ -27,14 +25,16 @@ function httpGetAsync(theUrl, thenewUrl)
               $( ".form-signin" ).hide();
               $( ".updating" ).show();
             }
+        } else {
+          theUrl=thenewUrl;
+          return theUrl;
         }
-        return theUrl;
     }
     xmlHttp.open("GET", theUrl, true); // true for asynchronous 
     xmlHttp.send(null);
 }
 
 window.setInterval(function () {
-  httpGetAsync ("/cpanel/status.php", "https://usavm2.gadix.net");
+  httpGetAsync ("/cpanel/status.php", thenewUrl);
 }, 1000); // repeat forever, polling every 1 seconds
 
