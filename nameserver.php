@@ -84,12 +84,11 @@ if ($status=='ready'){
       *  ou=customfqdn,ou=cpanel,dc=example,dc=tld
       *  status= locked
       */
-
       if ($up_fqdn && $ch_domain) {
-
+        
         $modifydn='ou=customfqdn,ou=cpanel,' . SUFFIX ;
         $info['status']= 'locked';
-        $ch_fqdn=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
+       $ch_fqdn=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
 
       /* Activate all disabled apps
        */
@@ -118,7 +117,7 @@ if ($status=='ready'){
         $updatefqdn=$Ldap->modifyRecord($ldapconn, $modifydn, $info ); 
         //Redirect to home
         header('Location: /cpanel/fqdn-process.php');
-      } // end if ($up_fqdn && $ch_domain && $ch_mail)
+      } // end if ($up_fqdn && $ch_domain)
     } //end if isset($_POST['changenameserver']
   } // end check satuts ready
 } // end check satuts ready

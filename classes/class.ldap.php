@@ -95,7 +95,8 @@ class LDAP{
         $data["objectclass"][1]    = "metaInfo";
         $data["objectclass"][2]    = "top";
         $data["status"] = $status;
-        ldap_add($this->connection, $adddn, $data);
+        $result = ldap_add($this->connection, $adddn, $data);
+        return $result;
     }  
     function addDkimkey($ldapconn,$domain_new){
         $dkimexist = $this->search($ldapconn,'ou=opendkim,ou=cpanel,' . SUFFIX ,'(&(objectClass=organizationalUnit)(objectClass=metaInfo))');
