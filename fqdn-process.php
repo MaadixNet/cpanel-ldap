@@ -70,13 +70,13 @@ function print_form($new_url){
                     <br>';
 }
 
-function updating(){
+function updating($new_url){
                 $spinner = '<img src="/cpanel/images/spinner.gif" />';
     		echo '<div class="updating hidden-form">
   		        <h2 class="form-signin-heading">' . sprintf(_("Actualizando sistema %s"), $spinner) . '</h2>
 		        <hr>
                         <div class="form-group">
-        	          <span>' . sprintf(_("Esta operación tardará unos minutos. En cuanto el proceso termine, estará disponible en esta misma página, el enlace para acceder al panel de control bajo la nueva dirección.")) . '</span>
+        	          <span>' . sprintf(_("Esta operación tardará varios minutos. En cuanto el proceso termine, se activará en esta misma página, el enlace para acceder al panel de control bajo la nueva dirección https://%s/cpanel"),$new_url) . '</span>
                         </div>
     		      </div>';
 }
@@ -111,7 +111,7 @@ function updating(){
                     <?php
                     echo $message;
                     print_form($new_url);
-                    updating();
+                    updating($new_url);
                     ?>
 
 

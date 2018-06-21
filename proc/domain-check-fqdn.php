@@ -75,8 +75,8 @@ if ($host_domain){
         * So we can manage different error message strngs
         */
 
-        $ipA = $resultA[0]['ip'];
-        if ($resultA[0]['ip']==$server_ipaddr){
+        $ipA = ($resultA[0]['ip'])?$resultA[0]['ip']:'';
+        if ($ipA==$server_ipaddr){
             $error=0;
             $errormsg='';
         } else {

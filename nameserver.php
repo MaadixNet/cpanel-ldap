@@ -80,7 +80,7 @@ if ($status=='ready'){
       }
 
         /*
-      * Lock cpanel and destroy session
+      * Lock cpanel 
       *  ou=customfqdn,ou=cpanel,dc=example,dc=tld
       *  status= locked
       */
@@ -91,10 +91,9 @@ if ($status=='ready'){
         $info['status']= 'locked';
         $ch_fqdn=$Ldap->modifyRecord($ldapconn, $modifydn, $info );
 
-
+      /* Activate all disabled apps
+       */
       
-        //Clear this sessions
-        //session_destroy();
       if($serv_disabled["count"]>0){
          for ($c=0; $c<$serv_disabled["count"]; $c++) {
             $service=$serv_disabled[$c]["ou"][0];
@@ -106,6 +105,12 @@ if ($status=='ready'){
             $updategroup=$Ldap->modifyRecord($ldapconn, $modifydn, $entry );
           }
         }
+
+        /* Wait one second before locking ou=cpanel
+         * Local puppet for fqdn lock must run first
+         */
+        sleep(1);
+
        //Update ou=cpanel object with lock status
         $modifydn='ou=cpanel,' . SUFFIX ;
         $info = array();
