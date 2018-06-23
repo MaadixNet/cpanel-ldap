@@ -1,19 +1,12 @@
 $( ".form-signin" ).hide();
 $( ".updating" ).hide();
-var thenewUrl='';
-if (document.getElementById("newUrl")) {
 
-  var div= document.getElementById("newUrl");
-  thenewUrl = div.getAttribute("data-url");
-}
-
-function httpGetAsync(theUrl, thenewUrl)
+function httpGetAsync(theUrl)
 {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() { 
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
             //console.log(xmlHttp.responseText);
-
             if (xmlHttp.responseText == 'ready'){
               //UNLOCK GUI
               //console.log('ready');
@@ -25,9 +18,6 @@ function httpGetAsync(theUrl, thenewUrl)
               $( ".form-signin" ).hide();
               $( ".updating" ).show();
             }
-        } else {
-          theUrl=thenewUrl;
-          return theUrl;
         }
     }
     xmlHttp.open("GET", theUrl, true); // true for asynchronous 
@@ -35,6 +25,5 @@ function httpGetAsync(theUrl, thenewUrl)
 }
 
 window.setInterval(function () {
-  httpGetAsync ("/cpanel/status.php", thenewUrl);
+  httpGetAsync ("/cpanel/status.php");
 }, 1000); // repeat forever, polling every 1 seconds
-

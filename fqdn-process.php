@@ -122,7 +122,7 @@ function updating($new_url){
       <script src="js/vendor.min.js"></script>
       <script src="js/app.min.js"></script>
       <script src="js/customscript.js"></script>
-      <script src="js/status.js"></script>
+      <script src="js/fetch-status.js"></script>
 
     </body>
 
