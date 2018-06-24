@@ -1,29 +1,45 @@
 $( ".form-signin" ).hide();
 $( ".updating" ).hide();
+var theUrl = "/cpanel/status.php";
 
 function httpGetAsync(theUrl)
+
 {
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
-            //console.log(xmlHttp.responseText);
-            if (xmlHttp.responseText == 'ready'){
-              //UNLOCK GUI
-              //console.log('ready');
-              $( ".form-signin" ).show();
-              $( ".updating" ).hide();
+
+fetch(theUrl) // Call the fetch function passing the url of the API as a parameter
+.then(function(response) {
+    console.log(response);
+    // Your code for handling the data you get from the API
+  if(response.status == 200){
+      return response.text();
+  }
+  })
+  .then(function(text) {
+          if(text=='ready') {
+           setTimeout(function() {
+                $( ".form-signin" ).show();
+                $( ".updating" ).hide();
+           }, 3000);             //UNLOCK GUI
+
             }else{
               //LOCK GUI
               //console.log('locked');
               $( ".form-signin" ).hide();
               $( ".updating" ).show();
-            }
-        }
-    }
-    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
-    xmlHttp.send(null);
-}
+               setTimeout(function() {
+                     httpGetAsync(theUrl);
+               }, 2000);
 
-window.setInterval(function () {
-  httpGetAsync ("/cpanel/status.php");
-}, 1000); // repeat forever, polling every 1 seconds
+            }
+  })
+
+.catch(function(error) {
+   clearInterval(httpGetAsync);
+   console.log('Fetch Error:', error);
+   setTimeout(function() {
+        $( ".form-signin" ).show();
+        $( ".updating" ).hide();
+   }, 5000);
+});
+}
+httpGetAsync(theUrl);
