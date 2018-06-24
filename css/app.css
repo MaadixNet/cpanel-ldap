@@ -1,13 +1,14 @@
 /*
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,800,700,600);
 */
-@font-face{font-family:'Open Sans';src:url(../fonts/Open-Sans/Light/OpenSans-Light.woff2?v=1.101) format("woff2"),url(../fonts/Open-Sans/Light/OpenSans-Light.woff?v=1.101) format("woff");font-weight:300;font-style:normal}
+@font-face{font-family:'Open Sans';src:url(../fonts/Open-Sans/Light/OpenSans-Light.woff?v=1.101) format("woff");font-weight:300;font-style:normal}
 
-@font-face{font-family:'Open Sans';src:url(../fonts/Open-Sans/LightItalic/OpenSans-LightItalic.woff2?v=1.101) format("woff2"),url(../fonts/Open-Sans/LightItalic/OpenSans-LightItalic.woff?v=1.101) format("woff");font-weight:300;font-style:italic}@font-face{font-family:'Open Sans';src:url(../fonts/Open-Sans/Regular/OpenSans-Regular.woff2?v=1.101) format("woff2"),url(../fonts/Open-Sans/Regular/OpenSans-Regular.woff?v=1.101) format("woff");font-weight:400;font-style:normal}
-@font-face{font-family:'Open Sans';src:url(../fonts/Open-Sans/Italic/OpenSans-Italic.woff2?v=1.101) format("woff2"),url(../fonts/Open-Sans/Italic/OpenSans-Italic.woff?v=1.101) format("woff");font-weight:400;font-style:italic}
-@font-face{font-family:'Open Sans';src:url(../fonts/Open-Sans/Semibold/OpenSans-Semibold.woff2?v=1.101) format("woff2"),url(../fonts/Open-Sans/Semibold/OpenSans-Semibold.woff?v=1.101) format("woff");font-weight:600;font-style:normal}
+@font-face{font-family:'Open Sans';src:url(../fonts/Open-Sans/LightItalic/OpenSans-LightItalic.woff2?v=1.101) format("woff2"),url(../fonts/Open-Sans/LightItalic/OpenSans-LightItalic.woff?v=1.101) format("woff");font-weight:300;font-style:italic}
+@font-face{font-family:'Open Sans';src:url(../fonts/Open-Sans/Regular/OpenSans-Regular-webfont.woff?v=1.101) format("woff");font-weight:400;font-style:normal}
+@font-face{font-family:'Open Sans';src:url(../fonts/Open-Sans/Italic/OpenSans-Italic-webfont.woff?v=1.101) format("woff");font-weight:400;font-style:italic}
+@font-face{font-family:'Open Sans';src:url(../fonts/Open-Sans/Semibold/OpenSans-Semibold-webfont.woff?v=1.101) format("woff");font-weight:600;font-style:normal}
 @font-face{font-family:'Open Sans';src:url(../fonts/Open-Sans/SemiboldItalic/OpenSans-SemiboldItalic.woff2?v=1.101) format("woff2"),url(../fonts/Open-Sans/SemiboldItalic/OpenSans-SemiboldItalic.woff?v=1.101) format("woff");font-weight:600;font-style:italic}
-@font-face{font-family:'Open Sans';src:url(../fonts/Open-Sans/Bold/OpenSans-Bold.woff2?v=1.101) format("woff2"),url(../fonts/Open-Sans/Bold/OpenSans-Bold.woff?v=1.101) format("woff");font-weight:700;font-style:normal}
+@font-face{font-family:'Open Sans';src:url(../fonts/Open-Sans/Bold/OpenSans-Bold-webfont.woff?v=1.101) format("woff");font-weight:700;font-style:normal}
 @font-face{font-family:'Open Sans';src:url(../fonts/Open-Sans/BoldItalic/OpenSans-BoldItalic.woff2?v=1.101) format("woff2"),url(../fonts/Open-Sans/BoldItalic/OpenSans-BoldItalic.woff?v=1.101) format("woff");font-weight:700;font-style:italic}
 @font-face{font-family:'Open Sans';src:url(../fonts/Open-Sans/ExtraBold/OpenSans-ExtraBold.woff2?v=1.101) format("woff2"),url(../fonts/Open-Sans/ExtraBold/OpenSans-ExtraBold.woff?v=1.101) format("woff");font-weight:800;font-style:normal}
 @font-face{font-family:'Open Sans';src:url(../fonts/Open-Sans/ExtraBoldItalic/OpenSans-ExtraBoldItalic.woff2?v=1.101) format("woff2"),url(../fonts/Open-Sans/ExtraBoldItalic/OpenSans-ExtraBoldItalic.woff?v=1.101) format("woff");font-weight:800;font-style:italic}
