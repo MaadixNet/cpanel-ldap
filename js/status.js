@@ -19,7 +19,7 @@ fetch(theUrl) // Call the fetch function passing the url of the API as a paramet
            setTimeout(function() {
                 $( ".form-signin" ).show();
                 $( ".updating" ).hide();
-           }, 3000);             //UNLOCK GUI
+           }, 10);             //UNLOCK GUI
 
             }else{
               //LOCK GUI
