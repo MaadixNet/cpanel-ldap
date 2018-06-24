@@ -118,6 +118,12 @@ $old_domain=$ldap_dep_object[0]['status'][0];
             <div class="inner" id="maincol">
 
               <?php
+                /*
+                echo '<pre>';
+                print_r($deps);
+                echo '</pre>';
+                 */
+
                 if ($serv_target["count"] < 1) {                                                                                   
                   printf(_("La aplicación %s no está activada y no se pueden editar las configuraciones"), $service_data['name']);
 

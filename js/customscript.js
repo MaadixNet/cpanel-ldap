@@ -681,6 +681,7 @@ $("#fieldset").submit(function(e) {
                     
                     {
                     data=$.parseJSON(data);
+                    console.log(data);
                     if(data.totErros== 0){
                          $("#fieldsModal").modal('hide');
                           $(this).off('submit').submit();

@@ -649,7 +649,6 @@ function dependencies_input_fields($service_data){
              * 3- name.type.value.[Description] - this is for dependencies that need a user input, such as domain value
              */
             $deps= explode(".", $dependency);
-             
             if (count($deps) >=3 ) {
               $field=get_dependencies_properties($dependency);
               $inputs_fields.=sprintf(_('<label class="modalfield hide" for="%s">%s</label>'),$field['id'],$field['label']);
@@ -672,16 +671,17 @@ return array('hiddenHtml' => $hidden_fields, 'inputHtml' => $inputs_fields);
 
 function get_dependencies_properties($dependency){
         $field=array();
-        if (strpos($dependency, ".") !== false){
+         $deps= explode(".", $dependency);
+        if (strpos($dependency, ".") !== false && count($deps) >=3 ){
             // This field needs input
             /*we know the string has 4 elements divided by dot
             * [0] = id
             * [1] = type
             * [2] = Label
-            * .[Description:.....]
+            * [3] = .[Description:.....] //RocketChat has not this...only three
             * First remove the ,[Description ....] string,that will be the help text for the input
             * Previous version of the API may have field with just 3 elements.
-            * To avoid error totally renove 4the elemente .[Description and  then add it again. if it s missing use the default valued
+            * To avoid error totally renove 4th element .[Description and  then add it again. if it s missing use the default value
             * Then            
             * Explode the remaining string and create an array withe these trhee data
             * Maybe we should add a more explicit value such as input: id.type.label.input?
@@ -697,6 +697,7 @@ function get_dependencies_properties($dependency){
               $dependency = str_replace($matches[0],'', $dependency);
             }  
             $deps= explode(".", $dependency);
+            //printf(_('COUNT: %s - %s --------'),count($deps), $deps);
             // Try preg_split(".",$string, 4); to split the string  in 4 matches. next dots will not be take in account
             if ($field_dedscription==''){
               $field_dedscription=get_input_field_description($deps[0]);
