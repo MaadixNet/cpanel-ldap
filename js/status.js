@@ -8,7 +8,7 @@ function httpGetAsync(theUrl)
 
 fetch(theUrl) // Call the fetch function passing the url of the API as a parameter
 .then(function(response) {
-    console.log(response);
+//    console.log(response);
     // Your code for handling the data you get from the API
   if(response.status == 200){
       return response.text();
