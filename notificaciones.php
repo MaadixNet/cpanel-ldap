@@ -116,13 +116,15 @@ require_once('sidebar.php');
                 }
                 echo '<option value="www-data@'.$fqdn . '">www-data@'.$fqdn . '</option>';
                 echo '</select></span>';
-              };?>
+                ?>
                 </div><!--form-group-->
-              <br>
-              <input type="submit" name="chmail_notif" value="<?php printf(_('Guardar'));?>" class="btn btn-small btn-primary" />
-            </form>
+                <br>
+                <input type="submit" name="chmail_notif" value="<?php printf(_('Guardar'));?>" class="btn btn-small btn-primary" />
+              </form>
               <hr>
               <?php
+              } //end if($result["count"] == 0)
+
               /* Custom admin mail needs puppet agent 
               * Check if status is ready
               */
@@ -152,7 +154,7 @@ require_once('sidebar.php');
           </div><!--inner-->
       </div><!--col-sm-12-->
   </div><!--row-->
-</section>
+  </section>
 </article>
 <?php
   ldap_close($ldapconn);   

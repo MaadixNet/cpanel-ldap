@@ -37,4 +37,4 @@ if [ $recordMX != $recordMXok ];then
   mxClass="error"
 fi
 
-echo {\"Fqdn\": \"$fqdn\",\"classA\": \"$aClass\",\"TypeA\": \"A\", \"valA\": \"$recorda\", \"valAok\": \"$recordaok\",\"classMX\": \"$mxClass\",\"TypeMX\": \"MX\", \"valMX\": \"$recordMX\", \"valMXok\": \"$recordMXok\",\"classSPF\": \"$spfClass\",\"TypeSPF\": \"SPF\", \"valSPF\": \"$recordspf\", \"valSPFok\": \"$recordspfok\",\"classDKIM\": \"$dkimClass\",\"TypeDKIM\": \"DKIM\", \"valDKIM\": \"$recorddkim\", \"valDKIMok\": \"$recorddkimok\"}
+echo {\"Fqdn\": \"$fqdn\",\"classA\": \"$aClass\",\"TypeA\": \"A\", \"valA\": \"$recorda\", \"valAok\": \"$recordaok\",\"classMX\": \"$mxClass\",\"TypeMX\": \"MX\", \"valMX\": \"$recordMX\", \"valMXok\": \"$recordMXok\",\"classSPF\": \"$spfClass\",\"TypeSPF\": \"TXT\", \"valSPF\": \"$recordspf\", \"valSPFok\": \"$recordspfok\",\"classDKIM\": \"$dkimClass\",\"TypeDKIM\": \"TXT\", \"valDKIM\": \"$recorddkim\", \"valDKIMok\": \"$recorddkimok\"}
