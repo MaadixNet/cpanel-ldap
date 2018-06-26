@@ -562,17 +562,6 @@ $('input.installGroups:checkbox').on('change', function(e){
     var username= $(this).parents('.col-md-6').find('input[name="sysuser"]').val(); 
     /* If the application needs a user to be created, check that it is not present in system yet
      */
-   /* First check if server has enough space here
-   *
-   * Discourse needs minimun 5GB in order to be installed
-   * if (groupname=='discourse'){
-   *    make a ajax call to check-space.php 
-   *    This file can use the Diskstatus class to return free space
-   *    if free space >5GB continue
-   *    else 
-   * }
-   */
-
     var usererror=0;
     if (username){
     var usererror = function () {
