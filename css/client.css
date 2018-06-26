@@ -36,7 +36,7 @@ form.standard select {
   border-radius: 0.25rem;
 }
 .logo img {width:100%;max-width:50px;}
-.service-img img{max-width:100%;}
+.service-img img{width:100%;}
 .loading{ background-image: url("../images/spinner.gif");padding: 0 7px;background-repeat:no-repeat;background-position-y:3px}
 .tab-content a button.btn{white-space:normal;}
 
