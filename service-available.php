@@ -109,8 +109,6 @@ require_once('sidebar.php');
 // $serv_installed originally comes from header, and it ocly includes active apps
 // Check if there is any group to install
 
-
-
 $serv_installed= $Ldap->search($ldapconn, LDAP_SERVICES ,'(|(&(objectClass=organizationalUnit)(status=enabled)(type=available))(&(objectClass=organizationalUnit)(status=disabled)(type=installed)))');
 
 foreach ($obj as $service_data){
@@ -130,6 +128,8 @@ if (empty($release_info)) { ?>
     </article>
 
 <?php }else{ 
+
+
 ?>
   <article class="content cards-page">
           <?php if ($available != 1){ ?>
@@ -138,8 +138,16 @@ if (empty($release_info)) { ?>
                 <h4 class="title"> <?php printf(_("No hay aplicaciones para instalar"));?> </h4>
             </div>
 
-          <?php } else { ?>
+          <?php } else { 
+            /* Check space available on disk.
+             *  * It reutns
+             *  * $freeSpace
+             *  * $totalSpace
+             *  * $barWidth 
+             **/
 
+          require_once __DIR__.'/proc/check-space.php';
+          ?>
             <div class="title-block">
                 <h4 class="title"> <?php printf(_("Aplicaciones Disponibles para Instalar"));?> </h4>
                 <br>
@@ -196,11 +204,18 @@ if (empty($release_info)) { ?>
                                                         
                                                       }
                                                     ?>  
-                                                    <div><label>
-                                                      <input type="checkbox" class="installGroups checkbox <?php echo $depNeedsInput;?>" name="groups" value="<?php echo $service_data['id']; ?>" />
-                                                    <span><?php printf(_("Seleccionar"));?></span></label></div>
-                                                      <input type="hidden" class="groupname" name="groupname" value="<?php echo $service_data['name']; ?>" />
-                                                    <?php if (isset($dep_form_fields['hiddenHtml'])) echo $dep_form_fields['hiddenHtml'];?>
+<?php
+                                                      if ($service_data['id'] == 'disocurse' && $freeSpace < 5){
+                                                          echo '<div><label><span>';
+                                                          printf(_('No hay suficiente espacio para instalar esta aplicación. El mínimo requerido son 5G'));
+                                                          echo '</span></label></div>';
+                                                      } else {?>   
+                                                          <div><label>
+                                                          <input type="checkbox" class="installGroups checkbox <?php echo $depNeedsInput;?>" name="groups" value="<?php echo $service_data['id']; ?>" />
+                                                          <span><?php printf(_("Seleccionar"));?></span></label></div>
+                                                          <input type="hidden" class="groupname" name="groupname" value="<?php echo $service_data['name']; ?>" />
+                                                          <?php if (isset($dep_form_fields['hiddenHtml'])) echo $dep_form_fields['hiddenHtml'];?>
+                                                      <?php } ?>
                                                     <span class="activatedDomain"></span>
                                                   </div>
                                                 </div>
