@@ -32,14 +32,20 @@ $resultA=dns_get_record ( $domain,  DNS_A );
 $resultMX=dns_get_record ( $domain,  DNS_MX );
 $resultNS = dns_get_record($domain,  DNS_NS );
 $resultTXT = dns_get_record($domain,  DNS_TXT );
+/*
 $command= "dig default._domainkey." . $domain ." TXT | grep -o -P \"(?<=TXT).*\"";
 $resultDKIM = shell_exec($command);
 $resultDKIM = str_replace('\\', '', $resultDKIM);
+ */
+$lookupstring ='default._domainkey.'. $domain;
+
+$resultDKIMArr = dns_get_record($lookupstring, DNS_TXT);
+$resultDKIM = $resultDKIMArr[0]['txt'];
 
 /* Found some dig that returns spf for domainkey. 
  * So we empty the vriable if ther is not DKIM string 
 */
-if (strpos($resultDKIM, 'v=DKIM') == false) $resultDKIM='';
+//if (strpos($resultDKIM, 'v=DKIM') == false) $resultDKIM='';
 $domain_ip=( $resultA && $resultA[0]['ip'])?($resultA[0]['ip']):'No hay registro';
 $statok='<i class="fa fa-check-circle-o icon checkok"></i>';
 $staterr='<i class="fa fa-exclamation-triangle icon checkko"></i>';
@@ -86,7 +92,7 @@ if ($has_dkim || $ismailActive == 'mailmandomain') {
 
 $nospace_public_dkim=preg_replace('/\s+/', '', $resultDKIM);
 $nospace_correct_dkim= preg_replace('/\s+/', '', $correct_dkim);
-$nospace_correct_dkim = '"' . $nospace_correct_dkim . '"';
+//$nospace_correct_dkim = '"' . $nospace_correct_dkim . '"';
 require_once('sidebar.php');
 ?>
 <article>
@@ -268,7 +274,7 @@ require_once('sidebar.php');
         echo "<td class='longRecord'>";
         $dkim_record = ($resultDKIM)?$resultDKIM:sprintf(_('No hay registro DKIM'));
 
-        echo $dkim_record;
+        echo "\"" . $dkim_record ."\"";
         echo "</td>";
         echo "<td class='longRecord'>";
         echo '"'.$correct_dkim .'"';
