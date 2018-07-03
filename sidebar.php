@@ -99,7 +99,7 @@
 
                              <?php if( !empty($serv_installed) && array_search('discourse', array_column(array_column($serv_installed, 'ou'),0)) !== false){
                                      if ($ldapbind) {
-                                       $app_domain= $Ldap->search($ldapconn,'ou=domain,ou=disocurse,'.LDAP_SERVICES ,'(objectClass=organizationalUnit)');
+                                       $app_domain= $Ldap->search($ldapconn,'ou=domain,ou=discourse,'.LDAP_SERVICES ,'(objectClass=organizationalUnit)');
                                        $discoursedomain = "https://".$app_domain[0]['status'][0];
                                      }
                              ?>
