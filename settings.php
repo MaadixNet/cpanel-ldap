@@ -107,7 +107,6 @@ $old_domain=$ldap_dep_object[0]['status'][0];
       /* TODO: use the name from the api, not the group name
       *  And maybe get the image too
        */
-
       ?>
       <h3 class="title"> <?php printf(_("Configuración de la aplicación %s"),$service_data['name']);?></h3>
     </div>

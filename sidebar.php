@@ -156,16 +156,7 @@
                                 </li> 
                                   <li><a href="/<?php echo BASE_PATH;?>/notificaciones.php"><i class="fa fa-mail-forward"></i><?php printf(_("Notificaciones"));?></a></li>
                                 <?php } ?>
-
-                                <li>
-                                    <a href=""> <i class="fa fa-book"></i><?php printf(_("Documentación"));?><i class="fa arrow"></i> </a>
-                                    <ul>
-                                      <li><a href="https://docs.maadix.net/" target="_blank"><?php printf(_("Panel de control"));?></a></li>
-
-                                      <li><a href="https://doc.owncloud.org/server/latest/ownCloud_User_Manual.pdf" target="_blank"><?php printf(_("Owncloud"));?></a></li>
-
-                                    </ul>
-                                </li>
+                                  <li><a href="https://docs.maadix.net/" target="_blank"><i class="fa fa-book"></i><?php printf(_("Documentación"));?></a></li>
 
                           </ul>
 
