@@ -715,7 +715,7 @@ function get_dependencies_properties($dependency){
 function get_input_field_description($field){
   switch($field){
     case 'domain':
-      $text=sprintf(_("Esta aplicación necesita ser instalada bajo un dominio o subdominio propio. Inserta un dominio váldio que no esté siendo usado por ninguna otra aplicación y cuyos dns estén ya apuntando a la IP de este servidor: %s"), $_SERVER["SERVER_ADDR"]);
+      $text=sprintf(_("Esta aplicación necesita ser instalada bajo un dominio o subdominio propio. Inserta un dominio válido que no esté siendo usado por ninguna otra aplicación y cuyos dns estén ya apuntando a la IP de este servidor: %s"), $_SERVER["SERVER_ADDR"]);
       break;
     case 'email':
       $text=sprintf(_("Esta aplicación necesita una cuenta de email asocicada. Inserta una diercción de correo electrónico válida:"));
