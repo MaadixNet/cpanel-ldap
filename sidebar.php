@@ -79,6 +79,23 @@
                                 </ul>
                               </li>
                               <?php }?> 
+
+                             <?php if( !empty($serv_installed) && array_search('mailtrain', array_column(array_column($serv_installed, 'ou'),0)) !== false){
+                                     if ($ldapbind) {
+                                       $app_domain= $Ldap->search($ldapconn,'ou=domain,ou=mailtrain,'.LDAP_SERVICES ,'(objectClass=organizationalUnit)');
+                                       $mailtraindomain = "https://".$app_domain[0]['status'][0];
+                                     }
+                             ?>
+                              <li>
+                                <a href=""> <i class="fa fa-comments"></i> Mailtrain<i class="fa arrow"></i> </a>
+                                <ul>
+                                  <li><a target="_blank" href="<?php echo $mailtraindomain;?>"><?php printf(_("Ir a la aplicación"));?></a></li>
+                                  <li><a href="/<?php echo BASE_PATH;?>/settings.php?app=mailtrain"><?php printf(_("Configurar"));?></a>
+                                </ul>
+                              </li>
+                              <?php }?>
+
+
                              <?php if( !empty($serv_installed) && array_search('rocketchat', array_column(array_column($serv_installed, 'ou'),0)) !== false){
                                      if ($ldapbind) {
                                        $app_domain= $Ldap->search($ldapconn,'ou=domain,ou=rocketchat,'.LDAP_SERVICES ,'(objectClass=organizationalUnit)');
