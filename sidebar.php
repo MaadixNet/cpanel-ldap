@@ -128,6 +128,12 @@
                                 </ul>
                               </li>
                               <?php }?>
+                              <?php if( !empty($serv_installed) && array_search('onlyoffice', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
+
+                                <li>
+                                  <a href="/<?php echo BASE_PATH;?>/settings.php?app=onlyoffice"><i class="fa fa-paste"></i> <?php printf(_("OnlyOffice"));?></a>
+                                </li>
+                              <?php }?>
 
 
                               <?php if( !empty($serv_installed) && array_search('lool', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
@@ -136,6 +142,7 @@
                                   <a href="/<?php echo BASE_PATH;?>/settings.php?app=lool"><i class="fa fa-paste"></i> <?php printf(_("Libre Office Online"));?></a>
                                 </li>
                               <?php }?>
+
                               <?php if( !empty($serv_installed) && array_search('coturn', array_column(array_column($serv_installed, 'ou'),0)) !== false){?>
 
                                 <li>
