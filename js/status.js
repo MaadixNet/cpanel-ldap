@@ -34,12 +34,11 @@ fetch(theUrl) // Call the fetch function passing the url of the API as a paramet
   })
 
 .catch(function(error) {
-   clearInterval(httpGetAsync);
    console.log('Fetch Error:', error);
+   clearInterval(httpGetAsync);
    setTimeout(function() {
-        $( ".form-signin" ).show();
-        $( ".updating" ).hide();
-   }, 5000);
+     httpGetAsync(theUrl);
+  }, 5000);
 });
 }
 httpGetAsync(theUrl);
