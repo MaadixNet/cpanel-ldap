@@ -5,7 +5,6 @@
 # exists it means that somebody is willing to recover password
 #
 PATH=/sbin:/bin:/usr/bin
-
 # If another ldapsearch.sh cron is running exit
 for pid in $(pidof -x ldapsearch.sh); do
     if [ $pid != $$ ]; then
@@ -19,7 +18,7 @@ ldapbase="o=hosting,"$suffix
 peopletree="ou=sshd,ou=People,"$suffix
 delete="0"
 checkfile="/tmp/checkfile.txt"
-
+phpconfig=''
 # Initial delay to wait puppetcron to start
 sleep 10
 
@@ -33,9 +32,9 @@ echo "$status"
 
 # If cpanel is locked or running, or cannot retrieve any value from ldap  exit
 if [ "$status" = 'locked' ] || [ "$status" = 'running' ] || [ -z "$status" ]
-  then
-    echo "Cpanel has status locked or running, exit cron"
-    exit 0
+then
+  echo "Cpanel has status locked or running, exit cron"
+  exit 0
 fi
 
 #get ldap admin username and email. it's used by Pets' Encrypt
@@ -115,64 +114,79 @@ defaultsudouser=$(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "$peopletree" "(&(
 
 ########## Domain Loop START #############################################################################
 while read domain
-  do
-    echo "DEBUG: ##### $domain START #####################################################"
-    # Create array with all the domains in ldap and add .conf to all them
-    # We will use this arryay to check deleted domains from ldap that are
-    # still present in /etc/apache2/ldap-enabled, so we can remove them.
+do
+  echo "DEBUG: ##### $domain START #####################################################"
+  # Create array with all the domains in ldap and add .conf to all them
+  # We will use this arryay to check deleted domains from ldap that are
+  # still present in /etc/apache2/ldap-enabled, so we can remove them.
 
-    ldapresult+=("$domain".conf)
+  ldapresult+=("$domain".conf)
 
-    # Check if there is a webmaster for current domain. We are using adminID
-    # attribute, which is not a required attribute. so is better to check if
-    # this value is empty or not
+  # Check if there is a webmaster for current domain. We are using adminID
+  # attribute, which is not a required attribute. so is better to check if
+  # this value is empty or not
 
-    webmaster=$(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "vd=$domain,$ldapbase" "adminID=*" | grep -o -P "(?<=adminID: ).*")
-    #issudouser=$(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "uid="$webmaster",ou=sshd,ou=People,dc=example,dc=tld" "gidNumber=*" | grep -o -P "(?<=gidNumber: ).*")
-    #webmaster=$(ldapsearch -x -D "cn=admin,dc=example,dc=tld" -p 389 -h ldap://localhost -b "vd=$domain,o=hosting,dc=example,dc=tld" "adminID=*" -w $bindpass | grep -o -P "(?<=adminID: ).*")
+  webmaster=$(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "vd=$domain,$ldapbase" "adminID=*" | grep -o -P "(?<=adminID: ).*")
+  #issudouser=$(ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "uid="$webmaster",ou=sshd,ou=People,dc=example,dc=tld" "gidNumber=*" | grep -o -P "(?<=gidNumber: ).*")
+  #webmaster=$(ldapsearch -x -D "cn=admin,dc=example,dc=tld" -p 389 -h ldap://localhost -b "vd=$domain,o=hosting,dc=example,dc=tld" "adminID=*" -w $bindpass | grep -o -P "(?<=adminID: ).*")
 
-    # Check DNS for current domain
-    domainip="$(dig +short "$domain")"
+  # Check DNS for current domain
+  domainip="$(dig +short "$domain")"
 
-    ########## Domain Loop: Create virtual hosts and certbot for domains pointing to this ip ########
+  ########## Domain Loop: Create virtual hosts and certbot for domains pointing to this ip ########
 
-    # If virtualhost does not exists Let's create it
-    if [ "$domainip" == $myip ] && [ ! -f $vhroot/"$domain".conf ];
+  # If virtualhost does not exists Let's create it
+  if [ "$domainip" == $myip ] && [ ! -f $vhroot/"$domain".conf ];
+  then
+    #New domain. Let's create virtual host
+    has_new_domains=true #true = at least one new domain = reload apache config
+    echo "<VirtualHost *:80>
+    ServerName  "$domain"
+    ServerAlias www."$domain"
+    ServerAdmin postmaster@"$domain"
+    DocumentRoot $documenRoot/"$domain"
+    </VirtualHost>" > $vhroot/"$domain"-nossl-.conf
+
+    mkdir $documenRoot/$domain
+    echo 'Folder created'
+
+    if [[ -z "$webmaster" ]];
     then
-        #New domain. Let's create virtual host
-        has_new_domains=true #true = at least one new domain = reload apache config
-        echo "<VirtualHost *:80>
-        ServerName  "$domain"
-        ServerAlias www."$domain"
-        ServerAdmin postmaster@"$domain"
-        DocumentRoot $documenRoot/"$domain"
-        </VirtualHost>" > $vhroot/"$domain"-nossl-.conf
+      $webmaster="$defaultsudouser"
+    fi
 
-        mkdir $documenRoot/$domain
-        echo 'Folder created'
+    # Set right permission for 
+    chown -R $webmaster:web $documenRoot/$domain
+    chmod -R 2775 $documenRoot/$domain
 
-        if [[ -z "$webmaster" ]];
-        then
-          $webmaster="$defaultsudouser"
-        fi
+    #a2ensite "$domain".conf
+    #Need to reload apache to create ssl certifciate with webroot and 
+    # Let's encrypt
+    # in production remove --staging
+    #/etc/init.d/apache2 reload && certbot certonly --agree-tos --staging --non-interactive --text --rsa-key-size 4096 --email $mail --webroot-path $documenRoot/$domain --domains "$domain, www.$domain" && \                 
+    # En modo producció : https://acme-v01.api.letsencrypt.org/directory
+    # En modo prueba : https://acme-staging.api.letsencrypt.org/directory 
 
-        # Set right permission for 
-        chown -R $webmaster:web $documenRoot/$domain
-        chmod -R 2775 $documenRoot/$domain
+    cerbotdomain="$domain"
 
-        #a2ensite "$domain".conf
-        #Need to reload apache to create ssl certifciate with webroot and 
-        # Let's encrypt
-        # in production remove --staging
-        #/etc/init.d/apache2 reload && certbot certonly --agree-tos --staging --non-interactive --text --rsa-key-size 4096 --email $mail --webroot-path $documenRoot/$domain --domains "$domain, www.$domain" && \                 
-        # En modo producció : https://acme-v01.api.letsencrypt.org/directory
-        # En modo prueba : https://acme-staging.api.letsencrypt.org/directory 
-
-        cerbotdomain="$domain"
-        wwwdomainip="$(dig +short "www.$domain")"
-        if [ "$wwwdomainip" == $myip ];then
-          cerbotdomain+=" -d www."$domain""
-        fi
+    # Check for www record as A and CNAME
+    wwwdomainip="$(dig +short "www.$domain")"
+    cnamedomain="$(dig +short "www.$domain")"
+    if [ "$wwwdomainip" == $myip ] or [ $domain == "$cnamedomain"* ];then
+      cerbotdomain+=" -d www."$domain""
+    fi
+    ## Check debian Release 
+    debianrelease="$(cat /etc/debian_version)"
+    # If is Jessie add php_alue to vhost
+    if [ ${debianrelease%\.*} -lt 9 ]; then
+      phpconfig="
+	  php_value max_execution_time \"3600\"
+	  php_value max_input_time \"3600\"
+	  php_value memory_limit \"512M\"
+	  php_value post_max_size \"2G\"
+	  php_value upload_max_filesize \"2G\"
+	  "
+    fi
 
           /etc/init.d/apache2 reload && letsencrypt --server https://acme-v01.api.letsencrypt.org/directory  \
             -d $cerbotdomain --agree-tos --email $mail --webroot --webroot-path $documenRoot/$domain --non-interactive --text --rsa-key-size 4096  certonly &&  \
@@ -186,7 +200,7 @@ while read domain
         ## Directories, there should at least be a declaration for /var/www/html
 
         <Directory "$documenRoot/$domain">
-          Options Indexes FollowSymLinks MultiViews
+          Options FollowSymLinks MultiViews
           AllowOverride All 
           Require all granted
         </Directory>
@@ -228,11 +242,8 @@ while read domain
         SSLCertificateFile      "/etc/letsencrypt/live/$domain/fullchain.pem"
         SSLCertificateKeyFile   "/etc/letsencrypt/live/$domain/privkey.pem"
         SSLCACertificatePath    "/etc/ssl/certs"
-        php_value max_execution_time "3600"
-        php_value max_input_time "3600"
-        php_value memory_limit "512M"
-        php_value post_max_size "2G"
-        php_value upload_max_filesize "2G"
+
+	$phpconfig	
 
         </VirtualHost>" > $vhroot/"$domain".conf
         rm $vhroot/"$domain"-nossl-.conf

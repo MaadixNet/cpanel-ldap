@@ -69,10 +69,10 @@ if ($has_dkim || $ismailActive == 'mailmandomain') {
   $domain_dkim_file =( file_exists("/etc/opendkim/keys/$domain/default.txt"))?file_get_contents("/etc/opendkim/keys/$domain/default.txt"):false; 
   if ($domain_dkim_file) {
     //Just get the public key value
-    preg_match_all('/\"p\=(.*)\" \)/',$domain_dkim_file,$the_result_array);
+    preg_match_all('/\(\s((?s)(.+?))\s\)/',$domain_dkim_file,$the_result_array);
     $dkim_public_key_value = $the_result_array[1][0];
     //Rebuild the txt record for dkim TXT entry
-    $correct_dkim = "v=DKIM1; k=rsa; p=" . $dkim_public_key_value;
+    $correct_dkim =  $dkim_public_key_value;
   } else {
     $correct_dkim = sprintf(_('Todavía no se ha generado ninguna clave dkim para el dominio %s. Este proceso puede tardar unos minutos.'),$domain);
   }
@@ -90,10 +90,13 @@ if ($has_dkim || $ismailActive == 'mailmandomain') {
  * Spaces doesn't matter
 */
 
-$nospace_public_dkim=preg_replace('/\s+/', '', $resultDKIM);
-$nospace_correct_dkim= preg_replace('/\s+/', '', $correct_dkim);
+//$nospace_public_dkim=preg_replace('/\s+/', '', $resultDKIM);
+$nospace_public_dkim= str_replace(array(" ", "\"","\n", "\r\n","\r", "\t" ), "", $resultDKIM);
+$nospace_correct_dkim= str_replace(array(" ", "\"", "\n","\r\n", "\r","\t"), "", $correct_dkim);
 //$nospace_correct_dkim = '"' . $nospace_correct_dkim . '"';
 require_once('sidebar.php');
+echo 'resultdkim ' . $nospace_public_dkim;
+echo 'correctdkim' . $nospace_correct_dkim;
 ?>
 <article>
   <section>
@@ -277,7 +280,7 @@ require_once('sidebar.php');
         echo "\"" . $dkim_record ."\"";
         echo "</td>";
         echo "<td class='longRecord'>";
-        echo '"'.$correct_dkim .'"';
+        echo $correct_dkim;
         echo "</td>";
         $dkim_stat=($nospace_public_dkim == $nospace_correct_dkim || (!$has_dkim && $ismailActive != 'mailmandomain' && !$resultDKIM))?$statok:$staterr . " <a href='#dkimCorrect'>" . sprintf(_("Cómo Corregir?")) ."</a>";
         echo '<td class="center">' . $dkim_stat . '</td>';
