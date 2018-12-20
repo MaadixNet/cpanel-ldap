@@ -227,7 +227,7 @@ do
         ## Directories, there should at least be a declaration for /var/www/html
 
         <Directory "$documenRoot/$domain">
-          Options Indexes FollowSymLinks MultiViews
+          Options FollowSymLinks MultiViews
           AllowOverride All
           Require all granted
         </Directory>
