@@ -95,8 +95,6 @@ $nospace_public_dkim= str_replace(array(" ", "\"","\n", "\r\n","\r", "\t" ), "",
 $nospace_correct_dkim= str_replace(array(" ", "\"", "\n","\r\n", "\r","\t"), "", $correct_dkim);
 //$nospace_correct_dkim = '"' . $nospace_correct_dkim . '"';
 require_once('sidebar.php');
-echo 'resultdkim ' . $nospace_public_dkim;
-echo 'correctdkim' . $nospace_correct_dkim;
 ?>
 <article>
   <section>
