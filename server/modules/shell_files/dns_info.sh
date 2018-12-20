@@ -17,7 +17,7 @@ recordspfok="v=spf1 a mx ~all"
 
 #record Dkim
 
-recorddkim=$(/usr/bin/dig +short default._domainkey."$fqdn" TXT  | tr -d '\n' | tr -d '\t' | tr -d '\r' | sed "s/\" \"//g" | tr -d '\"' )
+recorddkim=$(/usr/bin/dig +short default._domainkey."$fqdn" TXT  | tr -d '\n' | tr -d '\t' | tr -d '\r' | sed "s/\" \"//g" | tr -d '\"' | tr -d "\\" )
 #recorddkimKey=$(/bin/cat /etc/opendkim/keys/"$fqdn"/default.txt | grep -o -P "(?<=\"p=).*(?=\")")
 #recorddkimok="v=DKIM1; k=rsa; p="$recorddkimKey
 recorddkimok=$(/bin/cat /etc/opendkim/keys/"$fqdn"/default.txt | tr -d '\"' | tr -d '\n' | tr -d '\t' | tr -d '\r' | tr -s " " | grep -o -P "(?<=\(\s).*(?=\s\))")
