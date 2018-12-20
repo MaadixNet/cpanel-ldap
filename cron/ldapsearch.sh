@@ -172,7 +172,7 @@ do
     # Check for www record as A and CNAME
     wwwdomainip="$(dig +short "www.$domain")"
     cnamedomain="$(dig +short "www.$domain")"
-    if [ "$wwwdomainip" == $myip ] or [ $domain == "$cnamedomain"* ];then
+    if [ "$wwwdomainip" == "$myip" ] or [[ "$domain" == "$cnamedomain"* ]];then
       cerbotdomain+=" -d www."$domain""
     fi
     ## Check debian Release 
