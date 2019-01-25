@@ -1,11 +1,5 @@
 <?php
 session_start();
-/*
-require_once 'classes/class.ldap.php';
-$user_home = new LDAP();
-$current_page=basename(__FILE__);
-$user_home->check_login_or_redirect($current_page);
- */
 require_once('header.php');?>
 
         <link rel="stylesheet" type="text/css" href="css/stats/main.css">
