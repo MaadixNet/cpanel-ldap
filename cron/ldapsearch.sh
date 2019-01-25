@@ -186,6 +186,13 @@ do
 	  php_value post_max_size \"2G\"
 	  php_value upload_max_filesize \"2G\"
 	  "
+    else
+      phpconfig="
+           <FilesMatch "\.php$">
+              SetHandler "proxy:fcgi://127.0.0.1:9000/" 
+           </FilesMatch>
+           "
+
     fi
 
           /etc/init.d/apache2 reload && letsencrypt --server https://acme-v01.api.letsencrypt.org/directory  \
