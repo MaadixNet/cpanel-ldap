@@ -43,6 +43,17 @@ if ($domain){
         $errormsg.='<br />';
         $errormsg.= sprintf(_("Si quieres utilizarlo para esta aplicación deberás primero eliminarlo desde el listado de dominios"));
         //Some other applicaction may ne using same domain. This is not allowed
+
+	// Bug fix: if a domain has been renmoved from ldap but cron has not run yet, it will then delete le certificates
+	// in case it is useb for an applicaction. 
+    } else if( !empty($vds) && array_search($domain, array_column(array_column($vds, 'vd'),0)) == false && file_exists('/etc/apache2/ldap-enabled/' . $domain . '.conf')){
+
+        $totalerrors++;
+        $error=3;
+        $errormsg=sprintf(_("El dominio %s ha sido eliminado desde el panel de control, pero todavía no se ha completado el proceso de eliminación en el sistema."), $domain);
+        $errormsg.='<br />';
+        $errormsg.= sprintf(_("Vuelve a intentarlo pasado unos minutos"));
+
     } else if($Ldap->is_domain_in_use($domain)) {
       
         $totalerrors++;
