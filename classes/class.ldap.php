@@ -143,6 +143,26 @@ class LDAP{
           ldap_add($ldapconn, $adddn, $info);
         }
     }
+    function sendReport($ldapconn){
+      $dn = 'ou=report,ou=cpanel,' . SUFFIX;
+      $filter = "(objectclass=extensibleObject)";
+      $isrepo = $this->search($ldapconn,$dn,$filter);
+      $info = array();
+      $info['status']= 'locked';
+      if ($isrepo) {
+        //Modify
+        $result = $this->ModifyRecord($ldapconn,$dn,$info);
+      } else {
+        //Add
+        $info['objectclass'][0]='organizationalUnit';
+        $info['objectclass'][1]='metaInfo';
+        $info['objectclass'][2]='extensibleObject';
+        $result = ldap_add($ldapconn, $dn, $info);
+      }
+      return $result;
+    }
+
+
     function search($ldapconn,$searchdn, $filter){
           set_error_handler(array($this, 'warning_handler'), E_WARNING);
           //escape filter
@@ -364,7 +384,8 @@ class LDAP{
         $vm_status = $this->getpuppetstatus();
         $updates = $this->getreleaseinfo('updates');
         // Check available updates 
-        $avalibale_update = (!empty($updates)|| $vm_status=='pending')?$notification_string:'';
+        $str = shell_exec('cat /etc/debian_version');
+        $avalibale_update = (!empty($updates)|| $vm_status=='pending' || (int)$str < 9)?$notification_string:'';
         return $avalibale_update;
     }
 
@@ -375,6 +396,8 @@ class LDAP{
       $need_reboot = ($reboot_attr[0]['info'][0]) == 'reboot'?$notification_string:'';
       return $need_reboot;
     }
+
+
 
     function notifications_header_dropdown($ldapconn,$vm_status) {
       $count_notif = 0;
@@ -394,7 +417,9 @@ class LDAP{
       }
       //$has_update= $this->check_available_updates($ldapconn);
       //$status = getpuppetstatus($Ldap,$ldapconn,$ldapbind);
-      if ($vm_status=='pending' || $this->getreleaseinfo('updates')){
+      // Also check if current debian is Jessie, show upgrade available
+      $str = shell_exec('cat /etc/debian_version');
+      if ($vm_status=='pending' || $this->getreleaseinfo('updates') || (int)$str < 9){
         $count_notif++;
         $notification_list.='
         <li>
